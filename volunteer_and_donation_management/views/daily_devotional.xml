@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!--              Daily Devotional - List View               -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <record id="view_daily_devotional_list" model="ir.ui.view">
+        <field name="name">daily.devotional.list</field>
+        <field name="model">daily.devotional</field>
+        <field name="arch" type="xml">
+            <list string="Daily Devotionals">
+                <field name="date"/>
+                <field name="name"/>
+                <field name="scripture_reference"/>
+                <field name="author"/>
+                <field name="category"/>
+                <field name="is_published"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!--              Daily Devotional - Form View               -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <record id="view_daily_devotional_form" model="ir.ui.view">
+        <field name="name">daily.devotional.form</field>
+        <field name="model">daily.devotional</field>
+        <field name="arch" type="xml">
+            <form string="Daily Devotional">
+                <header>
+                    <button name="action_publish" type="object"
+                            string="Publish"
+                            class="btn-primary"
+                            invisible="is_published"/>
+                    <button name="action_unpublish" type="object"
+                            string="Unpublish"
+                            class="btn-secondary"
+                            invisible="not is_published"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Devotional Title..."/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="date"/>
+                            <field name="scripture_reference" placeholder="e.g. John 3:16"/>
+                            <field name="author"/>
+                            <field name="category"/>
+                            <field name="is_published"/>
+                        </group>
+                        <group>
+                            <field name="image" widget="image" class="oe_avatar"/>
+                            <field name="video" filename="video_filename"/>
+                            <field name="video_url"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Content" name="content">
+                            <field name="content" widget="html" placeholder="Write your devotional content here..."/>
+                        </page>
+                        <page string="Summary" name="summary">
+                            <field name="summary" placeholder="Brief summary for the app listing..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!--             Daily Devotional - Search View              -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <record id="view_daily_devotional_search" model="ir.ui.view">
+        <field name="name">daily.devotional.search</field>
+        <field name="model">daily.devotional</field>
+        <field name="type">search</field>
+        <field name="arch" type="xml">
+            <search string="Search Devotionals">
+                <field name="name"/>
+                <field name="scripture_reference"/>
+                <field name="author"/>
+                <filter name="published" string="Published"
+                        domain="[('is_published','=',True)]"/>
+                <filter name="unpublished" string="Unpublished"
+                        domain="[('is_published','=',False)]"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!--              Daily Devotional - Action                  -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <record id="action_daily_devotional" model="ir.actions.act_window">
+        <field name="name">Daily Devotionals</field>
+        <field name="res_model">daily.devotional</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_daily_devotional_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first Daily Devotional
+            </p>
+            <p>
+                Add devotionals that will appear in the mobile app.
+                Only published devotionals will be visible to app users.
+            </p>
+        </field>
+    </record>
+
+</odoo>

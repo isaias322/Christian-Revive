@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- Volunteer List View -->
+    <record id="view_volunteer_list" model="ir.ui.view">
+        <field name="name">res.partner.volunteer.list</field>
+        <field name="model">res.partner</field>
+        <field name="arch" type="xml">
+            <list string="Volunteers">
+                <field name="name"/>
+                <field name="email"/>
+                <field name="phone"/>
+                <field name="city"/>
+                <field name="cnic"/>
+                <field name="date_of_birth"/>
+                <field name="volunteer_skill"/>
+            </list>
+        </field>
+    </record>
+
+
+    <!-- Extend Contact Form : Volunteer Tab -->
+    <record id="view_partner_form_volunteer_extension" model="ir.ui.view">
+        <field name="name">res.partner.form.volunteer.extension</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+
+            <!-- Volunteer Checkbox -->
+            <xpath expr="//field[@name='category_id']" position="after">
+                <field name="is_volunteer"/>
+                <field name="cnic"/>
+                <field name="date_of_birth"/>
+            </xpath>
+
+
+            <!-- Volunteer Tab -->
+            <xpath expr="//sheet/notebook" position="inside">
+
+                <page string="Volunteer Information">
+
+                    <group string="Volunteer Skills">
+                        <field name="volunteer_skill"/>
+                    </group>
+
+                    <group string="Availability">
+                        <field name="availability" widget="radio"/>
+                    </group>
+
+                    <group string="Motivation">
+                        <field name="motivation"/>
+                    </group>
+                    <group string="Donation Summary">
+                        <group>
+                            <field name="total_donated" string="Total Donated (Rs)"/>
+                            <field name="donation_transaction_count" string="Number of Donations"/>
+                        </group>
+                    </group>
+
+                </page>
+
+            </xpath>
+
+        </field>
+    </record>
+
+
+    <!-- Volunteer Action -->
+    <record id="action_volunteer" model="ir.actions.act_window">
+        <field name="name">Volunteers</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('is_volunteer','=',True)]</field>
+    </record>
+
+</odoo>

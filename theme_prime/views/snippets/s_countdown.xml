@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="s_tp_countdown" name="Countdown">
+        <div class="tp-countdown tp-editor-inner-snippet style-1 position-left tp-dark pt16 pb8" t-att-data-due-date="datetime.datetime.now().timestamp() + 228307" data-countdown-style="s_countdown_1">
+            <div class="container tp-countdown-wrapper">
+                <div class="row pt16 tp-end-msg-container css_non_editable_mode_hidden s_nb_column_fixed">
+                    <div class="col-12">
+                        <div class="text-center alert alert-info css_non_editable_mode_hidden o_not_editable" t-ignore="True" role="status">
+                            The following message will become visible <strong>only</strong> once the countdown ends.
+                        </div>
+                        <div class="oe_structure">
+                            <section class="s_picture">
+                                <div class="container">
+                                    <div class="row s_nb_column_fixed">
+                                        <div class="col-12">
+                                            <h2>Happy Shopping!</h2>
+                                            <p>As promised, we will offer surprise coupon for our next sale.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+<!-- Assets -->
+    <record id="theme_prime.s_tp_countdown_000_scss" model="ir.asset">
+        <field name="name">Tp Countdown 000 SCSS</field>
+        <field name="bundle">web.assets_frontend</field>
+        <field name="path">theme_prime/static/src/snippets/s_tp_countdown/000.scss</field>
+    </record>
+
+    <record id="theme_prime.s_tp_countdown_000_js" model="ir.asset">
+        <field name="name">Tp Countdown 000 JS</field>
+        <field name="bundle">web.assets_frontend</field>
+        <field name="path">theme_prime/static/src/snippets/s_tp_countdown/000.js</field>
+    </record>
+
+</odoo>

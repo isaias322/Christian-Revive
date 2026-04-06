@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- Action -->
+    <record id="action_volunteers" model="ir.actions.act_window">
+        <field name="name">Volunteers</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('is_volunteer','=',True)]</field>
+    </record>
+
+    <!-- Root Menu -->
+    <menuitem
+        id="menu_volunteer_root"
+        name="Revive Application"
+        action="action_volunteers"
+        sequence="10"
+        web_icon="volunteer_and_donation_management,static/description/app_icon.png"
+    />
+
+    <!-- Child Menu -->
+    <menuitem
+        id="menu_volunteer_list"
+        name="Volunteer List"
+        parent="menu_volunteer_root"
+        action="action_volunteers"
+        sequence="1"
+    />
+
+    <menuitem id="menu_member_list"
+          name="Members"
+          parent="menu_volunteer_root"
+          action="volunteer_and_donation_management.action_members"
+          sequence="2"/>
+
+    <menuitem id="menu_client_detail_list"
+          name="Client Details"
+          parent="menu_volunteer_root"
+          action="action_client_detail"
+          sequence="4"/>
+
+    <menuitem id="menu_broadcast_list"
+            name = "Lesson"
+            parent="menu_volunteer_root"
+            action="action_broadcast"
+            sequence="5"/>
+
+    <menuitem id="menu_sabbath_school"
+        name="Sabbath School"
+        parent="menu_volunteer_root"
+        action="action_sabbath_school"
+        sequence="6"/>
+
+    <menuitem id="menu_books"
+        name="Books &amp; Library"
+        parent="menu_volunteer_root"
+        action="action_books"
+        sequence="7"/>
+
+    <menuitem id="menu_ministry_partners"
+        name="Partners"
+        parent="menu_volunteer_root"
+        action="action_ministry_partners"
+        sequence="10"/>
+
+    <menuitem id="menu_store"
+        name="Store"
+        parent="menu_volunteer_root"
+        sequence="11"/>
+
+    <menuitem id="menu_store_products"
+        name="Products"
+        parent="menu_store"
+        action="action_store_products"
+        sequence="1"/>
+
+    <menuitem id="menu_store_orders"
+        name="Orders"
+        parent="menu_store"
+        action="action_store_sale_orders"
+        sequence="2"/>
+
+    <menuitem id="menu_configuration_list"
+          name="Configuration"
+          parent="menu_volunteer_root"
+          sequence="100"/>
+
+    <menuitem id="menu_volunteer_skill"
+          name="Volunteer Skills"
+          parent="menu_configuration_list"
+          action="action_volunteer_skill"
+          sequence="1"/>
+
+      <menuitem id="menu_daily_devotional"
+          name="Daily Devotional"
+          parent="menu_configuration_list"
+          action="action_daily_devotional"
+          sequence="2"/>
+
+    <menuitem id="menu_daily_wisdom"
+        name="Daily Wisdom"
+        parent="menu_configuration_list"
+        action="action_daily_wisdom"
+        sequence="3"/>
+
+    <menuitem id="menu_thought_of_the_day"
+        name="Thought of the Day"
+        parent="menu_configuration_list"
+        action="action_thought_of_the_day"
+        sequence="4"/>
+
+    <menuitem id="menu_donate_list"
+          name="Donate"
+          parent="menu_configuration_list"
+          action="action_donate"
+          sequence="4"/>
+
+    <menuitem
+        id="menu_patients_list"
+        name="Medical Camp"
+        parent="menu_volunteer_root"
+        action="action_patients"
+        sequence="5"/>
+
+    <menuitem id="menu_church_staff"
+            name="Staff"
+            parent="menu_volunteer_root"
+            action="action_church_staff"
+            sequence="6"/>
+
+    <menuitem id="menu_events"
+        name="Events"
+        parent="menu_configuration_list"
+        action="action_church_events"
+        sequence="7"/>
+
+    <menuitem id ="menu_app_notifications"
+        name="App Notifications"
+        parent="menu_configuration_list"
+        action="action_app_notification"
+        sequence="8"/>
+
+    <menuitem id="menu_health_broadcast"
+        name="Health Broadcasts"
+        parent="menu_configuration_list"
+        action="action_health_broadcast"
+        sequence="9"/>
+
+    <menuitem id="menu_app_projects"
+            name="Projects"
+            parent="menu_configuration_list"
+            action="action_app_projects"
+            sequence="10"/>
+    <menuitem
+        id="menu_prayer_request"
+        name="Prayer Requests"
+        action="action_prayer_request"
+        parent="menu_configuration_list"
+        sequence="11"/>
+        
+    <menuitem id="menu_music_tracks"
+        name="Music"
+        parent="menu_configuration_list"
+        action="action_music_tracks"
+        sequence="12"/>
+
+    <menuitem id="menu_medical_codes"
+              name="Medical Codes"
+              parent="menu_configuration_list"
+              sequence="60"/>
+
+    <menuitem id="menu_icd10"
+              name="ICD-10 Diagnoses"
+              parent="menu_medical_codes"
+              action="action_icd10"
+              sequence="10"/>
+
+    <menuitem id="menu_cpt"
+              name="CPT Procedures"
+              parent="menu_medical_codes"
+              action="action_cpt"
+              sequence="20"/>
+
+    <menuitem id="menu_snomed"
+              name="SNOMED-CT Terms"
+              parent="menu_medical_codes"
+              action="action_snomed"
+              sequence="30"/>
+
+    <menuitem id="menu_rxnorm"
+              name="RxNorm Drugs"
+              parent="menu_medical_codes"
+              action="action_rxnorm"
+              sequence="40"/>
+
+    <menuitem id="menu_partner_config"
+        name="Partner Configuration"
+        parent="menu_configuration_list"
+        sequence="20"/>
+
+    <menuitem id="menu_partner_areas"
+        name="Partnership Areas"
+        parent="menu_partner_config"
+        action="action_partner_areas"
+        sequence="1"/>
+
+    <menuitem id="menu_partner_skills"
+        name="Partner Skills"
+        parent="menu_partner_config"
+        action="action_partner_skills"
+        sequence="2"/>
+
+    <menuitem id="menu_app_profiles"
+        name="App Profiles"
+        parent="menu_configuration_list"
+        action="action_app_profiles"
+        sequence="99"/>
+
+</odoo>

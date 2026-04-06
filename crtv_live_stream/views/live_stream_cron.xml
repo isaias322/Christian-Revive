@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="ir_cron_refresh_live_stream_status" model="ir.cron">
+        <field name="name">CRTV: Refresh Live Stream Statuses</field>
+        <field name="model_id" ref="model_crtv_live_stream"/>
+        <field name="state">code</field>
+        <field name="code">model.action_refresh_all_statuses()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">minutes</field>
+        <field name="active">True</field>
+    </record>
+
+</odoo>

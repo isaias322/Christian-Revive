@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- ICD-10 VIEWS                                    -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <record id="view_icd10_list" model="ir.ui.view">
+        <field name="name">medical.icd10.list</field>
+        <field name="model">medical.icd10</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="code"/>
+                <field name="name"/>
+                <field name="category"/>
+                <field name="chapter"/>
+                <field name="is_active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_icd10_form" model="ir.ui.view">
+        <field name="name">medical.icd10.form</field>
+        <field name="model">medical.icd10</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="code"/>
+                            <field name="name"/>
+                            <field name="category"/>
+                        </group>
+                        <group>
+                            <field name="chapter"/>
+                            <field name="is_active"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_icd10" model="ir.actions.act_window">
+        <field name="name">ICD-10 Codes</field>
+        <field name="res_model">medical.icd10</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- CPT VIEWS                                       -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <record id="view_cpt_list" model="ir.ui.view">
+        <field name="name">medical.cpt.list</field>
+        <field name="model">medical.cpt</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="code"/>
+                <field name="name"/>
+                <field name="category"/>
+                <field name="section"/>
+                <field name="is_active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_cpt_form" model="ir.ui.view">
+        <field name="name">medical.cpt.form</field>
+        <field name="model">medical.cpt</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="code"/>
+                            <field name="name"/>
+                            <field name="category"/>
+                        </group>
+                        <group>
+                            <field name="section"/>
+                            <field name="is_active"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_cpt" model="ir.actions.act_window">
+        <field name="name">CPT Codes</field>
+        <field name="res_model">medical.cpt</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- SNOMED-CT VIEWS                                 -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <record id="view_snomed_list" model="ir.ui.view">
+        <field name="name">medical.snomed.list</field>
+        <field name="model">medical.snomed</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="code"/>
+                <field name="name"/>
+                <field name="semantic_type"/>
+                <field name="is_active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_snomed" model="ir.actions.act_window">
+        <field name="name">SNOMED-CT Terms</field>
+        <field name="res_model">medical.snomed</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- ═══════════════════════════════════════════════ -->
+    <!-- RXNORM VIEWS                                    -->
+    <!-- ═══════════════════════════════════════════════ -->
+    <record id="view_rxnorm_list" model="ir.ui.view">
+        <field name="name">medical.rxnorm.list</field>
+        <field name="model">medical.rxnorm</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="rxcui"/>
+                <field name="name"/>
+                <field name="generic_name"/>
+                <field name="strength"/>
+                <field name="dose_form"/>
+                <field name="route"/>
+                <field name="drug_class"/>
+                <field name="is_active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_rxnorm_form" model="ir.ui.view">
+        <field name="name">medical.rxnorm.form</field>
+        <field name="model">medical.rxnorm</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="rxcui"/>
+                            <field name="name"/>
+                            <field name="generic_name"/>
+                            <field name="drug_class"/>
+                        </group>
+                        <group>
+                            <field name="dose_form"/>
+                            <field name="strength"/>
+                            <field name="route"/>
+                            <field name="is_active"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_rxnorm" model="ir.actions.act_window">
+        <field name="name">RxNorm Drugs</field>
+        <field name="res_model">medical.rxnorm</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

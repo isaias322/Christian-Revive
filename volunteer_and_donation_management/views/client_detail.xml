@@ -1,0 +1,8 @@
+<odoo>
+    <record id="action_client_detail" model="ir.actions.act_window">
+        <field name="name">Client Details</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('is_client','=',True)]</field>
+    </record>
+</odoo>

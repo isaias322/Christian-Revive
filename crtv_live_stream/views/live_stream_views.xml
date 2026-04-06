@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- FORM VIEW -->
+    <record id="view_crtv_live_stream_form" model="ir.ui.view">
+        <field name="name">crtv.live.stream.form</field>
+        <field name="model">crtv.live.stream</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <field name="thumbnail" widget="image" class="oe_avatar"/>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Program Title"/></h1>
+                        <h3><field name="subtitle" placeholder="Episode or Subtitle"/></h3>
+                    </div>
+                    <group>
+                        <group string="Schedule">
+                            <field name="air_date"/>
+                            <field name="air_time" placeholder="09:00"/>
+                            <field name="duration"/>
+                            <field name="air_datetime_local"
+                                   string="Broadcasts At (Local)"
+                                   readonly="1"/>
+                            <field name="is_live_now" readonly="1"/>
+                        </group>
+                        <group string="Settings">
+                            <field name="status" readonly="1"/>
+                            <field name="category"/>
+                            <field name="language"/>
+                            <field name="is_published"/>
+                            <field name="is_featured"/>
+                        </group>
+                    </group>
+                    <group string="Stream Source">
+                        <field name="stream_type"/>
+                        <field name="stream_url"
+                               invisible="stream_type == 'uploaded'"
+                               placeholder="https://www.youtube.com/watch?v=..."/>
+                        <field name="video_file"
+                               invisible="stream_type != 'uploaded'"
+                               filename="name"/>
+                    </group>
+                    <group string="Description">
+                        <field name="description" nolabel="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- LIST VIEW -->
+    <record id="view_crtv_live_stream_list" model="ir.ui.view">
+        <field name="name">crtv.live.stream.list</field>
+        <field name="model">crtv.live.stream</field>
+        <field name="arch" type="xml">
+            <list decoration-success="status == 'live'"
+                  decoration-muted="status == 'ended'">
+                <field name="name"/>
+                <field name="subtitle"/>
+                <field name="air_date"/>
+                <field name="air_time"/>
+                <field name="air_datetime_local" string="Local Time"/>
+                <field name="duration" string="Mins"/>
+                <field name="stream_type"/>
+                <field name="category"/>
+                <field name="status"/>
+                <field name="is_published" widget="boolean_toggle"/>
+                <field name="is_featured" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- CALENDAR VIEW -->
+    <record id="view_crtv_live_stream_calendar" model="ir.ui.view">
+        <field name="name">crtv.live.stream.calendar</field>
+        <field name="model">crtv.live.stream</field>
+        <field name="arch" type="xml">
+            <calendar date_start="air_date"
+                      color="category"
+                      quick_create="false"
+                      mode="month">
+                <field name="name"/>
+                <field name="air_time"/>
+                <field name="status"/>
+            </calendar>
+        </field>
+    </record>
+
+    <!-- SEARCH VIEW -->
+    <record id="view_crtv_live_stream_search" model="ir.ui.view">
+        <field name="name">crtv.live.stream.search</field>
+        <field name="model">crtv.live.stream</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="air_date"/>
+                <field name="status"/>
+                <filter name="filter_live"
+                        string="On Air Now"
+                        domain="[('status','=','live')]"/>
+                <filter name="filter_published"
+                        string="Published"
+                        domain="[('is_published','=',True)]"/>
+                <filter name="filter_featured"
+                        string="Featured"
+                        domain="[('is_featured','=',True)]"/>
+                <filter name="filter_scheduled"
+                        string="Scheduled"
+                        domain="[('status','=','scheduled')]"/>
+                <filter name="filter_ended"
+                        string="Ended"
+                        domain="[('status','=','ended')]"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- ACTION -->
+    <record id="action_crtv_live_streams" model="ir.actions.act_window">
+        <field name="name">Live Streams</field>
+        <field name="res_model">crtv.live.stream</field>
+        <field name="view_mode">list,form,calendar</field>
+        <field name="search_view_id" ref="view_crtv_live_stream_search"/>
+        <field name="context">{'search_default_filter_published': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Schedule your first live stream!
+            </p>
+            <p>
+                Enter the air time in your local time — the system converts
+                to UTC automatically based on your user timezone.
+            </p>
+        </field>
+    </record>
+
+</odoo>

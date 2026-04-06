@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="snippets" inherit_id="website.snippets">
+        <xpath expr="//t[@id='installed_snippets_hook']" position="after">
+            <t snippet-group="theme_prime_dynamic" t-snippet="website.s_snippet_group" string="Dynamic" t-thumbnail="/theme_prime/static/src/img/snippets_thumbs/s_dynamic.svg"/>
+            <t snippet-group="theme_prime_cover" t-snippet="website.s_snippet_group" string="Covers" t-thumbnail="/theme_prime/static/src/img/snippets_thumbs/s_cover.svg"/>
+            <t snippet-group="theme_prime_heading" t-snippet="website.s_snippet_group" string="Headings" t-thumbnail="/theme_prime/static/src/img/snippets_thumbs/s_heading.svg"/>
+            <t snippet-group="theme_prime_banner" t-snippet="website.s_snippet_group" string="Banners" t-thumbnail="/theme_prime/static/src/img/snippets_thumbs/s_banner.svg"/>
+            <t snippet-group="theme_prime_info_block" t-snippet="website.s_snippet_group" string="Info Blocks" t-thumbnail="/theme_prime/static/src/img/snippets_thumbs/s_info_block.svg"/>
+            <t snippet-group="theme_prime_shop_offer" t-snippet="website.s_snippet_group" string="Shop Offers" t-thumbnail="/theme_prime/static/src/img/snippets_thumbs/s_shop_offer.svg"/>
+            <t snippet-group="theme_prime_pricing" t-snippet="website.s_snippet_group" string="Pricing" t-thumbnail="/theme_prime/static/src/img/snippets_thumbs/s_pricing.svg"/>
+            <t snippet-group="theme_prime_icon_block" t-snippet="website.s_snippet_group" string="Icon Blocks" t-thumbnail="/theme_prime/static/src/img/snippets_thumbs/s_icon_block.svg"/>
+            <t snippet-group="theme_prime_stats" t-snippet="website.s_snippet_group" string="Stats" t-thumbnail="/theme_prime/static/src/img/snippets_thumbs/s_stats.svg"/>
+            <t snippet-group="theme_prime_clients" t-snippet="website.s_snippet_group" string="Clients" t-thumbnail="/theme_prime/static/src/img/snippets_thumbs/s_clients.svg"/>
+            <t snippet-group="theme_prime_gallery" t-snippet="website.s_snippet_group" string="Gallery" t-thumbnail="/theme_prime/static/src/img/snippets_thumbs/s_gallery.svg"/>
+            <t snippet-group="theme_prime_testimonials" t-snippet="website.s_snippet_group" string="Testimonials" t-thumbnail="/theme_prime/static/src/img/snippets_thumbs/s_testimonials.svg"/>
+            <t snippet-group="theme_prime_team" t-snippet="website.s_snippet_group" string="Teams" t-thumbnail="/theme_prime/static/src/img/snippets_thumbs/s_team.svg"/>
+            <t snippet-group="theme_prime_cta" t-snippet="website.s_snippet_group" string="CTAs" t-thumbnail="/theme_prime/static/src/img/snippets_thumbs/s_cta.svg"/>
+            <t snippet-group="theme_prime_subscribe" t-snippet="website.s_snippet_group" string="Subscribe" t-thumbnail="/theme_prime/static/src/img/snippets_thumbs/s_subscribe.svg"/>
+            <t snippet-group="theme_prime_coming_soon" t-snippet="website.s_snippet_group" string="Coming Soon" t-thumbnail="/theme_prime/static/src/img/snippets_thumbs/s_coming_soon.svg"/>
+        </xpath>
+        <t t-snippet="website.s_banner" position="before">
+            <!-- Dynamic -->
+            <t t-snippet="theme_prime.s_d_products_snippet" string="Products" group="theme_prime_dynamic">
+                <keywords>products, dynamic</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_tp_documents_snippet" string="Documents" group="theme_prime_dynamic">
+                <keywords>documents, attachments</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_d_2_column_snippet" string="2 Column Deals" group="theme_prime_dynamic">
+                <keywords>products, dynamic</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_category_brands" string="Categories &amp; Brands" group="theme_prime_dynamic">
+                <keywords>products, dynamic</keywords>
+            </t>
+
+            <!-- Cover -->
+            <t t-snippet="theme_prime.s_cover_1" string="Cover - 1" group="theme_prime_cover">
+                <keywords>covers, carousel</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_cover_2" string="Cover - 2" group="theme_prime_cover">
+                <keywords>covers, carousel</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_cover_3" string="Cover - 3" group="theme_prime_cover">
+                <keywords>covers, carousel</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_cover_4" string="Cover - 4" group="theme_prime_cover">
+                <keywords>covers, carousel</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_cover_5" string="Cover - 5" group="theme_prime_cover">
+                <keywords>covers</keywords>
+            </t>
+
+            <!-- Heading -->
+            <t t-snippet="theme_prime.s_heading_1" string="Heading - 1" group="theme_prime_heading">
+                <keywords>heading, title</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_heading_2" string="Heading - 2" group="theme_prime_heading">
+                <keywords>heading, title</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_heading_3" string="Heading - 3" group="theme_prime_heading">
+                <keywords>heading, title</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_heading_4" string="Heading - 4" group="theme_prime_heading">
+                <keywords>heading, title</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_heading_5" string="Heading - 5" group="theme_prime_heading">
+                <keywords>heading, title</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_heading_6" string="Heading - 6" group="theme_prime_heading">
+                <keywords>heading, title</keywords>
+            </t>
+
+            <!-- Banner -->
+            <t t-snippet="theme_prime.s_banner_1" string="Banner - 1" group="theme_prime_banner">
+                <keywords>banner, hero</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_banner_2" string="Banner - 2" group="theme_prime_banner">
+                <keywords>banner, hero</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_banner_3" string="Banner - 3" group="theme_prime_banner">
+                <keywords>banner, hero</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_banner_4" string="Banner - 4" group="theme_prime_banner">
+                <keywords>banner, hero</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_banner_5" string="Banner - 5" group="theme_prime_banner">
+                <keywords>banner, hero</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_banner_6" string="Banner - 6" group="theme_prime_banner">
+                <keywords>banner, hero</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_banner_7" string="Banner - 7" group="theme_prime_banner">
+                <keywords>banner, hero</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_banner_8" string="Banner - 8" group="theme_prime_banner">
+                <keywords>banner, hero</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_banner_9" string="Banner - 9" group="theme_prime_banner">
+                <keywords>banner, hero</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_banner_10" string="Banner - 10" group="theme_prime_banner">
+                <keywords>banner, hero</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_banner_11" string="Banner - 11" group="theme_prime_banner">
+                <keywords>banner, hero</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_banner_12" string="Banner - 12" group="theme_prime_banner">
+                <keywords>banner, hero</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_banner_13" string="Banner - 13" group="theme_prime_banner">
+                <keywords>banner, hero</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_banner_14" string="Banner - 14" group="theme_prime_banner">
+                <keywords>banner, hero</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_banner_15" string="Banner - 15" group="theme_prime_banner">
+                <keywords>banner, hero</keywords>
+            </t>
+
+            <!-- Info Block -->
+            <t t-snippet="theme_prime.s_info_block_1" string="Info Block - 1" group="theme_prime_info_block">
+                <keywords>information, content</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_info_block_2" string="Info Block - 2" group="theme_prime_info_block">
+                <keywords>information, content</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_info_block_3" string="Info Block - 3" group="theme_prime_info_block">
+                <keywords>information, content</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_info_block_4" string="Info Block - 4" group="theme_prime_info_block">
+                <keywords>information, content</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_info_block_5" string="Info Block - 5" group="theme_prime_info_block">
+                <keywords>information, content</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_info_block_6" string="Info Block - 6" group="theme_prime_info_block">
+                <keywords>information, content</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_info_block_7" string="Info Block - 7" group="theme_prime_info_block">
+                <keywords>information, content</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_info_block_8" string="Info Block - 8" group="theme_prime_info_block">
+                <keywords>information, content</keywords>
+            </t>
+
+            <!-- Shop Offer -->
+            <t t-snippet="theme_prime.s_shop_offer_1" string="Shop Offer - 1" group="theme_prime_shop_offer">
+                <keywords>offer</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_shop_offer_2" string="Shop Offer - 2" group="theme_prime_shop_offer">
+                <keywords>offer</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_shop_offer_3" string="Shop Offer - 3" group="theme_prime_shop_offer">
+                <keywords>offer</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_shop_offer_4" string="Shop Offer - 4" group="theme_prime_shop_offer">
+                <keywords>offer</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_shop_offer_5" string="Shop Offer - 5" group="theme_prime_shop_offer">
+                <keywords>offer</keywords>
+            </t>
+
+            <!-- Pricing -->
+            <t t-snippet="theme_prime.s_pricing_1" string="Pricing - 1" group="theme_prime_pricing">
+                <keywords>pricing, comparison, table</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_pricing_2" string="Pricing - 2" group="theme_prime_pricing">
+                <keywords>pricing, comparison, table</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_pricing_3" string="Pricing - 3" group="theme_prime_pricing">
+                <keywords>pricing, comparison, table</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_pricing_4" string="Pricing - 4" group="theme_prime_pricing">
+                <keywords>pricing, comparison, table</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_pricing_5" string="Pricing - 5" group="theme_prime_pricing">
+                <keywords>pricing, comparison, table</keywords>
+            </t>
+
+            <!-- Icon Block -->
+            <t t-snippet="theme_prime.s_icon_block_1" string="Icon Block - 1" group="theme_prime_icon_block">
+                <keywords>icon, features</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_icon_block_2" string="Icon Block - 2" group="theme_prime_icon_block">
+                <keywords>icon, features</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_icon_block_3" string="Icon Block - 3" group="theme_prime_icon_block">
+                <keywords>icon, features</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_icon_block_4" string="Icon Block - 4" group="theme_prime_icon_block">
+                <keywords>icon, features</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_icon_block_5" string="Icon Block - 5" group="theme_prime_icon_block">
+                <keywords>icon, features</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_icon_block_6" string="Icon Block - 6" group="theme_prime_icon_block">
+                <keywords>icon, features</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_icon_block_7" string="Icon Block - 7" group="theme_prime_icon_block">
+                <keywords>icon, features</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_icon_block_8" string="Icon Block - 8" group="theme_prime_icon_block">
+                <keywords>icon, features</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_icon_block_9" string="Icon Block - 9" group="theme_prime_icon_block">
+                <keywords>icon, features</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_icon_block_10" string="Icon Block - 10" group="theme_prime_icon_block">
+                <keywords>icon, features</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_icon_block_11" string="Icon Block - 11" group="theme_prime_icon_block">
+                <keywords>icon, features</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_icon_block_12" string="Icon Block - 12" group="theme_prime_icon_block">
+                <keywords>icon, features</keywords>
+            </t>
+
+            <!-- Stats -->
+            <t t-snippet="theme_prime.s_stats_1" string="Stats - 1" group="theme_prime_stats">
+                <keywords>stats, counter, number</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_stats_2" string="Stats - 2" group="theme_prime_stats">
+                <keywords>stats, counter, number</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_stats_3" string="Stats - 3" group="theme_prime_stats">
+                <keywords>stats, counter, number</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_stats_4" string="Stats - 4" group="theme_prime_stats">
+                <keywords>stats, counter, number</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_stats_5" string="Stats - 5" group="theme_prime_stats">
+                <keywords>stats, counter, number</keywords>
+            </t>
+
+            <!-- Clients -->
+            <t t-snippet="theme_prime.s_clients_1" string="Clients - 1" group="theme_prime_clients">
+                <keywords>clients, logo, reference</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_clients_2" string="Clients - 2" group="theme_prime_clients">
+                <keywords>clients, logo, reference</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_clients_3" string="Clients - 3" group="theme_prime_clients">
+                <keywords>clients, logo, reference</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_clients_4" string="Clients - 4" group="theme_prime_clients">
+                <keywords>clients, logo, reference</keywords>
+            </t>
+
+            <!-- Gallery -->
+            <t t-snippet="theme_prime.s_gallery_1"  string="Gallery - " group="theme_prime_gallery">
+                <keywords>gallery, album, portfolio</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_gallery_2" string="Gallery - 2" group="theme_prime_gallery">
+                <keywords>gallery, album, portfolio</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_gallery_3" string="Gallery - 3" group="theme_prime_gallery">
+                <keywords>gallery, album, portfolio</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_gallery_4" string="Gallery - 4" group="theme_prime_gallery">
+                <keywords>gallery, album, portfolio</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_gallery_5" string="Gallery - 5" group="theme_prime_gallery">
+                <keywords>gallery, album, portfolio</keywords>
+            </t>
+
+            <!-- Testimonials -->
+            <t t-snippet="theme_prime.s_testimonial_1" string="Testimonial - 1" group="theme_prime_testimonials">
+                <keywords>testimonials, quotes</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_testimonial_2" string="Testimonial - 2" group="theme_prime_testimonials">
+                <keywords>testimonials, quotes</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_testimonial_3" string="Testimonial - 3" group="theme_prime_testimonials">
+                <keywords>testimonials, quotes</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_testimonial_4" string="Testimonial - 4" group="theme_prime_testimonials">
+                <keywords>testimonials, quotes</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_testimonial_5" string="Testimonial - 5" group="theme_prime_testimonials">
+                <keywords>testimonials, quotes</keywords>
+            </t>
+
+            <!-- Team -->
+            <t t-snippet="theme_prime.s_team_1" string="Team - 1" group="theme_prime_team">
+                <keywords>team, avatar, profile, organisation, structure</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_team_2" string="Team - 2" group="theme_prime_team">
+                <keywords>team, avatar, profile, organisation, structure</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_team_3" string="Team - 3" group="theme_prime_team">
+                <keywords>team, avatar, profile, organisation, structure</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_team_4" string="Team - 4" group="theme_prime_team">
+                <keywords>team, avatar, profile, organisation, structure</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_team_5" string="Team - 5" group="theme_prime_team">
+                <keywords>team, avatar, profile, organisation, structure</keywords>
+            </t>
+
+            <!-- CTA -->
+            <t t-snippet="theme_prime.s_call_to_action_1" string="Call To Action - 1" group="theme_prime_cta">
+                <keywords>call to action, cta</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_call_to_action_2" string="Call To Action - 2" group="theme_prime_cta">
+                <keywords>call to action, cta</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_call_to_action_3" string="Call To Action - 3" group="theme_prime_cta">
+                <keywords>call to action, cta</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_call_to_action_4" string="Call To Action - 4" group="theme_prime_cta">
+                <keywords>call to action, cta</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_call_to_action_5" string="Call To Action - 5" group="theme_prime_cta">
+                <keywords>call to action, cta</keywords>
+            </t>
+
+            <!-- Subscribe -->
+            <t t-snippet="theme_prime.s_subscribe_1" string="Subscribe - 1" group="theme_prime_subscribe">
+                <keywords>newsletter, subscribe, mail, email, marketing, mass mailing</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_subscribe_2" string="Subscribe - 2" group="theme_prime_subscribe">
+                <keywords>newsletter, subscribe, mail, email, marketing, mass mailing</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_subscribe_3" string="Subscribe - 3" group="theme_prime_subscribe">
+                <keywords>newsletter, subscribe, mail, email, marketing, mass mailing</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_subscribe_4" string="Subscribe - 4" group="theme_prime_subscribe">
+                <keywords>newsletter, subscribe, mail, email, marketing, mass mailing</keywords>
+            </t>
+
+            <!-- Coming Soon -->
+            <t t-snippet="theme_prime.s_coming_soon_1" string="Coming Soon - 1" group="theme_prime_coming_soon">
+                <keywords>coming soon, countdown, timer</keywords>
+            </t>
+            <t t-snippet="theme_prime.s_coming_soon_2" string="Coming Soon - 2" group="theme_prime_coming_soon">
+                <keywords>coming soon, countdown, timer</keywords>
+            </t>
+        </t>
+        <snippets id="snippet_content" position="inside">
+            <t t-snippet="theme_prime.s_tp_countdown" string="Countdown" t-thumbnail="/theme_prime/static/src/img/snippets_thumbs/s_countdown.svg">
+                <keywords>countdown, timer</keywords>
+            </t>
+        </snippets>
+    </template>
+</odoo>

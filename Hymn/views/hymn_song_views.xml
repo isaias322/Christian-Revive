@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ═══════════════════════════════════════════
+         SONG — list View
+         ═══════════════════════════════════════════ -->
+    <record id="hymn_song_list" model="ir.ui.view">
+        <field name="name">hymn.song.list</field>
+        <field name="model">hymn.song</field>
+        <field name="arch" type="xml">
+            <list string="Songs" default_order="collection_id, number">
+                <field name="number"/>
+                <field name="name"/>
+                <field name="title_urdu"/>
+                <field name="collection_id"/>
+                <field name="category_id"/>
+                <field name="author"/>
+                <field name="scripture"/>
+                <field name="verse_count"/>
+                <field name="language" optional="hide"/>
+                <field name="is_featured"/>
+                <field name="is_published"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ═══════════════════════════════════════════
+         SONG — Form View
+         ═══════════════════════════════════════════ -->
+    <record id="hymn_song_form" model="ir.ui.view">
+        <field name="name">hymn.song.form</field>
+        <field name="model">hymn.song</field>
+        <field name="arch" type="xml">
+            <form string="Song">
+                <sheet>
+                    <group>
+                        <group string="Song Details">
+                            <field name="name" placeholder="Title in Roman/English..."/>
+                            <field name="title_urdu" placeholder="عنوان اردو میں..."/>
+                            <field name="number"/>
+                            <field name="collection_id"/>
+                            <field name="category_id"/>
+                            <field name="author"/>
+                            <field name="language"/>
+                        </group>
+                        <group string="Metadata">
+                            <field name="tune"/>
+                            <field name="scripture"/>
+                            <field name="tags" placeholder="prayer, dua, worship..."/>
+                            <field name="is_featured"/>
+                            <field name="is_published"/>
+                            <field name="sequence"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="Verses" name="verses">
+                            <field name="verse_ids">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="verse_number"/>
+                                    <field name="text"/>
+                                    <field name="roman"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Chorus" name="chorus">
+                            <group>
+                                <field name="chorus" placeholder="اردو / اصل زبان میں کورس لکھیں..."/>
+                                <field name="chorus_roman" placeholder="Roman transliteration of chorus..."/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ═══════════════════════════════════════════
+         SONG — Action
+         ═══════════════════════════════════════════ -->
+    <record id="hymn_song_action" model="ir.actions.act_window">
+        <field name="name">Songs</field>
+        <field name="res_model">hymn.song</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Add a new song
+            </p>
+            <p>
+                Create songs with verses in original script and Roman
+                transliteration. Assign to a collection and category.
+            </p>
+        </field>
+    </record>
+
+    <!-- ═══════════════════════════════════════════
+         CATEGORY — list + Form + Action
+         ═══════════════════════════════════════════ -->
+    <record id="hymn_category_list" model="ir.ui.view">
+        <field name="name">hymn.category.list</field>
+        <field name="model">hymn.category</field>
+        <field name="arch" type="xml">
+            <list string="Categories" editable="bottom" default_order="sequence">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="name_urdu"/>
+                <field name="code"/>
+                <field name="icon"/>
+                <field name="song_count"/>
+                <field name="is_active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="hymn_category_action" model="ir.actions.act_window">
+        <field name="name">Categories</field>
+        <field name="res_model">hymn.category</field>
+        <field name="view_mode">list</field>
+    </record>
+
+</odoo>

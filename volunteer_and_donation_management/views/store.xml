@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- Extend Product Template Form - Add App Store Tab -->
+    <record id="view_product_template_store_form" model="ir.ui.view">
+        <field name="name">product.template.store.form</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_only_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet/notebook" position="inside">
+                <page string="App Store">
+                    <group>
+                        <group string="Store Settings">
+                            <field name="is_store_product"/>
+                            <field name="categ_id" string="Store Category"/>
+                            <field name="compare_price"/>
+                            <field name="store_sequence"/>
+                        </group>
+                        <group string="Reviews &amp; Sales">
+                            <field name="store_rating"/>
+                            <field name="store_review_count"/>
+                            <field name="store_sold_count"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Variants">
+                            <field name="color_options"/>
+                            <field name="size_options"/>
+                        </group>
+                    </group>
+                    <group string="Store Description">
+                        <field name="store_description" nolabel="1"/>
+                    </group>
+                    <group string="Additional Store Images">
+                        <field name="store_image_2" widget="image"/>
+                        <field name="store_image_3" widget="image"/>
+                        <field name="store_image_4" widget="image"/>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Store Products Action (filtered view) -->
+    <record id="action_store_products" model="ir.actions.act_window">
+        <field name="name">Store Products</field>
+        <field name="res_model">product.template</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('is_store_product', '=', True)]</field>
+        <field name="context">{'default_is_store_product': True, 'default_sale_ok': True}</field>
+    </record>
+
+    <record id="action_store_sale_orders" model="ir.actions.act_window">
+        <field name="name">Store Orders</field>
+        <field name="res_model">sale.order</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

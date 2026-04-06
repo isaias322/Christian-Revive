@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="view_ministry_partner_form" model="ir.ui.view">
+        <field name="name">ministry.partner.form</field>
+        <field name="model">ministry.partner</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <field name="status" widget="statusbar" statusbar_visible="new,review,approved"/>
+                </header>
+                <sheet>
+                    <field name="image" widget="image" class="oe_avatar"/>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Partner Name"/></h1>
+                    </div>
+                    <group>
+                        <group string="Basic Information">
+                            <field name="contact_person"/>
+                            <field name="email"/>
+                            <field name="phone"/>
+                            <field name="country_id"/>
+                            <field name="city"/>
+                            <field name="organization_name"/>
+                            <field name="website"/>
+                            <field name="partner_type"/>
+                        </group>
+                        <group string="Partnership Details">
+                            <field name="partnership_areas" widget="many2many_tags"/>
+                            <field name="contribution_type"/>
+                            <field name="estimated_support"/>
+                            <field name="communication_preference"/>
+                            <field name="update_frequency"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Motivation &amp; Experience">
+                            <group>
+                                <field name="motivation"/>
+                                <field name="experience"/>
+                                <field name="skills" widget="many2many_tags"/>
+                                <field name="resources"/>
+                            </group>
+                        </page>
+                        <page string="Legal &amp; Compliance">
+                            <group>
+                                <field name="registration_number"/>
+                                <field name="ntn"/>
+                                <field name="faith_agreement"/>
+                                <field name="agreement_accepted"/>
+                                <field name="linked_partner_id"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_ministry_partner_list" model="ir.ui.view">
+        <field name="name">ministry.partner.list</field>
+        <field name="model">ministry.partner</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="partner_type"/>
+                <field name="email"/>
+                <field name="phone"/>
+                <field name="status"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_ministry_partners" model="ir.actions.act_window">
+        <field name="name">Partners</field>
+        <field name="res_model">ministry.partner</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Partnership Areas -->
+    <record id="view_partner_area_list" model="ir.ui.view">
+        <field name="name">ministry.partner.area.list</field>
+        <field name="model">ministry.partner.area</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="name"/>
+                <field name="code"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_partner_areas" model="ir.actions.act_window">
+        <field name="name">Partnership Areas</field>
+        <field name="res_model">ministry.partner.area</field>
+        <field name="view_mode">list</field>
+    </record>
+
+    <!-- Partner Skills -->
+    <record id="view_partner_skill_list" model="ir.ui.view">
+        <field name="name">ministry.partner.skill.list</field>
+        <field name="model">ministry.partner.skill</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="name"/>
+                <field name="code"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_partner_skills" model="ir.actions.act_window">
+        <field name="name">Partner Skills</field>
+        <field name="res_model">ministry.partner.skill</field>
+        <field name="view_mode">list</field>
+    </record>
+
+</odoo>

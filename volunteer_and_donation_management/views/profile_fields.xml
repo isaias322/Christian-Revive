@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- Add checkboxes + donation info to contact form -->
+    <record id="view_partner_form_profile_tab" model="ir.ui.view">
+        <field name="name">res.partner.form.profile.tab</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet/notebook" position="inside">
+                <page string="App Profile">
+                    <group>
+                        <group string="Personal Details">
+                            <field name="cnic" string="NIC/CNIC"/>
+                            <field name="date_of_birth"/>
+                            <field name="phone" string="Phone/Cell"/>
+                        </group>
+                        <group string="Address">
+                            <field name="street" string="Address"/>
+                            <field name="city"/>
+                        </group>
+                    </group>
+                    <group string="Donation Summary">
+                        <group>
+                            <field name="total_donated" string="Total Donated (Rs)"/>
+                            <field name="donation_transaction_count" string="Number of Donations"/>
+                        </group>
+                    </group>
+                    <field name="donation_transaction_ids" string="Donation History">
+                        <list readonly="1">
+                            <field name="date"/>
+                            <field name="donate_id" string="Cause"/>
+                            <field name="amount"/>
+                            <field name="status"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Profile List Action -->
+    <record id="action_app_profiles" model="ir.actions.act_window">
+        <field name="name">App Profiles</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('is_app_profile', '=', True)]</field>
+    </record>
+
+</odoo>

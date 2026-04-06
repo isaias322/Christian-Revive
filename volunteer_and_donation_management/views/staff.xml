@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="view_hr_employee_form_extend" model="ir.ui.view">
+        <field name="name">hr.employee.form.extend</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='job_id']" position="after">
+                <field name="staff_role"/>
+                <field name="app_email"/>
+                <field name="app_pin"/>
+                <field name="is_app_active"/>
+                <field name="assigned_project_ids"
+                    widget="many2many_tags"
+                    invisible="staff_role != 'admin'"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_hr_employee_list_extend" model="ir.ui.view">
+        <field name="name">hr.employee.list.extend</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='job_id']" position="after">
+                <field name="staff_role"/>
+                <field name="is_app_active"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_church_staff" model="ir.actions.act_window">
+        <field name="name">Church Staff</field>
+        <field name="res_model">hr.employee</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('staff_role', '!=', False)]</field>
+        <field name="context">{'default_is_app_active': True}</field>
+    </record>
+
+</odoo>

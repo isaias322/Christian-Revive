@@ -1,0 +1,30 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_volunteer_department,volunteer.department,model_volunteer_department,,1,1,1,1
+access_volunteer_skills,volunteer.skills,model_volunteer_skills,,1,1,1,1
+access_volunteer_skill,volunteer.skill,model_volunteer_skill,,1,1,1,1
+access_daily_devotional,daily.devotional,model_daily_devotional,,1,1,1,1
+access_donate,donate,model_donate,,1,1,1,1
+access_patients,patients,model_patients,,1,1,1,1
+access_broadcast,broadcast,model_broadcast,,1,1,1,1
+access_sabbath_school_lesson,sabbath.school.lesson,model_sabbath_school_lesson,,1,1,1,1
+access_daily_wisdom,daily.wisdom,model_daily_wisdom,,1,1,1,1
+access_thought_of_the_day,thought.of.the.day,model_thought_of_the_day,,1,1,1,1
+access_donation_transaction,donation.transaction,model_donation_transaction,base.group_user,1,1,1,1
+access_library_book,library.book,model_library_book,base.group_user,1,1,1,1
+access_church_event,church.event,model_church_event,base.group_user,1,1,1,1
+access_ministry_partner,ministry.partner,model_ministry_partner,base.group_user,1,1,1,1
+access_ministry_partner_area,ministry.partner.area,model_ministry_partner_area,base.group_user,1,1,1,1
+access_ministry_partner_skill,ministry.partner.skill,model_ministry_partner_skill,base.group_user,1,1,1,1
+access_app_notification,app.notification,model_app_notification,base.group_user,1,1,1,1
+access_health_broadcast,health.broadcast,model_health_broadcast,base.group_user,1,1,1,1
+access_hr_employee_app,hr.employee.app,model_hr_employee,base.group_user,1,0,0,0
+access_app_project,app.project,model_app_project,base.group_user,1,1,1,1
+access_prayer_request,prayer.request,model_prayer_request,base.group_user,1,1,1,1
+access_medical_icd10_user,medical.icd10 user,model_medical_icd10,base.group_user,1,1,1,1
+access_medical_cpt_user,medical.cpt user,model_medical_cpt,base.group_user,1,1,1,1
+access_medical_snomed_user,medical.snomed user,model_medical_snomed,base.group_user,1,1,1,1
+access_medical_rxnorm_user,medical.rxnorm user,model_medical_rxnorm,base.group_user,1,1,1,1
+access_medical_prescription_line_user,medical.prescription.line user,model_medical_prescription_line,base.group_user,1,1,1,1
+access_medical_diagnosis_line_user,medical.diagnosis.line user,model_medical_diagnosis_line,base.group_user,1,1,1,1
+access_medical_procedure_line_user,medical.procedure.line user,model_medical_procedure_line,base.group_user,1,1,1,1
+access_music_track,music.track,model_music_track,base.group_user,1,1,1,1

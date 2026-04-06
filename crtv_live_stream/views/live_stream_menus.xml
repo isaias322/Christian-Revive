@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <menuitem
+        id="menu_crtv_root"
+        name="CRTV Live"
+        sequence="50"/>
+
+    <menuitem
+        id="menu_crtv_live_streams"
+        name="Live Streams"
+        parent="menu_crtv_root"
+        sequence="10"/>
+
+    <menuitem
+        id="menu_crtv_all_streams"
+        name="All Streams"
+        parent="menu_crtv_live_streams"
+        action="action_crtv_live_streams"
+        sequence="10"/>
+</odoo>

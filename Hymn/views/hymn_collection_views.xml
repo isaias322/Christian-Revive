@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ═══════════════════════════════════════════
+         COLLECTION — list View
+         ═══════════════════════════════════════════ -->
+    <record id="hymn_collection_list" model="ir.ui.view">
+        <field name="name">hymn.collection.list</field>
+        <field name="model">hymn.collection</field>
+        <field name="arch" type="xml">
+            <list string="Hymn Collections" default_order="sequence">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="language"/>
+                <field name="song_count"/>
+                <field name="is_published"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ═══════════════════════════════════════════
+         COLLECTION — Form View
+         ═══════════════════════════════════════════ -->
+    <record id="hymn_collection_form" model="ir.ui.view">
+        <field name="name">hymn.collection.form</field>
+        <field name="model">hymn.collection</field>
+        <field name="arch" type="xml">
+            <form string="Hymn Collection">
+                <sheet>
+                    <group>
+                        <group string="Collection Details">
+                            <field name="name" placeholder="Collection Name..."/>
+                            <field name="code"/>
+                            <field name="language"/>
+                            <field name="color"/>
+                            <field name="sequence"/>
+                        </group>
+                        <group string="Publishing">
+                            <field name="is_published"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="description" placeholder="Describe this collection..."/>
+                    </group>
+                    <notebook>
+                        <page string="Songs">
+                            <field name="song_ids">
+                                <list editable="bottom">
+                                    <field name="number"/>
+                                    <field name="name"/>
+                                    <field name="title_urdu"/>
+                                    <field name="category_id"/>
+                                    <field name="author"/>
+                                    <field name="is_published"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ═══════════════════════════════════════════
+         COLLECTION — Kanban View
+         ═══════════════════════════════════════════ -->
+    <record id="hymn_collection_kanban" model="ir.ui.view">
+        <field name="name">hymn.collection.kanban</field>
+        <field name="model">hymn.collection</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_mobile">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="language"/>
+                <field name="song_count"/>
+                <field name="image"/>
+                <field name="is_published"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="row g-0">
+                            <div class="col-3 text-center p-2">
+                                <field name="image" widget="image"
+                                       options="{'img_class': 'rounded'}"
+                                       class="w-100"/>
+                            </div>
+                            <div class="col-9 p-2">
+                                <strong><field name="name"/></strong>
+                                <div class="text-muted small">
+                                    <field name="language"/> ·
+                                    <field name="song_count"/> songs
+                                </div>
+                                <div t-if="!record.is_published.raw_value"
+                                     class="badge text-bg-secondary">Draft</div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- ═══════════════════════════════════════════
+         COLLECTION — Action
+         ═══════════════════════════════════════════ -->
+    <record id="hymn_collection_action" model="ir.actions.act_window">
+        <field name="name">Collections</field>
+        <field name="res_model">hymn.collection</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first hymn collection
+            </p>
+            <p>
+                A collection represents a song book — e.g. "Hymns Book",
+                "گیت و زبور". Each collection has its own language and songs.
+            </p>
+        </field>
+    </record>
+
+</odoo>

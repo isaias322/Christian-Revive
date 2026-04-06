@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- Member List View -->
+    <record id="view_member_list" model="ir.ui.view">
+        <field name="name">res.partner.member.list</field>
+        <field name="model">res.partner</field>
+        <field name="arch" type="xml">
+            <list string="Members">
+                <field name="name"/>
+                <field name="email"/>
+                <field name="cnic"/>
+                <field name="date_of_birth"/>
+                <field name="membership_type"/>
+                <field name="contribution_preference"/>
+            </list>
+        </field>
+    </record>
+
+
+    <!-- Extend Contact Form : Member Tab -->
+    <record id="view_partner_form_member_extension" model="ir.ui.view">
+        <field name="name">res.partner.form.member.extension</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+
+            <!-- Member Checkbox -->
+            <xpath expr="//field[@name='category_id']" position="after">
+                <field name="is_member"/>
+            </xpath>
+
+
+            <!-- Member Tab -->
+            <xpath expr="//sheet/notebook" position="inside">
+
+                <page string="Member Information">
+
+                    <group string="Membership Details">
+                        <field name="membership_type"/>
+                        <field name="contribution_preference"/>
+                    </group>
+
+                    <group string="Donation Summary">
+                        <group>
+                            <field name="total_donated" string="Total Donated (Rs)"/>
+                            <field name="donation_transaction_count" string="Number of Donations"/>
+                        </group>
+                    </group>
+
+                </page>
+
+            </xpath>
+
+        </field>
+    </record>
+
+
+    <!-- Member Action -->
+    <record id="action_members" model="ir.actions.act_window">
+        <field name="name">Members</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('is_member','=',True)]</field>
+    </record>
+
+</odoo>

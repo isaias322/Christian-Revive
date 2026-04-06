@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!--              broadcast - List View               -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <record id="view_broadcast_list" model="ir.ui.view">
+        <field name="name">broadcast.list</field>
+        <field name="model">broadcast</field>
+        <field name="arch" type="xml">
+            <list string="broadcasts">
+                <field name="name"/>
+                <field name="date"/>
+                <field name="lessons"/>
+                <field name="is_published"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!--              broadcast - Form View               -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <record id="view_broadcast_form" model="ir.ui.view">
+        <field name="name">broadcast.form</field>
+        <field name="model">broadcast</field>
+        <field name="arch" type="xml">
+            <form string="broadcast">
+                <header>
+                    <button name="action_publish" type="object"
+                            string="Publish"
+                            class="btn-primary"
+                            invisible="is_published"/>
+                    <button name="action_unpublish" type="object"
+                            string="Unpublish"
+                            class="btn-secondary"
+                            invisible="not is_published"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="broadcast..."/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="date"/>
+                            <field name="lessons"/>
+                            <field name="is_published"/>
+                        </group>
+                        <group>
+                            <field name="image" widget="image" class="oe_avatar"/>
+                            <field name="video" filename="video_filename"/>
+                            <field name="video_url"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Message" name="message">
+                            <field name="message" widget="html" placeholder="Write your message here..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!--             broadcast - Search View              -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <record id="view_broadcast_search" model="ir.ui.view">
+        <field name="name">broadcast.search</field>
+        <field name="model">broadcast</field>
+        <field name="arch" type="xml">
+            <search string="Search Devotionals">
+                <field name="name"/>
+                <field name="date"/>
+                <filter name="published" string="Published"
+                        domain="[('is_published','=',True)]"/>
+                <filter name="unpublished" string="Unpublished"
+                        domain="[('is_published','=',False)]"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <!--              broadcast - Action                  -->
+    <!-- ═══════════════════════════════════════════════════════ -->
+    <record id="action_broadcast" model="ir.actions.act_window">
+        <field name="name">Lesson</field>
+        <field name="res_model">broadcast</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_broadcast_search"/>
+    </record>
+
+</odoo>

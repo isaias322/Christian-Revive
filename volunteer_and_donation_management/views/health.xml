@@ -1,0 +1,29 @@
+<odoo>
+    <record id="view_health_broadcast_form" model="ir.ui.view">
+        <field name="name">health.broadcast.form</field>
+        <field name="model">health.broadcast</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <field name="image" widget="image"/>
+                    <group>
+                        <field name="name"/>
+                        <field name="category"/>
+                        <field name="date"/>
+                        <field name="presenter"/>
+                        <field name="duration"/>
+                        <field name="is_published"/>
+                        <field name="video_url"/>
+                    </group>
+                    <field name="description"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_health_broadcast" model="ir.actions.act_window">
+        <field name="name">Health Broadcasts</field>
+        <field name="res_model">health.broadcast</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

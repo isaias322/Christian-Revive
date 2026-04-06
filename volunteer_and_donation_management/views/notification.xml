@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_app_notification_form" model="ir.ui.view">
+        <field name="name">app.notification.form</field>
+        <field name="model">app.notification</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <field name="image" widget="image"/>
+                    <group>
+                        <field name="name"/>
+                        <field name="notification_type"/>
+                        <field name="is_published"/>
+                        <field name="target_url"/>
+                    </group>
+                    <group string="Scheduling">
+                        <field name="is_scheduled"/>
+                        <field name="scheduled_publish"
+                            invisible="not is_scheduled"
+                            required="is_scheduled"/>
+                        <field name="scheduled_expiry"
+                            invisible="not is_scheduled"/>
+                        <field name="is_active_now" readonly="1"/>
+                    </group>
+                    <field name="message"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_app_notification_list" model="ir.ui.view">
+        <field name="name">app.notification.list</field>
+        <field name="model">app.notification</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="notification_type"/>
+                <field name="is_published"/>
+                <field name="is_scheduled"/>
+                <field name="scheduled_publish"/>
+                <field name="scheduled_expiry"/>
+                <field name="is_active_now"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_app_notification" model="ir.actions.act_window">
+        <field name="name">App Notifications</field>
+        <field name="res_model">app.notification</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

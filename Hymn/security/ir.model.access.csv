@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_hymn_collection_all,hymn.collection.all,model_hymn_collection,base.group_user,1,1,1,1
+access_hymn_category_all,hymn.category.all,model_hymn_category,base.group_user,1,1,1,1
+access_hymn_song_all,hymn.song.all,model_hymn_song,base.group_user,1,1,1,1
+access_hymn_verse_all,hymn.verse.all,model_hymn_verse,base.group_user,1,1,1,1

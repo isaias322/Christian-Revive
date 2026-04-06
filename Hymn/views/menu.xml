@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ═══════════════════════════════════════════
+         TOP-LEVEL MENU
+         ═══════════════════════════════════════════ -->
+    <menuitem id="menu_hymn_root"
+              name="Hymns &amp; Songs"
+              web_icon="hymn_management,static/description/icon.png"
+              sequence="16"/>
+
+    <!-- ── Songs ── -->
+    <menuitem id="menu_hymn_songs"
+              name="Songs"
+              parent="menu_hymn_root"
+              sequence="1"/>
+
+    <menuitem id="menu_hymn_songs_all"
+              name="All Songs"
+              parent="menu_hymn_songs"
+              action="hymn_song_action"
+              sequence="1"/>
+
+    <menuitem id="menu_hymn_collections"
+              name="Collections"
+              parent="menu_hymn_songs"
+              action="hymn_collection_action"
+              sequence="2"/>
+
+    <!-- ── Configuration ── -->
+    <menuitem id="menu_hymn_config"
+              name="Configuration"
+              parent="menu_hymn_root"
+              sequence="10"/>
+
+    <menuitem id="menu_hymn_categories"
+              name="Categories"
+              parent="menu_hymn_config"
+              action="hymn_category_action"
+              sequence="1"/>
+
+</odoo>

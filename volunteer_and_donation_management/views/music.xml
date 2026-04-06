@@ -1,0 +1,63 @@
+<odoo>
+    <record id="view_music_track_form" model="ir.ui.view">
+        <field name="name">music.track.form</field>
+        <field name="model">music.track</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <field name="image" widget="image" class="oe_avatar"
+                           optional="show"/>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Song Title"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="artist"/>
+                            <field name="album"/>
+                            <field name="genre"/>
+                            <field name="duration"/>
+                            <field name="sequence"/>
+                        </group>
+                        <group>
+                            <field name="is_published"/>
+                            <field name="is_featured"/>
+                            <field name="youtube_url"
+                                   placeholder="https://youtube.com/watch?v=..."/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Description">
+                            <field name="description"/>
+                        </page>
+                        <page string="Lyrics">
+                            <field name="lyrics"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_music_track_list" model="ir.ui.view">
+        <field name="name">music.track.list</field>
+        <field name="model">music.track</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="artist"/>
+                <field name="album"/>
+                <field name="genre"/>
+                <field name="duration"/>
+                <field name="is_featured"/>
+                <field name="is_published"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_music_tracks" model="ir.actions.act_window">
+        <field name="name">Music Tracks</field>
+        <field name="res_model">music.track</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo> 

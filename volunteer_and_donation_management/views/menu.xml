@@ -164,6 +164,13 @@
         action="action_music_tracks"
         sequence="12"/>
 
+    <menuitem
+        id="menu_daily_verse"
+        name="Daily Verses"
+        action="action_daily_verse"
+        parent="menu_configuration_list"
+        sequence="13"/>
+
     <menuitem id="menu_medical_codes"
               name="Medical Codes"
               parent="menu_configuration_list"

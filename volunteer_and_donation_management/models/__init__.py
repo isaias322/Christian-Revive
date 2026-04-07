@@ -21,3 +21,4 @@ from . import project
 from . import prayer_request
 from . import medical_codes
 from . import music
+from . import daily_verse_model

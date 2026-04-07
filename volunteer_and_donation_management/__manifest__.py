@@ -16,6 +16,7 @@
         'views/notification.xml',
         'views/medical_codes.xml',
         'views/health.xml',
+        'views/daily_verse.xml',
         'views/partner_ministry.xml',
         'data/sequence.xml',
         'views/music.xml',

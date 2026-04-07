@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- List View -->
+    <record id="view_daily_verse_list" model="ir.ui.view">
+        <field name="name">church.daily.verse.list</field>
+        <field name="model">church.daily.verse</field>
+        <field name="arch" type="xml">
+            <list string="Daily Verses" default_order="scheduled_date desc">
+                <field name="scheduled_date"/>
+                <field name="reference"/>
+                <field name="theme"/>
+                <field name="source"/>
+                <field name="is_active"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_daily_verse_form" model="ir.ui.view">
+        <field name="name">church.daily.verse.form</field>
+        <field name="model">church.daily.verse</field>
+        <field name="arch" type="xml">
+            <form string="Daily Verse">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="reference" placeholder="e.g. John 3:16"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Schedule">
+                            <field name="scheduled_date"/>
+                            <field name="theme" placeholder="e.g. Hope, Faith, Love, Strength"/>
+                            <field name="source"/>
+                            <field name="is_active"/>
+                        </group>
+                    </group>
+                    <group string="Verse Text">
+                        <field name="verse_text" nolabel="1"
+                               placeholder="Type the full verse text here (plain text only, no HTML)..."/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_daily_verse_search" model="ir.ui.view">
+        <field name="name">church.daily.verse.search</field>
+        <field name="model">church.daily.verse</field>
+        <field name="arch" type="xml">
+            <search string="Search Verses">
+                <field name="reference"/>
+                <field name="theme"/>
+                <field name="scheduled_date"/>
+                <filter name="active" string="Active" domain="[('is_active','=',True)]"/>
+                <filter name="manual" string="Pastor Added" domain="[('source','=','manual')]"/>
+                <filter name="upcoming" string="Upcoming"
+                        domain="[('scheduled_date','&gt;=', context_today().strftime('%Y-%m-%d'))]"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_daily_verse" model="ir.actions.act_window">
+        <field name="name">Daily Verses</field>
+        <field name="res_model">church.daily.verse</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_daily_verse_search"/>
+        <field name="context">{'search_default_upcoming': 1}</field>
+    </record>
+
+</odoo>

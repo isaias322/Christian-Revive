@@ -40,7 +40,7 @@
           sequence="4"/>
 
     <menuitem id="menu_broadcast_list"
-            name = "Lesson"
+            name = "Lessons"
             parent="menu_volunteer_root"
             action="action_broadcast"
             sequence="5"/>

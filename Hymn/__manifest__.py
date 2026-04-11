@@ -4,7 +4,7 @@
     'category': 'Church',
     'summary': 'Manage hymns, songs, geet & zaboor collections with multi-language support',
     'description': """
-        Adventist Revive - Hymn & Song Management
+        Christian Revive - Hymn & Song Management
         ==========================================
         - Multi-collection support (Hymns Book, Geet & Zaboor, custom)
         - Multi-language: English, Urdu, Punjabi, Hindi, Arabic
@@ -18,8 +18,8 @@
         - Collection-level and song-level images
         - API endpoints for Flutter mobile app
     """,
-    'author': 'Adventist Revive',
-    'website': 'https://adventistrevive.com',
+    'author': 'Christian Revive',
+    'website': 'https://Christianrevive.com',
     'depends': ['base', 'mail'],
     'data': [
         'security/ir.model.access.csv',

@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_church_give_transaction_admin,church.give.transaction admin,model_church_give_transaction,base.group_system,1,1,1,1
+access_church_give_transaction_manager,church.give.transaction manager,model_church_give_transaction,church_give.group_give_manager,1,1,1,1
+access_church_give_transaction_user,church.give.transaction user,model_church_give_transaction,church_give.group_give_user,1,0,1,0
+access_church_give_category_admin,church.give.category admin,model_church_give_category,base.group_system,1,1,1,1
+access_church_give_category_manager,church.give.category manager,model_church_give_category,church_give.group_give_manager,1,1,1,1
+access_church_give_category_user,church.give.category user,model_church_give_category,church_give.group_give_user,1,0,0,0

@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_church_give_category_list" model="ir.ui.view">
+        <field name="name">church.give.category.list</field>
+        <field name="model">church.give.category</field>
+        <field name="arch" type="xml">
+            <list string="Give Categories" editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="icon"/>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="transaction_count"/>
+                <field name="total_raised"/>
+                <field name="is_active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_church_give_category_form" model="ir.ui.view">
+        <field name="name">church.give.category.form</field>
+        <field name="model">church.give.category</field>
+        <field name="arch" type="xml">
+            <form string="Give Category">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="icon"/>
+                            <field name="name" placeholder="Category Name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="code"/>
+                            <field name="sequence"/>
+                            <field name="is_active"/>
+                        </group>
+                        <group>
+                            <field name="transaction_count"/>
+                            <field name="total_raised"/>
+                        </group>
+                    </group>
+                    <field name="description" placeholder="Description..."/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_church_give_transaction_list" model="ir.ui.view">
+        <field name="name">church.give.transaction.list</field>
+        <field name="model">church.give.transaction</field>
+        <field name="arch" type="xml">
+            <list string="Donations"
+                  decoration-success="state == 'completed'"
+                  decoration-warning="state == 'pending'"
+                  decoration-danger="state == 'failed'"
+                  decoration-muted="state == 'refunded'">
+                <field name="transaction_date"/>
+                <field name="reference"/>
+                <field name="donor_name"/>
+                <field name="category_id"/>
+                <field name="gateway"/>
+                <field name="display_amount"/>
+                <field name="amount_pkr" string="PKR Equiv."/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'completed'"
+                       decoration-warning="state == 'pending'"
+                       decoration-danger="state == 'failed'"/>
+                <field name="gateway_reference"/>
+                <button name="action_confirm" type="object"
+                        string="Confirm" class="btn-success btn-sm"
+                        invisible="state != 'pending'"
+                        groups="church_give.group_give_manager"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_church_give_transaction_form" model="ir.ui.view">
+        <field name="name">church.give.transaction.form</field>
+        <field name="model">church.give.transaction</field>
+        <field name="arch" type="xml">
+            <form string="Donation">
+                <header>
+                    <button name="action_confirm" type="object"
+                            string="Confirm Payment"
+                            class="btn-primary"
+                            invisible="state != 'pending'"
+                            groups="church_give.group_give_manager"/>
+                    <button name="action_send_receipt" type="object"
+                            string="Send Receipt"
+                            invisible="state != 'completed' or receipt_sent"/>
+                    <button name="action_refund" type="object"
+                            string="Refund"
+                            class="btn-warning"
+                            invisible="state != 'completed'"
+                            groups="church_give.group_give_manager"/>
+                    <button name="action_fail" type="object"
+                            string="Mark Failed"
+                            class="btn-danger"
+                            invisible="state not in ['pending']"
+                            groups="church_give.group_give_manager"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="pending,completed"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="reference" readonly="1"/></h1>
+                        <h2><field name="display_amount" readonly="1"/></h2>
+                    </div>
+                    <group>
+                        <group string="Donor">
+                            <field name="partner_id"/>
+                            <field name="donor_name"/>
+                            <field name="donor_email"/>
+                            <field name="donor_phone"/>
+                            <field name="app_user_id"/>
+                            <field name="is_anonymous"/>
+                        </group>
+                        <group string="Payment">
+                            <field name="amount"/>
+                            <field name="currency"/>
+                            <field name="amount_pkr" readonly="1"/>
+                            <field name="category_id"/>
+                            <field name="gateway"/>
+                            <field name="transaction_date"/>
+                        </group>
+                    </group>
+                    <group string="Gateway Details">
+                        <field name="app_transaction_id"/>
+                        <field name="gateway_reference"/>
+                        <field name="receipt_sent" readonly="1"/>
+                        <field name="confirmed_by" readonly="1"
+                               invisible="not confirmed_by"/>
+                        <field name="confirmed_at" readonly="1"
+                               invisible="not confirmed_at"/>
+                    </group>
+                    <group string="Notes">
+                        <field name="note" nolabel="1"
+                               placeholder="Donor note..."/>
+                    </group>
+                    <group string="Internal Notes"
+                           groups="church_give.group_give_manager">
+                        <field name="internal_note" nolabel="1"
+                               placeholder="Internal notes (not visible to donor)..."/>
+                    </group>
+                    <group string="Gateway Response"
+                           groups="base.group_system">
+                        <field name="gateway_response" nolabel="1"
+                               widget="text"
+                               placeholder="Raw gateway response JSON..."/>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_church_give_transaction_kanban" model="ir.ui.view">
+        <field name="name">church.give.transaction.kanban</field>
+        <field name="model">church.give.transaction</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <field name="state"/>
+                <field name="donor_name"/>
+                <field name="display_amount"/>
+                <field name="category_id"/>
+                <field name="gateway"/>
+                <field name="transaction_date"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="fw-bold">
+                            <field name="display_amount"/>
+                        </div>
+                        <div><field name="donor_name"/></div>
+                        <div>
+                            <field name="category_id"/>
+                            <span class="ms-1 text-muted">
+                                <field name="gateway"/>
+                            </span>
+                        </div>
+                        <div class="text-muted">
+                            <field name="transaction_date" widget="date"/>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="action_church_give_transactions" model="ir.actions.act_window">
+        <field name="name">Donations</field>
+        <field name="res_model">church.give.transaction</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No donations yet!
+            </p>
+            <p>Donations submitted via the Christian Revive app will appear here.</p>
+        </field>
+    </record>
+
+    <record id="action_church_give_categories" model="ir.actions.act_window">
+        <field name="name">Donation Categories</field>
+        <field name="res_model">church.give.category</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="action_church_give_pending" model="ir.actions.act_window">
+        <field name="name">Pending Donations</field>
+        <field name="res_model">church.give.transaction</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('state','=','pending')]</field>
+        <field name="context">{'search_default_pending': 1}</field>
+    </record>
+
+</odoo>

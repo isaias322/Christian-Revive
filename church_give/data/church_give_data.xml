@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Default donation categories — match Flutter GiveCategory enum exactly -->
+
+        <record id="give_cat_tithe" model="church.give.category">
+            <field name="name">Tithe</field>
+            <field name="code">tithe</field>
+            <field name="icon">🙏</field>
+            <field name="sequence">1</field>
+            <field name="description">The biblical 10% of income dedicated to God</field>
+        </record>
+
+        <record id="give_cat_offering" model="church.give.category">
+            <field name="name">Offering</field>
+            <field name="code">offering</field>
+            <field name="icon">💝</field>
+            <field name="sequence">2</field>
+            <field name="description">Freewill offerings above the tithe</field>
+        </record>
+
+        <record id="give_cat_missions" model="church.give.category">
+            <field name="name">Missions</field>
+            <field name="code">missions</field>
+            <field name="icon">✈️</field>
+            <field name="sequence">3</field>
+            <field name="description">Support for missionary work locally and globally</field>
+        </record>
+
+        <record id="give_cat_building" model="church.give.category">
+            <field name="name">Building Fund</field>
+            <field name="code">building</field>
+            <field name="icon">🏛️</field>
+            <field name="sequence">4</field>
+            <field name="description">Contributions towards church construction and maintenance</field>
+        </record>
+
+        <record id="give_cat_special" model="church.give.category">
+            <field name="name">Special Gift</field>
+            <field name="code">special</field>
+            <field name="icon">⭐</field>
+            <field name="sequence">5</field>
+            <field name="description">One-time or designated special gifts</field>
+        </record>
+
+    </data>
+</odoo>

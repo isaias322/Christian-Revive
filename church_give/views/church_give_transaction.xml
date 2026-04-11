@@ -68,9 +68,9 @@
                        decoration-danger="state == 'failed'"/>
                 <field name="gateway_reference"/>
                 <button name="action_confirm" type="object"
-                        string="Confirm" class="btn-success btn-sm"
-                        invisible="state != 'pending'"
-                        groups="church_give.group_give_manager"/>
+                            string="Confirm Payment"
+                            class="btn-primary"
+                            invisible="state != 'pending'"/>
             </list>
         </field>
     </record>

@@ -285,9 +285,6 @@ class ChurchGiveTransaction(models.Model):
         if donor_email:
             partner = self.env['res.partner'].search(
                 [('email', '=', donor_email)], limit=1)
-        if not partner and app_user_id:
-            partner = self.env['res.partner'].search(
-                [('app_user_id', '=', app_user_id)], limit=1)
 
         # Check duplicate
         existing = self.search([

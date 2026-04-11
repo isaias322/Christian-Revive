@@ -278,13 +278,18 @@ class ChurchGiveTransaction(models.Model):
             raise ValidationError(f'Give category "{category_code}" not found. '
                                    'Please create categories in Odoo first.')
 
-        # Resolve partner
+        # Resolve partner — try email first, then name
         partner = None
         app_user_id = data.get('app_user_id', '')
         donor_email = data.get('donor_email', '')
+        donor_name  = data.get('donor_name', '')
+
         if donor_email:
             partner = self.env['res.partner'].search(
                 [('email', '=', donor_email)], limit=1)
+        if not partner and donor_name and donor_name != 'App User':
+            partner = self.env['res.partner'].search(
+                [('name', 'ilike', donor_name)], limit=1)
 
         # Check duplicate
         existing = self.search([
@@ -309,8 +314,8 @@ class ChurchGiveTransaction(models.Model):
             'app_user_id':        app_user_id,
             'partner_id':         partner.id if partner else False,
             'donor_name':         data.get('donor_name', 'App User'),
-            'donor_email':        donor_email,
-            'donor_phone':        data.get('donor_phone', ''),
+            'donor_email':  donor_email or (partner.email if partner else ''),
+            'donor_phone':  data.get('donor_phone', '') or (partner.phone or partner.mobile if partner else ''),
             'amount':             float(data.get('amount', 0)),
             'currency':           data.get('currency', 'PKR'),
             'category_id':        category.id,

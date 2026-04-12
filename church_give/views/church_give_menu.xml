@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <menuitem id="menu_church_give_root"
-              name="Give"
-              sequence="50"/>
+              name="Give" sequence="50"/>
 
     <menuitem id="menu_church_give_transactions"
               name="Donations"
@@ -21,4 +20,10 @@
               parent="menu_church_give_root"
               action="action_church_give_categories"
               sequence="3"/>
+
+    <menuitem id="menu_church_give_projects"
+              name="Projects"
+              parent="menu_church_give_root"
+              action="action_church_give_projects"
+              sequence="4"/>
 </odoo>

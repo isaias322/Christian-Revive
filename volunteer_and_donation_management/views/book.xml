@@ -41,6 +41,7 @@
         <field name="model">library.book</field>
         <field name="arch" type="xml">
             <list>
+                <field name="sequence" widget="handle"/>
                 <field name="name"/>
                 <field name="author"/>
                 <field name="date"/>

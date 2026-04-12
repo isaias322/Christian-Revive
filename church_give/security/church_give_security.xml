@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data>
+    <data noupdate="0">
         <record id="group_give_user" model="res.groups">
-            <field name="name">Give User</field>
+            <field name="name">Give: User</field>
         </record>
-
         <record id="group_give_manager" model="res.groups">
-            <field name="name">Give Manager</field>
+            <field name="name">Give: Manager</field>
             <field name="implied_ids" eval="[(4, ref('group_give_user'))]"/>
         </record>
     </data>

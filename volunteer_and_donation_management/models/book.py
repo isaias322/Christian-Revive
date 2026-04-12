@@ -3,8 +3,9 @@ from odoo import fields, models
 class Book(models.Model):
     _name = 'library.book'
     _description = 'Library Book'
-    _order = 'date desc'
+    _order = 'sequence, date desc'
 
+    sequence = fields.Integer(string='Sequence')
     name = fields.Char(string='Title', required=True)
     author = fields.Char(string='Author')
     date = fields.Date(string='Published Date')

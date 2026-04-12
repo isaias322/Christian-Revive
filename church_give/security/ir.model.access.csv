@@ -5,3 +5,6 @@ access_church_give_transaction_user,church.give.transaction user,model_church_gi
 access_church_give_category_admin,church.give.category admin,model_church_give_category,base.group_system,1,1,1,1
 access_church_give_category_manager,church.give.category manager,model_church_give_category,church_give.group_give_manager,1,1,1,1
 access_church_give_category_user,church.give.category user,model_church_give_category,church_give.group_give_user,1,0,0,0
+access_church_give_project_admin,church.give.project admin,model_church_give_project,base.group_system,1,1,1,1
+access_church_give_project_manager,church.give.project manager,model_church_give_project,church_give.group_give_manager,1,1,1,1
+access_church_give_project_user,church.give.project user,model_church_give_project,church_give.group_give_user,1,0,0,0

@@ -59,6 +59,7 @@
                 <field name="reference"/>
                 <field name="donor_name"/>
                 <field name="category_id"/>
+                <field name="project_id"/>
                 <field name="gateway"/>
                 <field name="display_amount"/>
                 <field name="amount_pkr" string="PKR Equiv."/>
@@ -68,9 +69,9 @@
                        decoration-danger="state == 'failed'"/>
                 <field name="gateway_reference"/>
                 <button name="action_confirm" type="object"
-                            string="Confirm Payment"
-                            class="btn-primary"
-                            invisible="state != 'pending'"/>
+                        string="Confirm Payment"
+                        class="btn-primary"
+                        invisible="state != 'pending'"/>
             </list>
         </field>
     </record>
@@ -84,19 +85,16 @@
                     <button name="action_confirm" type="object"
                             string="Confirm Payment"
                             class="btn-primary"
-                            invisible="state != 'pending'"
-                            groups="church_give.group_give_manager"/>
+                            invisible="state != 'pending'"/>
                     <button name="action_send_receipt" type="object"
                             string="Send Receipt"
                             invisible="state != 'completed' or receipt_sent"/>
                     <button name="action_refund" type="object"
-                            string="Refund"
-                            class="btn-warning"
+                            string="Refund" class="btn-warning"
                             invisible="state != 'completed'"
                             groups="church_give.group_give_manager"/>
                     <button name="action_fail" type="object"
-                            string="Mark Failed"
-                            class="btn-danger"
+                            string="Mark Failed" class="btn-danger"
                             invisible="state not in ['pending']"
                             groups="church_give.group_give_manager"/>
                     <field name="state" widget="statusbar"
@@ -121,6 +119,7 @@
                             <field name="currency"/>
                             <field name="amount_pkr" readonly="1"/>
                             <field name="category_id"/>
+                            <field name="project_id"/>
                             <field name="gateway"/>
                             <field name="transaction_date"/>
                         </group>
@@ -141,13 +140,12 @@
                     <group string="Internal Notes"
                            groups="church_give.group_give_manager">
                         <field name="internal_note" nolabel="1"
-                               placeholder="Internal notes (not visible to donor)..."/>
+                               placeholder="Internal notes..."/>
                     </group>
                     <group string="Gateway Response"
                            groups="base.group_system">
                         <field name="gateway_response" nolabel="1"
-                               widget="text"
-                               placeholder="Raw gateway response JSON..."/>
+                               widget="text"/>
                     </group>
                 </sheet>
                 <chatter/>
@@ -187,14 +185,61 @@
         </field>
     </record>
 
+    <record id="view_church_give_project_list" model="ir.ui.view">
+        <field name="name">church.give.project.list</field>
+        <field name="model">church.give.project</field>
+        <field name="arch" type="xml">
+            <list string="Give Projects" editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="icon"/>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="goal_amount"/>
+                <field name="raised_amount"/>
+                <field name="progress_percent" widget="progressbar"/>
+                <field name="transaction_count"/>
+                <field name="is_active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_church_give_project_form" model="ir.ui.view">
+        <field name="name">church.give.project.form</field>
+        <field name="model">church.give.project</field>
+        <field name="arch" type="xml">
+            <form string="Give Project">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="icon"/>
+                            <field name="name" placeholder="Project Name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="code"/>
+                            <field name="sequence"/>
+                            <field name="is_active"/>
+                        </group>
+                        <group>
+                            <field name="goal_amount"/>
+                            <field name="raised_amount"/>
+                            <field name="progress_percent" widget="progressbar"/>
+                            <field name="transaction_count"/>
+                        </group>
+                    </group>
+                    <field name="description" placeholder="Describe this project..."/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
     <record id="action_church_give_transactions" model="ir.actions.act_window">
         <field name="name">Donations</field>
         <field name="res_model">church.give.transaction</field>
         <field name="view_mode">list,kanban,form</field>
         <field name="help" type="html">
-            <p class="o_view_nocontent_smiling_face">
-                No donations yet!
-            </p>
+            <p class="o_view_nocontent_smiling_face">No donations yet!</p>
             <p>Donations submitted via the Christian Revive app will appear here.</p>
         </field>
     </record>
@@ -211,6 +256,12 @@
         <field name="view_mode">list,form</field>
         <field name="domain">[('state','=','pending')]</field>
         <field name="context">{'search_default_pending': 1}</field>
+    </record>
+
+    <record id="action_church_give_projects" model="ir.actions.act_window">
+        <field name="name">Give Projects</field>
+        <field name="res_model">church.give.project</field>
+        <field name="view_mode">list,form</field>
     </record>
 
 </odoo>

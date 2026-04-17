@@ -21,6 +21,7 @@
                         <group>
                             <field name="pdf_file" filename="pdf_filename"/>
                             <field name="pdf_filename" invisible="1"/>
+                            <field name="language"/>
                         </group>
                     </group>
                     <notebook>
@@ -46,6 +47,7 @@
                 <field name="author"/>
                 <field name="date"/>
                 <field name="category"/>
+                <field name="language"/>
                 <field name="is_published"/>
             </list>
         </field>

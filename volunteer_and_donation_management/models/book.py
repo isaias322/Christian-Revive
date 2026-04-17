@@ -15,6 +15,10 @@ class Book(models.Model):
     pdf_file = fields.Binary(string='PDF File')
     pdf_filename = fields.Char(string='PDF Filename')
     is_published = fields.Boolean(string='Published', default=True)
+    language = fields.Selection([
+    ('english', 'English'),
+    ('urdu', 'Urdu'),
+], string='Language', default='english', required=True)
     category = fields.Selection([
         ('bible_study', 'Bible Study'),
         ('devotional', 'Devotional'),

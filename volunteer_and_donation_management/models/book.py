@@ -32,7 +32,7 @@ class Book(models.Model):
     ], string='Category', default='other')
 
     # ── NEW FIELD ──────────────────────────────────────────────
-    pdf_text = fields.Text(string='PDF Extracted Text', readonly=True)
+    pdf_text = fields.Html(string='PDF Text (Editable)', sanitize=False)
 
     # ── NEW METHOD ─────────────────────────────────────────────
     def action_extract_pdf_text(self):
@@ -47,11 +47,18 @@ class Book(models.Model):
             try:
                 pdf_bytes  = base64.b64decode(record.pdf_file)
                 pdf_reader = PyPDF2.PdfReader(io.BytesIO(pdf_bytes))
-                text_parts = []
+                
+                # ── Save as HTML paragraphs instead of plain text ──
+                html_parts = []
                 for page in pdf_reader.pages:
                     text = page.extract_text()
                     if text:
-                        text_parts.append(text.strip())
-                record.pdf_text = '\n\n'.join(text_parts)
+                        lines = text.strip().split('\n')
+                        for line in lines:
+                            line = line.strip()
+                            if line:
+                                html_parts.append(f'<p>{line}</p>')
+                
+                record.pdf_text = '\n'.join(html_parts)
             except Exception as e:
-                raise UserError(f"Failed to extract PDF text: {e}") 
+                raise UserError(f"Failed to extract PDF text: {e}")

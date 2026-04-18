@@ -54,4 +54,4 @@ class Book(models.Model):
                         text_parts.append(text.strip())
                 record.pdf_text = '\n\n'.join(text_parts)
             except Exception as e:
-                raise UserError(f"Failed to extract PDF text: {e}")
+                raise UserError(f"Failed to extract PDF text: {e}") 

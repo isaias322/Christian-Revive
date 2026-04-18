@@ -6,6 +6,14 @@
         <field name="model">library.book</field>
         <field name="arch" type="xml">
             <form>
+                <!-- ── NEW: Extract button ── -->
+                <header>
+                    <button name="action_extract_pdf_text"
+                            string="Extract PDF Text"
+                            type="object"
+                            class="btn-primary"/>
+                </header>
+
                 <sheet>
                     <field name="image" widget="image" class="oe_avatar"/>
                     <div class="oe_title">
@@ -30,6 +38,10 @@
                         </page>
                         <page string="Content">
                             <field name="content"/>
+                        </page>
+                        <!-- ── NEW: PDF Text tab ── -->
+                        <page string="PDF Text">
+                            <field name="pdf_text"/>
                         </page>
                     </notebook>
                 </sheet>

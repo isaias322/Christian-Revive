@@ -91,6 +91,8 @@ class LiveStream(models.Model):
     is_published = fields.Boolean(string='Published', default=True)
     is_featured  = fields.Boolean(string='Featured (Main Player)')
 
+    send_notification = fields.Boolean(string='Send Push Notification', default=False)
+
     # ── Language Selection ─────────────────────
     language = fields.Selection([
         ('english', 'English'),

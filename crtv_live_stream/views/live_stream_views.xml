@@ -29,6 +29,7 @@
                             <field name="language"/>
                             <field name="is_published"/>
                             <field name="is_featured"/>
+                            <field name="send_notification"/>
                         </group>
                     </group>
                     <group string="Stream Source">

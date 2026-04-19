@@ -99,16 +99,17 @@ class LiveStream(models.Model):
 
     # ── Get server/user timezone ──────────────────────────────
     def _get_tz(self):
-        """Return the active timezone — user tz > system tz > UTC."""
+        """Return the active timezone — user tz > system tz > Asia/Karachi."""
         tz_name = (
             self.env.user.tz
             or self.env['ir.config_parameter'].sudo().get_param(
-                'system.timezone', 'UTC')
+                'system.timezone', 'Asia/Karachi')
         )
         try:
             return pytz.timezone(tz_name)
         except Exception:
-            return pytz.UTC
+            return pytz.timezone('Asia/Karachi')
+
 
     # ── Convert local air_date + air_time → UTC Datetime ─────
     @api.depends('air_date', 'air_time', 'duration')
@@ -180,8 +181,21 @@ class LiveStream(models.Model):
     def action_refresh_all_statuses(self):
         """Called by the scheduler every minute."""
         records = self.search([('is_published', '=', True)])
-        records._compute_air_datetimes()
-        records._compute_status_auto()
+        now_utc = datetime.utcnow()
+        for rec in records:
+            start = rec.air_datetime_start
+            end   = rec.air_datetime_end
+            if not start or not end:
+                new_status = 'scheduled'
+            elif now_utc < start:
+                new_status = 'scheduled'
+            elif start <= now_utc <= end:
+                new_status = 'live'
+            else:
+                new_status = 'ended'
+            if rec.status != new_status:
+                rec.write({'status': new_status})
+
 
     # ── Constraint: validate HH:MM format ────────────────────
     @api.constrains('air_time')

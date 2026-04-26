@@ -29,3 +29,4 @@ access_medical_diagnosis_line_user,medical.diagnosis.line user,model_medical_dia
 access_medical_procedure_line_user,medical.procedure.line user,model_medical_procedure_line,base.group_user,1,1,1,1
 access_music_track,music.track,model_music_track,base.group_user,1,1,1,1
 access_church_daily_verse,church.daily.verse,model_church_daily_verse,base.group_user,1,1,1,1
+access_onevoice_bible_study,onevoice.bible.study,model_onevoice_bible_study,base.group_user,1,1,1,1

@@ -13,7 +13,6 @@
     <menuitem
         id="menu_volunteer_root"
         name="Revive Application"
-        action="action_volunteers"
         sequence="10"
         web_icon="volunteer_and_donation_management,static/description/app_icon.png"
     />
@@ -56,6 +55,13 @@
         parent="menu_volunteer_root"
         action="action_books"
         sequence="7"/>
+    <menuitem
+        id="menu_onevoice_bible_study"
+        name="OneVoice27 Bible Studies"
+        action="action_onevoice_bible_study"
+        parent="menu_volunteer_root"
+        sequence="9"/>
+
 
     <menuitem id="menu_ministry_partners"
         name="Partners"
@@ -224,3 +230,4 @@
         sequence="99"/>
 
 </odoo>
+

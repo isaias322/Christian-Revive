@@ -22,3 +22,4 @@ from . import prayer_request
 from . import medical_codes
 from . import music
 from . import daily_verse_model
+from . import onevoice_bible_study

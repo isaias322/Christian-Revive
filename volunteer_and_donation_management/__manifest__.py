@@ -22,6 +22,8 @@
         'views/music.xml',
         'views/project.xml',
         'views/prayer_request.xml',
+        
+        'views/onevoice_bible_study.xml',
         'views/event.xml',
         'views/thought_of_the_day.xml',
         'views/profile_fields.xml',
@@ -40,3 +42,4 @@
     'installable': True,
     'application': True,
 }
+

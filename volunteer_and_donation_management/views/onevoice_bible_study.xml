@@ -1,0 +1,53 @@
+<odoo>
+    <record id="view_onevoice_bible_study_form" model="ir.ui.view">
+        <field name="name">onevoice.bible.study.form</field>
+        <field name="model">onevoice.bible.study</field>
+        <field name="arch" type="xml">
+            <form string="OneVoice27 Bible Study">
+                <header>
+                    <button name="action_set_interested" type="object" string="Interested" class="btn-secondary"/>
+                    <button name="action_set_in_progress" type="object" string="In Progress" class="btn-primary"/>
+                    <button name="action_set_completed" type="object" string="Completed" class="btn-success"/>
+                    <field name="state" widget="statusbar" statusbar_visible="interested,in_progress,completed"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="contact_name"/>
+                            <field name="phone"/>
+                            <field name="location"/>
+                        </group>
+                        <group>
+                            <field name="study_days"/>
+                            <field name="partner_id"/>
+                            <field name="create_date" readonly="1"/>
+                        </group>
+                    </group>
+                    <separator string="Notes"/>
+                    <field name="notes" placeholder="Add follow-up notes here..."/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_onevoice_bible_study_list" model="ir.ui.view">
+        <field name="name">onevoice.bible.study.list</field>
+        <field name="model">onevoice.bible.study</field>
+        <field name="arch" type="xml">
+            <list string="OneVoice27 Bible Studies">
+                <field name="contact_name"/>
+                <field name="phone"/>
+                <field name="location"/>
+                <field name="study_days"/>
+                <field name="state"/>
+                <field name="create_date"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_onevoice_bible_study" model="ir.actions.act_window">
+        <field name="name">OneVoice27 Bible Studies</field>
+        <field name="res_model">onevoice.bible.study</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

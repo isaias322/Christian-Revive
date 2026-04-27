@@ -17,5 +17,6 @@ class ResPartner(models.Model):
     contribution_preference = fields.Selection([
         ('financial', 'Financial Support'),
         ('event', 'Event Support'),
-        ('administrative', 'Administrative Support')
+        ('administrative', 'Administrative Support'),
+        ('one_voice', 'One Voice 27'),
     ], string="Contribution Preference")

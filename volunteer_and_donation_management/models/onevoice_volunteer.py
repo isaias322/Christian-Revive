@@ -29,8 +29,8 @@ class OneVoiceVolunteer(models.Model):
 
     @api.model
     def app_submit_volunteer(self, vals):
-        """Called from the Flutter app to register a OneVoice27 volunteer."""
-        record = self.create({
+        """Called from the Flutter app to create or update a volunteer record."""
+        data = {
             'name':         vals.get('name', ''),
             'email':        vals.get('email', ''),
             'phone':        vals.get('phone', ''),
@@ -38,5 +38,29 @@ class OneVoiceVolunteer(models.Model):
             'roles':        vals.get('roles', ''),
             'availability': vals.get('availability', ''),
             'notes':        vals.get('notes', ''),
-        })
-        return {'id': record.id, 'status': 'success'}
+        }
+        record_id = vals.get('record_id')
+        if record_id:
+            record = self.sudo().browse(int(record_id))
+            if record.exists():
+                record.write(data)
+                return {'id': record.id, 'status': 'updated'}
+        record = self.sudo().create(data)
+        return {'id': record.id, 'status': 'created'}
+
+    @api.model
+    def app_get_volunteer(self, record_id):
+        """Fetch a volunteer record by ID for the Flutter app."""
+        record = self.sudo().browse(int(record_id))
+        if not record.exists():
+            return {}
+        return {
+            'id':           record.id,
+            'name':         record.name or '',
+            'email':        record.email or '',
+            'phone':        record.phone or '',
+            'city':         record.city or '',
+            'roles':        record.roles or '',
+            'availability': record.availability or '',
+            'notes':        record.notes or '',
+        }

@@ -2,8 +2,6 @@
 from odoo import models, fields, api
 from odoo.exceptions import ValidationError, UserError
 import logging
-from datetime import date
-
 _logger = logging.getLogger(__name__)
 
 
@@ -100,7 +98,13 @@ class ChurchGiveTransaction(models.Model):
 
     @api.depends('amount', 'currency')
     def _compute_amount_pkr(self):
-        rates = {'PKR': 1.0, 'USD': 285.0, 'GBP': 360.0, 'EUR': 308.0}
+        get = self.env['ir.config_parameter'].sudo().get_param
+        rates = {
+            'PKR': 1.0,
+            'USD': float(get('give.exchange_rate.usd', '285.0')),
+            'GBP': float(get('give.exchange_rate.gbp', '360.0')),
+            'EUR': float(get('give.exchange_rate.eur', '308.0')),
+        }
         for rec in self:
             rec.amount_pkr = rec.amount * rates.get(rec.currency, 1.0)
 
@@ -167,9 +171,7 @@ class ChurchGiveTransaction(models.Model):
 
     @api.model
     def _generate_ref(self):
-        today = date.today()
-        seq   = self.search_count([]) + 1
-        return f'GIV-{today.year}{today.month:02d}{today.day:02d}-{seq:04d}'
+        return self.env['ir.sequence'].next_by_code('church.give.transaction') or 'GIV-NEW'
 
     # ── App API ────────────────────────────────────────────────
 

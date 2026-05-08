@@ -86,12 +86,51 @@ class HymnSong(models.Model):
                 raise ValidationError('Song number must be 1 or greater.')
 
     # ── API for Flutter ──
+
+    def _songs_to_list(self, songs):
+        """Convert a songs recordset to dicts, fetching all verses in a single query."""
+        if not songs:
+            return []
+        all_verses = self.env['hymn.verse'].search_read(
+            [('song_id', 'in', songs.ids)],
+            fields=['song_id', 'verse_number', 'text', 'roman', 'sequence'],
+            order='sequence asc',
+        )
+        verses_by_song = {}
+        for v in all_verses:
+            sid = v['song_id'][0]
+            verses_by_song.setdefault(sid, []).append(v)
+
+        result = []
+        for s in songs:
+            raw = verses_by_song.get(s.id, [])
+            verses = [
+                {'verse': v['verse_number'], 'text': v['text'] or '', 'roman': v['roman'] or ''}
+                for v in raw
+            ]
+            result.append({
+                'id':          s.id,
+                'number':      s.number,
+                'title':       s.name,
+                'titleUrdu':   s.title_urdu or '',
+                'author':      s.author or '',
+                'category':    s.category_id.code if s.category_id else 'general',
+                'tune':        s.tune or '',
+                'scripture':   s.scripture or '',
+                'tags':        [t.strip() for t in (s.tags or '').split(',') if t.strip()],
+                'chorus':      s.chorus or None,
+                'chorusRoman': s.chorus_roman or None,
+                'verses':      verses,
+                'is_featured': s.is_featured,
+            })
+        return result
+
     @api.model
     def app_fetch_songs(self, *args, **kwargs):
         # _callKw sends ([], 'hymns', 200, 0) — skip the empty [] record IDs
         clean = [a for a in args if a != []]
         collection_code = clean[0] if clean else None
-        limit = clean[1] if len(clean) > 1 else 200
+        limit  = clean[1] if len(clean) > 1 else 200
         offset = clean[2] if len(clean) > 2 else 0
         """Fetch all published songs for a collection — used by the Flutter app."""
         collection = self.env['hymn.collection'].search([
@@ -100,37 +139,11 @@ class HymnSong(models.Model):
         ], limit=1)
         if not collection:
             return []
-
         songs = self.search([
             ('collection_id', '=', collection.id),
             ('is_published', '=', True),
         ], order='number asc', limit=limit, offset=offset)
-
-        result = []
-        for s in songs:
-            verses = []
-            for v in s.verse_ids.sorted(key=lambda r: r.sequence):
-                verses.append({
-                    'verse': v.verse_number,
-                    'text': v.text or '',
-                    'roman': v.roman or '',
-                })
-            result.append({
-                'id': s.id,
-                'number': s.number,
-                'title': s.name,
-                'titleUrdu': s.title_urdu or '',
-                'author': s.author or '',
-                'category': s.category_id.code if s.category_id else 'general',
-                'tune': s.tune or '',
-                'scripture': s.scripture or '',
-                'tags': [t.strip() for t in (s.tags or '').split(',') if t.strip()],
-                'chorus': s.chorus or None,
-                'chorusRoman': s.chorus_roman or None,
-                'verses': verses,
-                'is_featured': s.is_featured,
-            })
-        return result
+        return self._songs_to_list(songs)
 
     @api.model
     def app_search_songs(self, collection_code=None, query='', category='', limit=50):
@@ -145,26 +158,30 @@ class HymnSong(models.Model):
             ('collection_id', '=', collection.id),
             ('is_published', '=', True),
         ]
+
         if category:
             cat = self.env['hymn.category'].search([('code', '=', category)], limit=1)
             if cat:
                 domain.append(('category_id', '=', cat.id))
 
         if query:
-            domain = [('collection_id', '=', collection.id), ('is_published', '=', True),
-                      '|', '|', '|', '|',
-                      ('name', 'ilike', query),
-                      ('title_urdu', 'ilike', query),
-                      ('author', 'ilike', query),
-                      ('tags', 'ilike', query),
-                      ('verse_ids.roman', 'ilike', query)]
+            domain = [
+                ('collection_id', '=', collection.id),
+                ('is_published', '=', True),
+                '|', '|', '|', '|',
+                ('name', 'ilike', query),
+                ('title_urdu', 'ilike', query),
+                ('author', 'ilike', query),
+                ('tags', 'ilike', query),
+                ('verse_ids.roman', 'ilike', query),
+            ]
             if category:
                 cat = self.env['hymn.category'].search([('code', '=', category)], limit=1)
                 if cat:
                     domain.append(('category_id', '=', cat.id))
 
         songs = self.search(domain, order='number asc', limit=limit)
-        return self.app_fetch_songs.__func__(self, collection_code, limit=limit)
+        return self._songs_to_list(songs)
 
     # ── Bulk Import ──
     @api.model

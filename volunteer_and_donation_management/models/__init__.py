@@ -23,3 +23,4 @@ from . import medical_codes
 from . import music
 from . import daily_verse_model
 from . import onevoice_bible_study
+from . import onevoice_volunteer

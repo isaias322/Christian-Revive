@@ -32,20 +32,25 @@ class ChurchGiveProject(models.Model):
 
     @api.depends()
     def _compute_raised_amount(self):
+        data = self.env['church.give.transaction'].read_group(
+            [('project_id', 'in', self.ids), ('state', '=', 'completed')],
+            ['project_id', 'amount_pkr'],
+            ['project_id'],
+        )
+        totals = {row['project_id'][0]: row['amount_pkr'] for row in data if row['project_id']}
         for proj in self:
-            txs = self.env['church.give.transaction'].search([
-                ('project_id', '=', proj.id),
-                ('state', '=', 'completed'),
-            ])
-            proj.raised_amount = sum(txs.mapped('amount_pkr'))
+            proj.raised_amount = totals.get(proj.id, 0.0)
 
     @api.depends()
     def _compute_transaction_count(self):
+        data = self.env['church.give.transaction'].read_group(
+            [('project_id', 'in', self.ids), ('state', '=', 'completed')],
+            ['project_id'],
+            ['project_id'],
+        )
+        counts = {row['project_id'][0]: row['project_id_count'] for row in data if row['project_id']}
         for proj in self:
-            proj.transaction_count = self.env['church.give.transaction'].search_count([
-                ('project_id', '=', proj.id),
-                ('state', '=', 'completed'),
-            ])
+            proj.transaction_count = counts.get(proj.id, 0)
 
     @api.depends('raised_amount', 'goal_amount')
     def _compute_progress(self):

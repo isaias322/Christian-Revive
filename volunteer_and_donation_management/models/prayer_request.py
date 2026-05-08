@@ -25,14 +25,6 @@ class PrayerRequest(models.Model):
     response_by = fields.Char(string='Response By')
     response_date = fields.Datetime(string='Response Date')
 
-    def action_mark_prayed(self):
-        """Increment pray count from the app"""
-        for rec in self:
-            rec.sudo().write({
-                'pray_count': rec.pray_count + 1,
-            })
-        return True
-
     def action_respond(self, response_text, responded_by=''):
         """Called from the Flutter app (pastor) or Odoo backend to add a response"""
         for rec in self:

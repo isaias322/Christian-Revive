@@ -23,7 +23,11 @@ class HymnCategory(models.Model):
 
     @api.depends()
     def _compute_song_count(self):
+        data = self.env['hymn.song'].read_group(
+            [('category_id', 'in', self.ids)],
+            ['category_id'],
+            ['category_id'],
+        )
+        counts = {row['category_id'][0]: row['category_id_count'] for row in data if row['category_id']}
         for rec in self:
-            rec.song_count = self.env['hymn.song'].search_count([
-                ('category_id', '=', rec.id)
-            ])
+            rec.song_count = counts.get(rec.id, 0)

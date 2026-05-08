@@ -26,6 +26,9 @@ class Donate(models.Model):
     def action_record_donation(self, amount, donor_name='', donor_email='', donor_phone='', partner_id=False):
         """Called from Flutter to record a donation and create a sale order"""
         self.ensure_one()
+        if not amount or float(amount) <= 0:
+            raise ValueError('Donation amount must be greater than zero')
+        amount = float(amount)
 
         # Create transaction
         self.env['donation.transaction'].create({

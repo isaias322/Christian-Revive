@@ -34,6 +34,8 @@ class Book(models.Model):
     # ── NEW FIELD ──────────────────────────────────────────────
     pdf_text = fields.Html(string='PDF Text (Editable)', sanitize=False)
 
+    _PDF_MAX_PAGES = 50  # cap per extraction to avoid HTTP timeout
+
     # ── NEW METHOD ─────────────────────────────────────────────
     def action_extract_pdf_text(self):
         try:
@@ -50,7 +52,11 @@ class Book(models.Model):
                 html_parts = []
 
                 with pdfplumber.open(_io.BytesIO(pdf_bytes)) as pdf:
-                    for page_num, page in enumerate(pdf.pages, start=1):
+                    total_pages = len(pdf.pages)
+                    pages_to_process = pdf.pages[:self._PDF_MAX_PAGES]
+                    truncated = total_pages > self._PDF_MAX_PAGES
+
+                    for page_num, page in enumerate(pages_to_process, start=1):
                         
                         # ── Extract words with positions ──────────────
                         words = page.extract_words(
@@ -160,11 +166,18 @@ class Book(models.Model):
                             html_parts.append(
                                 f'<p>{" ".join(paragraph_words)}</p>')
 
-                        # Page separator (except last page)
-                        if page_num < len(pdf.pages):
+                        # Page separator (except last processed page)
+                        if page_num < len(pages_to_process):
                             html_parts.append(
                                 f'<hr/><p style="color:gray;font-size:12px;">'
                                 f'— Page {page_num} —</p>')
+
+                    if truncated:
+                        html_parts.append(
+                            f'<hr/><p style="color:orange;font-size:12px;">'
+                            f'⚠️ Showing first {self._PDF_MAX_PAGES} of {total_pages} pages. '
+                            f'To extract more, split the PDF or increase _PDF_MAX_PAGES.</p>'
+                        )
 
                 record.pdf_text = '\n'.join(html_parts)
 

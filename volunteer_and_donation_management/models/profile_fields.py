@@ -1,5 +1,5 @@
-import hashlib
 from odoo import fields, models, api
+from werkzeug.security import generate_password_hash, check_password_hash
 
 class ResPartnerProfile(models.Model):
     _inherit = 'res.partner'
@@ -24,33 +24,35 @@ class ResPartnerProfile(models.Model):
             partner.total_donated = sum(confirmed.mapped('amount'))
             partner.donation_transaction_count = len(confirmed)
 
+    @api.model
     def app_register(self, email, password, vals):
         """Register a new app user"""
-        # Check if email already exists
+        if not email or not password:
+            return {'success': False, 'error': 'Email and password are required'}
         existing = self.sudo().search([
-            ('app_login_email', '=', email),
+            ('app_login_email', '=', email.strip().lower()),
             ('is_app_profile', '=', True),
         ], limit=1)
         if existing:
             return {'success': False, 'error': 'Email already registered'}
 
-        pw_hash = hashlib.sha256(password.encode()).hexdigest()
         vals.update({
             'is_app_profile': True,
-            'app_login_email': email,
-            'app_password_hash': pw_hash,
+            'app_login_email': email.strip().lower(),
+            'app_password_hash': generate_password_hash(password),
         })
         partner = self.sudo().create(vals)
         return {'success': True, 'partner_id': partner.id}
 
+    @api.model
     def app_login(self, email, password):
         """Login an app user"""
-        pw_hash = hashlib.sha256(password.encode()).hexdigest()
+        if not email or not password:
+            return {'success': False, 'error': 'Invalid email or password'}
         partner = self.sudo().search([
-            ('app_login_email', '=', email),
-            ('app_password_hash', '=', pw_hash),
+            ('app_login_email', '=', email.strip().lower()),
             ('is_app_profile', '=', True),
         ], limit=1)
-        if partner:
+        if partner and check_password_hash(partner.app_password_hash, password):
             return {'success': True, 'partner_id': partner.id}
         return {'success': False, 'error': 'Invalid email or password'}

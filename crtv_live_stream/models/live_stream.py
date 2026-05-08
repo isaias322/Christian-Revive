@@ -21,6 +21,7 @@ class LiveStream(models.Model):
         string='Air Date',
         required=True,
         default=fields.Date.today,
+        index=True,
     )
     air_time = fields.Char(
         string='Air Time (HH:MM)',
@@ -33,16 +34,18 @@ class LiveStream(models.Model):
         default=60,
     )
 
-    # Stored UTC datetimes for efficient querying
+    # Stored UTC datetimes for efficient querying — indexed for cron + status filters
     air_datetime_start = fields.Datetime(
         string='Start (UTC)',
         compute='_compute_air_datetimes',
         store=True,
+        index=True,
     )
     air_datetime_end = fields.Datetime(
         string='End (UTC)',
         compute='_compute_air_datetimes',
         store=True,
+        index=True,
     )
 
     # Human-readable local time display

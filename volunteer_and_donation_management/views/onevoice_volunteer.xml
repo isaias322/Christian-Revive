@@ -1,0 +1,56 @@
+<odoo>
+    <record id="view_onevoice_volunteer_form" model="ir.ui.view">
+        <field name="name">onevoice.volunteer.form</field>
+        <field name="model">onevoice.volunteer</field>
+        <field name="arch" type="xml">
+            <form string="OneVoice27 Volunteer">
+                <header>
+                    <button name="action_set_contacted" type="object" string="Mark Contacted" class="btn-primary"/>
+                    <button name="action_set_active" type="object" string="Mark Active" class="btn-success"/>
+                    <field name="state" widget="statusbar" statusbar_visible="new,contacted,active"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group string="Personal Information">
+                            <field name="name"/>
+                            <field name="email"/>
+                            <field name="phone"/>
+                            <field name="city"/>
+                        </group>
+                        <group string="Volunteer Details">
+                            <field name="roles"/>
+                            <field name="availability"/>
+                            <field name="partner_id"/>
+                            <field name="create_date" readonly="1"/>
+                        </group>
+                    </group>
+                    <separator string="Additional Notes"/>
+                    <field name="notes" placeholder="Any additional information from the volunteer..."/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_onevoice_volunteer_list" model="ir.ui.view">
+        <field name="name">onevoice.volunteer.list</field>
+        <field name="model">onevoice.volunteer</field>
+        <field name="arch" type="xml">
+            <list string="OneVoice27 Volunteers">
+                <field name="name"/>
+                <field name="email"/>
+                <field name="phone"/>
+                <field name="city"/>
+                <field name="roles"/>
+                <field name="availability"/>
+                <field name="state"/>
+                <field name="create_date"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_onevoice_volunteer" model="ir.actions.act_window">
+        <field name="name">OneVoice27 Volunteers</field>
+        <field name="res_model">onevoice.volunteer</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

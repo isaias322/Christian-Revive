@@ -62,6 +62,13 @@
         parent="menu_volunteer_root"
         sequence="9"/>
 
+    <menuitem
+        id="menu_onevoice_volunteer"
+        name="OneVoice27 Volunteers"
+        action="action_onevoice_volunteer"
+        parent="menu_volunteer_root"
+        sequence="10"/>
+
 
     <menuitem id="menu_ministry_partners"
         name="Partners"

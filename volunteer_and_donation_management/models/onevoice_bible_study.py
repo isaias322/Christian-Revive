@@ -36,6 +36,8 @@ class OneVoiceBibleStudy(models.Model):
     certificate_issued_date = fields.Datetime(string='Certificate Issued On')
     prayer_pledge_count = fields.Integer(string='Prayer Pledges', default=0)
     testimony_count = fields.Integer(string='Testimonies', default=0)
+    prayer_pledges_details = fields.Text(string='Prayer Pledge Details')
+    testimonies_details = fields.Text(string='Testimony Details')
 
     @api.depends('completed_session_count', 'total_session_count')
     def _compute_certificate_eligible(self):
@@ -61,14 +63,20 @@ class OneVoiceBibleStudy(models.Model):
         })
 
     @api.model
-    def app_update_pledge_testimony_count(self, record_id, prayer_pledge_count, testimony_count):
+    def app_update_pledge_testimony_count(self, record_id, prayer_pledge_count, testimony_count,
+                                          prayer_pledges_details=None, testimonies_details=None):
         record = self.sudo().browse(record_id)
         if not record.exists():
             return {'error': 'Record not found'}
-        record.write({
+        vals = {
             'prayer_pledge_count': prayer_pledge_count,
             'testimony_count': testimony_count,
-        })
+        }
+        if prayer_pledges_details is not None:
+            vals['prayer_pledges_details'] = prayer_pledges_details
+        if testimonies_details is not None:
+            vals['testimonies_details'] = testimonies_details
+        record.write(vals)
         return {'success': True, 'id': record.id}
 
     @api.model

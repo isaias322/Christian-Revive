@@ -46,6 +46,12 @@
                         </group>
                     </group>
                     <field name="completed_session_ids" invisible="1"/>
+                    <separator string="Prayer Pledges" invisible="not prayer_pledges_details"/>
+                    <field name="prayer_pledges_details" readonly="1" placeholder="No prayer pledges recorded yet."
+                           invisible="not prayer_pledges_details"/>
+                    <separator string="Testimonies" invisible="not testimonies_details"/>
+                    <field name="testimonies_details" readonly="1" placeholder="No testimonies recorded yet."
+                           invisible="not testimonies_details"/>
                     <separator string="Notes"/>
                     <field name="notes" placeholder="Add follow-up notes here..."/>
                 </sheet>

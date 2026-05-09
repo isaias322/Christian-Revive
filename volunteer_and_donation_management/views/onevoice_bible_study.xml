@@ -37,6 +37,14 @@
                             <field name="certificate_issued_date" readonly="1"/>
                         </group>
                     </group>
+                    <group string="Engagement">
+                        <group>
+                            <field name="prayer_pledge_count" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="testimony_count" readonly="1"/>
+                        </group>
+                    </group>
                     <field name="completed_session_ids" invisible="1"/>
                     <separator string="Notes"/>
                     <field name="notes" placeholder="Add follow-up notes here..."/>
@@ -56,6 +64,8 @@
                 <field name="study_days"/>
                 <field name="completed_session_count"/>
                 <field name="total_session_count"/>
+                <field name="prayer_pledge_count"/>
+                <field name="testimony_count"/>
                 <field name="certificate_eligible"/>
                 <field name="certificate_issued"/>
                 <field name="state"/>

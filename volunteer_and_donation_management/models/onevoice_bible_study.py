@@ -34,6 +34,8 @@ class OneVoiceBibleStudy(models.Model):
     )
     certificate_issued = fields.Boolean(string='Certificate Issued', default=False)
     certificate_issued_date = fields.Datetime(string='Certificate Issued On')
+    prayer_pledge_count = fields.Integer(string='Prayer Pledges', default=0)
+    testimony_count = fields.Integer(string='Testimonies', default=0)
 
     @api.depends('completed_session_count', 'total_session_count')
     def _compute_certificate_eligible(self):
@@ -59,6 +61,17 @@ class OneVoiceBibleStudy(models.Model):
         })
 
     @api.model
+    def app_update_pledge_testimony_count(self, record_id, prayer_pledge_count, testimony_count):
+        record = self.sudo().browse(record_id)
+        if not record.exists():
+            return {'error': 'Record not found'}
+        record.write({
+            'prayer_pledge_count': prayer_pledge_count,
+            'testimony_count': testimony_count,
+        })
+        return {'success': True, 'id': record.id}
+
+    @api.model
     def app_create_registration(self, vals):
         record = self.sudo().create(vals)
         return {
@@ -73,5 +86,7 @@ class OneVoiceBibleStudy(models.Model):
             'total_session_count': record.total_session_count,
             'certificate_eligible': record.certificate_eligible,
             'certificate_issued': record.certificate_issued,
+            'prayer_pledge_count': record.prayer_pledge_count,
+            'testimony_count': record.testimony_count,
             'create_date': str(record.create_date),
         }

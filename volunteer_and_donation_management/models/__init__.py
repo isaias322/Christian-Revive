@@ -24,3 +24,5 @@ from . import music
 from . import daily_verse_model
 from . import onevoice_bible_study
 from . import onevoice_volunteer
+from . import onevoice_devotional
+from . import onevoice_prayer_pledge

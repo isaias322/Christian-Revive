@@ -55,19 +55,33 @@
         parent="menu_volunteer_root"
         action="action_books"
         sequence="7"/>
+    <!-- OneVoice27 parent menu -->
     <menuitem
-        id="menu_onevoice_bible_study"
-        name="OneVoice27 Bible Studies"
-        action="action_onevoice_bible_study"
+        id="menu_onevoice27"
+        name="OneVoice27"
         parent="menu_volunteer_root"
         sequence="9"/>
+
+    <menuitem
+        id="menu_onevoice_bible_study"
+        name="OneVoice27 Perseverance"
+        action="action_onevoice_bible_study"
+        parent="menu_onevoice27"
+        sequence="1"/>
 
     <menuitem
         id="menu_onevoice_volunteer"
         name="OneVoice27 Volunteers"
         action="action_onevoice_volunteer"
-        parent="menu_volunteer_root"
-        sequence="10"/>
+        parent="menu_onevoice27"
+        sequence="2"/>
+
+    <menuitem
+        id="menu_onevoice_devotional"
+        name="40-Day Schedule"
+        action="volunteer_and_donation_management.action_onevoice_devotional"
+        parent="menu_onevoice27"
+        sequence="3"/>
 
 
     <menuitem id="menu_ministry_partners"

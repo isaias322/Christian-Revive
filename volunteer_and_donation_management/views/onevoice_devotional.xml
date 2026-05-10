@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="view_onevoice_devotional_list" model="ir.ui.view">
+        <field name="name">onevoice.devotional.list</field>
+        <field name="model">onevoice.devotional</field>
+        <field name="arch" type="xml">
+            <list string="40-Day Devotional Schedule"
+                  decoration-success="days_from_now == 0"
+                  decoration-info="days_from_now == 1 or days_from_now == 2"
+                  decoration-muted="days_from_now &lt; 0">
+                <field name="day_number" string="Day"/>
+                <field name="date"/>
+                <field name="theme"/>
+                <field name="title"/>
+                <field name="reference"/>
+                <field name="morning_prayer" optional="hide"/>
+                <field name="evening_reading" optional="hide"/>
+                <field name="days_from_now" string="Days Away" optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_onevoice_devotional_form" model="ir.ui.view">
+        <field name="name">onevoice.devotional.form</field>
+        <field name="model">onevoice.devotional</field>
+        <field name="arch" type="xml">
+            <form string="Devotional Day">
+                <sheet>
+                    <div class="oe_title">
+                        <label for="title"/>
+                        <h1><field name="title" placeholder="Day title…"/></h1>
+                    </div>
+                    <group>
+                        <group string="Schedule">
+                            <field name="day_number"/>
+                            <field name="date"/>
+                            <field name="theme"/>
+                            <field name="reference"/>
+                            <field name="days_from_now" readonly="1"/>
+                        </group>
+                    </group>
+                    <separator string="Morning Prayer Prompt"/>
+                    <field name="morning_prayer" placeholder="Morning prayer guidance…"/>
+                    <separator string="Evening Reading"/>
+                    <field name="evening_reading" placeholder="Evening reading note…"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_onevoice_devotional_search" model="ir.ui.view">
+        <field name="name">onevoice.devotional.search</field>
+        <field name="model">onevoice.devotional</field>
+        <field name="arch" type="xml">
+            <search string="Search Schedule">
+                <field name="title"/>
+                <field name="theme"/>
+                <field name="reference"/>
+                <separator/>
+                <filter name="group_by_theme" string="Group by Theme"
+                        context="{'group_by': 'theme'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_onevoice_devotional" model="ir.actions.act_window">
+        <field name="name">40-Day Devotional Schedule</field>
+        <field name="res_model">onevoice.devotional</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_onevoice_devotional_search"/>
+    </record>
+
+</odoo>

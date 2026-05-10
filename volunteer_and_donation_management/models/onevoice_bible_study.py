@@ -18,15 +18,9 @@ class OneVoiceBibleStudy(models.Model):
     ], string='Status', default='interested', required=True)
     notes = fields.Text(string='Notes')
     partner_id = fields.Many2one('res.partner', string='Related Contact')
-    completed_session_count = fields.Integer(
-        string='Completed Sessions',
-        default=0,
-    )
+    completed_session_count = fields.Integer(string='Completed Sessions', default=0)
     completed_session_ids = fields.Text(string='Completed Session IDs')
-    total_session_count = fields.Integer(
-        string='Total Sessions',
-        default=121,
-    )
+    total_session_count = fields.Integer(string='Total Sessions', default=121)
     certificate_eligible = fields.Boolean(
         string='Certificate Eligible',
         compute='_compute_certificate_eligible',

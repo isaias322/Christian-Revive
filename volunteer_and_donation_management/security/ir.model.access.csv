@@ -31,3 +31,5 @@ access_music_track,music.track,model_music_track,base.group_user,1,1,1,1
 access_church_daily_verse,church.daily.verse,model_church_daily_verse,base.group_user,1,1,1,1
 access_onevoice_bible_study,onevoice.bible.study,model_onevoice_bible_study,base.group_user,1,1,1,1
 access_onevoice_volunteer,onevoice.volunteer,model_onevoice_volunteer,base.group_user,1,1,1,1
+access_onevoice_devotional,onevoice.devotional,model_onevoice_devotional,base.group_user,1,1,1,1
+access_onevoice_prayer_pledge,onevoice.prayer.pledge,model_onevoice_prayer_pledge,base.group_user,1,1,1,1

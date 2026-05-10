@@ -1,0 +1,406 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+<data noupdate="1">
+
+    <record id="devotional_day_01" model="onevoice.devotional">
+        <field name="day_number">1</field>
+        <field name="date">2027-07-23</field>
+        <field name="theme">Faithfulness</field>
+        <field name="title">Faithful in a Foreign Land</field>
+        <field name="reference">Daniel 1</field>
+        <field name="morning_prayer">Pray for believers who must stand firm in environments hostile to faith.</field>
+        <field name="evening_reading">Daniel 1 — Daniel's Resolve</field>
+    </record>
+
+    <record id="devotional_day_02" model="onevoice.devotional">
+        <field name="day_number">2</field>
+        <field name="date">2027-07-24</field>
+        <field name="theme">Revelation</field>
+        <field name="title">God Who Reveals Mysteries</field>
+        <field name="reference">Daniel 2</field>
+        <field name="morning_prayer">Ask God for wisdom to understand the times we live in.</field>
+        <field name="evening_reading">Daniel 2 — The Dream of Four Kingdoms</field>
+    </record>
+
+    <record id="devotional_day_03" model="onevoice.devotional">
+        <field name="day_number">3</field>
+        <field name="date">2027-07-25</field>
+        <field name="theme">Courage</field>
+        <field name="title">Standing Firm in the Fire</field>
+        <field name="reference">Daniel 3</field>
+        <field name="morning_prayer">Pray for courage for persecuted believers in hostile nations.</field>
+        <field name="evening_reading">Daniel 3 — The Fiery Furnace</field>
+    </record>
+
+    <record id="devotional_day_04" model="onevoice.devotional">
+        <field name="day_number">4</field>
+        <field name="date">2027-07-26</field>
+        <field name="theme">Humility</field>
+        <field name="title">Humility Before the Most High</field>
+        <field name="reference">Daniel 4</field>
+        <field name="morning_prayer">Pray for national leaders to acknowledge the sovereignty of God.</field>
+        <field name="evening_reading">Daniel 4 — Nebuchadnezzar's Humbling</field>
+    </record>
+
+    <record id="devotional_day_05" model="onevoice.devotional">
+        <field name="day_number">5</field>
+        <field name="date">2027-07-27</field>
+        <field name="theme">Accountability</field>
+        <field name="title">The Writing on the Wall</field>
+        <field name="reference">Daniel 5</field>
+        <field name="morning_prayer">Pray for holy reverence for God to sweep through our generation.</field>
+        <field name="evening_reading">Daniel 5 — Belshazzar's Feast</field>
+    </record>
+
+    <record id="devotional_day_06" model="onevoice.devotional">
+        <field name="day_number">6</field>
+        <field name="date">2027-07-28</field>
+        <field name="theme">Trust</field>
+        <field name="title">Unshaken Trust</field>
+        <field name="reference">Daniel 6</field>
+        <field name="morning_prayer">Pray for steadfastness in prayer despite opposition and distraction.</field>
+        <field name="evening_reading">Daniel 6 — Daniel in the Lions' Den</field>
+    </record>
+
+    <record id="devotional_day_07" model="onevoice.devotional">
+        <field name="day_number">7</field>
+        <field name="date">2027-07-29</field>
+        <field name="theme">Kingdom</field>
+        <field name="title">The Ancient of Days Reigns</field>
+        <field name="reference">Daniel 7</field>
+        <field name="morning_prayer">Declare: God's Kingdom is advancing. Pray for it to come in your city.</field>
+        <field name="evening_reading">Daniel 7 — Vision of the Four Beasts</field>
+    </record>
+
+    <record id="devotional_day_08" model="onevoice.devotional">
+        <field name="day_number">8</field>
+        <field name="date">2027-07-30</field>
+        <field name="theme">Discernment</field>
+        <field name="title">Visions of Things to Come</field>
+        <field name="reference">Daniel 8</field>
+        <field name="morning_prayer">Pray for prophetic discernment and clarity in the Church.</field>
+        <field name="evening_reading">Daniel 8 — The Ram and the Goat</field>
+    </record>
+
+    <record id="devotional_day_09" model="onevoice.devotional">
+        <field name="day_number">9</field>
+        <field name="date">2027-07-31</field>
+        <field name="theme">Intercession</field>
+        <field name="title">The Prayer of Intercession</field>
+        <field name="reference">Daniel 9</field>
+        <field name="morning_prayer">Pray a prayer of corporate repentance on behalf of your nation.</field>
+        <field name="evening_reading">Daniel 9 — Daniel's Great Prayer</field>
+    </record>
+
+    <record id="devotional_day_10" model="onevoice.devotional">
+        <field name="day_number">10</field>
+        <field name="date">2027-08-01</field>
+        <field name="theme">Warfare</field>
+        <field name="title">Warfare in the Heavenlies</field>
+        <field name="reference">Daniel 10</field>
+        <field name="morning_prayer">Pray for breakthrough in the spiritual realm over unreached nations.</field>
+        <field name="evening_reading">Daniel 10 — The Heavenly Messenger</field>
+    </record>
+
+    <record id="devotional_day_11" model="onevoice.devotional">
+        <field name="day_number">11</field>
+        <field name="date">2027-08-02</field>
+        <field name="theme">Endurance</field>
+        <field name="title">Perseverance in Great Conflict</field>
+        <field name="reference">Daniel 11</field>
+        <field name="morning_prayer">Pray for endurance for those facing long-term persecution.</field>
+        <field name="evening_reading">Daniel 11 — The Coming Conflicts</field>
+    </record>
+
+    <record id="devotional_day_12" model="onevoice.devotional">
+        <field name="day_number">12</field>
+        <field name="date">2027-08-03</field>
+        <field name="theme">Hope</field>
+        <field name="title">The Promise of Resurrection</field>
+        <field name="reference">Daniel 12</field>
+        <field name="morning_prayer">Pray for the lost — that they would receive eternal life.</field>
+        <field name="evening_reading">Daniel 12 — The Time of the End</field>
+    </record>
+
+    <record id="devotional_day_13" model="onevoice.devotional">
+        <field name="day_number">13</field>
+        <field name="date">2027-08-04</field>
+        <field name="theme">Worship</field>
+        <field name="title">Behold the Risen Christ</field>
+        <field name="reference">Revelation 1</field>
+        <field name="morning_prayer">Spend time in pure worship — Jesus is the First and the Last.</field>
+        <field name="evening_reading">Revelation 1 — John's Vision of Christ</field>
+    </record>
+
+    <record id="devotional_day_14" model="onevoice.devotional">
+        <field name="day_number">14</field>
+        <field name="date">2027-08-05</field>
+        <field name="theme">First Love</field>
+        <field name="title">Return to Your First Love</field>
+        <field name="reference">Revelation 2:1-17</field>
+        <field name="morning_prayer">Pray for the Church to rediscover its passion for Jesus.</field>
+        <field name="evening_reading">Revelation 2:1-17 — Letters to Ephesus, Smyrna and Pergamum</field>
+    </record>
+
+    <record id="devotional_day_15" model="onevoice.devotional">
+        <field name="day_number">15</field>
+        <field name="date">2027-08-06</field>
+        <field name="theme">Holiness</field>
+        <field name="title">Hold Fast What You Have</field>
+        <field name="reference">Revelation 2:18-29</field>
+        <field name="morning_prayer">Pray for holiness and faithfulness in the global Church.</field>
+        <field name="evening_reading">Revelation 2:18-29 — Letter to Thyatira</field>
+    </record>
+
+    <record id="devotional_day_16" model="onevoice.devotional">
+        <field name="day_number">16</field>
+        <field name="date">2027-08-07</field>
+        <field name="theme">Awakening</field>
+        <field name="title">To the Overcomers</field>
+        <field name="reference">Revelation 3</field>
+        <field name="morning_prayer">Pray for spiritually lukewarm churches to awaken with fresh fire.</field>
+        <field name="evening_reading">Revelation 3 — Letters to Sardis, Philadelphia and Laodicea</field>
+    </record>
+
+    <record id="devotional_day_17" model="onevoice.devotional">
+        <field name="day_number">17</field>
+        <field name="date">2027-08-08</field>
+        <field name="theme">Adoration</field>
+        <field name="title">Holy, Holy, Holy</field>
+        <field name="reference">Revelation 4</field>
+        <field name="morning_prayer">Worship God for who He is — not just what He does.</field>
+        <field name="evening_reading">Revelation 4 — The Throne Room of Heaven</field>
+    </record>
+
+    <record id="devotional_day_18" model="onevoice.devotional">
+        <field name="day_number">18</field>
+        <field name="date">2027-08-09</field>
+        <field name="theme">Salvation</field>
+        <field name="title">The Worthy Lamb Has Triumphed</field>
+        <field name="reference">Revelation 5</field>
+        <field name="morning_prayer">Pray for Muslims, Hindus and Buddhists to encounter the Lamb of God.</field>
+        <field name="evening_reading">Revelation 5 — The Scroll and the Worthy Lamb</field>
+    </record>
+
+    <record id="devotional_day_19" model="onevoice.devotional">
+        <field name="day_number">19</field>
+        <field name="date">2027-08-10</field>
+        <field name="theme">Peace</field>
+        <field name="title">Seals of the End Times</field>
+        <field name="reference">Revelation 6</field>
+        <field name="morning_prayer">Pray for peace and the gospel to advance in war-torn nations.</field>
+        <field name="evening_reading">Revelation 6 — The Six Seals</field>
+    </record>
+
+    <record id="devotional_day_20" model="onevoice.devotional">
+        <field name="day_number">20</field>
+        <field name="date">2027-08-11</field>
+        <field name="theme">Harvest</field>
+        <field name="title">A Multitude from Every Nation</field>
+        <field name="reference">Revelation 7</field>
+        <field name="morning_prayer">Pray the fulfilment of Rev 7:9 — every tribe, tongue and nation.</field>
+        <field name="evening_reading">Revelation 7 — The 144,000 and the Great Multitude</field>
+    </record>
+
+    <record id="devotional_day_21" model="onevoice.devotional">
+        <field name="day_number">21</field>
+        <field name="date">2027-08-12</field>
+        <field name="theme">Awakening</field>
+        <field name="title">The Trumpets Sound</field>
+        <field name="reference">Revelation 8-9</field>
+        <field name="morning_prayer">Pray for spiritual awakening like a trumpet blast over your city.</field>
+        <field name="evening_reading">Revelation 8-9 — The First Six Trumpets</field>
+    </record>
+
+    <record id="devotional_day_22" model="onevoice.devotional">
+        <field name="day_number">22</field>
+        <field name="date">2027-08-13</field>
+        <field name="theme">Witness</field>
+        <field name="title">Arise, Bold Witnesses</field>
+        <field name="reference">Revelation 10-11</field>
+        <field name="morning_prayer">Pray for bold witnesses like Elijah to arise in every nation.</field>
+        <field name="evening_reading">Revelation 10-11 — The Two Witnesses</field>
+    </record>
+
+    <record id="devotional_day_23" model="onevoice.devotional">
+        <field name="day_number">23</field>
+        <field name="date">2027-08-14</field>
+        <field name="theme">Victory</field>
+        <field name="title">The Dragon Is Defeated</field>
+        <field name="reference">Revelation 12</field>
+        <field name="morning_prayer">Plead the blood of Jesus over your family and community.</field>
+        <field name="evening_reading">Revelation 12 — The Woman and the Dragon</field>
+    </record>
+
+    <record id="devotional_day_24" model="onevoice.devotional">
+        <field name="day_number">24</field>
+        <field name="date">2027-08-15</field>
+        <field name="theme">Steadfastness</field>
+        <field name="title">Steadfast Under Pressure</field>
+        <field name="reference">Revelation 13</field>
+        <field name="morning_prayer">Pray for Christians in countries where faith is criminalised.</field>
+        <field name="evening_reading">Revelation 13 — The Two Beasts</field>
+    </record>
+
+    <record id="devotional_day_25" model="onevoice.devotional">
+        <field name="day_number">25</field>
+        <field name="date">2027-08-16</field>
+        <field name="theme">Mission</field>
+        <field name="title">The Eternal Gospel Goes Forth</field>
+        <field name="reference">Revelation 14</field>
+        <field name="morning_prayer">Pray for missionaries and evangelists in the 10/40 Window.</field>
+        <field name="evening_reading">Revelation 14 — The Lamb and the 144,000</field>
+    </record>
+
+    <record id="devotional_day_26" model="onevoice.devotional">
+        <field name="day_number">26</field>
+        <field name="date">2027-08-17</field>
+        <field name="theme">Justice</field>
+        <field name="title">Justice and God's Wrath</field>
+        <field name="reference">Revelation 15-16</field>
+        <field name="morning_prayer">Pray for nations to turn to God in repentance before judgment.</field>
+        <field name="evening_reading">Revelation 15-16 — The Seven Bowls of Wrath</field>
+    </record>
+
+    <record id="devotional_day_27" model="onevoice.devotional">
+        <field name="day_number">27</field>
+        <field name="date">2027-08-18</field>
+        <field name="theme">Freedom</field>
+        <field name="title">Come Out of Babylon</field>
+        <field name="reference">Revelation 17</field>
+        <field name="morning_prayer">Pray for believers entangled in worldly systems to be set free.</field>
+        <field name="evening_reading">Revelation 17 — Babylon the Great</field>
+    </record>
+
+    <record id="devotional_day_28" model="onevoice.devotional">
+        <field name="day_number">28</field>
+        <field name="date">2027-08-19</field>
+        <field name="theme">Purity</field>
+        <field name="title">The Fall of Babylon</field>
+        <field name="reference">Revelation 18</field>
+        <field name="morning_prayer">Pray for the Church to be free from materialism and compromise.</field>
+        <field name="evening_reading">Revelation 18 — Come Out of Her, My People</field>
+    </record>
+
+    <record id="devotional_day_29" model="onevoice.devotional">
+        <field name="day_number">29</field>
+        <field name="date">2027-08-20</field>
+        <field name="theme">Triumph</field>
+        <field name="title">Hallelujah! The Lord Reigns</field>
+        <field name="reference">Revelation 19</field>
+        <field name="morning_prayer">Declare boldly: the Kingdom of God is advancing over the nations!</field>
+        <field name="evening_reading">Revelation 19 — The Rider on the White Horse</field>
+    </record>
+
+    <record id="devotional_day_30" model="onevoice.devotional">
+        <field name="day_number">30</field>
+        <field name="date">2027-08-21</field>
+        <field name="theme">Eternity</field>
+        <field name="title">The Judgment Is His Alone</field>
+        <field name="reference">Revelation 20</field>
+        <field name="morning_prayer">Pray urgently for souls to be saved before the final hour.</field>
+        <field name="evening_reading">Revelation 20 — The Thousand Years and Final Judgment</field>
+    </record>
+
+    <record id="devotional_day_31" model="onevoice.devotional">
+        <field name="day_number">31</field>
+        <field name="date">2027-08-22</field>
+        <field name="theme">Renewal</field>
+        <field name="title">Behold, All Things New</field>
+        <field name="reference">Revelation 21:1-14</field>
+        <field name="morning_prayer">Pray for revival that transforms communities like a new creation.</field>
+        <field name="evening_reading">Revelation 21:1-14 — The New Heaven and New Earth</field>
+    </record>
+
+    <record id="devotional_day_32" model="onevoice.devotional">
+        <field name="day_number">32</field>
+        <field name="date">2027-08-23</field>
+        <field name="theme">Glory</field>
+        <field name="title">The Glory of New Jerusalem</field>
+        <field name="reference">Revelation 21:15-27</field>
+        <field name="morning_prayer">Pray that God's glory would fill your city as it fills New Jerusalem.</field>
+        <field name="evening_reading">Revelation 21:15-27 — The Dimensions of the Holy City</field>
+    </record>
+
+    <record id="devotional_day_33" model="onevoice.devotional">
+        <field name="day_number">33</field>
+        <field name="date">2027-08-24</field>
+        <field name="theme">Return</field>
+        <field name="title">Come, Lord Jesus</field>
+        <field name="reference">Revelation 22:1-17</field>
+        <field name="morning_prayer">Pray the ancient cry: Maranatha — Come, Lord Jesus!</field>
+        <field name="evening_reading">Revelation 22:1-17 — The River of Life and The Spirit Says Come</field>
+    </record>
+
+    <record id="devotional_day_34" model="onevoice.devotional">
+        <field name="day_number">34</field>
+        <field name="date">2027-08-25</field>
+        <field name="theme">Reflection</field>
+        <field name="title">Faithfulness Through the Ages</field>
+        <field name="reference">Daniel 1-3</field>
+        <field name="morning_prayer">Reflect on faithfulness, courage and God's sovereignty in Daniel 1-3.</field>
+        <field name="evening_reading">Daniel 1-3 — A Review of Faithful Courage</field>
+    </record>
+
+    <record id="devotional_day_35" model="onevoice.devotional">
+        <field name="day_number">35</field>
+        <field name="date">2027-08-26</field>
+        <field name="theme">Persecuted Church</field>
+        <field name="title">Pray for the Persecuted</field>
+        <field name="reference">Revelation 6:9-11</field>
+        <field name="morning_prayer">Pray by name for believers in North Korea, Iran, Nigeria and Pakistan.</field>
+        <field name="evening_reading">Revelation 6:9-11 — The Souls Under the Altar</field>
+    </record>
+
+    <record id="devotional_day_36" model="onevoice.devotional">
+        <field name="day_number">36</field>
+        <field name="date">2027-08-27</field>
+        <field name="theme">Revival</field>
+        <field name="title">Pray for Global Revival</field>
+        <field name="reference">Daniel 9:17-19</field>
+        <field name="morning_prayer">Pray for the Holy Spirit to fall on 10 unreached nations today.</field>
+        <field name="evening_reading">Daniel 9:17-19 — Daniel's Cry for Revival</field>
+    </record>
+
+    <record id="devotional_day_37" model="onevoice.devotional">
+        <field name="day_number">37</field>
+        <field name="date">2027-08-28</field>
+        <field name="theme">Muslim Nations</field>
+        <field name="title">Pray for the Muslim World</field>
+        <field name="reference">Revelation 7:9-14</field>
+        <field name="morning_prayer">Pray for Muslims in Pakistan, the Middle East and North Africa.</field>
+        <field name="evening_reading">Revelation 7:9-14 — A Multitude from Every Nation</field>
+    </record>
+
+    <record id="devotional_day_38" model="onevoice.devotional">
+        <field name="day_number">38</field>
+        <field name="date">2027-08-29</field>
+        <field name="theme">Youth and Families</field>
+        <field name="title">Raise Up a Generation</field>
+        <field name="reference">Daniel 1:8-21</field>
+        <field name="morning_prayer">Pray for young people and families to encounter God personally.</field>
+        <field name="evening_reading">Daniel 1:8-21 — Daniel's Resolve as a Young Man</field>
+    </record>
+
+    <record id="devotional_day_39" model="onevoice.devotional">
+        <field name="day_number">39</field>
+        <field name="date">2027-08-30</field>
+        <field name="theme">Israel and Nations</field>
+        <field name="title">Until All Have Heard</field>
+        <field name="reference">Revelation 22:1-5</field>
+        <field name="morning_prayer">Pray for Israel's salvation and completion of the Great Commission.</field>
+        <field name="evening_reading">Revelation 22:1-5 — The River of Life for All Nations</field>
+    </record>
+
+    <record id="devotional_day_40" model="onevoice.devotional">
+        <field name="day_number">40</field>
+        <field name="date">2027-08-31</field>
+        <field name="theme">Celebration</field>
+        <field name="title">One Voice, One Hope</field>
+        <field name="reference">Revelation 22:20</field>
+        <field name="morning_prayer">Gather with others to pray, worship and celebrate 40 days of faithfulness.</field>
+        <field name="evening_reading">Revelation 22:20 — Surely I am coming soon. Amen. Come, Lord Jesus!</field>
+    </record>
+
+</data>
+</odoo>

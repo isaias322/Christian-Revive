@@ -25,6 +25,8 @@
         
         'views/onevoice_bible_study.xml',
         'views/onevoice_volunteer.xml',
+        'views/onevoice_devotional.xml',
+        'data/onevoice_devotional_data.xml',
         'views/event.xml',
         'views/thought_of_the_day.xml',
         'views/profile_fields.xml',

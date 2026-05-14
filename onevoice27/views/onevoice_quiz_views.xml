@@ -55,7 +55,26 @@
         <field name="view_mode">list,form</field>
     </record>
 
-    <!-- ─── Quiz Question (standalone form for drilling down) ── -->
+    <!-- ─── Quiz Question (standalone list + form for import) ── -->
+
+    <record id="view_onevoice_quiz_question_list" model="ir.ui.view">
+        <field name="name">onevoice.quiz.question.list</field>
+        <field name="model">onevoice.quiz.question</field>
+        <field name="arch" type="xml">
+            <list string="Quiz Questions">
+                <field name="quiz_id" string="Quiz"/>
+                <field name="sequence" string="Seq"/>
+                <field name="question_type" string="Type"/>
+                <field name="question_text" string="Question"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_onevoice_quiz_question" model="ir.actions.act_window">
+        <field name="name">Quiz Questions</field>
+        <field name="res_model">onevoice.quiz.question</field>
+        <field name="view_mode">list,form</field>
+    </record>
 
     <record id="view_onevoice_quiz_question_form" model="ir.ui.view">
         <field name="name">onevoice.quiz.question.form</field>
@@ -82,6 +101,42 @@
                 </sheet>
             </form>
         </field>
+    </record>
+
+    <!-- ─── Quiz Option (standalone list for import) ──────────── -->
+
+    <record id="view_onevoice_quiz_option_list" model="ir.ui.view">
+        <field name="name">onevoice.quiz.option.list</field>
+        <field name="model">onevoice.quiz.option</field>
+        <field name="arch" type="xml">
+            <list string="Quiz Options">
+                <field name="question_id" string="Question"/>
+                <field name="option_text" string="Option Text"/>
+                <field name="is_correct" string="Correct?"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_onevoice_quiz_option_form" model="ir.ui.view">
+        <field name="name">onevoice.quiz.option.form</field>
+        <field name="model">onevoice.quiz.option</field>
+        <field name="arch" type="xml">
+            <form string="Quiz Option">
+                <sheet>
+                    <group>
+                        <field name="question_id"/>
+                        <field name="option_text"/>
+                        <field name="is_correct"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_onevoice_quiz_option" model="ir.actions.act_window">
+        <field name="name">Quiz Options</field>
+        <field name="res_model">onevoice.quiz.option</field>
+        <field name="view_mode">list,form</field>
     </record>
 
     <!-- ─── Quiz Attempt (results view) ─────────────────────── -->

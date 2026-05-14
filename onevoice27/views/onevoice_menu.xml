@@ -67,10 +67,24 @@
         sequence="3"/>
 
     <menuitem
+        id="menu_ov27_quiz_questions"
+        name="Quiz Questions"
+        action="action_onevoice_quiz_question"
+        parent="menu_ov27_learn"
+        sequence="4"/>
+
+    <menuitem
+        id="menu_ov27_quiz_options"
+        name="Quiz Options"
+        action="action_onevoice_quiz_option"
+        parent="menu_ov27_learn"
+        sequence="5"/>
+
+    <menuitem
         id="menu_ov27_quiz_results"
         name="Quiz Results"
         action="action_onevoice_quiz_attempt"
         parent="menu_ov27_learn"
-        sequence="4"/>
+        sequence="6"/>
 
 </odoo>

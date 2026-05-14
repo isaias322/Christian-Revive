@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- OneVoice27 standalone app root menu -->
+    <menuitem
+        id="menu_onevoice27_root"
+        name="OneVoice27"
+        sequence="20"/>
+
+    <!-- ─── Core sections ──────────────────────────────────── -->
+
+    <menuitem
+        id="menu_ov27_devotional"
+        name="40-Day Devotional"
+        action="action_onevoice_devotional"
+        parent="menu_onevoice27_root"
+        sequence="1"/>
+
+    <menuitem
+        id="menu_ov27_bible_study"
+        name="Spiritual Preparation"
+        action="action_onevoice_bible_study"
+        parent="menu_onevoice27_root"
+        sequence="2"/>
+
+    <menuitem
+        id="menu_ov27_volunteer"
+        name="Volunteers"
+        action="action_onevoice_volunteer"
+        parent="menu_onevoice27_root"
+        sequence="3"/>
+
+    <menuitem
+        id="menu_ov27_prayer_pledge"
+        name="Prayer Wall"
+        action="action_onevoice_prayer_pledge"
+        parent="menu_onevoice27_root"
+        sequence="4"/>
+
+    <!-- ─── Flashcards &amp; Quizzes submenu ──────────────── -->
+
+    <menuitem
+        id="menu_ov27_learn"
+        name="Flashcards &amp; Quizzes"
+        parent="menu_onevoice27_root"
+        sequence="5"/>
+
+    <menuitem
+        id="menu_ov27_flashcard_decks"
+        name="Flashcard Decks"
+        action="action_onevoice_flashcard_deck"
+        parent="menu_ov27_learn"
+        sequence="1"/>
+
+    <menuitem
+        id="menu_ov27_flashcards"
+        name="All Flashcards"
+        action="action_onevoice_flashcard"
+        parent="menu_ov27_learn"
+        sequence="2"/>
+
+    <menuitem
+        id="menu_ov27_quizzes"
+        name="All Quizzes"
+        action="action_onevoice_quiz"
+        parent="menu_ov27_learn"
+        sequence="3"/>
+
+    <menuitem
+        id="menu_ov27_quiz_results"
+        name="Quiz Results"
+        action="action_onevoice_quiz_attempt"
+        parent="menu_ov27_learn"
+        sequence="4"/>
+
+</odoo>

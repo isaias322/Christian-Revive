@@ -203,7 +203,6 @@ class OnevoiceDevotional(models.Model):
                 }
                 for r in records
             ]
-        # Admin hasn't seeded yet — return the built-in plan so the app always works
         return [
             {
                 'day': d, 'date': dt, 'theme': theme, 'title': title,

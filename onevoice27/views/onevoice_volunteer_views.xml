@@ -1,4 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <odoo>
+
     <record id="view_onevoice_volunteer_form" model="ir.ui.view">
         <field name="name">onevoice.volunteer.form</field>
         <field name="model">onevoice.volunteer</field>
@@ -53,4 +55,5 @@
         <field name="res_model">onevoice.volunteer</field>
         <field name="view_mode">list,form</field>
     </record>
+
 </odoo>

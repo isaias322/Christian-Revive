@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- ─── Flashcard Deck ──────────────────────────────────── -->
+
+    <record id="view_onevoice_flashcard_deck_list" model="ir.ui.view">
+        <field name="name">onevoice.flashcard.deck.list</field>
+        <field name="model">onevoice.flashcard.deck</field>
+        <field name="arch" type="xml">
+            <list string="Flashcard Decks">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="card_count" string="Cards"/>
+                <field name="is_active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_onevoice_flashcard_deck_form" model="ir.ui.view">
+        <field name="name">onevoice.flashcard.deck.form</field>
+        <field name="model">onevoice.flashcard.deck</field>
+        <field name="arch" type="xml">
+            <form string="Flashcard Deck">
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="Deck name…"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="is_active"/>
+                            <field name="sequence"/>
+                            <field name="card_count" readonly="1"/>
+                        </group>
+                    </group>
+                    <separator string="Description"/>
+                    <field name="description" placeholder="Optional deck description…"/>
+                    <separator string="Flashcards"/>
+                    <field name="card_ids">
+                        <list editable="bottom">
+                            <field name="sequence" widget="handle"/>
+                            <field name="front_text" string="Front (Question)"/>
+                            <field name="back_text" string="Back (Answer)"/>
+                            <field name="hint"/>
+                        </list>
+                    </field>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_onevoice_flashcard_deck" model="ir.actions.act_window">
+        <field name="name">Flashcard Decks</field>
+        <field name="res_model">onevoice.flashcard.deck</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- ─── Flashcard (standalone list) ───────────────────── -->
+
+    <record id="view_onevoice_flashcard_list" model="ir.ui.view">
+        <field name="name">onevoice.flashcard.list</field>
+        <field name="model">onevoice.flashcard</field>
+        <field name="arch" type="xml">
+            <list string="All Flashcards">
+                <field name="deck_id"/>
+                <field name="sequence" widget="handle"/>
+                <field name="front_text" string="Front"/>
+                <field name="back_text" string="Back"/>
+                <field name="hint"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_onevoice_flashcard_form" model="ir.ui.view">
+        <field name="name">onevoice.flashcard.form</field>
+        <field name="model">onevoice.flashcard</field>
+        <field name="arch" type="xml">
+            <form string="Flashcard">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="deck_id"/>
+                            <field name="sequence"/>
+                            <field name="hint"/>
+                        </group>
+                    </group>
+                    <separator string="Front (Question)"/>
+                    <field name="front_text" placeholder="Write the question or prompt…"/>
+                    <separator string="Back (Answer)"/>
+                    <field name="back_text" placeholder="Write the answer…"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_onevoice_flashcard" model="ir.actions.act_window">
+        <field name="name">All Flashcards</field>
+        <field name="res_model">onevoice.flashcard</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

@@ -26,6 +26,10 @@
         <field name="model">onevoice.devotional</field>
         <field name="arch" type="xml">
             <form string="Devotional Day">
+                <header>
+                    <button name="action_generate_plan" type="object"
+                            string="Seed 40-Day Plan" class="btn-primary"/>
+                </header>
                 <sheet>
                     <div class="oe_title">
                         <label for="title"/>

@@ -1,4 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <odoo>
+
     <record id="view_onevoice_bible_study_form" model="ir.ui.view">
         <field name="name">onevoice.bible.study.form</field>
         <field name="model">onevoice.bible.study</field>

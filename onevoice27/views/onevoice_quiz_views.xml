@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- ─── Quiz ──────────────────────────────────────────────── -->
+
+    <record id="view_onevoice_quiz_list" model="ir.ui.view">
+        <field name="name">onevoice.quiz.list</field>
+        <field name="model">onevoice.quiz</field>
+        <field name="arch" type="xml">
+            <list string="Quizzes">
+                <field name="name"/>
+                <field name="question_count" string="Questions"/>
+                <field name="attempt_count" string="Attempts"/>
+                <field name="shuffle_questions"/>
+                <field name="is_active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_onevoice_quiz_form" model="ir.ui.view">
+        <field name="name">onevoice.quiz.form</field>
+        <field name="model">onevoice.quiz</field>
+        <field name="arch" type="xml">
+            <form string="Quiz">
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="Quiz name…"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="is_active"/>
+                            <field name="shuffle_questions"/>
+                            <field name="question_count" readonly="1"/>
+                        </group>
+                    </group>
+                    <separator string="Description"/>
+                    <field name="description" placeholder="Optional description…"/>
+                    <separator string="Questions"/>
+                    <field name="question_ids">
+                        <list editable="bottom">
+                            <field name="sequence" widget="handle"/>
+                            <field name="question_type"/>
+                            <field name="question_text" string="Question"/>
+                        </list>
+                    </field>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_onevoice_quiz" model="ir.actions.act_window">
+        <field name="name">Quizzes</field>
+        <field name="res_model">onevoice.quiz</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- ─── Quiz Question (standalone form for drilling down) ── -->
+
+    <record id="view_onevoice_quiz_question_form" model="ir.ui.view">
+        <field name="name">onevoice.quiz.question.form</field>
+        <field name="model">onevoice.quiz.question</field>
+        <field name="arch" type="xml">
+            <form string="Quiz Question">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="quiz_id"/>
+                            <field name="question_type"/>
+                            <field name="sequence"/>
+                        </group>
+                    </group>
+                    <separator string="Question Text"/>
+                    <field name="question_text" placeholder="Enter your question…"/>
+                    <separator string="Answer Options"/>
+                    <field name="option_ids">
+                        <list editable="bottom">
+                            <field name="option_text" string="Option"/>
+                            <field name="is_correct" string="Correct?"/>
+                        </list>
+                    </field>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ─── Quiz Attempt (results view) ─────────────────────── -->
+
+    <record id="view_onevoice_quiz_attempt_list" model="ir.ui.view">
+        <field name="name">onevoice.quiz.attempt.list</field>
+        <field name="model">onevoice.quiz.attempt</field>
+        <field name="arch" type="xml">
+            <list string="Quiz Results" create="0" delete="0">
+                <field name="quiz_id"/>
+                <field name="user_name"/>
+                <field name="score"/>
+                <field name="total_questions"/>
+                <field name="completed_at"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_onevoice_quiz_attempt" model="ir.actions.act_window">
+        <field name="name">Quiz Results</field>
+        <field name="res_model">onevoice.quiz.attempt</field>
+        <field name="view_mode">list</field>
+    </record>
+
+</odoo>

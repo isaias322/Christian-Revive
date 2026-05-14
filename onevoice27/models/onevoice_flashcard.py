@@ -44,6 +44,7 @@ class OnevoiceFlashcard(models.Model):
     back_text  = fields.Text(string='Back (Answer)', required=True)
     hint       = fields.Char(string='Hint')
     sequence   = fields.Integer(string='Sequence', default=10)
+    image      = fields.Image(string='Card Image', max_width=800, max_height=800)
 
     @api.model
     def app_get_cards(self, deck_id):
@@ -56,6 +57,7 @@ class OnevoiceFlashcard(models.Model):
                 'front':   c.front_text or '',
                 'back':    c.back_text or '',
                 'hint':    c.hint or '',
+                'image':   c.image.decode('utf-8') if c.image else '',
             }
             for c in cards
         ]

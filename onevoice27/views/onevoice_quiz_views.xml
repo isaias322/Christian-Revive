@@ -161,7 +161,7 @@
         <field name="name">onevoice.quiz.attempt.graph</field>
         <field name="model">onevoice.quiz.attempt</field>
         <field name="arch" type="xml">
-            <graph string="Quiz Results" type="bar" sample="1">
+            <graph string="Quiz Results" type="bar">
                 <field name="quiz_id" type="row"/>
                 <field name="score_percent" type="measure"/>
                 <field name="score" type="measure"/>
@@ -173,7 +173,7 @@
         <field name="name">onevoice.quiz.attempt.pivot</field>
         <field name="model">onevoice.quiz.attempt</field>
         <field name="arch" type="xml">
-            <pivot string="Quiz Results" sample="1">
+            <pivot string="Quiz Results">
                 <field name="quiz_id" type="row"/>
                 <field name="passed" type="col"/>
                 <field name="score_percent" type="measure"/>
@@ -191,11 +191,6 @@
                 <field name="user_name" string="User"/>
                 <filter string="Passed" name="filter_passed" domain="[('passed','=',True)]"/>
                 <filter string="Not Passed" name="filter_failed" domain="[('passed','=',False)]"/>
-                <separator/>
-                <filter string="This Week" name="filter_week"
-                    domain="[('completed_at','&gt;=', (context_today() - relativedelta(weeks=1)).strftime('%Y-%m-%d'))]"/>
-                <filter string="This Month" name="filter_month"
-                    domain="[('completed_at','&gt;=', (context_today()).strftime('%Y-%m-01'))]"/>
                 <separator/>
                 <group expand="1" string="Group By">
                     <filter string="Quiz" name="group_quiz" context="{'group_by':'quiz_id'}"/>

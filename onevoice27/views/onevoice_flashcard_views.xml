@@ -62,6 +62,7 @@
         <field name="model">onevoice.flashcard</field>
         <field name="arch" type="xml">
             <list string="All Flashcards">
+                <field name="image" widget="image" string=" " options="{'size': [38, 38]}"/>
                 <field name="deck_id"/>
                 <field name="sequence" widget="handle"/>
                 <field name="front_text" string="Front"/>
@@ -77,6 +78,12 @@
         <field name="arch" type="xml">
             <form string="Flashcard">
                 <sheet>
+                    <div class="oe_button_box" name="button_box"/>
+                    <field name="image" widget="image" class="oe_avatar" options="{'preview_image': 'image'}"/>
+                    <div class="oe_title">
+                        <label for="front_text" string="Front (Question)"/>
+                        <field name="front_text" placeholder="Write the question or prompt…"/>
+                    </div>
                     <group>
                         <group>
                             <field name="deck_id"/>
@@ -84,8 +91,6 @@
                             <field name="hint"/>
                         </group>
                     </group>
-                    <separator string="Front (Question)"/>
-                    <field name="front_text" placeholder="Write the question or prompt…"/>
                     <separator string="Back (Answer)"/>
                     <field name="back_text" placeholder="Write the answer…"/>
                 </sheet>

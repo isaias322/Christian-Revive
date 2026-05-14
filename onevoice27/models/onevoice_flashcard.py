@@ -7,17 +7,24 @@ class OnevoiceFlashcardDeck(models.Model):
     _description = 'Flashcard Deck'
     _order = 'sequence, name'
 
-    name        = fields.Char(string='Deck Name', required=True)
-    description = fields.Text(string='Description')
-    is_active   = fields.Boolean(string='Active', default=True)
-    sequence    = fields.Integer(string='Sequence', default=10)
-    card_ids    = fields.One2many('onevoice.flashcard', 'deck_id', string='Cards')
-    card_count  = fields.Integer(string='Card Count', compute='_compute_card_count', store=False)
+    name          = fields.Char(string='Deck Name', required=True)
+    description   = fields.Text(string='Description')
+    is_active     = fields.Boolean(string='Active', default=True)
+    sequence      = fields.Integer(string='Sequence', default=10)
+    card_ids      = fields.One2many('onevoice.flashcard', 'deck_id', string='Cards')
+    card_count    = fields.Integer(string='Card Count', compute='_compute_card_count', store=False)
+    attempt_count = fields.Integer(string='Study Sessions', compute='_compute_attempt_count', store=False)
 
     @api.depends('card_ids')
     def _compute_card_count(self):
         for deck in self:
             deck.card_count = len(deck.card_ids)
+
+    def _compute_attempt_count(self):
+        for deck in self:
+            deck.attempt_count = self.env['onevoice.flashcard.attempt'].search_count(
+                [('deck_id', '=', deck.id)]
+            )
 
     @api.model
     def app_get_decks(self):
@@ -25,10 +32,11 @@ class OnevoiceFlashcardDeck(models.Model):
         decks = self.sudo().search([('is_active', '=', True)], order='sequence asc')
         return [
             {
-                'id':          d.id,
-                'name':        d.name or '',
-                'description': d.description or '',
-                'card_count':  d.card_count,
+                'id':            d.id,
+                'name':          d.name or '',
+                'description':   d.description or '',
+                'card_count':    d.card_count,
+                'attempt_count': d.attempt_count,
             }
             for d in decks
         ]
@@ -61,3 +69,23 @@ class OnevoiceFlashcard(models.Model):
             }
             for c in cards
         ]
+
+
+class OnevoiceFlashcardAttempt(models.Model):
+    _name = 'onevoice.flashcard.attempt'
+    _description = 'Flashcard Deck Study Session'
+    _order = 'completed_at desc'
+
+    deck_id      = fields.Many2one('onevoice.flashcard.deck', string='Deck', ondelete='set null')
+    user_name    = fields.Char(string='User Name')
+    completed_at = fields.Datetime(string='Studied At')
+
+    @api.model
+    def app_log_attempt(self, vals):
+        """Log a completed deck study session from the Flutter app."""
+        self.sudo().create({
+            'deck_id':      vals.get('deck_id'),
+            'user_name':    vals.get('user_name', ''),
+            'completed_at': fields.Datetime.now(),
+        })
+        return True

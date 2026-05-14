@@ -9,3 +9,4 @@ access_onevoice_quiz,onevoice.quiz,model_onevoice_quiz,base.group_user,1,1,1,1
 access_onevoice_quiz_question,onevoice.quiz.question,model_onevoice_quiz_question,base.group_user,1,1,1,1
 access_onevoice_quiz_option,onevoice.quiz.option,model_onevoice_quiz_option,base.group_user,1,1,1,1
 access_onevoice_quiz_attempt,onevoice.quiz.attempt,model_onevoice_quiz_attempt,base.group_user,1,1,1,1
+access_onevoice_flashcard_attempt,onevoice.flashcard.attempt,model_onevoice_flashcard_attempt,base.group_user,1,1,1,1

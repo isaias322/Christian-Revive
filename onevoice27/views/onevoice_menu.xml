@@ -60,6 +60,13 @@
         sequence="2"/>
 
     <menuitem
+        id="menu_ov27_flashcard_activity"
+        name="Deck Activity"
+        action="action_onevoice_flashcard_attempt"
+        parent="menu_ov27_learn"
+        sequence="3"/>
+
+    <menuitem
         id="menu_ov27_quizzes"
         name="All Quizzes"
         action="action_onevoice_quiz"

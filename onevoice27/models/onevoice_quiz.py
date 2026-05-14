@@ -109,6 +109,7 @@ class OnevoiceQuizAttempt(models.Model):
     score_percent   = fields.Integer(string='Score %', compute='_compute_score_percent', store=True)
     passed          = fields.Boolean(string='Passed', compute='_compute_score_percent', store=True)
     completed_at    = fields.Datetime(string='Completed At')
+    retake_count    = fields.Integer(string='Retakes', default=0)
     app_session_key = fields.Char(string='Session Key')
 
     @api.depends('score', 'total_questions')
@@ -122,17 +123,33 @@ class OnevoiceQuizAttempt(models.Model):
 
     @api.model
     def app_submit_attempt(self, vals):
-        """Save a quiz attempt submitted from the Flutter app."""
-        record = self.sudo().create({
-            'quiz_id':         vals.get('quiz_id'),
-            'user_name':       vals.get('user_name', ''),
-            'score':           vals.get('score', 0),
-            'total_questions': vals.get('total_questions', 0),
-            'completed_at':    fields.Datetime.now(),
-            'app_session_key': vals.get('session_key', ''),
-        })
+        """Create or update a quiz attempt. Retakes update the existing row."""
+        quiz_id   = vals.get('quiz_id')
+        user_name = vals.get('user_name', '')
+        existing  = self.sudo().search([
+            ('quiz_id',   '=', quiz_id),
+            ('user_name', '=', user_name),
+        ], limit=1)
+        if existing:
+            existing.write({
+                'score':           vals.get('score', 0),
+                'total_questions': vals.get('total_questions', 0),
+                'completed_at':    fields.Datetime.now(),
+                'retake_count':    existing.retake_count + 1,
+            })
+            record = existing
+        else:
+            record = self.sudo().create({
+                'quiz_id':         quiz_id,
+                'user_name':       user_name,
+                'score':           vals.get('score', 0),
+                'total_questions': vals.get('total_questions', 0),
+                'completed_at':    fields.Datetime.now(),
+                'retake_count':    0,
+                'app_session_key': vals.get('session_key', ''),
+            })
         return {
-            'id':             record.id,
-            'score':          record.score,
+            'id':              record.id,
+            'score':           record.score,
             'total_questions': record.total_questions,
         }

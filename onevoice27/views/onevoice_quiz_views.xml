@@ -153,6 +153,7 @@
                 <field name="total_questions" string="Total Qs"/>
                 <field name="score_percent" string="Score %"/>
                 <field name="passed" string="Passed?"/>
+                <field name="retake_count" string="Retakes"/>
             </list>
         </field>
     </record>

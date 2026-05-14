@@ -106,8 +106,19 @@ class OnevoiceQuizAttempt(models.Model):
     user_name       = fields.Char(string='User Name')
     score           = fields.Integer(string='Score', default=0)
     total_questions = fields.Integer(string='Total Questions', default=0)
+    score_percent   = fields.Integer(string='Score %', compute='_compute_score_percent', store=True)
+    passed          = fields.Boolean(string='Passed', compute='_compute_score_percent', store=True)
     completed_at    = fields.Datetime(string='Completed At')
     app_session_key = fields.Char(string='Session Key')
+
+    @api.depends('score', 'total_questions')
+    def _compute_score_percent(self):
+        for attempt in self:
+            if attempt.total_questions:
+                attempt.score_percent = round(attempt.score * 100 / attempt.total_questions)
+            else:
+                attempt.score_percent = 0
+            attempt.passed = attempt.score_percent >= 60
 
     @api.model
     def app_submit_attempt(self, vals):

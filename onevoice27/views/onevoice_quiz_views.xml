@@ -145,20 +145,72 @@
         <field name="name">onevoice.quiz.attempt.list</field>
         <field name="model">onevoice.quiz.attempt</field>
         <field name="arch" type="xml">
-            <list string="Quiz Results" create="0" delete="0">
+            <list string="Quiz Results" create="0" delete="0" default_order="completed_at desc">
+                <field name="completed_at" string="Date"/>
                 <field name="quiz_id"/>
-                <field name="user_name"/>
-                <field name="score"/>
-                <field name="total_questions"/>
-                <field name="completed_at"/>
+                <field name="user_name" string="User"/>
+                <field name="score" string="Score"/>
+                <field name="total_questions" string="Total Qs"/>
+                <field name="score_percent" string="Score %" widget="progressbar"/>
+                <field name="passed" string="Passed?" widget="boolean_toggle"/>
             </list>
+        </field>
+    </record>
+
+    <record id="view_onevoice_quiz_attempt_graph" model="ir.ui.view">
+        <field name="name">onevoice.quiz.attempt.graph</field>
+        <field name="model">onevoice.quiz.attempt</field>
+        <field name="arch" type="xml">
+            <graph string="Quiz Results" type="bar" sample="1">
+                <field name="quiz_id" type="row"/>
+                <field name="score_percent" type="measure"/>
+                <field name="score" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="view_onevoice_quiz_attempt_pivot" model="ir.ui.view">
+        <field name="name">onevoice.quiz.attempt.pivot</field>
+        <field name="model">onevoice.quiz.attempt</field>
+        <field name="arch" type="xml">
+            <pivot string="Quiz Results" sample="1">
+                <field name="quiz_id" type="row"/>
+                <field name="passed" type="col"/>
+                <field name="score_percent" type="measure"/>
+                <field name="score" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_onevoice_quiz_attempt_search" model="ir.ui.view">
+        <field name="name">onevoice.quiz.attempt.search</field>
+        <field name="model">onevoice.quiz.attempt</field>
+        <field name="arch" type="xml">
+            <search string="Search Results">
+                <field name="quiz_id" string="Quiz"/>
+                <field name="user_name" string="User"/>
+                <filter string="Passed" name="filter_passed" domain="[('passed','=',True)]"/>
+                <filter string="Not Passed" name="filter_failed" domain="[('passed','=',False)]"/>
+                <separator/>
+                <filter string="This Week" name="filter_week"
+                    domain="[('completed_at','&gt;=', (context_today() - relativedelta(weeks=1)).strftime('%Y-%m-%d'))]"/>
+                <filter string="This Month" name="filter_month"
+                    domain="[('completed_at','&gt;=', (context_today()).strftime('%Y-%m-01'))]"/>
+                <separator/>
+                <group expand="1" string="Group By">
+                    <filter string="Quiz" name="group_quiz" context="{'group_by':'quiz_id'}"/>
+                    <filter string="Passed / Failed" name="group_passed" context="{'group_by':'passed'}"/>
+                    <filter string="Date" name="group_date" context="{'group_by':'completed_at:month'}"/>
+                </group>
+            </search>
         </field>
     </record>
 
     <record id="action_onevoice_quiz_attempt" model="ir.actions.act_window">
         <field name="name">Quiz Results</field>
         <field name="res_model">onevoice.quiz.attempt</field>
-        <field name="view_mode">list</field>
+        <field name="view_mode">graph,pivot,list</field>
+        <field name="context">{'search_default_group_quiz': 1}</field>
     </record>
 
 </odoo>

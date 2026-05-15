@@ -58,11 +58,12 @@ class OnevoiceQuiz(models.Model):
                 for o in q.option_ids
             ]
             questions.append({
-                'id':      q.id,
-                'type':    q.question_type,
-                'text':    q.question_text or '',
-                'image':   q.image.decode('utf-8') if q.image else '',
-                'options': options,
+                'id':          q.id,
+                'type':        q.question_type,
+                'text':        q.question_text or '',
+                'explanation': q.explanation or '',
+                'image':       q.image.decode('utf-8') if q.image else '',
+                'options':     options,
             })
         return {
             'id':          quiz.id,
@@ -84,6 +85,7 @@ class OnevoiceQuizQuestion(models.Model):
         ('true_false', 'True / False'),
     ], string='Question Type', default='mcq', required=True)
     question_text = fields.Text(string='Question', required=True)
+    explanation   = fields.Text(string='Explanation')
     image         = fields.Image(string='Question Image', max_width=800, max_height=800)
     sequence      = fields.Integer(string='Sequence', default=10)
     option_ids    = fields.One2many('onevoice.quiz.option', 'question_id', string='Options')

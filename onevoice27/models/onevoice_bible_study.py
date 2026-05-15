@@ -20,6 +20,8 @@ class OneVoiceBibleStudy(models.Model):
     # ── session_key: device identifier sent from the app ────────
     # If this column is missing in your DB, run the migration SQL below.
     session_key = fields.Char(string='Session Key', index=True)
+    email       = fields.Char(string='Email')
+    church_name = fields.Char(string='Church Name')
 
     phone = fields.Char(string='Phone')
     location = fields.Char(string='Location / City')
@@ -194,14 +196,10 @@ class OneVoiceBibleStudy(models.Model):
         return {
             'id': r.id,
             'name': r.contact_name,
+            'email': r.email or '',
+            'church_name': r.church_name or '',
             'phone': r.phone or '',
             'location': r.location or '',
-            'days': (r.study_days or '').split(',') if r.study_days else ['Sunday'],
-            'status': {
-                'interested': 'Interested',
-                'in_progress': 'In Progress',
-                'completed': 'Completed',
-            }.get(r.state, 'Interested'),
             'completedSessionCount': r.completed_session_count,
             'completedSessionIds': completed_ids,
             'totalSessionCount': r.total_session_count,

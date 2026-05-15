@@ -7,13 +7,10 @@
         <field name="arch" type="xml">
             <form string="OneVoice27 Perseverance">
                 <header>
-                    <button name="action_set_interested" type="object" string="Interested" class="btn-secondary"/>
-                    <button name="action_set_in_progress" type="object" string="In Progress" class="btn-primary"/>
-                    <button name="action_set_completed" type="object" string="Completed" class="btn-success"/>
                     <button name="action_mark_certificate_issued" type="object" string="Certificate Issued"
                             class="btn-success"
                             invisible="not certificate_eligible or certificate_issued"/>
-                    <field name="state" widget="statusbar" statusbar_visible="interested,in_progress,completed"/>
+                    <field name="state" widget="statusbar" statusbar_visible="interested,in_progress,completed" invisible="1"/>
                 </header>
                 <sheet>
                     <widget name="web_ribbon" title="Certificate Ready" bg_color="text-bg-success"
@@ -21,13 +18,14 @@
                     <widget name="web_ribbon" title="Certificate Issued" bg_color="text-bg-info"
                             invisible="not certificate_issued"/>
                     <group>
-                        <group>
+                        <group string="Contact Details">
                             <field name="contact_name"/>
+                            <field name="email"/>
                             <field name="phone"/>
+                            <field name="church_name"/>
                             <field name="location"/>
                         </group>
-                        <group>
-                            <field name="study_days"/>
+                        <group string="Meta">
                             <field name="partner_id"/>
                             <field name="create_date" readonly="1"/>
                         </group>
@@ -73,16 +71,16 @@
         <field name="arch" type="xml">
             <list string="OneVoice27 Perseverance">
                 <field name="contact_name"/>
+                <field name="email"/>
+                <field name="church_name"/>
                 <field name="phone"/>
                 <field name="location"/>
-                <field name="study_days"/>
                 <field name="completed_session_count"/>
                 <field name="total_session_count"/>
                 <field name="prayer_pledge_count"/>
                 <field name="testimony_count"/>
                 <field name="certificate_eligible"/>
                 <field name="certificate_issued"/>
-                <field name="state"/>
                 <field name="create_date"/>
             </list>
         </field>

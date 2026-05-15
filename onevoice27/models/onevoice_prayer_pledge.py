@@ -49,6 +49,18 @@ class OneVoicePrayerPledge(models.Model):
             for p in pledges
         ]
 
+    def action_delete_pledge(self):
+        """Admin button: delete this pledge and return to the list."""
+        self.ensure_one()
+        self.unlink()
+        return {
+            'type':    'ir.actions.act_window',
+            'name':    'Prayer Pledges',
+            'res_model': 'onevoice.prayer.pledge',
+            'view_mode': 'list,form',
+            'target':  'current',
+        }
+
     @api.model
     def app_delete_pledge(self, pledge_id, session_key):
         """Delete a pledge — only if it belongs to this session."""

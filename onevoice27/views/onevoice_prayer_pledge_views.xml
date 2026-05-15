@@ -7,7 +7,7 @@
         <field name="name">onevoice.prayer.pledge.list</field>
         <field name="model">onevoice.prayer.pledge</field>
         <field name="arch" type="xml">
-            <list string="Prayer Pledges" create="0" delete="0">
+            <list string="Prayer Pledges" create="0">
                 <field name="posted_date" string="Submitted" widget="datetime"/>
                 <field name="pledge_name" string="Name"/>
                 <field name="prayer_focus" string="Prayer Focus"/>
@@ -26,6 +26,11 @@
         <field name="model">onevoice.prayer.pledge</field>
         <field name="arch" type="xml">
             <form string="Prayer Pledge">
+                <header>
+                    <button name="action_delete_pledge" string="Delete Pledge" type="object"
+                            class="btn-danger"
+                            confirm="Are you sure you want to permanently delete this pledge?"/>
+                </header>
                 <sheet>
                     <div class="alert alert-info" role="alert" style="margin-bottom:16px;">
                         <strong>🔒 Private Pledge</strong> — Only visible to the person who submitted it (matched by session key) and admin users.

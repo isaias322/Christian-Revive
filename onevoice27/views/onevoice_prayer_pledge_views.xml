@@ -8,11 +8,13 @@
         <field name="model">onevoice.prayer.pledge</field>
         <field name="arch" type="xml">
             <list string="Prayer Pledges" create="0" delete="0">
-                <field name="posted_date" string="Submitted"/>
+                <field name="posted_date" string="Submitted" widget="datetime"/>
                 <field name="pledge_name" string="Name"/>
-                <field name="prayer_focus" string="Focus"/>
+                <field name="prayer_focus" string="Prayer Focus"/>
                 <field name="prayer_duration" string="Duration"/>
-                <field name="admin_response" string="Response" optional="show"/>
+                <field name="admin_response" string="Admin Response" optional="show"
+                       decoration-success="admin_response != False and admin_response != ''"
+                       decoration-muted="not admin_response"/>
             </list>
         </field>
     </record>
@@ -25,19 +27,27 @@
         <field name="arch" type="xml">
             <form string="Prayer Pledge">
                 <sheet>
+                    <div class="alert alert-info" role="alert" style="margin-bottom:16px;">
+                        <strong>🔒 Private Pledge</strong> — Only visible to the person who submitted it (matched by session key) and admin users.
+                    </div>
                     <group>
                         <group string="Pledge Details">
                             <field name="pledge_name" string="Name" readonly="1"/>
-                            <field name="prayer_focus" string="Focus" readonly="1"/>
+                            <field name="prayer_focus" string="Prayer Focus" readonly="1"/>
                             <field name="prayer_duration" string="Duration" readonly="1"/>
-                            <field name="posted_date" string="Submitted" readonly="1"/>
+                            <field name="posted_date" string="Submitted" readonly="1" widget="datetime"/>
                             <field name="source_key" string="Session Key" readonly="1"/>
                         </group>
                     </group>
-                    <separator string="Admin Response / Kind Words"/>
+                    <separator string="✉️ Admin Response / Kind Words"/>
+                    <div class="alert alert-success" role="alert" style="margin-bottom:8px; font-size:13px;">
+                        Write an encouraging word, prayer confirmation, or kind response below.
+                        This will be displayed privately to the person who made this pledge in the app.
+                    </div>
                     <field name="admin_response"
                            placeholder="Write a kind word, encouragement, or confirm you are praying for this person…"
-                           nolabel="1"/>
+                           nolabel="1"
+                           style="min-height:120px;"/>
                 </sheet>
             </form>
         </field>

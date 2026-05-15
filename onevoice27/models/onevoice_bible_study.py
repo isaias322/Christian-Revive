@@ -8,6 +8,7 @@ class OneVoiceBibleStudy(models.Model):
     _rec_name = 'contact_name'
 
     contact_name = fields.Char(string='Contact Name', required=True)
+    session_key  = fields.Char(string='Session Key', index=True)
     phone = fields.Char(string='Phone')
     location = fields.Char(string='Location / City')
     study_days = fields.Char(string='Study Days')

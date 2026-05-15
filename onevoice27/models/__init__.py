@@ -8,3 +8,4 @@ from . import onevoice_flashcard
 from . import onevoice_quiz
 from . import onevoice_device
 from . import onevoice_notification_ext
+from . import onevoice_translation

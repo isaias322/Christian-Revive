@@ -101,6 +101,13 @@
         parent="menu_ov27_learn"
         sequence="6"/>
 
+    <menuitem
+        id="menu_ov27_translation_overrides"
+        name="Urdu Overrides"
+        action="action_onevoice_translation"
+        parent="menu_ov27_learn"
+        sequence="7"/>
+
     <!-- ─── App Notifications ──────────────────────────────── -->
 
     <record id="action_ov27_app_notifications" model="ir.actions.act_window">

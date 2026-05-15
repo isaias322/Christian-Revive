@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- ─── Urdu Translation Overrides ───────────────────────── -->
+
+    <record id="view_onevoice_translation_list" model="ir.ui.view">
+        <field name="name">onevoice.translation.list</field>
+        <field name="model">onevoice.translation</field>
+        <field name="arch" type="xml">
+            <list string="Urdu Overrides" editable="bottom">
+                <field name="source_text"     string="English Text"     required="1"/>
+                <field name="translated_text" string="Urdu Translation" required="1"/>
+                <field name="notes"           string="Notes"            optional="show"/>
+                <field name="is_active"       string="Active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_onevoice_translation_form" model="ir.ui.view">
+        <field name="name">onevoice.translation.form</field>
+        <field name="model">onevoice.translation</field>
+        <field name="arch" type="xml">
+            <form string="Urdu Translation Override">
+                <sheet>
+                    <group>
+                        <group string="Translation">
+                            <field name="source_text"
+                                   placeholder="English word or phrase…"/>
+                            <field name="translated_text"
+                                   placeholder="اردو ترجمہ…"/>
+                            <field name="is_active"/>
+                        </group>
+                        <group string="Admin Notes">
+                            <field name="notes"
+                                   placeholder="Optional — where is this used?"/>
+                        </group>
+                    </group>
+                    <div class="alert alert-info" role="alert">
+                        <strong>How it works:</strong>
+                        When a user enables Urdu in the app, the app checks this table first.
+                        If the English text matches exactly, your Urdu translation is shown instead
+                        of the live Google Translate result. Useful for fixing names, Bible terms,
+                        quiz options like "True / False", or any phrase that translates incorrectly.
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_onevoice_translation" model="ir.actions.act_window">
+        <field name="name">Urdu Overrides</field>
+        <field name="res_model">onevoice.translation</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

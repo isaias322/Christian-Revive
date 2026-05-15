@@ -101,4 +101,26 @@
         parent="menu_ov27_learn"
         sequence="6"/>
 
+    <!-- ─── Notifications ────────────────────────────────────── -->
+
+    <menuitem
+        id="menu_ov27_notifications"
+        name="Notifications"
+        parent="menu_onevoice27_root"
+        sequence="10"/>
+
+    <menuitem
+        id="menu_ov27_push_notifications"
+        name="Send Notification"
+        action="action_onevoice_notification"
+        parent="menu_ov27_notifications"
+        sequence="1"/>
+
+    <menuitem
+        id="menu_ov27_devices"
+        name="Registered Devices"
+        action="action_onevoice_device"
+        parent="menu_ov27_notifications"
+        sequence="2"/>
+
 </odoo>

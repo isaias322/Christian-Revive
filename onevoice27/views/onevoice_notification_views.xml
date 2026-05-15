@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- ─── onevoice.device list view ──────────────────────────── -->
+    <record id="view_onevoice_device_list" model="ir.ui.view">
+        <field name="name">onevoice.device.list</field>
+        <field name="model">onevoice.device</field>
+        <field name="arch" type="xml">
+            <list string="Registered Devices" create="0" edit="0">
+                <field name="display_name"/>
+                <field name="session_key"/>
+                <field name="last_seen"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_onevoice_device" model="ir.actions.act_window">
+        <field name="name">Registered Devices</field>
+        <field name="res_model">onevoice.device</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- ─── onevoice.notification list view ────────────────────── -->
+    <record id="view_onevoice_notification_list" model="ir.ui.view">
+        <field name="name">onevoice.notification.list</field>
+        <field name="model">onevoice.notification</field>
+        <field name="arch" type="xml">
+            <list string="Push Notifications" decoration-success="status == 'sent'"
+                  decoration-danger="status == 'error'" decoration-muted="status == 'draft'">
+                <field name="title"/>
+                <field name="target"/>
+                <field name="device_id" optional="show"/>
+                <field name="status"/>
+                <field name="sent_count" string="Reached"/>
+                <field name="sent_at"    optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ─── onevoice.notification form view ─────────────────────── -->
+    <record id="view_onevoice_notification_form" model="ir.ui.view">
+        <field name="name">onevoice.notification.form</field>
+        <field name="model">onevoice.notification</field>
+        <field name="arch" type="xml">
+            <form string="Push Notification">
+
+                <header>
+                    <!-- Send button — only visible in draft -->
+                    <button name="action_send"
+                            string="Send Notification"
+                            type="object"
+                            class="btn-primary"
+                            invisible="status != 'draft'"
+                            confirm="Are you sure you want to send this notification now?"/>
+
+                    <!-- Reset to draft on error -->
+                    <button name="action_reset_draft"
+                            string="Reset to Draft"
+                            type="object"
+                            invisible="status != 'error'"/>
+
+                    <field name="status" widget="statusbar"
+                           statusbar_visible="draft,sent"/>
+                </header>
+
+                <sheet>
+                    <!-- Status banner when sent -->
+                    <div class="alert alert-success" role="alert"
+                         invisible="status != 'sent'">
+                        <strong>Sent!</strong>
+                        Notification delivered at
+                        <field name="sent_at" readonly="1" nolabel="1"/>
+                        — reached <field name="sent_count" readonly="1" nolabel="1"/> device(s).
+                    </div>
+
+                    <!-- Error banner -->
+                    <div class="alert alert-danger" role="alert"
+                         invisible="status != 'error'">
+                        <strong>Send Failed.</strong>
+                        <field name="error_msg" readonly="1" nolabel="1"/>
+                    </div>
+
+                    <group string="Compose Notification">
+                        <field name="title"
+                               placeholder="e.g. Daily Devotional Reminder"/>
+                        <field name="message"
+                               placeholder="Write your message here…"
+                               widget="text"/>
+                    </group>
+
+                    <group string="Target">
+                        <field name="target" widget="radio"/>
+                        <field name="device_id"
+                               invisible="target != 'device'"
+                               required="target == 'device'"
+                               options="{'no_create': True}"
+                               help="Pick the device (session) you want to notify"/>
+                    </group>
+                </sheet>
+
+            </form>
+        </field>
+    </record>
+
+    <record id="action_onevoice_notification" model="ir.actions.act_window">
+        <field name="name">Push Notifications</field>
+        <field name="res_model">onevoice.notification</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'default_target': 'all'}</field>
+    </record>
+
+</odoo>

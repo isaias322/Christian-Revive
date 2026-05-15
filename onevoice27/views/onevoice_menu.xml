@@ -101,26 +101,21 @@
         parent="menu_ov27_learn"
         sequence="6"/>
 
-    <!-- ─── Notifications ────────────────────────────────────── -->
+    <!-- ─── App Notifications ──────────────────────────────── -->
+
+    <record id="action_ov27_app_notifications" model="ir.actions.act_window">
+        <field name="name">App Notifications</field>
+        <field name="res_model">app.notification</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('notification_type', '=', 'onevoice')]</field>
+        <field name="context">{'default_notification_type': 'onevoice'}</field>
+    </record>
 
     <menuitem
-        id="menu_ov27_notifications"
-        name="Notifications"
+        id="menu_ov27_app_notifications"
+        name="App Notifications"
+        action="action_ov27_app_notifications"
         parent="menu_onevoice27_root"
         sequence="10"/>
-
-    <menuitem
-        id="menu_ov27_push_notifications"
-        name="Send Notification"
-        action="action_onevoice_notification"
-        parent="menu_ov27_notifications"
-        sequence="1"/>
-
-    <menuitem
-        id="menu_ov27_devices"
-        name="Registered Devices"
-        action="action_onevoice_device"
-        parent="menu_ov27_notifications"
-        sequence="2"/>
 
 </odoo>

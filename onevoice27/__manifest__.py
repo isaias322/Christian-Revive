@@ -16,7 +16,7 @@
     """,
     'author': 'Christian Revive',
     'website': 'https://christianrevive.com',
-    'depends': ['base'],
+    'depends': ['base', 'volunteer_and_donation_management'],
     'data': [
         'security/ir.model.access.csv',
         'views/onevoice_devotional_views.xml',
@@ -26,7 +26,6 @@
         'views/onevoice_prayer_wall_views.xml',
         'views/onevoice_flashcard_views.xml',
         'views/onevoice_quiz_views.xml',
-        'views/onevoice_notification_views.xml',
         'views/onevoice_menu.xml',
         'data/onevoice_devotional_data.xml',
     ],

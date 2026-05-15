@@ -23,6 +23,7 @@
         'views/onevoice_bible_study_views.xml',
         'views/onevoice_volunteer_views.xml',
         'views/onevoice_prayer_pledge_views.xml',
+        'views/onevoice_prayer_wall_views.xml',
         'views/onevoice_flashcard_views.xml',
         'views/onevoice_quiz_views.xml',
         'views/onevoice_menu.xml',

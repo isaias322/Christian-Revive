@@ -3,6 +3,7 @@ access_onevoice_devotional,onevoice.devotional,model_onevoice_devotional,base.gr
 access_onevoice_bible_study,onevoice.bible.study,model_onevoice_bible_study,base.group_user,1,1,1,1
 access_onevoice_volunteer,onevoice.volunteer,model_onevoice_volunteer,base.group_user,1,1,1,1
 access_onevoice_prayer_pledge,onevoice.prayer.pledge,model_onevoice_prayer_pledge,base.group_user,1,1,1,1
+access_onevoice_prayer_wall,onevoice.prayer.wall,model_onevoice_prayer_wall,base.group_user,1,1,1,1
 access_onevoice_flashcard_deck,onevoice.flashcard.deck,model_onevoice_flashcard_deck,base.group_user,1,1,1,1
 access_onevoice_flashcard,onevoice.flashcard,model_onevoice_flashcard,base.group_user,1,1,1,1
 access_onevoice_quiz,onevoice.quiz,model_onevoice_quiz,base.group_user,1,1,1,1

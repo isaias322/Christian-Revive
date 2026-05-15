@@ -1,44 +1,52 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
 
+    <!-- ─── Prayer Pledges list ──────────────────────────────── -->
+
     <record id="view_onevoice_prayer_pledge_list" model="ir.ui.view">
         <field name="name">onevoice.prayer.pledge.list</field>
         <field name="model">onevoice.prayer.pledge</field>
         <field name="arch" type="xml">
-            <list string="Prayer Wall">
+            <list string="Prayer Pledges" create="0" delete="0">
+                <field name="posted_date" string="Submitted"/>
                 <field name="pledge_name" string="Name"/>
-                <field name="pledge_text" string="Prayer"/>
-                <field name="pray_count" string="Prayed"/>
-                <field name="posted_date"/>
-                <field name="source_key"/>
+                <field name="prayer_focus" string="Focus"/>
+                <field name="prayer_duration" string="Duration"/>
+                <field name="admin_response" string="Response" optional="show"/>
             </list>
         </field>
     </record>
+
+    <!-- ─── Prayer Pledges form ──────────────────────────────── -->
 
     <record id="view_onevoice_prayer_pledge_form" model="ir.ui.view">
         <field name="name">onevoice.prayer.pledge.form</field>
         <field name="model">onevoice.prayer.pledge</field>
         <field name="arch" type="xml">
-            <form string="Prayer Wall Entry">
+            <form string="Prayer Pledge">
                 <sheet>
                     <group>
-                        <group>
-                            <field name="pledge_name" string="Name"/>
-                            <field name="pray_count" string="Prayed Count"/>
-                            <field name="posted_date"/>
-                            <field name="source_key"/>
-                            <field name="study_id"/>
+                        <group string="Pledge Details">
+                            <field name="pledge_name" string="Name" readonly="1"/>
+                            <field name="prayer_focus" string="Focus" readonly="1"/>
+                            <field name="prayer_duration" string="Duration" readonly="1"/>
+                            <field name="posted_date" string="Submitted" readonly="1"/>
+                            <field name="source_key" string="Session Key" readonly="1"/>
                         </group>
                     </group>
-                    <separator string="Prayer"/>
-                    <field name="pledge_text" placeholder="Prayer text…"/>
+                    <separator string="Admin Response / Kind Words"/>
+                    <field name="admin_response"
+                           placeholder="Write a kind word, encouragement, or confirm you are praying for this person…"
+                           nolabel="1"/>
                 </sheet>
             </form>
         </field>
     </record>
 
+    <!-- ─── Action ───────────────────────────────────────────── -->
+
     <record id="action_onevoice_prayer_pledge" model="ir.actions.act_window">
-        <field name="name">Prayer Wall</field>
+        <field name="name">Prayer Pledges</field>
         <field name="res_model">onevoice.prayer.pledge</field>
         <field name="view_mode">list,form</field>
     </record>

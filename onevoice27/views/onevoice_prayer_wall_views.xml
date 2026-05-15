@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- ─── Prayer Wall list ──────────────────────────────────── -->
+
+    <record id="view_onevoice_prayer_wall_list" model="ir.ui.view">
+        <field name="name">onevoice.prayer.wall.list</field>
+        <field name="model">onevoice.prayer.wall</field>
+        <field name="arch" type="xml">
+            <list string="Prayer Wall" delete="0">
+                <field name="posted_date" string="Posted"/>
+                <field name="name" string="Name"/>
+                <field name="request_text" string="Prayer Request"/>
+                <field name="pray_count" string="Praying"/>
+                <field name="is_active" string="Active"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ─── Prayer Wall form ──────────────────────────────────── -->
+
+    <record id="view_onevoice_prayer_wall_form" model="ir.ui.view">
+        <field name="name">onevoice.prayer.wall.form</field>
+        <field name="model">onevoice.prayer.wall</field>
+        <field name="arch" type="xml">
+            <form string="Prayer Wall Request">
+                <sheet>
+                    <group>
+                        <group string="Details">
+                            <field name="name"        string="Name"    readonly="1"/>
+                            <field name="pray_count"  string="Praying" readonly="1"/>
+                            <field name="posted_date" string="Posted"  readonly="1"/>
+                            <field name="is_active"   string="Active"/>
+                        </group>
+                    </group>
+                    <separator string="Prayer Request"/>
+                    <field name="request_text" nolabel="1" readonly="1"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ─── Action ───────────────────────────────────────────── -->
+
+    <record id="action_onevoice_prayer_wall" model="ir.actions.act_window">
+        <field name="name">Prayer Wall</field>
+        <field name="res_model">onevoice.prayer.wall</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

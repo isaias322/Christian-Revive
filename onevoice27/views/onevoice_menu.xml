@@ -32,10 +32,17 @@
 
     <menuitem
         id="menu_ov27_prayer_pledge"
-        name="Prayer Wall"
+        name="Prayer Pledges"
         action="action_onevoice_prayer_pledge"
         parent="menu_onevoice27_root"
         sequence="4"/>
+
+    <menuitem
+        id="menu_ov27_prayer_wall"
+        name="Prayer Wall"
+        action="action_onevoice_prayer_wall"
+        parent="menu_onevoice27_root"
+        sequence="5"/>
 
     <!-- ─── Flashcards &amp; Quizzes submenu ──────────────── -->
 

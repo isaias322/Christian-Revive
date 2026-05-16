@@ -82,6 +82,7 @@ class OneVoiceBaptismPledge(models.Model):
         ('submitted', 'Submitted'),
         ('approved', 'Approved'),
     ], string='Status', default='draft', required=True)
+    approval_date = fields.Date('Approval Date', readonly=True)
 
     # ── Computed ──────────────────────────────────────────────────────────
     full_name = fields.Char('Full Name', compute='_compute_full_name', store=True)
@@ -97,6 +98,7 @@ class OneVoiceBaptismPledge(models.Model):
         for r in self:
             if r.status == 'submitted':
                 r.status = 'approved'
+                r.approval_date = fields.Date.today()
 
     def action_reset_draft(self):
         for r in self:
@@ -201,6 +203,8 @@ class OneVoiceBaptismPledge(models.Model):
             'lifestyle_sabbath': record.lifestyle_sabbath,
             'lifestyle_stewardship': record.lifestyle_stewardship,
             'lifestyle_prayer_bible': record.lifestyle_prayer_bible,
+            # Meta
+            'approval_date': str(record.approval_date) if record.approval_date else '',
             # Photo
             'photo': record.photo.decode() if record.photo else '',
             # Step 5

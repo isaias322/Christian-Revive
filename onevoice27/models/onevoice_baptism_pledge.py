@@ -72,6 +72,9 @@ class OneVoiceBaptismPledge(models.Model):
     consent_ceremony_photo = fields.Boolean('I consent to photos/video at the ceremony')
     consent_membership = fields.Boolean('I wish to become a member of the Seventh-day Adventist Church')
 
+    # ── Photo ─────────────────────────────────────────────────────────────
+    photo = fields.Binary('Candidate Photo', attachment=True)
+
     # ── Metadata ──────────────────────────────────────────────────────────
     device_id = fields.Char('Device ID')
     status = fields.Selection([
@@ -175,6 +178,8 @@ class OneVoiceBaptismPledge(models.Model):
             'lifestyle_sabbath': record.lifestyle_sabbath,
             'lifestyle_stewardship': record.lifestyle_stewardship,
             'lifestyle_prayer_bible': record.lifestyle_prayer_bible,
+            # Photo
+            'photo': record.photo.decode() if record.photo else '',
             # Step 5
             'preferred_location': record.preferred_location or '',
             'preferred_date': str(record.preferred_date) if record.preferred_date else '',

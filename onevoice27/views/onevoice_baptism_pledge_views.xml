@@ -121,6 +121,11 @@
             </group>
           </group>
 
+          <!-- Photo -->
+          <group string="Candidate Photo">
+            <field name="photo" widget="image" colspan="2"/>
+          </group>
+
           <!-- Step 5: Ceremony Details -->
           <group string="Step 5 — Ceremony Details">
             <group>

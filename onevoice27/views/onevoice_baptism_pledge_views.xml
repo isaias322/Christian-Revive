@@ -6,7 +6,7 @@
     <field name="name">onevoice.baptism.pledge.list</field>
     <field name="model">onevoice.baptism.pledge</field>
     <field name="arch" type="xml">
-      <tree string="Baptism Pledges" decoration-success="status == 'approved'"
+      <list string="Baptism Pledges" decoration-success="status == 'approved'"
             decoration-info="status == 'submitted'" decoration-muted="status == 'draft'">
         <field name="full_name"/>
         <field name="date_of_birth"/>
@@ -17,7 +17,7 @@
         <field name="preferred_location"/>
         <field name="status"/>
         <field name="create_date" string="Submitted On"/>
-      </tree>
+      </list>
     </field>
   </record>
 
@@ -68,16 +68,16 @@
               <field name="salvation_date"/>
               <field name="completed_bible_studies"/>
               <field name="study_conductor"
-                     attrs="{'invisible': [('completed_bible_studies', '=', False)]}"/>
+                     invisible="not completed_bible_studies"/>
               <field name="study_duration_value"
-                     attrs="{'invisible': [('completed_bible_studies', '=', False)]}"/>
+                     invisible="not completed_bible_studies"/>
               <field name="study_duration_unit"
-                     attrs="{'invisible': [('completed_bible_studies', '=', False)]}"/>
+                     invisible="not completed_bible_studies"/>
             </group>
             <group>
               <field name="attended_evangelistic_series"/>
               <field name="evangelistic_series_details"
-                     attrs="{'invisible': [('attended_evangelistic_series', '=', False)]}"/>
+                     invisible="not attended_evangelistic_series"/>
             </group>
           </group>
           <group>
@@ -148,7 +148,7 @@
   <record id="action_onevoice_baptism_pledge" model="ir.actions.act_window">
     <field name="name">Baptism Pledges</field>
     <field name="res_model">onevoice.baptism.pledge</field>
-    <field name="view_mode">tree,form</field>
+    <field name="view_mode">list,form</field>
     <field name="context">{}</field>
   </record>
 

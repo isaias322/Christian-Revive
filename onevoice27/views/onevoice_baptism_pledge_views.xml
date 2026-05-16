@@ -28,6 +28,10 @@
     <field name="arch" type="xml">
       <form string="Baptism Pledge">
         <header>
+          <button name="action_approve" string="Approve Pledge" type="object"
+                  class="btn-primary" invisible="status != 'submitted'"/>
+          <button name="action_reset_draft" string="Reset to Draft" type="object"
+                  invisible="status != 'submitted'"/>
           <field name="status" widget="statusbar"
                  statusbar_visible="draft,submitted,approved"/>
         </header>

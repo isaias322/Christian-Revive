@@ -92,11 +92,25 @@ class OneVoiceBaptismPledge(models.Model):
             parts = [r.first_name, r.middle_name, r.last_name]
             r.full_name = ' '.join(p for p in parts if p)
 
+    # ── Admin actions ─────────────────────────────────────────────────────
+    def action_approve(self):
+        for r in self:
+            if r.status == 'submitted':
+                r.status = 'approved'
+
+    def action_reset_draft(self):
+        for r in self:
+            r.status = 'draft'
+
     # ── App API ───────────────────────────────────────────────────────────
     @api.model
     def app_submit_baptism_pledge(self, vals, record_id=None):
-        """Create or update a baptism pledge record from the Flutter app."""
-        # Coerce boolean strings that may come from JSON
+        """Create or update a baptism pledge record from the Flutter app.
+
+        Enforces one-pledge-per-device: if no record_id is provided but vals
+        contains a device_id, we search for an existing record first so a
+        reinstall or cleared-prefs cannot produce a duplicate.
+        """
         bool_fields = [
             'completed_bible_studies', 'attended_evangelistic_series',
             'vow_accept_bible', 'vow_one_god', 'vow_ten_commandments',
@@ -115,11 +129,20 @@ class OneVoiceBaptismPledge(models.Model):
                 if isinstance(v, str):
                     vals[f] = v.lower() in ('true', '1', 'yes')
 
+        # Explicit record_id → update
         if record_id:
             record = self.browse(record_id)
             if record.exists():
                 record.write(vals)
                 return {'id': record.id, 'status': record.status}
+
+        # No record_id → check device_id to prevent duplicates
+        device_id = vals.get('device_id', '').strip()
+        if device_id:
+            existing = self.search([('device_id', '=', device_id)], limit=1)
+            if existing:
+                existing.write(vals)
+                return {'id': existing.id, 'status': existing.status}
 
         record = self.create(vals)
         return {'id': record.id, 'status': record.status}

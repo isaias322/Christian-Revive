@@ -14,3 +14,4 @@ access_onevoice_flashcard_attempt,onevoice.flashcard.attempt,model_onevoice_flas
 access_onevoice_device,onevoice.device,model_onevoice_device,base.group_user,1,1,1,1
 access_onevoice_translation,onevoice.translation,model_onevoice_translation,base.group_user,1,1,1,1
 access_onevoice_roman_override,onevoice.roman.override,model_onevoice_roman_override,base.group_user,1,1,1,1
+access_onevoice_baptism_pledge,onevoice.baptism.pledge,model_onevoice_baptism_pledge,base.group_user,1,1,1,1

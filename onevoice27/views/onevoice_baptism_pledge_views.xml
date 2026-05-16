@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <!-- ── List View ───────────────────────────────────────────────────── -->
+  <record id="view_onevoice_baptism_pledge_list" model="ir.ui.view">
+    <field name="name">onevoice.baptism.pledge.list</field>
+    <field name="model">onevoice.baptism.pledge</field>
+    <field name="arch" type="xml">
+      <tree string="Baptism Pledges" decoration-success="status == 'approved'"
+            decoration-info="status == 'submitted'" decoration-muted="status == 'draft'">
+        <field name="full_name"/>
+        <field name="date_of_birth"/>
+        <field name="gender"/>
+        <field name="phone"/>
+        <field name="email"/>
+        <field name="preferred_date"/>
+        <field name="preferred_location"/>
+        <field name="status"/>
+        <field name="create_date" string="Submitted On"/>
+      </tree>
+    </field>
+  </record>
+
+  <!-- ── Form View ──────────────────────────────────────────────────── -->
+  <record id="view_onevoice_baptism_pledge_form" model="ir.ui.view">
+    <field name="name">onevoice.baptism.pledge.form</field>
+    <field name="model">onevoice.baptism.pledge</field>
+    <field name="arch" type="xml">
+      <form string="Baptism Pledge">
+        <header>
+          <field name="status" widget="statusbar"
+                 statusbar_visible="draft,submitted,approved"/>
+        </header>
+        <sheet>
+          <div class="oe_title">
+            <h1><field name="full_name" readonly="1"/></h1>
+          </div>
+
+          <!-- Step 1: Candidate Info -->
+          <group string="Step 1 — Candidate Information">
+            <group>
+              <field name="first_name"/>
+              <field name="middle_name"/>
+              <field name="last_name"/>
+              <field name="date_of_birth"/>
+              <field name="gender"/>
+            </group>
+            <group>
+              <field name="phone"/>
+              <field name="email"/>
+              <field name="occupation_or_grade"/>
+            </group>
+          </group>
+          <group string="Address">
+            <group>
+              <field name="street"/>
+              <field name="city"/>
+            </group>
+            <group>
+              <field name="state_province"/>
+              <field name="zip_code"/>
+            </group>
+          </group>
+
+          <!-- Step 2: Spiritual Journey -->
+          <group string="Step 2 — Spiritual Journey">
+            <group>
+              <field name="salvation_date"/>
+              <field name="completed_bible_studies"/>
+              <field name="study_conductor"
+                     attrs="{'invisible': [('completed_bible_studies', '=', False)]}"/>
+              <field name="study_duration_value"
+                     attrs="{'invisible': [('completed_bible_studies', '=', False)]}"/>
+              <field name="study_duration_unit"
+                     attrs="{'invisible': [('completed_bible_studies', '=', False)]}"/>
+            </group>
+            <group>
+              <field name="attended_evangelistic_series"/>
+              <field name="evangelistic_series_details"
+                     attrs="{'invisible': [('attended_evangelistic_series', '=', False)]}"/>
+            </group>
+          </group>
+          <group>
+            <field name="conversion_experience" colspan="2"/>
+          </group>
+
+          <!-- Step 3: 13 SDA Vows -->
+          <group string="Step 3 — 13 SDA Vows">
+            <group>
+              <field name="vow_accept_bible"/>
+              <field name="vow_one_god"/>
+              <field name="vow_ten_commandments"/>
+              <field name="vow_sabbath"/>
+              <field name="vow_second_coming"/>
+              <field name="vow_death_state"/>
+              <field name="vow_baptism"/>
+            </group>
+            <group>
+              <field name="vow_health"/>
+              <field name="vow_tithe"/>
+              <field name="vow_spiritual_gifts"/>
+              <field name="vow_remnant_church"/>
+              <field name="vow_unity"/>
+              <field name="vow_readiness"/>
+            </group>
+          </group>
+
+          <!-- Step 4: Lifestyle Commitments -->
+          <group string="Step 4 — Lifestyle Commitments">
+            <group>
+              <field name="lifestyle_holy_spirit_temple"/>
+              <field name="lifestyle_no_alcohol"/>
+              <field name="lifestyle_no_tobacco"/>
+              <field name="lifestyle_no_drugs"/>
+            </group>
+            <group>
+              <field name="lifestyle_clean_foods"/>
+              <field name="lifestyle_sabbath"/>
+              <field name="lifestyle_stewardship"/>
+              <field name="lifestyle_prayer_bible"/>
+            </group>
+          </group>
+
+          <!-- Step 5: Ceremony Details -->
+          <group string="Step 5 — Ceremony Details">
+            <group>
+              <field name="preferred_location"/>
+              <field name="preferred_date"/>
+            </group>
+            <group>
+              <field name="consent_statement_true"/>
+              <field name="consent_pastoral_contact"/>
+              <field name="consent_ceremony_photo"/>
+              <field name="consent_membership"/>
+            </group>
+          </group>
+
+          <!-- Internal -->
+          <group string="Internal">
+            <field name="device_id" readonly="1"/>
+          </group>
+        </sheet>
+      </form>
+    </field>
+  </record>
+
+  <!-- ── Action ─────────────────────────────────────────────────────── -->
+  <record id="action_onevoice_baptism_pledge" model="ir.actions.act_window">
+    <field name="name">Baptism Pledges</field>
+    <field name="res_model">onevoice.baptism.pledge</field>
+    <field name="view_mode">tree,form</field>
+    <field name="context">{}</field>
+  </record>
+
+</odoo>

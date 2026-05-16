@@ -44,6 +44,13 @@
         parent="menu_onevoice27_root"
         sequence="5"/>
 
+    <menuitem
+        id="menu_ov27_baptism_pledge"
+        name="Baptism Pledges"
+        action="action_onevoice_baptism_pledge"
+        parent="menu_onevoice27_root"
+        sequence="6"/>
+
     <!-- ─── Flashcards &amp; Quizzes submenu ──────────────── -->
 
     <menuitem

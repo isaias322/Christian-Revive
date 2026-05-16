@@ -13,3 +13,4 @@ access_onevoice_prayer_wall,onevoice.prayer.wall,model_onevoice_prayer_wall,base
 access_onevoice_flashcard_attempt,onevoice.flashcard.attempt,model_onevoice_flashcard_attempt,base.group_user,1,1,1,1
 access_onevoice_device,onevoice.device,model_onevoice_device,base.group_user,1,1,1,1
 access_onevoice_translation,onevoice.translation,model_onevoice_translation,base.group_user,1,1,1,1
+access_onevoice_roman_override,onevoice.roman.override,model_onevoice_roman_override,base.group_user,1,1,1,1

@@ -108,6 +108,13 @@
         parent="menu_ov27_learn"
         sequence="7"/>
 
+    <menuitem
+        id="menu_ov27_roman_overrides"
+        name="Roman Urdu Overrides"
+        action="action_onevoice_roman_override"
+        parent="menu_ov27_learn"
+        sequence="8"/>
+
     <!-- ─── App Notifications ──────────────────────────────── -->
 
     <record id="action_ov27_app_notifications" model="ir.actions.act_window">

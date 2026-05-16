@@ -27,6 +27,7 @@
         'views/onevoice_flashcard_views.xml',
         'views/onevoice_quiz_views.xml',
         'views/onevoice_translation_views.xml',
+        'views/onevoice_roman_override_views.xml',
         'views/onevoice_menu.xml',
         'data/onevoice_devotional_data.xml',
     ],

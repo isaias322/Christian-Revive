@@ -75,6 +75,9 @@ class OneVoiceBaptismPledge(models.Model):
     # ── Photo ─────────────────────────────────────────────────────────────
     photo = fields.Binary('Candidate Photo', attachment=True)
 
+    # ── Link to Spiritual Prep contact ────────────────────────────────────
+    study_contact_id = fields.Integer('Study Contact ID', index=True, default=0)
+
     # ── Metadata ──────────────────────────────────────────────────────────
     device_id = fields.Char('Device ID')
     status = fields.Selection([
@@ -153,7 +156,15 @@ class OneVoiceBaptismPledge(models.Model):
                 record.write(vals)
                 return {'id': record.id, 'status': record.status}
 
-        # No record_id → check device_id to prevent duplicates
+        # No record_id → check study_contact_id first (one pledge per contact)
+        contact_id = vals.get('study_contact_id', 0)
+        if contact_id:
+            existing = self.search([('study_contact_id', '=', int(contact_id))], limit=1)
+            if existing:
+                existing.write(vals)
+                return {'id': existing.id, 'status': existing.status}
+
+        # Fallback: check device_id to prevent duplicates on legacy records
         device_id = vals.get('device_id', '').strip()
         if device_id:
             existing = self.search([('device_id', '=', device_id)], limit=1)
@@ -163,6 +174,27 @@ class OneVoiceBaptismPledge(models.Model):
 
         record = self.create(vals)
         return {'id': record.id, 'status': record.status}
+
+    @api.model
+    def app_get_pledge_by_contact(self, contact_id):
+        """Return the pledge for a given study contact ID, or {} if none exists."""
+        if not contact_id:
+            return {}
+        record = self.search([('study_contact_id', '=', int(contact_id))], limit=1)
+        if not record:
+            return {}
+        return self.app_get_baptism_pledge(record.id)
+
+    @api.model
+    def app_get_pledges_summary(self, contact_ids):
+        """Return {contact_id: status} for a list of contact IDs."""
+        if not contact_ids:
+            return {}
+        records = self.search_read(
+            [('study_contact_id', 'in', contact_ids)],
+            ['study_contact_id', 'status'],
+        )
+        return {r['study_contact_id']: r['status'] for r in records}
 
     @api.model
     def app_get_baptism_pledge(self, record_id):

@@ -143,6 +143,7 @@
 
           <!-- Internal -->
           <group string="Internal">
+            <field name="study_contact_id" readonly="1"/>
             <field name="device_id" readonly="1"/>
           </group>
         </sheet>

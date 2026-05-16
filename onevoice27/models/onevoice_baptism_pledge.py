@@ -113,6 +113,13 @@ class OneVoiceBaptismPledge(models.Model):
         contains a device_id, we search for an existing record first so a
         reinstall or cleared-prefs cannot produce a duplicate.
         """
+        # Safety: older app versions may pass record_id inside vals dict
+        if not record_id:
+            record_id = vals.pop('record_id', None)
+        else:
+            vals.pop('record_id', None)  # ensure record_id never reaches write()
+
+        # Coerce boolean strings
         bool_fields = [
             'completed_bible_studies', 'attended_evangelistic_series',
             'vow_accept_bible', 'vow_one_god', 'vow_ten_commandments',
@@ -131,9 +138,17 @@ class OneVoiceBaptismPledge(models.Model):
                 if isinstance(v, str):
                     vals[f] = v.lower() in ('true', '1', 'yes')
 
+        # Convert empty strings to False for Date and Binary fields so ORM
+        # does not reject the write (Odoo Date/Binary reject '' but accept False)
+        for f in ('date_of_birth', 'salvation_date', 'preferred_date', 'approval_date'):
+            if vals.get(f) == '':
+                vals[f] = False
+        if vals.get('photo') == '':
+            vals.pop('photo')  # omit rather than clear existing photo
+
         # Explicit record_id → update
         if record_id:
-            record = self.browse(record_id)
+            record = self.browse(int(record_id))
             if record.exists():
                 record.write(vals)
                 return {'id': record.id, 'status': record.status}

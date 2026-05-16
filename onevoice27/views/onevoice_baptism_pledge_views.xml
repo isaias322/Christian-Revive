@@ -36,6 +36,8 @@
                  statusbar_visible="draft,submitted,approved"/>
         </header>
         <sheet>
+          <field name="photo" widget="image" class="oe_avatar"
+                 options="{'size': [64, 64]}"/>
           <div class="oe_title">
             <h1><field name="full_name" readonly="1"/></h1>
           </div>
@@ -123,11 +125,6 @@
               <field name="lifestyle_stewardship"/>
               <field name="lifestyle_prayer_bible"/>
             </group>
-          </group>
-
-          <!-- Photo -->
-          <group string="Candidate Photo">
-            <field name="photo" widget="image" colspan="2"/>
           </group>
 
           <!-- Step 5: Ceremony Details -->

@@ -164,10 +164,14 @@ class OneVoiceBaptismPledge(models.Model):
                 existing.write(vals)
                 return {'id': existing.id, 'status': existing.status}
 
-        # Fallback: check device_id to prevent duplicates on legacy records
+        # Fallback: check device_id only for legacy records that have no contact linked.
+        # Must NOT match records that belong to a different contact on the same device.
         device_id = vals.get('device_id', '').strip()
         if device_id:
-            existing = self.search([('device_id', '=', device_id)], limit=1)
+            existing = self.search([
+                ('device_id', '=', device_id),
+                ('study_contact_id', '=', 0),
+            ], limit=1)
             if existing:
                 existing.write(vals)
                 return {'id': existing.id, 'status': existing.status}

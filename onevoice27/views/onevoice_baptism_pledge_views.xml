@@ -16,8 +16,6 @@
         <filter string="Submitted" name="submitted" domain="[('status','=','submitted')]"/>
         <filter string="Approved"  name="approved"  domain="[('status','=','approved')]"/>
         <separator/>
-        <filter string="This Month" name="this_month"
-                domain="[('create_date','&gt;=', (context_today() + relativedelta(day=1)).strftime('%Y-%m-%d'))]"/>
         <filter string="Preferred Date Set" name="has_date"
                 domain="[('preferred_date','!=',False)]"/>
 

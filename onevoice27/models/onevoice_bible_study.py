@@ -127,6 +127,18 @@ class OneVoiceBibleStudy(models.Model):
         return {'success': True, 'id': record.id}
 
     @api.model
+    def app_update_registration(self, record_id, session_key, vals):
+        """Update contact info fields (name, phone, email, church, location). Owner only."""
+        record = self._get_own_record(record_id, session_key)
+        if record is None:
+            return {'error': 'Record not found or access denied'}
+        allowed = {'name', 'phone', 'email', 'church_name', 'location'}
+        clean = {k: v for k, v in vals.items() if k in allowed}
+        if clean:
+            record.write(clean)
+        return {'success': True, 'id': record.id}
+
+    @api.model
     def app_update_pledge_testimony_count(self, record_id, prayer_pledge_count,
                                           testimony_count,
                                           prayer_pledges_details=None,

@@ -10,6 +10,13 @@
     <!-- ─── Core sections ──────────────────────────────────── -->
 
     <menuitem
+        id="menu_ov27_baptism_dashboard"
+        name="Baptism Dashboard"
+        action="action_onevoice_baptism_dashboard"
+        parent="menu_onevoice27_root"
+        sequence="0"/>
+
+    <menuitem
         id="menu_ov27_devotional"
         name="40-Day Devotional"
         action="action_onevoice_devotional"

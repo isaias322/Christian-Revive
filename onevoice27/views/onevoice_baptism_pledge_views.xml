@@ -1,6 +1,128 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
+  <!-- ── Search View ─────────────────────────────────────────────────── -->
+  <record id="view_onevoice_baptism_pledge_search" model="ir.ui.view">
+    <field name="name">onevoice.baptism.pledge.search</field>
+    <field name="model">onevoice.baptism.pledge</field>
+    <field name="arch" type="xml">
+      <search string="Baptism Pledges">
+        <field name="full_name" string="Name"/>
+        <field name="phone"/>
+        <field name="email"/>
+        <field name="preferred_location"/>
+
+        <filter string="Draft"     name="draft"     domain="[('status','=','draft')]"/>
+        <filter string="Submitted" name="submitted" domain="[('status','=','submitted')]"/>
+        <filter string="Approved"  name="approved"  domain="[('status','=','approved')]"/>
+        <separator/>
+        <filter string="This Month" name="this_month"
+                domain="[('create_date','&gt;=', (context_today() + relativedelta(day=1)).strftime('%Y-%m-%d'))]"/>
+        <filter string="Preferred Date Set" name="has_date"
+                domain="[('preferred_date','!=',False)]"/>
+
+        <group expand="0" string="Group By">
+          <filter string="Status"         name="group_status"   context="{'group_by':'status'}"/>
+          <filter string="Gender"         name="group_gender"   context="{'group_by':'gender'}"/>
+          <filter string="Preferred Date" name="group_pref_date" context="{'group_by':'preferred_date:month'}"/>
+          <filter string="Submitted On"   name="group_created"  context="{'group_by':'create_date:month'}"/>
+        </group>
+      </search>
+    </field>
+  </record>
+
+  <!-- ── Kanban View ────────────────────────────────────────────────── -->
+  <record id="view_onevoice_baptism_pledge_kanban" model="ir.ui.view">
+    <field name="name">onevoice.baptism.pledge.kanban</field>
+    <field name="model">onevoice.baptism.pledge</field>
+    <field name="arch" type="xml">
+      <kanban default_group_by="status" class="o_kanban_small_column"
+              group_create="false" quick_create="false">
+        <field name="full_name"/>
+        <field name="photo"/>
+        <field name="status"/>
+        <field name="gender"/>
+        <field name="phone"/>
+        <field name="email"/>
+        <field name="preferred_date"/>
+        <field name="preferred_location"/>
+        <field name="create_date"/>
+        <progressbar field="status"
+                     colors='{"draft":"200","submitted":"info","approved":"success"}'/>
+        <templates>
+          <t t-name="card">
+            <div class="d-flex align-items-center gap-3 mb-2">
+              <img t-if="record.photo.raw_value"
+                   t-att-src="'data:image/png;base64,' + record.photo.raw_value"
+                   class="rounded-circle"
+                   style="width:48px;height:48px;object-fit:cover;border:2px solid #ccc;"/>
+              <div t-else=""
+                   class="rounded-circle bg-secondary d-flex align-items-center justify-content-center"
+                   style="width:48px;height:48px;flex-shrink:0;">
+                <i class="fa fa-user text-white" style="font-size:20px;"/>
+              </div>
+              <div>
+                <strong class="o_kanban_record_title">
+                  <field name="full_name"/>
+                </strong>
+                <div class="text-muted small">
+                  <field name="gender" widget="badge"/>
+                </div>
+              </div>
+            </div>
+
+            <div t-if="record.phone.raw_value" class="small text-muted mb-1">
+              <i class="fa fa-phone me-1"/>
+              <field name="phone"/>
+            </div>
+            <div t-if="record.preferred_date.raw_value" class="small text-muted mb-1">
+              <i class="fa fa-calendar me-1"/>
+              <field name="preferred_date"/>
+            </div>
+            <div t-if="record.preferred_location.raw_value" class="small text-muted">
+              <i class="fa fa-map-marker me-1"/>
+              <field name="preferred_location"/>
+            </div>
+
+            <div class="o_kanban_record_bottom mt-2">
+              <div class="oe_kanban_bottom_left small text-muted">
+                <field name="create_date" widget="date"/>
+              </div>
+              <div class="oe_kanban_bottom_right">
+                <field name="status" widget="label_selection"
+                       options="{'classes': {'draft':'default','submitted':'info','approved':'success'}}"/>
+              </div>
+            </div>
+          </t>
+        </templates>
+      </kanban>
+    </field>
+  </record>
+
+  <!-- ── Graph View ─────────────────────────────────────────────────── -->
+  <record id="view_onevoice_baptism_pledge_graph" model="ir.ui.view">
+    <field name="name">onevoice.baptism.pledge.graph</field>
+    <field name="model">onevoice.baptism.pledge</field>
+    <field name="arch" type="xml">
+      <graph string="Baptism Pledges" type="bar" stacked="True">
+        <field name="create_date" interval="month" type="row"/>
+        <field name="status" type="col"/>
+      </graph>
+    </field>
+  </record>
+
+  <!-- ── Pivot View ─────────────────────────────────────────────────── -->
+  <record id="view_onevoice_baptism_pledge_pivot" model="ir.ui.view">
+    <field name="name">onevoice.baptism.pledge.pivot</field>
+    <field name="model">onevoice.baptism.pledge</field>
+    <field name="arch" type="xml">
+      <pivot string="Baptism Pledges" display_quantity="true">
+        <field name="status" type="col"/>
+        <field name="gender" type="row"/>
+      </pivot>
+    </field>
+  </record>
+
   <!-- ── List View ───────────────────────────────────────────────────── -->
   <record id="view_onevoice_baptism_pledge_list" model="ir.ui.view">
     <field name="name">onevoice.baptism.pledge.list</field>
@@ -15,7 +137,10 @@
         <field name="email"/>
         <field name="preferred_date"/>
         <field name="preferred_location"/>
-        <field name="status"/>
+        <field name="status" widget="badge"
+               decoration-success="status == 'approved'"
+               decoration-info="status == 'submitted'"
+               decoration-muted="status == 'draft'"/>
         <field name="create_date" string="Submitted On"/>
       </list>
     </field>
@@ -36,10 +161,33 @@
                  statusbar_visible="draft,submitted,approved"/>
         </header>
         <sheet>
-          <field name="photo" widget="image" class="oe_avatar"
-                 options="{'size': [64, 64]}"/>
-          <div class="oe_title">
-            <h1><field name="full_name" readonly="1"/></h1>
+          <!-- Ribbon badges -->
+          <widget name="web_ribbon" text="Approved"  bg_color="text-bg-success"
+                  invisible="status != 'approved'"/>
+          <widget name="web_ribbon" text="Submitted" bg_color="text-bg-info"
+                  invisible="status != 'submitted'"/>
+
+          <!-- Hero: photo + name -->
+          <div class="row mb-4">
+            <div class="col-auto">
+              <field name="photo" widget="image"
+                     options="{'size': [160, 160], 'preview_image': 'photo'}"
+                     style="width:160px;height:160px;object-fit:cover;border-radius:12px;border:3px solid #dee2e6;display:block;"/>
+            </div>
+            <div class="col d-flex flex-column justify-content-center ps-3">
+              <div class="oe_title">
+                <h1 class="mb-1"><field name="full_name" readonly="1"/></h1>
+              </div>
+              <div class="d-flex gap-2 flex-wrap mt-1">
+                <field name="gender" widget="badge"/>
+                <span t-if="phone" class="badge text-bg-secondary">
+                  <i class="fa fa-phone me-1"/><field name="phone" readonly="1"/>
+                </span>
+              </div>
+              <div t-if="email" class="text-muted small mt-1">
+                <i class="fa fa-envelope me-1"/><field name="email" readonly="1"/>
+              </div>
+            </div>
           </div>
 
           <!-- Step 1: Candidate Info -->
@@ -132,6 +280,7 @@
             <group>
               <field name="preferred_location"/>
               <field name="preferred_date"/>
+              <field name="approval_date" readonly="1"/>
             </group>
             <group>
               <field name="consent_statement_true"/>
@@ -151,11 +300,19 @@
     </field>
   </record>
 
-  <!-- ── Action ─────────────────────────────────────────────────────── -->
+  <!-- ── Dashboard Action (kanban + graph + pivot default) ─────────── -->
+  <record id="action_onevoice_baptism_dashboard" model="ir.actions.act_window">
+    <field name="name">Baptism Dashboard</field>
+    <field name="res_model">onevoice.baptism.pledge</field>
+    <field name="view_mode">kanban,graph,pivot,list,form</field>
+    <field name="context">{'search_default_group_status': 1}</field>
+  </record>
+
+  <!-- ── List/Form Action (for the Pledges submenu) ────────────────── -->
   <record id="action_onevoice_baptism_pledge" model="ir.actions.act_window">
     <field name="name">Baptism Pledges</field>
     <field name="res_model">onevoice.baptism.pledge</field>
-    <field name="view_mode">list,form</field>
+    <field name="view_mode">list,form,kanban,graph,pivot</field>
     <field name="context">{}</field>
   </record>
 

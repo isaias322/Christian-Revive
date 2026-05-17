@@ -74,24 +74,16 @@ class OneVoiceBibleStudy(models.Model):
     @api.model
     def app_search_registrations(self, session_key):
         """
-        Return all registrations that belong to this session_key.
-        Admins additionally get every record regardless of session_key.
+        Return only registrations that belong to this session_key.
+        Admin access to all records is via the Odoo web UI, not this endpoint.
         """
         if not session_key:
             return []
 
-        is_admin = self._caller_is_admin()
-
-        if is_admin:
-            # Admins see everything
-            records = self.sudo().search([], order='create_date desc')
-        else:
-            # Regular users only see records matching their session_key
-            records = self.sudo().search(
-                [('session_key', '=', session_key)],
-                order='create_date desc',
-            )
-
+        records = self.sudo().search(
+            [('session_key', '=', session_key)],
+            order='create_date desc',
+        )
         return [self._format_record(r) for r in records]
 
     @api.model

@@ -87,6 +87,19 @@ class OneVoiceBibleStudy(models.Model):
         return [self._format_record(r) for r in records]
 
     @api.model
+    def app_migrate_session_key(self, old_key, new_key):
+        """
+        Re-tag records from a device-specific key to a profile-based key.
+        Called once when the app detects the profile key has changed format.
+        """
+        if not old_key or not new_key or old_key == new_key:
+            return {'migrated': 0}
+        records = self.sudo().search([('session_key', '=', old_key)])
+        if records:
+            records.write({'session_key': new_key})
+        return {'migrated': len(records)}
+
+    @api.model
     def app_create_registration(self, vals):
         """
         Create a new registration.  session_key is stored so the device

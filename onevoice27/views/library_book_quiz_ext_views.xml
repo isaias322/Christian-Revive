@@ -13,7 +13,7 @@
                                options="{'no_create_edit': True}"
                                placeholder="Link the Urdu PDF book record…"/>
                     </group>
-                    <p class="text-muted" attrs="{'invisible': [('urdu_version_id', '!=', False)]}">
+                    <p class="text-muted" invisible="urdu_version_id">
                         When set, the app shows an English ↔ Urdu toggle in the book viewer.
                         Tapping Urdu opens this book's Urdu PDF directly — no translation needed.
                     </p>

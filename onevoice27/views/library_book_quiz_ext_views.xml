@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Extend the library.book form to add Quiz and Urdu Version fields -->
+    <record id="view_library_book_quiz_ext_form" model="ir.ui.view">
+        <field name="name">library.book.quiz.ext.form</field>
+        <field name="model">library.book</field>
+        <field name="inherit_id" ref="volunteer_and_donation_management.view_book_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="App Settings">
+                    <group string="Urdu Version">
+                        <field name="urdu_version_id"
+                               options="{'no_create_edit': True}"
+                               placeholder="Link the Urdu PDF book record…"/>
+                    </group>
+                    <p class="text-muted" attrs="{'invisible': [('urdu_version_id', '!=', False)]}">
+                        When set, the app shows an English ↔ Urdu toggle in the book viewer.
+                        Tapping Urdu opens this book's Urdu PDF directly — no translation needed.
+                    </p>
+                    <group string="Book Quiz">
+                        <field name="quiz_id"
+                               options="{'no_create_edit': True}"
+                               placeholder="Select a quiz to attach to this book…"/>
+                    </group>
+                    <p class="text-muted">
+                        Users see a "Take Quiz" button after viewing this book in the app.
+                        Create quizzes under <strong>Flashcards &amp; Quizzes → All Quizzes</strong>.
+                    </p>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

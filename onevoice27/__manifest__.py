@@ -31,6 +31,7 @@
         'views/onevoice_event_views.xml',
         'views/onevoice_baptism_pledge_views.xml',
         'views/onevoice_notification_views.xml',
+        'views/library_book_quiz_ext_views.xml',
         'views/onevoice_menu.xml',
         'data/onevoice_devotional_data.xml',
     ],

@@ -58,6 +58,13 @@
         parent="menu_onevoice27_root"
         sequence="6"/>
 
+    <menuitem
+        id="menu_ov27_events"
+        name="Events"
+        action="action_onevoice_event"
+        parent="menu_onevoice27_root"
+        sequence="4"/>
+
     <!-- ─── Flashcards &amp; Quizzes submenu ──────────────── -->
 
     <menuitem

@@ -221,5 +221,13 @@
         action="action_app_profiles"
         sequence="99"/>
 
+    <!-- Push Notifications -->
+    <menuitem
+        id="menu_revive_push_notifications"
+        name="Push Notifications"
+        parent="menu_volunteer_root"
+        action="action_revive_notification"
+        sequence="90"/>
+
 </odoo>
 

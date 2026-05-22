@@ -36,6 +36,7 @@
         'views/members.xml',
         'views/donate.xml',
         'views/volunteers_skills.xml',
+        'views/push_notification.xml',
         'views/menu.xml',
     ],
     'installable': True,

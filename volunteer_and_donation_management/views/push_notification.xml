@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- List view -->
+    <record id="view_revive_notification_list" model="ir.ui.view">
+        <field name="name">revive.notification.list</field>
+        <field name="model">revive.notification</field>
+        <field name="arch" type="xml">
+            <list string="Push Notifications"
+                  decoration-success="status == 'sent'"
+                  decoration-danger="status == 'error'"
+                  decoration-muted="status == 'draft'">
+                <field name="title"/>
+                <field name="target"/>
+                <field name="status"/>
+                <field name="sent_count" string="Reached"/>
+                <field name="sent_at" optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form view -->
+    <record id="view_revive_notification_form" model="ir.ui.view">
+        <field name="name">revive.notification.form</field>
+        <field name="model">revive.notification</field>
+        <field name="arch" type="xml">
+            <form string="Push Notification">
+
+                <header>
+                    <button name="action_send"
+                            string="Send Notification"
+                            type="object"
+                            class="btn-primary"
+                            invisible="status != 'draft'"
+                            confirm="Are you sure you want to send this notification now?"/>
+
+                    <button name="action_reset_draft"
+                            string="Reset to Draft"
+                            type="object"
+                            invisible="status != 'error'"/>
+
+                    <field name="status" widget="statusbar"
+                           statusbar_visible="draft,sent"/>
+                </header>
+
+                <sheet>
+                    <div class="alert alert-success" role="alert"
+                         invisible="status != 'sent'">
+                        <strong>Sent!</strong>
+                        Notification delivered at
+                        <field name="sent_at" readonly="1" nolabel="1"/>
+                        — reached <field name="sent_count" readonly="1" nolabel="1"/> device(s).
+                    </div>
+
+                    <div class="alert alert-danger" role="alert"
+                         invisible="status != 'error'">
+                        <strong>Send Failed.</strong>
+                        <field name="error_msg" readonly="1" nolabel="1"/>
+                    </div>
+
+                    <group string="Compose Notification">
+                        <field name="title"
+                               placeholder="e.g. Sunday Service Reminder"/>
+                        <field name="message"
+                               placeholder="Write your message here…"
+                               widget="text"/>
+                    </group>
+
+                    <group string="Target">
+                        <field name="target" widget="radio"/>
+                        <field name="device_token"
+                               invisible="target != 'device'"
+                               required="target == 'device'"
+                               placeholder="Paste the device FCM token here"/>
+                    </group>
+                </sheet>
+
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_revive_notification" model="ir.actions.act_window">
+        <field name="name">Push Notifications</field>
+        <field name="res_model">revive.notification</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'default_target': 'all'}</field>
+    </record>
+
+</odoo>

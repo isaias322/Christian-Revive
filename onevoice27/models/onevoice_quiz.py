@@ -20,6 +20,7 @@ class OnevoiceQuiz(models.Model):
         for quiz in self:
             quiz.question_count = len(quiz.question_ids)
 
+    @api.depends()
     def _compute_attempt_count(self):
         for quiz in self:
             quiz.attempt_count = self.env['onevoice.quiz.attempt'].search_count(

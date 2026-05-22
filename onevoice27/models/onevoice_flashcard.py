@@ -20,6 +20,7 @@ class OnevoiceFlashcardDeck(models.Model):
         for deck in self:
             deck.card_count = len(deck.card_ids)
 
+    @api.depends()
     def _compute_attempt_count(self):
         for deck in self:
             deck.attempt_count = self.env['onevoice.flashcard.attempt'].search_count(

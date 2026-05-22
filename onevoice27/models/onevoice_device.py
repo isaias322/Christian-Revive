@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from odoo import models, fields, api
-from datetime import datetime
 
 
 class OneVoiceDevice(models.Model):
@@ -35,7 +34,7 @@ class OneVoiceDevice(models.Model):
         existing = self.sudo().search([('session_key', '=', session_key)], limit=1)
         data = {
             'fcm_token': fcm_token,
-            'last_seen': datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S'),
+            'last_seen': fields.Datetime.now(),
         }
         if vals.get('device_label'):
             data['device_label'] = vals['device_label']

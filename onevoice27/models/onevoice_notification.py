@@ -47,66 +47,113 @@ class OneVoiceNotification(models.Model):
         if self.status == 'sent':
             raise UserError('This notification has already been sent.')
 
-        server_key = self.env['ir.config_parameter'].sudo().get_param(
-            'onevoice27.fcm_server_key', ''
-        )
-        if not server_key:
-            raise UserError(
-                'FCM Server Key not configured.\n\n'
-                'Go to Settings → Technical → System Parameters and add:\n'
-                '  Key:   onevoice27.fcm_server_key\n'
-                '  Value: <your Firebase Server Key>'
-            )
+        access_token, project_id = self._get_fcm_credentials()
 
         if self.target == 'all':
-            self._send_to_topic(server_key)
+            self._send_to_topic(access_token, project_id)
         else:
-            self._send_to_device(server_key)
+            self._send_to_device(access_token, project_id)
 
-    def _build_payload(self, registration_id=None, topic=None):
-        notification = {
-            'title': self.title,
-            'body':  self.message,
-        }
-        data = {
-            'type':    'ov27_push',
-            'title':   self.title,
-            'body':    self.message,
-            'notif_id': str(self.id),
-        }
-        payload = {
-            'notification': notification,
-            'data':         data,
-            'priority':     'high',
+    # ── Load service-account credentials ────────────────────────
+    def _get_fcm_credentials(self):
+        sa_path = self.env['ir.config_parameter'].sudo().get_param(
+            'onevoice27.fcm_service_account_path', ''
+        )
+        if not sa_path:
+            raise UserError(
+                'FCM Service Account not configured.\n\n'
+                'Go to Settings → Technical → System Parameters and add:\n'
+                '  Key:   onevoice27.fcm_service_account_path\n'
+                '  Value: /path/to/your/service-account.json\n\n'
+                'Download the JSON from Firebase Console → Project Settings → Service Accounts.'
+            )
+        try:
+            from google.oauth2 import service_account
+            import google.auth.transport.requests as gatr
+
+            with open(sa_path, 'r') as f:
+                sa_info = json.load(f)
+
+            project_id = sa_info.get('project_id', '')
+            if not project_id:
+                raise UserError('project_id not found in service account JSON.')
+
+            creds = service_account.Credentials.from_service_account_info(
+                sa_info,
+                scopes=['https://www.googleapis.com/auth/firebase.messaging'],
+            )
+            creds.refresh(gatr.Request())
+            return creds.token, project_id
+
+        except ImportError:
+            raise UserError(
+                'The google-auth library is not installed on the server.\n\n'
+                'Run:  pip install google-auth'
+            )
+        except UserError:
+            raise
+        except Exception as exc:
+            raise UserError(f'Failed to load FCM credentials: {exc}')
+
+    # ── Build FCM v1 message payload ────────────────────────────
+    def _build_payload(self, token=None, topic=None):
+        message = {
+            'notification': {
+                'title': self.title,
+                'body':  self.message,
+            },
+            'data': {
+                'type':     'ov27_push',
+                'title':    self.title,
+                'body':     self.message,
+                'notif_id': str(self.id),
+            },
+            'android': {
+                'priority': 'high',
+                'notification': {
+                    'sound': 'default',
+                },
+            },
+            'apns': {
+                'payload': {
+                    'aps': {
+                        'sound': 'default',
+                        'content-available': 1,
+                    },
+                },
+            },
         }
         if topic:
-            payload['to'] = f'/topics/{topic}'
-        elif registration_id:
-            payload['to'] = registration_id
-        return payload
+            message['topic'] = topic
+        elif token:
+            message['token'] = token
+        return {'message': message}
 
-    def _fcm_post(self, server_key, payload):
-        url = 'https://fcm.googleapis.com/fcm/send'
+    # ── POST to FCM v1 API ───────────────────────────────────────
+    def _fcm_post(self, access_token, project_id, payload):
+        url = f'https://fcm.googleapis.com/v1/projects/{project_id}/messages:send'
         headers = {
-            'Authorization': f'key={server_key}',
+            'Authorization': f'Bearer {access_token}',
             'Content-Type':  'application/json',
         }
         try:
-            resp = requests.post(url, headers=headers,
-                                 data=json.dumps(payload), timeout=10)
+            resp = requests.post(
+                url, headers=headers,
+                data=json.dumps(payload), timeout=15,
+            )
             resp.raise_for_status()
             result = resp.json()
-            _logger.info('FCM response: %s', result)
+            _logger.info('FCM v1 response: %s', result)
             return result
         except Exception as exc:
-            _logger.error('FCM send failed: %s', exc)
+            _logger.error('FCM v1 send failed: %s', exc)
             raise
 
-    def _send_to_topic(self, server_key):
+    # ── Send to topic (all users) ────────────────────────────────
+    def _send_to_topic(self, access_token, project_id):
         payload = self._build_payload(topic='revive_ov27')
         try:
-            result = self._fcm_post(server_key, payload)
-            # Topic sends return message_id, not success count
+            self._fcm_post(access_token, project_id, payload)
             self.write({
                 'status':     'sent',
                 'sent_at':    fields.Datetime.now(),
@@ -117,19 +164,20 @@ class OneVoiceNotification(models.Model):
             self.write({'status': 'error', 'error_msg': str(exc)})
             raise UserError(f'FCM send failed: {exc}')
 
-    def _send_to_device(self, server_key):
+    # ── Send to a specific device ────────────────────────────────
+    def _send_to_device(self, access_token, project_id):
         token = self.device_id.fcm_token
         if not token:
             raise UserError('Selected device has no FCM token.')
-        payload = self._build_payload(registration_id=token)
+        payload = self._build_payload(token=token)
         try:
-            result = self._fcm_post(server_key, payload)
-            success = result.get('success', 0)
+            result = self._fcm_post(access_token, project_id, payload)
+            success = 'name' in result  # v1 returns {"name": "projects/.../messages/..."}
             self.write({
                 'status':     'sent' if success else 'error',
                 'sent_at':    fields.Datetime.now(),
-                'sent_count': success,
-                'error_msg':  None if success else json.dumps(result.get('results', [])),
+                'sent_count': 1 if success else 0,
+                'error_msg':  False if success else json.dumps(result),
             })
             if not success:
                 raise UserError(f'FCM rejected the token: {result}')

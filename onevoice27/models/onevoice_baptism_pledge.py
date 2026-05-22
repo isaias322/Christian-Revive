@@ -257,7 +257,7 @@ class OneVoiceBaptismPledge(models.Model):
             # Meta
             'approval_date': str(record.approval_date) if record.approval_date else '',
             # Photo
-            'photo': record.photo.decode() if record.photo else '',
+            'photo': record.photo.decode('utf-8') if record.photo else '',
             # Step 5
             'preferred_location': record.preferred_location or '',
             'preferred_date': str(record.preferred_date) if record.preferred_date else '',

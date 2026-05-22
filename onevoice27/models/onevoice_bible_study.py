@@ -5,6 +5,7 @@ from odoo.exceptions import AccessError
 class OneVoiceBibleStudy(models.Model):
     _name = 'onevoice.bible.study'
     _description = 'OneVoice27 Bible Study Registration'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
     _order = 'create_date desc'
     _rec_name = 'contact_name'
 

@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
 
-    <!-- ─── Roman Urdu Overrides ─────────────────────────────── -->
+    <!-- ─── Roman Word Overrides (shown in Urdu mode) ────────── -->
 
     <record id="view_onevoice_roman_override_list" model="ir.ui.view">
         <field name="name">onevoice.roman.override.list</field>
         <field name="model">onevoice.roman.override</field>
         <field name="arch" type="xml">
-            <list string="Roman Urdu Overrides" editable="bottom">
-                <field name="source_text" string="English Text"  required="1"/>
-                <field name="roman_text"  string="Roman Urdu"    required="1"/>
-                <field name="notes"       string="Notes"         optional="show"/>
+            <list string="Roman Word Overrides" editable="bottom">
+                <field name="source_text" string="Urdu Word / Phrase"  required="1"/>
+                <field name="roman_text"  string="Roman Replacement"   required="1"/>
+                <field name="notes"       string="Notes"               optional="show"/>
                 <field name="is_active"   string="Active"/>
             </list>
         </field>
@@ -20,14 +20,14 @@
         <field name="name">onevoice.roman.override.form</field>
         <field name="model">onevoice.roman.override</field>
         <field name="arch" type="xml">
-            <form string="Roman Urdu Override">
+            <form string="Roman Word Override">
                 <sheet>
                     <group>
-                        <group string="Translation">
+                        <group string="Override">
                             <field name="source_text"
-                                   placeholder="English word or phrase…"/>
+                                   placeholder="Urdu word or phrase to replace (e.g. ایمانوایل)"/>
                             <field name="roman_text"
-                                   placeholder="Roman Urdu (e.g. Daniel aur Mukashfa)…"/>
+                                   placeholder="Roman/Latin replacement (e.g. Immanuel)"/>
                             <field name="is_active"/>
                         </group>
                         <group string="Admin Notes">
@@ -37,9 +37,10 @@
                     </group>
                     <div class="alert alert-info" role="alert">
                         <strong>How it works:</strong>
-                        When a user enables Roman Urdu in the app, the app checks this table first.
-                        If the English text matches exactly, your Roman Urdu text is shown.
-                        Useful for names, Bible terms, or any phrase you want to control exactly.
+                        When a user selects Urdu in the app, the app scans the chapter text for
+                        any Urdu word listed here and replaces it with the Roman text you provide.
+                        Both the displayed text and the TTS voice use the Roman replacement.
+                        Useful for proper nouns or terms that are clearer in Latin script.
                     </div>
                 </sheet>
             </form>
@@ -47,7 +48,7 @@
     </record>
 
     <record id="action_onevoice_roman_override" model="ir.actions.act_window">
-        <field name="name">Roman Urdu Overrides</field>
+        <field name="name">Roman Word Overrides</field>
         <field name="res_model">onevoice.roman.override</field>
         <field name="view_mode">list,form</field>
     </record>

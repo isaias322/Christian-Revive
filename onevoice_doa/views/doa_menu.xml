@@ -23,7 +23,7 @@
     <menuitem
         id="menu_study_mcq"
         name="MCQs"
-        action="study_mcq_views.action_study_mcq"
+        action="action_study_mcq"
         parent="menu_study_books_root"
         sequence="3"/>
 

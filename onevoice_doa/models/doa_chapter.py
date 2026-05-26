@@ -15,6 +15,7 @@ class DoaChapter(models.Model):
     title_ur       = fields.Char(string='Urdu Title')
     text_ur        = fields.Text(string='Urdu Text')
     is_published   = fields.Boolean(string='Published', default=True)
+    mcq_ids        = fields.One2many('onevoice.study.mcq', 'chapter_id', string='MCQs')
 
     _sql_constraints = [
         ('chapter_book_number_uniq', 'unique(book_id, chapter_number)',

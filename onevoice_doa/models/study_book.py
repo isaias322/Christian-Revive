@@ -48,12 +48,25 @@ class StudyBook(models.Model):
         ], limit=1)
         if not chapter:
             return False
+        correct_map = {'a': 0, 'b': 1, 'c': 2, 'd': 3}
+        mcqs = []
+        for m in chapter.mcq_ids.filtered(lambda x: x.is_published).sorted('sequence'):
+            opts_en = [o for o in [m.option_a_en, m.option_b_en, m.option_c_en, m.option_d_en] if o]
+            opts_ur = [o for o in [m.option_a_ur, m.option_b_ur, m.option_c_ur, m.option_d_ur] if o]
+            mcqs.append({
+                'question_en':   m.question_en or '',
+                'question_ur':   m.question_ur or '',
+                'options_en':    opts_en,
+                'options_ur':    opts_ur,
+                'correct_index': correct_map.get(m.correct_option, 0),
+            })
         return {
             'chapter_number': chapter.chapter_number,
             'title_en':       chapter.title_en or '',
             'text_en':        chapter.text_en  or '',
             'title_ur':       chapter.title_ur or '',
             'text_ur':        chapter.text_ur  or '',
+            'mcqs':           mcqs,
         }
 
     @api.model

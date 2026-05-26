@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="view_study_mcq_list" model="ir.ui.view">
+        <field name="name">onevoice.study.mcq.list</field>
+        <field name="model">onevoice.study.mcq</field>
+        <field name="arch" type="xml">
+            <list string="MCQs" default_order="chapter_id,sequence">
+                <field name="chapter_id"     string="Chapter"/>
+                <field name="sequence"       string="Order"    widget="handle"/>
+                <field name="question_en"    string="Question"/>
+                <field name="correct_option" string="Answer"/>
+                <field name="is_published"   string="Published"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_study_mcq_form" model="ir.ui.view">
+        <field name="name">onevoice.study.mcq.form</field>
+        <field name="model">onevoice.study.mcq</field>
+        <field name="arch" type="xml">
+            <form string="MCQ">
+                <sheet>
+                    <group>
+                        <group string="Settings">
+                            <field name="chapter_id"     string="Chapter"/>
+                            <field name="sequence"       string="Order"/>
+                            <field name="correct_option" string="Correct Answer"/>
+                            <field name="is_published"   string="Published"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="English">
+                            <group>
+                                <field name="question_en" string="Question"
+                                       placeholder="e.g. What does this chapter teach about faith?"/>
+                                <field name="option_a_en" string="Option A" placeholder="Option A"/>
+                                <field name="option_b_en" string="Option B" placeholder="Option B"/>
+                                <field name="option_c_en" string="Option C" placeholder="Option C (optional)"/>
+                                <field name="option_d_en" string="Option D" placeholder="Option D (optional)"/>
+                            </group>
+                        </page>
+                        <page string="Urdu">
+                            <group>
+                                <field name="question_ur" string="Question (Urdu)"
+                                       placeholder="e.g. یہ باب ایمان کے بارے میں کیا سکھاتا ہے؟"/>
+                                <field name="option_a_ur" string="Option A (Urdu)"/>
+                                <field name="option_b_ur" string="Option B (Urdu)"/>
+                                <field name="option_c_ur" string="Option C (Urdu)"/>
+                                <field name="option_d_ur" string="Option D (Urdu)"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_study_mcq" model="ir.actions.act_window">
+        <field name="name">MCQs</field>
+        <field name="res_model">onevoice.study.mcq</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

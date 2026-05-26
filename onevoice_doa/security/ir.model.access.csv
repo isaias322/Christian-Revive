@@ -1,3 +1,4 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_onevoice_study_book,onevoice.study.book,model_onevoice_study_book,base.group_user,1,1,1,1
 access_onevoice_doa_chapter,onevoice.doa.chapter,model_onevoice_doa_chapter,base.group_user,1,1,1,1
+access_onevoice_study_mcq,onevoice.study.mcq,model_onevoice_study_mcq,base.group_user,1,1,1,1

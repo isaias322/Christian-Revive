@@ -45,6 +45,16 @@
                                        widget="text"/>
                             </group>
                         </page>
+                        <page string="MCQs">
+                            <field name="mcq_ids">
+                                <list editable="bottom">
+                                    <field name="sequence"       widget="handle"/>
+                                    <field name="question_en"    string="Question (EN)" optional="show"/>
+                                    <field name="correct_option" string="Answer"/>
+                                    <field name="is_published"   string="Published"/>
+                                </list>
+                            </field>
+                        </page>
                     </notebook>
                 </sheet>
             </form>

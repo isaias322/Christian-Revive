@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Study Books',
-    'version': '1.1.0',
+    'version': '1.2.0',
     'category': 'Church Management',
     'summary': 'Manages study books (Desire of Ages, Daniel, Revelation, etc.) for the OneVoice app',
     'author': 'Christian Revive',
@@ -11,6 +11,7 @@
         'security/ir.model.access.csv',
         'views/study_book_views.xml',
         'views/doa_chapter_views.xml',
+        'views/study_mcq_views.xml',
         'views/doa_menu.xml',
     ],
     'installable': True,

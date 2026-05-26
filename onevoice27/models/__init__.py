@@ -14,4 +14,3 @@ from . import onevoice_translation
 from . import onevoice_roman_override
 from . import onevoice_baptism_pledge
 from . import library_book_ext
-from . import onevoice_doa_chapter

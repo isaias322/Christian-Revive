@@ -136,13 +136,6 @@
         parent="menu_ov27_learn"
         sequence="8"/>
 
-    <menuitem
-        id="menu_ov27_doa_chapters"
-        name="Desire of Ages Chapters"
-        action="action_onevoice_doa_chapter"
-        parent="menu_onevoice27_root"
-        sequence="9"/>
-
     <!-- ─── App Notifications (in-app feed) ─────────────────── -->
 
     <record id="action_ov27_app_notifications" model="ir.actions.act_window">

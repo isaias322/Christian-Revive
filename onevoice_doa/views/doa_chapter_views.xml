@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="view_doa_chapter_list" model="ir.ui.view">
+        <field name="name">onevoice.doa.chapter.list</field>
+        <field name="model">onevoice.doa.chapter</field>
+        <field name="arch" type="xml">
+            <list string="Desire of Ages Chapters" default_order="chapter_number">
+                <field name="chapter_number" string="Ch #"/>
+                <field name="title_en"       string="English Title"/>
+                <field name="title_ur"       string="Urdu Title"   optional="show"/>
+                <field name="is_published"   string="Published"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_doa_chapter_form" model="ir.ui.view">
+        <field name="name">onevoice.doa.chapter.form</field>
+        <field name="model">onevoice.doa.chapter</field>
+        <field name="arch" type="xml">
+            <form string="Desire of Ages Chapter">
+                <sheet>
+                    <group>
+                        <group string="Chapter Info">
+                            <field name="chapter_number" string="Chapter Number"/>
+                            <field name="is_published"   string="Published"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="English">
+                            <group>
+                                <field name="title_en" string="Title"
+                                       placeholder="e.g. God With Us"/>
+                                <field name="text_en"  string="Chapter Text"
+                                       widget="text"/>
+                            </group>
+                        </page>
+                        <page string="Urdu">
+                            <group>
+                                <field name="title_ur" string="Title (Urdu)"
+                                       placeholder="e.g. خدا ہمارے ساتھ"/>
+                                <field name="text_ur"  string="Chapter Text (Urdu)"
+                                       widget="text"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_doa_chapter" model="ir.actions.act_window">
+        <field name="name">Chapters</field>
+        <field name="res_model">onevoice.doa.chapter</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

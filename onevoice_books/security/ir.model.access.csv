@@ -1,3 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_onevoice_book,onevoice.book,model_onevoice_book,base.group_user,1,1,1,1
-access_onevoice_book_chapter,onevoice.book.chapter,model_onevoice_book_chapter,base.group_user,1,1,1,1

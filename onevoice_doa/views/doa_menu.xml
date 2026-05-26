@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <menuitem
+        id="menu_doa_root"
+        name="Desire of Ages"
+        sequence="30"/>
+
+    <menuitem
+        id="menu_doa_chapters"
+        name="Chapters"
+        action="action_doa_chapter"
+        parent="menu_doa_root"
+        sequence="1"/>
+
+</odoo>

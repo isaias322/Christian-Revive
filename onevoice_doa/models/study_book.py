@@ -1,0 +1,66 @@
+# -*- coding: utf-8 -*-
+from odoo import models, fields, api
+
+
+class StudyBook(models.Model):
+    _name        = 'onevoice.study.book'
+    _description = 'Study Book'
+    _order       = 'sequence, name'
+
+    name         = fields.Char(string='Book Name', required=True)
+    book_code    = fields.Char(string='Book Code', required=True,
+                               help='Unique slug used by the Flutter app, e.g. desire_of_ages')
+    sequence     = fields.Integer(string='Sequence', default=10)
+    is_published = fields.Boolean(string='Published', default=True)
+    chapter_ids  = fields.One2many('onevoice.doa.chapter', 'book_id', string='Chapters')
+
+    _sql_constraints = [
+        ('book_code_uniq', 'unique(book_code)',
+         'A book with this code already exists.'),
+    ]
+
+    @api.model
+    def app_get_books(self):
+        """Return list of published books for the Flutter app."""
+        books = self.sudo().search([('is_published', '=', True)], order='sequence, name')
+        return [{'book_code': b.book_code, 'name': b.name} for b in books]
+
+    @api.model
+    def app_get_chapter_list(self, book_code):
+        """Return chapter numbers and titles (no body text) for a book."""
+        chapters = self.env['onevoice.doa.chapter'].sudo().search([
+            ('book_id.book_code', '=', book_code),
+            ('is_published', '=', True),
+        ], order='chapter_number')
+        return [{
+            'chapter_number': c.chapter_number,
+            'title_en':       c.title_en or '',
+            'title_ur':       c.title_ur or '',
+        } for c in chapters]
+
+    @api.model
+    def app_get_chapter(self, book_code, chapter_number):
+        """Return full chapter content for the Flutter app."""
+        chapter = self.env['onevoice.doa.chapter'].sudo().search([
+            ('book_id.book_code', '=', book_code),
+            ('chapter_number', '=', chapter_number),
+            ('is_published', '=', True),
+        ], limit=1)
+        if not chapter:
+            return False
+        return {
+            'chapter_number': chapter.chapter_number,
+            'title_en':       chapter.title_en or '',
+            'text_en':        chapter.text_en  or '',
+            'title_ur':       chapter.title_ur or '',
+            'text_ur':        chapter.text_ur  or '',
+        }
+
+    @api.model
+    def app_get_published_numbers(self, book_code):
+        """Return sorted list of published chapter numbers for a given book."""
+        chapters = self.env['onevoice.doa.chapter'].sudo().search([
+            ('book_id.book_code', '=', book_code),
+            ('is_published', '=', True),
+        ])
+        return sorted(c.chapter_number for c in chapters)

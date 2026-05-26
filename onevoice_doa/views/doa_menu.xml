@@ -2,15 +2,22 @@
 <odoo>
 
     <menuitem
-        id="menu_doa_root"
-        name="Desire of Ages"
+        id="menu_study_books_root"
+        name="Study Books"
         sequence="30"/>
 
     <menuitem
-        id="menu_doa_chapters"
-        name="Chapters"
-        action="action_doa_chapter"
-        parent="menu_doa_root"
+        id="menu_study_book_list"
+        name="Books"
+        action="action_study_book"
+        parent="menu_study_books_root"
         sequence="1"/>
+
+    <menuitem
+        id="menu_doa_chapters"
+        name="All Chapters"
+        action="action_doa_chapter"
+        parent="menu_study_books_root"
+        sequence="2"/>
 
 </odoo>

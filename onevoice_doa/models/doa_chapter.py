@@ -4,9 +4,11 @@ from odoo import models, fields, api
 
 class DoaChapter(models.Model):
     _name        = 'onevoice.doa.chapter'
-    _description = 'Desire of Ages — Chapter'
+    _description = 'Study Book Chapter'
     _order       = 'chapter_number'
 
+    book_id        = fields.Many2one('onevoice.study.book', string='Book',
+                                     ondelete='cascade')
     chapter_number = fields.Integer(string='Chapter #', required=True)
     title_en       = fields.Char(string='English Title')
     text_en        = fields.Text(string='English Text')
@@ -15,18 +17,25 @@ class DoaChapter(models.Model):
     is_published   = fields.Boolean(string='Published', default=True)
 
     _sql_constraints = [
-        ('chapter_number_uniq', 'unique(chapter_number)',
-         'A chapter with this number already exists.'),
+        ('chapter_book_number_uniq', 'unique(book_id, chapter_number)',
+         'A chapter with this number already exists in this book.'),
     ]
 
     @api.model
     def app_get_chapter(self, chapter_number):
-        """Return one chapter as a dict for the Flutter app.
-        Returns False if not found or not published."""
+        """Backward-compat: fetch a DOA (desire_of_ages) chapter by number."""
         rec = self.sudo().search([
+            ('book_id.book_code', '=', 'desire_of_ages'),
             ('chapter_number', '=', chapter_number),
             ('is_published',   '=', True),
         ], limit=1)
+        if not rec:
+            # Fallback for records not yet linked to a book
+            rec = self.sudo().search([
+                ('book_id', '=', False),
+                ('chapter_number', '=', chapter_number),
+                ('is_published',   '=', True),
+            ], limit=1)
         if not rec:
             return False
         return {
@@ -39,7 +48,14 @@ class DoaChapter(models.Model):
 
     @api.model
     def app_get_published_numbers(self):
-        """Return sorted list of published chapter numbers so the app knows
-        which chapters are available in Odoo vs need JSON fallback."""
-        recs = self.sudo().search([('is_published', '=', True)])
+        """Backward-compat: published chapter numbers for desire_of_ages."""
+        recs = self.sudo().search([
+            ('book_id.book_code', '=', 'desire_of_ages'),
+            ('is_published', '=', True),
+        ])
+        if not recs:
+            recs = self.sudo().search([
+                ('book_id', '=', False),
+                ('is_published', '=', True),
+            ])
         return sorted(r.chapter_number for r in recs)

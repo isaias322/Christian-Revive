@@ -5,11 +5,12 @@
         <field name="name">onevoice.doa.chapter.list</field>
         <field name="model">onevoice.doa.chapter</field>
         <field name="arch" type="xml">
-            <list string="Desire of Ages Chapters" default_order="chapter_number">
+            <list string="Chapters" default_order="chapter_number">
+                <field name="book_id"      string="Book"          optional="show"/>
                 <field name="chapter_number" string="Ch #"/>
-                <field name="title_en"       string="English Title"/>
-                <field name="title_ur"       string="Urdu Title"   optional="show"/>
-                <field name="is_published"   string="Published"/>
+                <field name="title_en"     string="English Title"/>
+                <field name="title_ur"     string="Urdu Title"    optional="show"/>
+                <field name="is_published" string="Published"/>
             </list>
         </field>
     </record>
@@ -18,12 +19,13 @@
         <field name="name">onevoice.doa.chapter.form</field>
         <field name="model">onevoice.doa.chapter</field>
         <field name="arch" type="xml">
-            <form string="Desire of Ages Chapter">
+            <form string="Chapter">
                 <sheet>
                     <group>
                         <group string="Chapter Info">
+                            <field name="book_id"       string="Book"/>
                             <field name="chapter_number" string="Chapter Number"/>
-                            <field name="is_published"   string="Published"/>
+                            <field name="is_published"  string="Published"/>
                         </group>
                     </group>
                     <notebook>
@@ -50,7 +52,7 @@
     </record>
 
     <record id="action_doa_chapter" model="ir.actions.act_window">
-        <field name="name">Chapters</field>
+        <field name="name">All Chapters</field>
         <field name="res_model">onevoice.doa.chapter</field>
         <field name="view_mode">list,form</field>
     </record>

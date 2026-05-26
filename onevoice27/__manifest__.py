@@ -28,6 +28,7 @@
         'views/onevoice_quiz_views.xml',
         'views/onevoice_translation_views.xml',
         'views/onevoice_roman_override_views.xml',
+        'views/onevoice_doa_chapter_views.xml',
         'views/onevoice_event_views.xml',
         'views/onevoice_baptism_pledge_views.xml',
         'views/onevoice_notification_views.xml',

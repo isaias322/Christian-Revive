@@ -118,8 +118,7 @@
                     </div>
                     <notebook>
                         <page string="Chapters">
-                            <field name="chapter_ids" widget="one2many_list"
-                                   context="{'default_book_id': active_id}">
+                            <field name="chapter_ids">
                                 <list editable="bottom" default_order="chapter_number">
                                     <field name="chapter_number" string="Ch #"/>
                                     <field name="title_en"       string="English Title"/>

@@ -11,7 +11,10 @@ class StudyBook(models.Model):
     book_code    = fields.Char(string='Book Code', required=True,
                                help='Unique slug used by the Flutter app, e.g. desire_of_ages')
     sequence     = fields.Integer(string='Sequence', default=10)
-    is_published = fields.Boolean(string='Published', default=True)
+    is_published   = fields.Boolean(string='Published', default=True)
+    available_from = fields.Datetime(
+        string='Available From',
+        help='Leave empty to make available immediately. Set a future date/time to lock this entire book until then.')
     chapter_ids  = fields.One2many('onevoice.doa.chapter', 'book_id', string='Chapters')
     mcq_ids      = fields.One2many('onevoice.study.mcq', 'book_id', string='MCQs')
 
@@ -24,7 +27,12 @@ class StudyBook(models.Model):
     def app_get_books(self):
         """Return list of published books for the Flutter app."""
         books = self.sudo().search([('is_published', '=', True)], order='sequence, name')
-        return [{'book_code': b.book_code, 'name': b.name} for b in books]
+        return [{
+            'book_code':      b.book_code,
+            'name':           b.name,
+            'available_from': (b.available_from.strftime('%Y-%m-%dT%H:%M:%SZ')
+                               if b.available_from else False),
+        } for b in books]
 
     @api.model
     def app_get_chapter_list(self, book_code):

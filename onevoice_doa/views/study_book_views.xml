@@ -28,6 +28,10 @@
                             <field name="sequence"     string="Sequence"/>
                             <field name="is_published" string="Published"/>
                         </group>
+                        <group string="Scheduling">
+                            <field name="available_from" string="Available From"
+                                   help="Leave empty to show immediately. Set a future date to lock the entire book until then."/>
+                        </group>
                     </group>
                     <notebook>
                         <page string="Chapters">
@@ -42,11 +46,9 @@
                             </field>
                         </page>
                         <page string="MCQs">
-                            <field name="mcq_ids"
-                                   context="{'group_by': 'chapter_id'}">
+                            <field name="mcq_ids">
                                 <list string="MCQs"
-                                      default_order="chapter_id, sequence"
-                                      default_group_by="chapter_id">
+                                      default_order="chapter_id, sequence">
                                     <field name="chapter_id"     string="Chapter"
                                            readonly="1"/>
                                     <field name="sequence"       widget="handle"/>

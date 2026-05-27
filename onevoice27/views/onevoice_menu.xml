@@ -169,4 +169,13 @@
         parent="menu_onevoice27_root"
         sequence="12"/>
 
+    <!-- ─── Prayer Journey Config ─────────────────────────────── -->
+
+    <menuitem
+        id="menu_ov27_journey_config"
+        name="Prayer Journeys"
+        action="action_journey_config"
+        parent="menu_onevoice27_root"
+        sequence="7"/>
+
 </odoo>

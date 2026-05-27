@@ -17,3 +17,4 @@ access_onevoice_roman_override,onevoice.roman.override,model_onevoice_roman_over
 access_onevoice_baptism_pledge,onevoice.baptism.pledge,model_onevoice_baptism_pledge,base.group_user,1,1,1,1
 access_onevoice_event,onevoice.event,model_onevoice_event,base.group_user,1,1,1,1
 access_onevoice_notification,onevoice.notification,model_onevoice_notification,base.group_user,1,1,1,1
+access_onevoice_journey_config,onevoice.journey.config,model_onevoice_journey_config,base.group_user,1,1,1,1

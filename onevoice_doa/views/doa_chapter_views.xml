@@ -8,9 +8,10 @@
             <list string="Chapters" default_order="chapter_number">
                 <field name="book_id"      string="Book"          optional="show"/>
                 <field name="chapter_number" string="Ch #"/>
-                <field name="title_en"     string="English Title"/>
-                <field name="title_ur"     string="Urdu Title"    optional="show"/>
-                <field name="is_published" string="Published"/>
+                <field name="title_en"      string="English Title"/>
+                <field name="title_ur"      string="Urdu Title"     optional="show"/>
+                <field name="available_from" string="Available From" optional="show"/>
+                <field name="is_published"  string="Published"/>
             </list>
         </field>
     </record>
@@ -23,9 +24,13 @@
                 <sheet>
                     <group>
                         <group string="Chapter Info">
-                            <field name="book_id"       string="Book"/>
+                            <field name="book_id"        string="Book"/>
                             <field name="chapter_number" string="Chapter Number"/>
-                            <field name="is_published"  string="Published"/>
+                            <field name="is_published"   string="Published"/>
+                        </group>
+                        <group string="Scheduling">
+                            <field name="available_from" string="Available From"
+                                   help="Leave empty to show immediately. Set a future date to lock this chapter until then."/>
                         </group>
                     </group>
                     <notebook>

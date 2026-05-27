@@ -36,6 +36,7 @@ class StudyBook(models.Model):
             'chapter_number': c.chapter_number,
             'title_en':       c.title_en or '',
             'title_ur':       c.title_ur or '',
+            'available_from': c.available_from.isoformat() if c.available_from else False,
         } for c in chapters]
 
     @api.model
@@ -70,6 +71,7 @@ class StudyBook(models.Model):
             'text_en':        chapter.text_en  or '',
             'title_ur':       chapter.title_ur or '',
             'text_ur':        chapter.text_ur  or '',
+            'available_from': chapter.available_from.isoformat() if chapter.available_from else False,
             'mcqs':           mcqs,
         }
 

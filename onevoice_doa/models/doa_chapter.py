@@ -16,6 +16,9 @@ class DoaChapter(models.Model):
     title_ur       = fields.Char(string='Urdu Title')
     text_ur        = fields.Text(string='Urdu Text')
     is_published   = fields.Boolean(string='Published', default=True)
+    available_from = fields.Datetime(
+        string='Available From',
+        help='Leave empty to make available immediately. Set a future date/time to lock this chapter until then.')
     mcq_ids        = fields.One2many('onevoice.study.mcq', 'chapter_id', string='MCQs')
 
     @api.depends('book_id.name', 'chapter_number')

@@ -9,6 +9,9 @@ class StudyMcq(models.Model):
 
     chapter_id     = fields.Many2one('onevoice.doa.chapter', string='Chapter',
                                      required=True, ondelete='cascade')
+    book_id        = fields.Many2one('onevoice.study.book',
+                                     related='chapter_id.book_id',
+                                     store=True, string='Book')
     sequence       = fields.Integer(string='Order', default=10)
     is_published   = fields.Boolean(string='Published', default=True)
 

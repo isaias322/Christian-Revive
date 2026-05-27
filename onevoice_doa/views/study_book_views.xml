@@ -41,6 +41,21 @@
                                 </list>
                             </field>
                         </page>
+                        <page string="MCQs">
+                            <field name="mcq_ids"
+                                   context="{'group_by': 'chapter_id'}">
+                                <list string="MCQs"
+                                      default_order="chapter_id, sequence"
+                                      default_group_by="chapter_id">
+                                    <field name="chapter_id"     string="Chapter"
+                                           readonly="1"/>
+                                    <field name="sequence"       widget="handle"/>
+                                    <field name="question_en"    string="Question (EN)"/>
+                                    <field name="correct_option" string="Answer"/>
+                                    <field name="is_published"   string="Published"/>
+                                </list>
+                            </field>
+                        </page>
                     </notebook>
                 </sheet>
             </form>

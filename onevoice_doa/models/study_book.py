@@ -13,6 +13,7 @@ class StudyBook(models.Model):
     sequence     = fields.Integer(string='Sequence', default=10)
     is_published = fields.Boolean(string='Published', default=True)
     chapter_ids  = fields.One2many('onevoice.doa.chapter', 'book_id', string='Chapters')
+    mcq_ids      = fields.One2many('onevoice.study.mcq', 'book_id', string='MCQs')
 
     _sql_constraints = [
         ('book_code_uniq', 'unique(book_code)',

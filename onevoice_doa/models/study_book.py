@@ -47,6 +47,7 @@ class StudyBook(models.Model):
             'title_ur':       c.title_ur or '',
             'available_from': (c.available_from.strftime('%Y-%m-%dT%H:%M:%SZ')
                                if c.available_from else False),
+            'mcq_count':      len(c.mcq_ids.filtered(lambda x: x.is_published)),
         } for c in chapters]
 
     @api.model

@@ -10,12 +10,19 @@ class DoaChapter(models.Model):
     book_id        = fields.Many2one('onevoice.study.book', string='Book',
                                      ondelete='cascade')
     chapter_number = fields.Integer(string='Chapter #', required=True)
+    name           = fields.Char(string='Name', compute='_compute_name', store=True)
     title_en       = fields.Char(string='English Title')
     text_en        = fields.Text(string='English Text')
     title_ur       = fields.Char(string='Urdu Title')
     text_ur        = fields.Text(string='Urdu Text')
     is_published   = fields.Boolean(string='Published', default=True)
     mcq_ids        = fields.One2many('onevoice.study.mcq', 'chapter_id', string='MCQs')
+
+    @api.depends('book_id.name', 'chapter_number')
+    def _compute_name(self):
+        for rec in self:
+            book = rec.book_id.name or 'Chapter'
+            rec.name = f'{book} – Ch {rec.chapter_number}'
 
     _sql_constraints = [
         ('chapter_book_number_uniq', 'unique(book_id, chapter_number)',

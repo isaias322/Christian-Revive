@@ -28,3 +28,8 @@ class StudyMcq(models.Model):
     correct_option = fields.Selection([
         ('a', 'A'), ('b', 'B'), ('c', 'C'), ('d', 'D'),
     ], string='Correct Answer', required=True, default='a')
+
+    explanation_en       = fields.Text(string='Explanation (EN)')
+    explanation_ur       = fields.Text(string='Explanation (UR)')
+    show_on_wrong        = fields.Boolean(string='Show on Wrong Answer', default=True)
+    show_on_correct      = fields.Boolean(string='Show on Correct Answer', default=False)

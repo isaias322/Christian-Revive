@@ -28,6 +28,10 @@
                             <field name="correct_option" string="Correct Answer"/>
                             <field name="is_published"   string="Published"/>
                         </group>
+                        <group string="Explanation Visibility">
+                            <field name="show_on_wrong"   string="Show on Wrong Answer"/>
+                            <field name="show_on_correct" string="Show on Correct Answer"/>
+                        </group>
                     </group>
                     <notebook>
                         <page string="English">
@@ -39,6 +43,11 @@
                                 <field name="option_c_en" string="Option C" placeholder="Option C (optional)"/>
                                 <field name="option_d_en" string="Option D" placeholder="Option D (optional)"/>
                             </group>
+                            <group string="Explanation">
+                                <field name="explanation_en" string="Explanation"
+                                       placeholder="Explain why the correct answer is right..."
+                                       nolabel="1"/>
+                            </group>
                         </page>
                         <page string="Urdu">
                             <group>
@@ -48,6 +57,11 @@
                                 <field name="option_b_ur" string="Option B (Urdu)"/>
                                 <field name="option_c_ur" string="Option C (Urdu)"/>
                                 <field name="option_d_ur" string="Option D (Urdu)"/>
+                            </group>
+                            <group string="Explanation (Urdu)">
+                                <field name="explanation_ur" string="Explanation (Urdu)"
+                                       placeholder="درست جواب کی وضاحت کریں..."
+                                       nolabel="1"/>
                             </group>
                         </page>
                     </notebook>

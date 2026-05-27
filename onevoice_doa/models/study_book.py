@@ -54,11 +54,15 @@ class StudyBook(models.Model):
             opts_en = [o for o in [m.option_a_en, m.option_b_en, m.option_c_en, m.option_d_en] if o]
             opts_ur = [o for o in [m.option_a_ur, m.option_b_ur, m.option_c_ur, m.option_d_ur] if o]
             mcqs.append({
-                'question_en':   m.question_en or '',
-                'question_ur':   m.question_ur or '',
-                'options_en':    opts_en,
-                'options_ur':    opts_ur,
-                'correct_index': correct_map.get(m.correct_option, 0),
+                'question_en':    m.question_en or '',
+                'question_ur':    m.question_ur or '',
+                'options_en':     opts_en,
+                'options_ur':     opts_ur,
+                'correct_index':  correct_map.get(m.correct_option, 0),
+                'explanation_en': m.explanation_en or '',
+                'explanation_ur': m.explanation_ur or '',
+                'show_on_wrong':  m.show_on_wrong,
+                'show_on_correct': m.show_on_correct,
             })
         return {
             'chapter_number': chapter.chapter_number,

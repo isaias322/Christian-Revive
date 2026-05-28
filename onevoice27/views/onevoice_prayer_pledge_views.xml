@@ -12,6 +12,9 @@
                 <field name="pledge_name" string="Name"/>
                 <field name="prayer_focus" string="Prayer Focus"/>
                 <field name="prayer_duration" string="Duration"/>
+                <field name="journey_key" string="Journey" optional="show"
+                       decoration-info="journey_key == '40_days'"
+                       decoration-warning="journey_key == '365_days'"/>
                 <field name="admin_response" string="Admin Response" optional="show"
                        decoration-success="admin_response != False and admin_response != ''"
                        decoration-muted="not admin_response"/>
@@ -41,6 +44,7 @@
                             <field name="prayer_focus" string="Prayer Focus" readonly="1"/>
                             <field name="prayer_duration" string="Duration" readonly="1"/>
                             <field name="posted_date" string="Submitted" readonly="1" widget="datetime"/>
+                            <field name="journey_key" string="Journey" readonly="1"/>
                             <field name="source_key" string="Session Key" readonly="1"/>
                         </group>
                     </group>

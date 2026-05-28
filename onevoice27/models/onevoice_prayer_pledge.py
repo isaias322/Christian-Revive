@@ -31,14 +31,14 @@ class OneVoicePrayerPledge(models.Model):
         return {'id': record.id, 'success': True}
 
     @api.model
-    def app_get_my_pledges(self, session_key):
-        """Return pledges belonging to this device session only."""
+    def app_get_my_pledges(self, session_key, journey_key=''):
+        """Return pledges for this session, optionally filtered by journey_key."""
         if not session_key:
             return []
-        pledges = self.sudo().search(
-            [('source_key', '=', session_key)],
-            order='posted_date desc',
-        )
+        domain = [('source_key', '=', session_key)]
+        if journey_key:
+            domain.append(('journey_key', '=', journey_key))
+        pledges = self.sudo().search(domain, order='posted_date desc')
         return [
             {
                 'id':             p.id,

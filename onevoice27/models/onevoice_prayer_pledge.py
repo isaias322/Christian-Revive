@@ -12,6 +12,7 @@ class OneVoicePrayerPledge(models.Model):
     prayer_duration = fields.Char(string='Duration')
     posted_date     = fields.Datetime(string='Submitted', default=fields.Datetime.now)
     source_key      = fields.Char(string='Session Key')
+    journey_key     = fields.Char(string='Journey', help='40_days or 365_days')
     admin_response  = fields.Text(string='Admin Response / Kind Words')
 
     # ── App API ──────────────────────────────────────────────────
@@ -25,6 +26,7 @@ class OneVoicePrayerPledge(models.Model):
             'prayer_duration': vals.get('duration', ''),
             'posted_date':     fields.Datetime.now(),
             'source_key':      vals.get('session_key', ''),
+            'journey_key':     vals.get('journey_key', ''),
         })
         return {'id': record.id, 'success': True}
 
@@ -44,6 +46,7 @@ class OneVoicePrayerPledge(models.Model):
                 'focus':          p.prayer_focus or '',
                 'duration':       p.prayer_duration or '',
                 'date':           p.posted_date.isoformat() if p.posted_date else '',
+                'journey_key':    p.journey_key or '',
                 'admin_response': p.admin_response or '',
             }
             for p in pledges

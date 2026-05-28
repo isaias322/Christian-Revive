@@ -43,11 +43,12 @@ class OnevoicePrayerWall(models.Model):
         )
         return [
             {
-                'id':      r.id,
-                'name':    r.name or 'Anonymous',
-                'request': r.request_text or '',
-                'date':    r.posted_date.isoformat() if r.posted_date else '',
-                'prays':   r.pray_count,
+                'id':          r.id,
+                'name':        r.name or 'Anonymous',
+                'request':     r.request_text or '',
+                'date':        r.posted_date.isoformat() if r.posted_date else '',
+                'prays':       r.pray_count,
+                'session_key': r.session_key or '',
             }
             for r in records
         ]

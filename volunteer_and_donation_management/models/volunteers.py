@@ -14,6 +14,11 @@ class ResPartner(models.Model):
         string="Volunteer Skills"
     )
 
+    skills_text = fields.Char(
+        string="Skills (App)",
+        help="Comma-separated skills submitted from the mobile app"
+    )
+
     availability = fields.Selection([
         ('part_time', 'Part Time'),
         ('weekends', 'Weekends Only'),

@@ -10,10 +10,9 @@
                 <field name="name"/>
                 <field name="email"/>
                 <field name="phone"/>
-                <field name="city"/>
-                <field name="cnic"/>
-                <field name="date_of_birth"/>
-                <field name="volunteer_skill"/>
+                <field name="availability"/>
+                <field name="skills_text" string="Skills (App)" optional="show"/>
+                <field name="volunteer_skill" optional="show"/>
             </list>
         </field>
     </record>
@@ -38,6 +37,12 @@
             <xpath expr="//sheet/notebook" position="inside">
 
                 <page string="Volunteer Information">
+
+                    <group string="Skills (from App)">
+                        <field name="skills_text"
+                               readonly="1"
+                               placeholder="Skills submitted from the mobile app will appear here"/>
+                    </group>
 
                     <group string="Volunteer Skills">
                         <field name="volunteer_skill"/>

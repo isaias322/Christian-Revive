@@ -10,13 +10,7 @@ class MusicTrack(models.Model):
     album = fields.Char(string='Album')
     youtube_url = fields.Char(string='YouTube URL')
     duration = fields.Char(string='Duration', help='e.g. 4:32')
-    genre = fields.Selection([
-        ('gospel', 'Gospel'),
-        ('worship', 'Worship'),
-        ('praise', 'Praise'),
-        ('hymn', 'Hymn'),
-        ('other', 'Other'),
-    ], default='gospel')
+    genre = fields.Char(string='Genre', default='Gospel')
     # ── Language Selection ─────────────────────
     language = fields.Selection([
         ('english', 'English'),

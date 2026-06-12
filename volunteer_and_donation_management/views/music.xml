@@ -15,6 +15,7 @@
                             <field name="artist"/>
                             <field name="album"/>
                             <field name="genre"/>
+                            <field name="language"/>
                             <field name="duration"/>
                             <field name="sequence"/>
                         </group>
@@ -48,6 +49,7 @@
                 <field name="artist"/>
                 <field name="album"/>
                 <field name="genre"/>
+                <field name="language"/>
                 <field name="duration"/>
                 <field name="is_featured"/>
                 <field name="is_published"/>

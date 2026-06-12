@@ -17,6 +17,11 @@ class MusicTrack(models.Model):
         ('hymn', 'Hymn'),
         ('other', 'Other'),
     ], default='gospel')
+    # ── Language Selection ─────────────────────
+    language = fields.Selection([
+        ('english', 'English'),
+        ('urdu', 'Urdu'),
+    ], string='Language', default='english', required=True)
     sequence = fields.Integer(default=10)
     is_published = fields.Boolean(default=True)
     is_featured = fields.Boolean(string='Featured')

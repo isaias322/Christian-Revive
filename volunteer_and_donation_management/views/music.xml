@@ -27,7 +27,7 @@
                                    placeholder="https://youtube.com/watch?v=..."
                                    invisible="source_type != 'youtube'"/>
                             <field name="onedrive_url"
-                                   placeholder="https://1drv.ms/v/..."
+                                   placeholder="https://drive.google.com/file/d/... or https://1drv.ms/v/..."
                                    invisible="source_type != 'onedrive'"/>
                             <field name="audio_file" filename="audio_filename"
                                    invisible="source_type != 'upload'"/>

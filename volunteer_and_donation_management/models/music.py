@@ -11,11 +11,11 @@ class MusicTrack(models.Model):
     # ── Source ──────────────────────────────────
     source_type = fields.Selection([
         ('youtube', 'YouTube'),
-        ('onedrive', 'OneDrive'),
+        ('onedrive', 'Cloud Video (Drive/OneDrive)'),
         ('upload', 'Upload MP3'),
     ], string='Source', default='youtube', required=True)
     youtube_url = fields.Char(string='YouTube URL')
-    onedrive_url = fields.Char(string='OneDrive Video Link')
+    onedrive_url = fields.Char(string='Cloud Video Link')
     audio_file = fields.Binary(string='MP3 File', attachment=True)
     audio_filename = fields.Char(string='MP3 Filename')
     duration = fields.Char(string='Duration', help='e.g. 4:32')

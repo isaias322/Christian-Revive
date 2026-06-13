@@ -22,8 +22,16 @@
                         <group>
                             <field name="is_published"/>
                             <field name="is_featured"/>
+                            <field name="source_type" widget="radio"/>
                             <field name="youtube_url"
-                                   placeholder="https://youtube.com/watch?v=..."/>
+                                   placeholder="https://youtube.com/watch?v=..."
+                                   invisible="source_type != 'youtube'"/>
+                            <field name="onedrive_url"
+                                   placeholder="https://1drv.ms/v/..."
+                                   invisible="source_type != 'onedrive'"/>
+                            <field name="audio_file" filename="audio_filename"
+                                   invisible="source_type != 'upload'"/>
+                            <field name="audio_filename" invisible="1"/>
                         </group>
                     </group>
                     <notebook>

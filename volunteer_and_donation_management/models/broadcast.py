@@ -20,6 +20,16 @@ class Broadcast(models.Model):
     video = fields.Binary(string='Video', attachment=True)
     video_url = fields.Char(string='Video URL')
 
+    # ── Source ──────────────────────────────────
+    source_type = fields.Selection([
+        ('video', 'Video (YouTube / Upload)'),
+        ('cloud', 'Cloud Video (Drive/OneDrive)'),
+        ('audio', 'Upload MP3'),
+    ], string='Media Source', default='video', required=True)
+    cloud_video_url = fields.Char(string='Cloud Video Link')
+    audio_file = fields.Binary(string='MP3 File', attachment=True)
+    audio_filename = fields.Char(string='MP3 Filename')
+
     def action_publish(self):
         self.write({'is_published': True})
 

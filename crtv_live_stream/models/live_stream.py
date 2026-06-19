@@ -267,37 +267,36 @@ class LiveStream(models.Model):
             return super().write(vals)
 
         before = {
-            rec.id: (
-                rec.language,
-                self._abs_minutes(rec.air_date, rec.air_time),
-                self._abs_minutes(rec.air_date, rec.air_time) + (rec.duration or 60),
-            )
+            rec.id: (rec.language, self._abs_minutes(rec.air_date, rec.air_time))
             for rec in self
         }
 
         res = super().write(vals)
 
         for rec in self:
-            old_language, old_start, old_end = before.get(rec.id, (None, None, None))
+            language, old_start = before.get(rec.id, (None, None))
             if old_start is None:
                 continue
-            new_end = self._abs_minutes(rec.air_date, rec.air_time) + (rec.duration or 60)
-            delta = new_end - old_end
-            if delta == 0:
-                continue
+            # Walk every same-language record that was scheduled after this one
+            # (in its existing chronological order) and re-chain each one
+            # directly off the end of the one before it — fully collapsing
+            # whatever gap previously existed, so the lineup is back-to-back
+            # from this point forward.
             downstream = self.search([
-                ('language', '=', old_language),
+                ('language', '=', language),
                 ('id', '!=', rec.id),
             ]).filtered(
                 lambda r: self._abs_minutes(r.air_date, r.air_time) > old_start
-            )
+            ).sorted(key=lambda r: self._abs_minutes(r.air_date, r.air_time))
+
+            cursor = self._abs_minutes(rec.air_date, rec.air_time) + (rec.duration or 60)
             for d in downstream:
-                new_abs = self._abs_minutes(d.air_date, d.air_time) + delta
-                new_date, new_time = self._minutes_to_date_time(new_abs)
+                new_date, new_time = self._minutes_to_date_time(cursor)
                 d.with_context(skip_schedule_cascade=True).write({
                     'air_date': new_date,
                     'air_time': new_time,
                 })
+                cursor += (d.duration or 60)
         return res
 
     # ── Get server/user timezone ──────────────────────────────

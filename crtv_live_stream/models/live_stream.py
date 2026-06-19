@@ -2,7 +2,7 @@ import logging
 
 from odoo import fields, models, api
 from odoo.exceptions import ValidationError
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 import pytz
 
 _logger = logging.getLogger(__name__)
@@ -241,6 +241,64 @@ class LiveStream(models.Model):
             if minutes:
                 vals['duration'] = minutes
         return super().create(vals_list)
+
+    # ── Cascade: keep the back-to-back chain in sync when a record's
+    # schedule changes ─────────────────────────────────────────
+    def _abs_minutes(self, rec_date, time_str):
+        if not rec_date or not time_str:
+            return 0
+        try:
+            h, m = map(int, time_str.split(':'))
+        except Exception:
+            h, m = 0, 0
+        return rec_date.toordinal() * 24 * 60 + h * 60 + m
+
+    def _minutes_to_date_time(self, abs_minutes):
+        days, minutes_of_day = divmod(abs_minutes, 24 * 60)
+        new_date = date.fromordinal(days)
+        h, m = divmod(minutes_of_day, 60)
+        return new_date, '%02d:%02d' % (h, m)
+
+    def write(self, vals):
+        schedule_fields = {'duration', 'air_time', 'air_date'}
+        if self.env.context.get('skip_schedule_cascade') or not (
+            schedule_fields & set(vals.keys())
+        ):
+            return super().write(vals)
+
+        before = {
+            rec.id: (
+                rec.language,
+                self._abs_minutes(rec.air_date, rec.air_time),
+                self._abs_minutes(rec.air_date, rec.air_time) + (rec.duration or 60),
+            )
+            for rec in self
+        }
+
+        res = super().write(vals)
+
+        for rec in self:
+            old_language, old_start, old_end = before.get(rec.id, (None, None, None))
+            if old_start is None:
+                continue
+            new_end = self._abs_minutes(rec.air_date, rec.air_time) + (rec.duration or 60)
+            delta = new_end - old_end
+            if delta == 0:
+                continue
+            downstream = self.search([
+                ('language', '=', old_language),
+                ('id', '!=', rec.id),
+            ]).filtered(
+                lambda r: self._abs_minutes(r.air_date, r.air_time) > old_start
+            )
+            for d in downstream:
+                new_abs = self._abs_minutes(d.air_date, d.air_time) + delta
+                new_date, new_time = self._minutes_to_date_time(new_abs)
+                d.with_context(skip_schedule_cascade=True).write({
+                    'air_date': new_date,
+                    'air_time': new_time,
+                })
+        return res
 
     # ── Get server/user timezone ──────────────────────────────
     def _get_tz(self):

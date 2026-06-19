@@ -273,7 +273,11 @@ class LiveStream(models.Model):
         return new_date, '%02d:%02d' % (h, m)
 
     def write(self, vals):
-        schedule_fields = {'duration', 'air_time', 'air_date'}
+        # Only duration/air_time changes cascade to keep the lineup
+        # back-to-back. Moving a record to a different air_date on its own
+        # is a deliberate "relocate this one lesson" action and must stay
+        # isolated to that single record.
+        schedule_fields = {'duration', 'air_time'}
         if self.env.context.get('skip_schedule_cascade') or not (
             schedule_fields & set(vals.keys())
         ):

@@ -123,27 +123,62 @@ class LiveStream(models.Model):
         return new_date, new_time
 
     # ── Auto-detect video duration ────────────────────────────
-    def _fetch_youtube_duration_minutes(self, url):
-        """Look up a YouTube video's duration via yt-dlp (no API key needed).
-        Returns whole minutes (rounded up), or False if it can't be determined."""
+    def _extract_youtube_video_id(self, url):
+        """Extract the 11-char video ID from common YouTube URL formats."""
         if not url:
             return False
-        try:
-            import yt_dlp
-        except ImportError:
-            _logger.warning('yt-dlp is not installed — cannot auto-detect duration for %s', url)
+        import re
+        match = re.search(
+            r'(?:youtube\.com/watch\?v=|youtube\.com/embed/|youtu\.be/|'
+            r'youtube\.com/shorts/)([A-Za-z0-9_-]{11})',
+            url,
+        )
+        return match.group(1) if match else False
+
+    def _parse_iso8601_duration(self, iso_str):
+        """Parse an ISO 8601 duration like 'PT1H2M10S' into total seconds."""
+        import re
+        match = re.match(r'PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?', iso_str or '')
+        if not match:
+            return 0
+        h, m, s = (int(x) if x else 0 for x in match.groups())
+        return h * 3600 + m * 60 + s
+
+    def _fetch_youtube_duration_minutes(self, url):
+        """Look up a YouTube video's duration via the YouTube Data API v3.
+        Requires the 'crtv_live_stream.youtube_api_key' system parameter.
+        Returns whole minutes (rounded up), or False if it can't be determined."""
+        video_id = self._extract_youtube_video_id(url)
+        if not video_id:
+            _logger.warning('Could not extract a YouTube video ID from %s', url)
             return False
+        api_key = self.env['ir.config_parameter'].sudo().get_param(
+            'crtv_live_stream.youtube_api_key')
+        if not api_key:
+            _logger.warning(
+                'No YouTube API key configured (system parameter '
+                'crtv_live_stream.youtube_api_key) — cannot auto-detect duration for %s', url)
+            return False
+        import json, urllib.request, urllib.parse
         try:
-            opts = {'quiet': True, 'no_warnings': True, 'skip_download': True}
-            with yt_dlp.YoutubeDL(opts) as ydl:
-                info = ydl.extract_info(url, download=False)
-            seconds = info.get('duration') if info else None
-            if not seconds:
-                _logger.warning('yt-dlp returned no duration for %s (info=%s)', url, info)
+            query = urllib.parse.urlencode(
+                {'id': video_id, 'part': 'contentDetails', 'key': api_key})
+            req_url = f'https://www.googleapis.com/youtube/v3/videos?{query}'
+            with urllib.request.urlopen(req_url, timeout=10) as resp:
+                data = json.loads(resp.read().decode('utf-8'))
+            items = data.get('items') or []
+            if not items:
+                _logger.warning(
+                    'YouTube API returned no items for video %s (response=%s)',
+                    video_id, data)
                 return False
-            return max(1, -(-int(seconds) // 60))
+            iso_duration = items[0]['contentDetails']['duration']
+            seconds = self._parse_iso8601_duration(iso_duration)
+            if not seconds:
+                return False
+            return max(1, -(-seconds // 60))
         except Exception:
-            _logger.exception('yt-dlp failed to fetch duration for %s', url)
+            _logger.exception('YouTube API call failed for video %s', video_id)
             return False
 
     def _fetch_file_duration_minutes(self, video_binary):

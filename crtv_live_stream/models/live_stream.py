@@ -24,15 +24,16 @@ class LiveStream(models.Model):
     air_date = fields.Date(
         string='Air Date',
         required=True,
-        default=lambda self: self._default_air_date_and_time()[0],
+        default=lambda self: self._default_air_date_and_time(language='english')[0],
         index=True,
     )
     air_time = fields.Char(
         string='Air Time (HH:MM)',
-        default=lambda self: self._default_air_date_and_time()[1],
+        default=lambda self: self._default_air_date_and_time(language='english')[1],
         help='24-hour LOCAL time — e.g. 09:00, 14:30, 20:00. '
              'The system will convert to UTC automatically. '
-             'Defaults to right after the most recently scheduled program ends.',
+             'Defaults to right after the most recently scheduled program in the '
+             'same language ends.',
     )
     duration = fields.Integer(
         string='Duration (minutes)',
@@ -107,9 +108,11 @@ class LiveStream(models.Model):
         ('urdu', 'Urdu'),
     ], string='Language', default='english', required=True)
 
-    # ── Default a new record to start right after the previous one ends ──
-    def _default_air_date_and_time(self):
-        last = self.search([], order='air_date desc, air_time desc', limit=1)
+    # ── Default a new record to start right after the previous one (same
+    # language) ends ───────────────────────────────────────────
+    def _default_air_date_and_time(self, language=None):
+        domain = [('language', '=', language)] if language else []
+        last = self.search(domain, order='air_date desc, air_time desc', limit=1)
         if not last or not last.air_time:
             return fields.Date.today(), '09:00'
         try:
@@ -121,6 +124,16 @@ class LiveStream(models.Model):
         new_date = last.air_date + timedelta(days=days_forward)
         new_time = '%02d:%02d' % (minutes_of_day // 60, minutes_of_day % 60)
         return new_date, new_time
+
+    @api.onchange('language')
+    def _onchange_language_default_schedule(self):
+        # Only re-target a brand-new, unsaved record — never silently move
+        # an existing record's schedule just because its language was edited.
+        if self._origin:
+            return
+        new_date, new_time = self._default_air_date_and_time(language=self.language)
+        self.air_date = new_date
+        self.air_time = new_time
 
     # ── Auto-detect video duration ────────────────────────────
     def _extract_youtube_video_id(self, url):

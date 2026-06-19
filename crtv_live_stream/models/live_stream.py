@@ -1,7 +1,11 @@
+import logging
+
 from odoo import fields, models, api
 from odoo.exceptions import ValidationError
 from datetime import datetime, timedelta
 import pytz
+
+_logger = logging.getLogger(__name__)
 
 
 class LiveStream(models.Model):
@@ -127,6 +131,7 @@ class LiveStream(models.Model):
         try:
             import yt_dlp
         except ImportError:
+            _logger.warning('yt-dlp is not installed — cannot auto-detect duration for %s', url)
             return False
         try:
             opts = {'quiet': True, 'no_warnings': True, 'skip_download': True}
@@ -134,9 +139,11 @@ class LiveStream(models.Model):
                 info = ydl.extract_info(url, download=False)
             seconds = info.get('duration') if info else None
             if not seconds:
+                _logger.warning('yt-dlp returned no duration for %s (info=%s)', url, info)
                 return False
             return max(1, -(-int(seconds) // 60))
         except Exception:
+            _logger.exception('yt-dlp failed to fetch duration for %s', url)
             return False
 
     def _fetch_file_duration_minutes(self, video_binary):
@@ -162,9 +169,11 @@ class LiveStream(models.Model):
             data = json.loads(result.stdout or '{}')
             seconds = float(data.get('format', {}).get('duration') or 0)
             if not seconds:
+                _logger.warning('ffprobe returned no duration (stderr=%s)', result.stderr)
                 return False
             return max(1, -(-int(seconds) // 60))
         except Exception:
+            _logger.exception('ffprobe failed to read uploaded video duration')
             return False
         finally:
             if tmp_path and os.path.exists(tmp_path):

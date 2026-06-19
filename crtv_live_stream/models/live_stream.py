@@ -20,14 +20,15 @@ class LiveStream(models.Model):
     air_date = fields.Date(
         string='Air Date',
         required=True,
-        default=fields.Date.today,
+        default=lambda self: self._default_air_date_and_time()[0],
         index=True,
     )
     air_time = fields.Char(
         string='Air Time (HH:MM)',
-        default='09:00',
+        default=lambda self: self._default_air_date_and_time()[1],
         help='24-hour LOCAL time — e.g. 09:00, 14:30, 20:00. '
-             'The system will convert to UTC automatically.',
+             'The system will convert to UTC automatically. '
+             'Defaults to right after the most recently scheduled program ends.',
     )
     duration = fields.Integer(
         string='Duration (minutes)',
@@ -101,6 +102,101 @@ class LiveStream(models.Model):
         ('english', 'English'),
         ('urdu', 'Urdu'),
     ], string='Language', default='english', required=True)
+
+    # ── Default a new record to start right after the previous one ends ──
+    def _default_air_date_and_time(self):
+        last = self.search([], order='air_date desc, air_time desc', limit=1)
+        if not last or not last.air_time:
+            return fields.Date.today(), '09:00'
+        try:
+            h, m = map(int, last.air_time.split(':'))
+        except Exception:
+            return fields.Date.today(), '09:00'
+        total_minutes = h * 60 + m + (last.duration or 60)
+        days_forward, minutes_of_day = divmod(total_minutes, 24 * 60)
+        new_date = last.air_date + timedelta(days=days_forward)
+        new_time = '%02d:%02d' % (minutes_of_day // 60, minutes_of_day % 60)
+        return new_date, new_time
+
+    # ── Auto-detect video duration ────────────────────────────
+    def _fetch_youtube_duration_minutes(self, url):
+        """Look up a YouTube video's duration via yt-dlp (no API key needed).
+        Returns whole minutes (rounded up), or False if it can't be determined."""
+        if not url:
+            return False
+        try:
+            import yt_dlp
+        except ImportError:
+            return False
+        try:
+            opts = {'quiet': True, 'no_warnings': True, 'skip_download': True}
+            with yt_dlp.YoutubeDL(opts) as ydl:
+                info = ydl.extract_info(url, download=False)
+            seconds = info.get('duration') if info else None
+            if not seconds:
+                return False
+            return max(1, -(-int(seconds) // 60))
+        except Exception:
+            return False
+
+    def _fetch_file_duration_minutes(self, video_binary):
+        """Inspect an uploaded video file's duration via ffprobe.
+        Returns whole minutes (rounded up), or False if it can't be determined."""
+        if not video_binary:
+            return False
+        import base64, subprocess, tempfile, os, json
+        try:
+            raw = base64.b64decode(video_binary)
+        except Exception:
+            return False
+        tmp_path = None
+        try:
+            with tempfile.NamedTemporaryFile(suffix='.mp4', delete=False) as tmp:
+                tmp.write(raw)
+                tmp_path = tmp.name
+            result = subprocess.run(
+                ['ffprobe', '-v', 'error', '-show_entries', 'format=duration',
+                 '-of', 'json', tmp_path],
+                capture_output=True, text=True, timeout=30,
+            )
+            data = json.loads(result.stdout or '{}')
+            seconds = float(data.get('format', {}).get('duration') or 0)
+            if not seconds:
+                return False
+            return max(1, -(-int(seconds) // 60))
+        except Exception:
+            return False
+        finally:
+            if tmp_path and os.path.exists(tmp_path):
+                os.remove(tmp_path)
+
+    @api.onchange('stream_type', 'stream_url')
+    def _onchange_stream_url_duration(self):
+        if self.stream_type == 'youtube' and self.stream_url:
+            minutes = self._fetch_youtube_duration_minutes(self.stream_url)
+            if minutes:
+                self.duration = minutes
+
+    @api.onchange('stream_type', 'video_file')
+    def _onchange_video_file_duration(self):
+        if self.stream_type == 'uploaded' and self.video_file:
+            minutes = self._fetch_file_duration_minutes(self.video_file)
+            if minutes:
+                self.duration = minutes
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            if vals.get('duration'):
+                continue
+            minutes = False
+            if vals.get('stream_type') == 'youtube' and vals.get('stream_url'):
+                minutes = self._fetch_youtube_duration_minutes(vals['stream_url'])
+            elif vals.get('stream_type') == 'uploaded' and vals.get('video_file'):
+                minutes = self._fetch_file_duration_minutes(vals['video_file'])
+            if minutes:
+                vals['duration'] = minutes
+        return super().create(vals_list)
 
     # ── Get server/user timezone ──────────────────────────────
     def _get_tz(self):

@@ -100,6 +100,12 @@ class LiveStream(models.Model):
     is_published = fields.Boolean(string='Published', default=True)
     is_featured  = fields.Boolean(string='Featured (Main Player)')
 
+    # When a day has no scheduled content at all, this single video plays
+    # on repeat instead of cycling through past programs. Only one stream
+    # can hold this flag at a time — enabling it here clears it everywhere
+    # else, the same way is_featured works for the main player.
+    is_loop_fallback = fields.Boolean(string='Loop Fallback')
+
     send_notification = fields.Boolean(string='Send Push Notification', default=False)
 
     # ── Language Selection ─────────────────────
@@ -253,7 +259,13 @@ class LiveStream(models.Model):
                 minutes = self._fetch_file_duration_minutes(vals['video_file'])
             if minutes:
                 vals['duration'] = minutes
-        return super().create(vals_list)
+        records = super().create(vals_list)
+        if any(vals.get('is_loop_fallback') for vals in vals_list):
+            # Only the most recently created loop-fallback record keeps the flag.
+            winner = records.filtered('is_loop_fallback')[-1:]
+            (self.search([('is_loop_fallback', '=', True)]) - winner).write(
+                {'is_loop_fallback': False})
+        return records
 
     # ── Cascade: keep the back-to-back chain in sync when a record's
     # schedule changes ─────────────────────────────────────────
@@ -273,6 +285,12 @@ class LiveStream(models.Model):
         return new_date, '%02d:%02d' % (h, m)
 
     def write(self, vals):
+        # Enabling the loop fallback anywhere (header button, list toggle,
+        # API) must clear it everywhere else — only one stream may hold it.
+        if vals.get('is_loop_fallback'):
+            (self.search([('is_loop_fallback', '=', True)]) - self).write(
+                {'is_loop_fallback': False})
+
         # Only duration/air_time changes cascade to keep the lineup
         # back-to-back. Moving a record to a different air_date on its own
         # is a deliberate "relocate this one lesson" action and must stay
@@ -315,6 +333,12 @@ class LiveStream(models.Model):
                 })
                 cursor += (d.duration or 60)
         return res
+
+    # ── Loop fallback toggle — write() enforces that only one stream
+    # may hold the flag at a time ───────────────────────────────────
+    def action_toggle_loop_fallback(self):
+        for rec in self:
+            rec.is_loop_fallback = not rec.is_loop_fallback
 
     # ── Get server/user timezone ──────────────────────────────
     def _get_tz(self):

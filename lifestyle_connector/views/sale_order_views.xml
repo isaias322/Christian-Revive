@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_order_form_lifestyle" model="ir.ui.view">
+        <field name="name">sale.order.form.lifestyle</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='state'][@widget='statusbar']" position="before">
+                <button name="action_notify_ready_for_pickup" type="object"
+                        string="Notify Ready for Pickup" class="btn-secondary"
+                        invisible="fulfillment_type != 'pickup' or delivery_stage not in ('processing', 'packing')"/>
+                <button name="action_notify_out_for_delivery" type="object"
+                        string="Notify Out for Delivery" class="btn-secondary"
+                        invisible="fulfillment_type != 'delivery' or delivery_stage not in ('processing', 'packing')"/>
+                <button name="action_mark_delivered" type="object"
+                        string="Mark Delivered" class="btn-primary"
+                        invisible="delivery_stage != 'out_for_delivery'"/>
+                <button name="action_mark_picked_up" type="object"
+                        string="Mark Picked Up" class="btn-primary"
+                        invisible="delivery_stage != 'ready_for_pickup'"/>
+                <button name="action_send_photo_to_customer" type="object"
+                        string="Send Photo to Customer" class="btn-secondary" icon="fa-camera"
+                        invisible="state not in ('sale', 'done')"/>
+            </xpath>
+            <xpath expr="//field[@name='partner_id']" position="after">
+                <field name="fulfillment_type"/>
+                <field name="delivery_stage" readonly="1"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -13,11 +13,14 @@ class MusicTrack(models.Model):
         ('youtube', 'YouTube'),
         ('onedrive', 'Cloud Video (Drive/OneDrive)'),
         ('upload', 'Upload MP3'),
+        ('video', 'Upload Video (MP4)'),
     ], string='Source', default='youtube', required=True)
     youtube_url = fields.Char(string='YouTube URL')
     onedrive_url = fields.Char(string='Cloud Video Link')
     audio_file = fields.Binary(string='MP3 File', attachment=True)
     audio_filename = fields.Char(string='MP3 Filename')
+    video_file = fields.Binary(string='Video File', attachment=True)
+    video_filename = fields.Char(string='Video Filename')
     duration = fields.Char(string='Duration', help='e.g. 4:32')
     genre = fields.Char(string='Genre', default='Gospel')
     # ── Language Selection ─────────────────────

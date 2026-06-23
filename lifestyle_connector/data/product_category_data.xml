@@ -2,14 +2,11 @@
 <odoo noupdate="1">
     <record id="category_fruits_veg" model="product.category">
         <field name="name">Fruits &amp; Vegetables</field>
-        <field name="parent_id" ref="product.product_category_all"/>
     </record>
     <record id="category_healthy_pantry" model="product.category">
         <field name="name">Healthy Pantry</field>
-        <field name="parent_id" ref="product.product_category_all"/>
     </record>
     <record id="category_furniture_home" model="product.category">
         <field name="name">Furniture &amp; Home</field>
-        <field name="parent_id" ref="product.product_category_all"/>
     </record>
 </odoo>

@@ -18,6 +18,13 @@ def _current_partner():
     return user.partner_id
 
 
+def _is_staff():
+    """True if the logged-in session belongs to an internal Odoo user (vendor/shop staff),
+    as opposed to a portal customer."""
+    user = request.env.user
+    return bool(user) and not user._is_public() and user.has_group('base.group_user')
+
+
 def _timeline_for(order):
     sequence = PICKUP_STAGE_SEQUENCE if order.fulfillment_type == 'pickup' else DELIVERY_STAGE_SEQUENCE
     if order.delivery_stage == 'cancelled':
@@ -306,3 +313,66 @@ class LifestyleAPI(http.Controller):
                 } for line in order.order_line],
             },
         }
+
+    # ---------------------------------------------------------------
+    # Vendor tools (internal staff only — surfaced in the app's Profile
+    # page when the logged-in account is Odoo staff, not a portal customer)
+    # ---------------------------------------------------------------
+    @http.route('/lifestyle/api/whoami', type='json', auth='public', methods=['GET', 'POST'], csrf=False)
+    def whoami(self, **kwargs):
+        user = request.env.user
+        if not user or user._is_public():
+            return {'status': 'error', 'message': 'Authentication required. Call /web/session/authenticate first.'}
+        return {
+            'status': 'success',
+            'is_staff': _is_staff(),
+            'name': user.name,
+            'email': user.login,
+        }
+
+    @http.route('/lifestyle/api/vendor/orders', type='json', auth='public', methods=['GET', 'POST'], csrf=False)
+    def vendor_orders(self, limit=20, offset=0, **kwargs):
+        if not _is_staff():
+            return {'status': 'error', 'message': 'Vendor access required.'}
+
+        Order = request.env['sale.order'].sudo()
+        orders = Order.search([], order='date_order desc', limit=min(int(limit or 20), 100), offset=int(offset or 0))
+        return {
+            'status': 'success',
+            'orders': [{
+                'id': o.id,
+                'name': o.name,
+                'partner_name': o.partner_id.name,
+                'date_order': str(o.date_order),
+                'state': o.state,
+                'fulfillment_type': o.fulfillment_type,
+                'delivery_stage': o.delivery_stage,
+                'stage_label': STAGE_LABELS.get(o.delivery_stage, o.delivery_stage),
+                'amount_total': o.amount_total,
+                'currency': o.currency_id.symbol or o.currency_id.name,
+            } for o in orders],
+        }
+
+    @http.route('/lifestyle/api/vendor/orders/<int:order_id>/photo', type='json', auth='public', methods=['POST'], csrf=False)
+    def vendor_send_photo(self, order_id, image_base64=None, mimetype='image/jpeg', **kwargs):
+        if not _is_staff():
+            return {'status': 'error', 'message': 'Vendor access required.'}
+        if not image_base64:
+            return {'status': 'error', 'message': 'image_base64 is required.'}
+
+        order = request.env['sale.order'].sudo().browse(order_id)
+        if not order.exists():
+            return {'status': 'error', 'message': 'Order not found'}
+
+        request.env['ir.attachment'].sudo().create({
+            'name': f'{order.name}-photo.jpg',
+            'res_model': 'sale.order',
+            'res_id': order.id,
+            'mimetype': mimetype,
+            'datas': image_base64,
+        })
+        try:
+            order.action_send_photo_to_customer()
+        except Exception as exc:
+            return {'status': 'error', 'message': str(exc)}
+        return {'status': 'success'}

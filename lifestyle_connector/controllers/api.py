@@ -177,10 +177,45 @@ class LifestyleAPI(http.Controller):
         return {'status': 'success'}
 
     # ---------------------------------------------------------------
+    # Profile (requires login)
+    # ---------------------------------------------------------------
+    ADDRESS_FIELDS = ('phone', 'street', 'street2', 'city', 'zip')
+
+    def _serialize_profile(self, partner):
+        data = {'name': partner.name, 'email': partner.email or ''}
+        for field in self.ADDRESS_FIELDS:
+            data[field] = getattr(partner, field) or ''
+        return data
+
+    @http.route('/lifestyle/api/profile', type='json', auth='public', methods=['GET', 'POST'], csrf=False)
+    def profile(self, **kwargs):
+        partner = _current_partner()
+        if not partner:
+            return {'status': 'error', 'message': 'Authentication required. Call /web/session/authenticate first.'}
+        return {'status': 'success', 'profile': self._serialize_profile(partner)}
+
+    @http.route('/lifestyle/api/profile/update', type='json', auth='public', methods=['POST'], csrf=False)
+    def update_profile(self, name=None, phone=None, street=None, street2=None, city=None, zip=None, **kwargs):
+        partner = _current_partner()
+        if not partner:
+            return {'status': 'error', 'message': 'Authentication required. Call /web/session/authenticate first.'}
+
+        vals = {}
+        if name is not None:
+            vals['name'] = name
+        for field, value in (('phone', phone), ('street', street), ('street2', street2), ('city', city), ('zip', zip)):
+            if value is not None:
+                vals[field] = value
+        if vals:
+            partner.sudo().write(vals)
+        return {'status': 'success', 'profile': self._serialize_profile(partner)}
+
+    # ---------------------------------------------------------------
     # Checkout & Orders (require login)
     # ---------------------------------------------------------------
     @http.route('/lifestyle/api/checkout', type='json', auth='public', methods=['POST'], csrf=False)
-    def checkout(self, fulfillment_type='delivery', lines=None, note=None, **kwargs):
+    def checkout(self, fulfillment_type='delivery', lines=None, note=None,
+                 phone=None, street=None, street2=None, city=None, zip=None, **kwargs):
         partner = _current_partner()
         if not partner:
             return {'status': 'error', 'message': 'Authentication required. Call /web/session/authenticate first.'}
@@ -188,6 +223,14 @@ class LifestyleAPI(http.Controller):
             return {'status': 'error', 'message': 'fulfillment_type must be delivery or pickup.'}
         if not lines:
             return {'status': 'error', 'message': 'At least one order line is required.'}
+
+        if fulfillment_type == 'delivery':
+            address_vals = {}
+            for field, value in (('phone', phone), ('street', street), ('street2', street2), ('city', city), ('zip', zip)):
+                if value is not None:
+                    address_vals[field] = value
+            if address_vals:
+                partner.sudo().write(address_vals)
 
         Product = request.env['product.product'].sudo()
         order_lines = []

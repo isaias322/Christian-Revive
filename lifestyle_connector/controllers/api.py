@@ -270,6 +270,7 @@ class LifestyleAPI(http.Controller):
                 'delivery_stage': o.delivery_stage,
                 'stage_label': STAGE_LABELS.get(o.delivery_stage, o.delivery_stage),
                 'amount_total': o.amount_total,
+                'currency': o.currency_id.symbol or o.currency_id.name,
             } for o in orders],
         }
 
@@ -293,6 +294,7 @@ class LifestyleAPI(http.Controller):
                 'fulfillment_type': order.fulfillment_type,
                 'delivery_stage': order.delivery_stage,
                 'amount_total': order.amount_total,
+                'currency': order.currency_id.symbol or order.currency_id.name,
                 'timeline': _timeline_for(order),
                 'photo_url': order._lifestyle_photo_url(),
                 'lines': [{

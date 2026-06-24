@@ -19,23 +19,35 @@ def _current_partner():
 
 
 def _is_staff():
-    """True if the logged-in session should see the app's Vendor Tools.
-
-    Full Odoo administrators always qualify (for setup/testing). Everyone
-    else needs an Employee record tagged Staff Role = Carpenter — set via
-    the same Employees screen used to manage other staff, then bridged to
-    an app login with the standard "Create User" button on that record.
+    """True if the logged-in Odoo session (cookie-based) should see the app's
+    Vendor Tools. This only covers full Odoo administrators — carpenters use
+    a separate App Login Email + App PIN flow (see _vendor_employee) instead
+    of a real Odoo account, so they never hit this check at all.
     """
     user = request.env.user
-    if not user or user._is_public():
-        return False
-    if user.has_group('base.group_system'):
-        return True
-    Employee = request.env['hr.employee'].sudo()
-    if 'staff_role' not in Employee._fields:
-        return False
-    employee = Employee.search([('user_id', '=', user.id)], limit=1)
-    return bool(employee) and employee.staff_role == 'carpenter' and employee.is_app_active
+    return bool(user) and not user._is_public() and user.has_group('base.group_system')
+
+
+def _vendor_employee():
+    """Returns the carpenter hr.employee authorized for vendor-tools requests,
+    identified by the X-Vendor-Token header issued by /lifestyle/api/vendor/login,
+    or None if missing/invalid."""
+    token = request.httprequest.headers.get('X-Vendor-Token')
+    if not token:
+        return None
+    vendor_session = request.env['lifestyle.vendor.session'].sudo().search([('token', '=', token)], limit=1)
+    if not vendor_session:
+        return None
+    employee = vendor_session.employee_id
+    if not employee.is_app_active or employee.staff_role != 'carpenter':
+        return None
+    return employee
+
+
+def _vendor_access():
+    """True if this request is authorized for vendor-tools endpoints, either
+    as a full Odoo admin (existing session) or a carpenter (PIN token)."""
+    return _is_staff() or _vendor_employee() is not None
 
 
 def _timeline_for(order):
@@ -343,9 +355,24 @@ class LifestyleAPI(http.Controller):
             'email': user.login,
         }
 
+    @http.route('/lifestyle/api/vendor/login', type='json', auth='public', methods=['POST'], csrf=False)
+    def vendor_login(self, email=None, pin=None, **kwargs):
+        if not email or not pin:
+            return {'status': 'error', 'message': 'email and pin are required.'}
+        employee = request.env['hr.employee'].sudo().search([
+            ('app_email', '=', email),
+            ('app_pin', '=', pin),
+        ], limit=1)
+        if not employee or not employee.is_app_active:
+            return {'status': 'error', 'message': 'Invalid email or PIN.'}
+        if employee.staff_role != 'carpenter':
+            return {'status': 'error', 'message': 'This account does not have vendor access.'}
+        vendor_session = request.env['lifestyle.vendor.session'].sudo().issue_for(employee)
+        return {'status': 'success', 'token': vendor_session.token, 'name': employee.name}
+
     @http.route('/lifestyle/api/vendor/orders', type='json', auth='public', methods=['GET', 'POST'], csrf=False)
     def vendor_orders(self, limit=20, offset=0, **kwargs):
-        if not _is_staff():
+        if not _vendor_access():
             return {'status': 'error', 'message': 'Vendor access required.'}
 
         Order = request.env['sale.order'].sudo()
@@ -368,7 +395,7 @@ class LifestyleAPI(http.Controller):
 
     @http.route('/lifestyle/api/vendor/orders/<int:order_id>/photo', type='json', auth='public', methods=['POST'], csrf=False)
     def vendor_send_photo(self, order_id, image_base64=None, mimetype='image/jpeg', **kwargs):
-        if not _is_staff():
+        if not _vendor_access():
             return {'status': 'error', 'message': 'Vendor access required.'}
         if not image_base64:
             return {'status': 'error', 'message': 'image_base64 is required.'}

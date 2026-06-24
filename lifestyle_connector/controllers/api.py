@@ -84,7 +84,7 @@ class LifestyleAPI(http.Controller):
             'login': email,
             'password': password,
             'partner_id': partner.id,
-            'groups_id': [(6, 0, [portal_group.id])],
+            'group_ids': [(6, 0, [portal_group.id])],
         })
         return {'status': 'success', 'partner_id': partner.id, 'user_id': user.id}
 

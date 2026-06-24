@@ -294,6 +294,7 @@ class LifestyleAPI(http.Controller):
                 'delivery_stage': order.delivery_stage,
                 'amount_total': order.amount_total,
                 'timeline': _timeline_for(order),
+                'photo_url': order._lifestyle_photo_url(),
                 'lines': [{
                     'product_id': line.product_id.id,
                     'name': line.product_id.name,

@@ -20,4 +20,5 @@ class LifestyleAttachmentToken(models.Model):
 
     @api.model
     def grant(self, attachment):
-        return self.create({'attachment_id': attachment.id})
+        existing = self.search([('attachment_id', '=', attachment.id)], limit=1)
+        return existing or self.create({'attachment_id': attachment.id})

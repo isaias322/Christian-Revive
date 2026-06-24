@@ -83,26 +83,37 @@ class SaleOrder(models.Model):
         for order in self:
             order._lifestyle_advance_stage('picked_up')
 
+    def _lifestyle_latest_photo_attachment(self):
+        self.ensure_one()
+        return self.env['ir.attachment'].search([
+            ('res_model', '=', 'sale.order'),
+            ('res_id', '=', self.id),
+            ('mimetype', 'like', 'image/'),
+        ], order='create_date desc', limit=1)
+
+    def _lifestyle_photo_url(self):
+        """Public, token-gated URL for the latest vendor photo on this order, or False if none."""
+        self.ensure_one()
+        attachment = self._lifestyle_latest_photo_attachment()
+        if not attachment:
+            return False
+        token = self.env['lifestyle.attachment.token'].grant(attachment)
+        base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
+        return f'{base_url}/lifestyle/api/image/attachment/{attachment.id}/{token.token}'
+
     def action_send_photo_to_customer(self):
         self.ensure_one()
         if not self.partner_id:
             raise UserError('This order has no customer to notify.')
 
-        attachment = self.env['ir.attachment'].search([
-            ('res_model', '=', 'sale.order'),
-            ('res_id', '=', self.id),
-            ('mimetype', 'like', 'image/'),
-        ], order='create_date desc', limit=1)
+        attachment = self._lifestyle_latest_photo_attachment()
         if not attachment:
             raise UserError(
                 'No photo found on this order yet.\n\n'
                 'Attach a photo first using the paperclip icon below (chatter), then click this button again.'
             )
 
-        token = self.env['lifestyle.attachment.token'].grant(attachment)
-        base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
-        image_url = f'{base_url}/lifestyle/api/image/attachment/{attachment.id}/{token.token}'
-
+        image_url = self._lifestyle_photo_url()
         products = self._lifestyle_product_summary()
         title = f'A photo of your {products}' if products else f'A photo from your order {self.name}'
 

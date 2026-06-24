@@ -8,6 +8,7 @@ class HrEmployeeExtended(models.Model):
         ('doctor', 'Doctor'),
         ('nurse', 'Nurse'),
         ('admin','Project Admin'),  # ← renamed
+        ('carpenter', 'Carpenter'),
         ('other', 'Other'),
     ], string='Staff Role')
 

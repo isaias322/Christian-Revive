@@ -19,10 +19,23 @@ def _current_partner():
 
 
 def _is_staff():
-    """True if the logged-in session belongs to an internal Odoo user (vendor/shop staff),
-    as opposed to a portal customer."""
+    """True if the logged-in session should see the app's Vendor Tools.
+
+    Full Odoo administrators always qualify (for setup/testing). Everyone
+    else needs an Employee record tagged Staff Role = Carpenter — set via
+    the same Employees screen used to manage other staff, then bridged to
+    an app login with the standard "Create User" button on that record.
+    """
     user = request.env.user
-    return bool(user) and not user._is_public() and user.has_group('base.group_user')
+    if not user or user._is_public():
+        return False
+    if user.has_group('base.group_system'):
+        return True
+    Employee = request.env['hr.employee'].sudo()
+    if 'staff_role' not in Employee._fields:
+        return False
+    employee = Employee.search([('user_id', '=', user.id)], limit=1)
+    return bool(employee) and employee.staff_role == 'carpenter' and employee.is_app_active
 
 
 def _timeline_for(order):

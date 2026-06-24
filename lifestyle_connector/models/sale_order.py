@@ -41,6 +41,15 @@ class SaleOrder(models.Model):
                 order._lifestyle_advance_stage('processing', push=False)
         return res
 
+    def _lifestyle_product_summary(self):
+        self.ensure_one()
+        names = self.order_line.mapped('product_id.name')
+        if not names:
+            return ''
+        if len(names) <= 2:
+            return ', '.join(names)
+        return f'{names[0]}, {names[1]} and {len(names) - 2} more'
+
     def _lifestyle_advance_stage(self, new_stage, push=True):
         self.ensure_one()
         if self.delivery_stage == new_stage:
@@ -49,10 +58,12 @@ class SaleOrder(models.Model):
         label = STAGE_LABELS.get(new_stage, new_stage)
         self.message_post(body=f'Order status updated: <b>{label}</b>')
         if push and self.partner_id:
+            products = self._lifestyle_product_summary()
+            body = f'Your order ({products}) is now: {label}' if products else f'Your order is now: {label}'
             self._lifestyle_send_push_to_partner(
                 self.partner_id,
                 title=f'Order {self.name}',
-                body=f'Your order is now: {label}',
+                body=body,
                 data={'type': 'order_status', 'order_id': self.id, 'stage': new_stage},
             )
 
@@ -92,10 +103,13 @@ class SaleOrder(models.Model):
         base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
         image_url = f'{base_url}/lifestyle/api/image/attachment/{attachment.id}/{token.token}'
 
+        products = self._lifestyle_product_summary()
+        title = f'A photo of your {products}' if products else f'A photo from your order {self.name}'
+
         self.message_post(body='Photo sent to customer for review.')
         sent = self._lifestyle_send_push_to_partner(
             self.partner_id,
-            title=f'A photo from your order {self.name}',
+            title=title,
             body='Take a look — come review it in-store or have it delivered!',
             data={'type': 'order_photo', 'order_id': self.id},
             image_url=image_url,

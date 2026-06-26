@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_lifestyle_app_banner_tree" model="ir.ui.view">
+        <field name="name">lifestyle.app.banner.tree</field>
+        <field name="model">lifestyle.app.banner</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="title"/>
+                <field name="active"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_lifestyle_app_banner_form" model="ir.ui.view">
+        <field name="name">lifestyle.app.banner.form</field>
+        <field name="model">lifestyle.app.banner</field>
+        <field name="arch" type="xml">
+            <form string="App News Banner">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="active"/>
+                            <field name="sequence"/>
+                            <field name="name"/>
+                            <field name="title"/>
+                            <field name="subtitle"/>
+                        </group>
+                        <group>
+                            <field name="image" widget="image" class="oe_avatar"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_lifestyle_app_banner" model="ir.actions.act_window">
+        <field name="name">App News Banners</field>
+        <field name="res_model">lifestyle.app.banner</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_lifestyle_app_banner"
+              name="App News Banners"
+              parent="sale.sale_menu_root"
+              action="action_lifestyle_app_banner"
+              sequence="95"/>
+</odoo>

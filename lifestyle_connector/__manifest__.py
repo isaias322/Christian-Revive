@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 {
     'name': 'Revive Lifestyle Connector',
     'version': '1.0.0',
@@ -20,9 +20,11 @@
         'data/product_category_data.xml',
         'views/sale_order_views.xml',
         'views/product_template_views.xml',
+        'views/app_banner_views.xml',
     ],
     'installable': True,
     'application': True,
     'license': 'LGPL-3',
     'post_init_hook': 'post_init_hook',
 }
+

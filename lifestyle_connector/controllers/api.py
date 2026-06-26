@@ -83,6 +83,10 @@ def _color_image_url(product_id, image_number):
     return f'/lifestyle/api/image/product/{product_id}/color/{image_number}'
 
 
+def _banner_image_url(banner_id):
+    return f'/lifestyle/api/image/banner/{banner_id}'
+
+
 def _app_visibility_domain(Product):
     if 'is_store_product' in Product._fields:
         return [('is_store_product', '=', True)]
@@ -187,6 +191,19 @@ class LifestyleAPI(http.Controller):
     # ---------------------------------------------------------------
     # Catalog (public)
     # ---------------------------------------------------------------
+    @http.route('/lifestyle/api/banners', type='json', auth='public', methods=['GET', 'POST'], csrf=False)
+    def banners(self, **kwargs):
+        banners = request.env['lifestyle.app.banner'].sudo().search([('active', '=', True)], order='sequence, id')
+        return {
+            'status': 'success',
+            'banners': [{
+                'id': banner.id,
+                'title': banner.title,
+                'subtitle': banner.subtitle or '',
+                'has_image': bool(banner.image),
+                'image_url': _banner_image_url(banner.id) if banner.image else '',
+            } for banner in banners],
+        }
     @http.route('/lifestyle/api/categories', type='json', auth='public', methods=['GET', 'POST'], csrf=False)
     def categories(self, **kwargs):
         roots = [
@@ -232,6 +249,16 @@ class LifestyleAPI(http.Controller):
         data['description_full'] = product.description or ''
         return {'status': 'success', 'product': data}
 
+    @http.route('/lifestyle/api/image/banner/<int:banner_id>', type='http', auth='public', methods=['GET'], csrf=False)
+    def banner_image(self, banner_id, **kwargs):
+        banner = request.env['lifestyle.app.banner'].sudo().browse(banner_id)
+        if not banner.exists() or not banner.active or not banner.image:
+            return request.not_found()
+        return Response(
+            base64.b64decode(banner.image),
+            content_type='image/png',
+            headers={'Cache-Control': 'public, max-age=3600'},
+        )
     @http.route('/lifestyle/api/image/product/<int:product_id>', type='http', auth='public', methods=['GET'], csrf=False)
     def product_image(self, product_id, **kwargs):
         product = request.env['product.template'].sudo().browse(product_id)
@@ -726,6 +753,7 @@ class LifestyleAPI(http.Controller):
         except Exception as exc:
             return {'status': 'error', 'message': str(exc)}
         return {'status': 'success'}
+
 
 
 

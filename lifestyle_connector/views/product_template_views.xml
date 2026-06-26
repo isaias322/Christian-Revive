@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <record id="view_product_template_form_lifestyle" model="ir.ui.view">
         <field name="name">product.template.form.lifestyle</field>
@@ -7,7 +7,14 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='sale_ok']" position="after">
                 <field name="lifestyle_app_visible"/>
+                <group string="Revive Lifestyle Color Images">
+                    <field name="lifestyle_color_image_1" widget="image"/>
+                    <field name="lifestyle_color_image_2" widget="image"/>
+                    <field name="lifestyle_color_image_3" widget="image"/>
+                    <field name="lifestyle_color_image_4" widget="image"/>
+                </group>
             </xpath>
         </field>
     </record>
 </odoo>
+

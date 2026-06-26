@@ -79,6 +79,10 @@ def _store_image_url(product_id, image_number):
     return f'/lifestyle/api/image/product/{product_id}/store/{image_number}'
 
 
+def _color_image_url(product_id, image_number):
+    return f'/lifestyle/api/image/product/{product_id}/color/{image_number}'
+
+
 def _app_visibility_domain(Product):
     if 'is_store_product' in Product._fields:
         return [('is_store_product', '=', True)]
@@ -123,6 +127,17 @@ def _serialize_product(product):
             for value in (_store_value(product, 'color_options', '') or '').split(',')
             if value.strip()
         ],
+        'color_images': {
+            color: _color_image_url(product.id, index)
+            for index, color in enumerate([
+                value.strip()
+                for value in (_store_value(product, 'color_options', '') or '').split(',')
+                if value.strip()
+            ], start=1)
+            if index <= 4
+            and f'lifestyle_color_image_{index}' in product._fields
+            and getattr(product, f'lifestyle_color_image_{index}')
+        },
         'size_options': [
             value.strip()
             for value in (_store_value(product, 'size_options', '') or '').split(',')
@@ -244,6 +259,23 @@ class LifestyleAPI(http.Controller):
             headers={'Cache-Control': 'public, max-age=3600'},
         )
 
+    @http.route('/lifestyle/api/image/product/<int:product_id>/color/<int:image_number>', type='http', auth='public', methods=['GET'], csrf=False)
+    def product_color_image(self, product_id, image_number, **kwargs):
+        if image_number not in (1, 2, 3, 4):
+            return request.not_found()
+        product = request.env['product.template'].sudo().browse(product_id)
+        field_name = f'lifestyle_color_image_{image_number}'
+        if not product.exists() or not _is_app_visible(product) or field_name not in product._fields:
+            return request.not_found()
+        image_data = getattr(product, field_name)
+        if not image_data:
+            return request.not_found()
+        return Response(
+            base64.b64decode(image_data),
+            content_type='image/png',
+            headers={'Cache-Control': 'public, max-age=3600'},
+        )
+
     @http.route('/lifestyle/api/image/attachment/<int:attachment_id>/<string:token>', type='http', auth='public', methods=['GET'], csrf=False)
     def attachment_image(self, attachment_id, token, **kwargs):
         grant = request.env['lifestyle.attachment.token'].sudo().search([
@@ -346,7 +378,17 @@ class LifestyleAPI(http.Controller):
             product = template.product_variant_id
             if not product:
                 return {'status': 'error', 'message': f'No sellable variant found for: {template.name}'}
-            order_lines.append((0, 0, {'product_id': product.id, 'product_uom_qty': qty}))
+            selected_color = (line.get('color') or '').strip()
+            color_options = []
+            if 'color_options' in template._fields and template.color_options:
+                color_options = [value.strip() for value in template.color_options.split(',') if value.strip()]
+            if color_options and selected_color not in color_options:
+                return {'status': 'error', 'message': f'Select a valid color for: {template.name}'}
+            line_vals = {'product_id': product.id, 'product_uom_qty': qty}
+            if selected_color:
+                line_vals['lifestyle_color'] = selected_color
+                line_vals['name'] = f'{product.display_name}\nColor: {selected_color}'
+            order_lines.append((0, 0, line_vals))
 
         order = request.env['sale.order'].sudo().create({
             'partner_id': partner.id,
@@ -415,6 +457,7 @@ class LifestyleAPI(http.Controller):
                     'qty': line.product_uom_qty,
                     'price_unit': line.price_unit,
                     'price_subtotal': line.price_subtotal,
+                    'color': line.lifestyle_color or '',
                 } for line in order.order_line],
             },
         }
@@ -670,6 +713,10 @@ class LifestyleAPI(http.Controller):
         except Exception as exc:
             return {'status': 'error', 'message': str(exc)}
         return {'status': 'success'}
+
+
+
+
 
 
 

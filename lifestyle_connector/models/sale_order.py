@@ -278,8 +278,9 @@ class SaleOrder(models.Model):
     def action_send_photo_to_customer(self):
         self.ensure_one()
         self.action_send_media_update(new_count=1)
+class SaleOrderLine(models.Model):
+    _inherit = 'sale.order.line'
 
-
-
+    lifestyle_color = fields.Char(string='Selected Color', copy=False)
 
 

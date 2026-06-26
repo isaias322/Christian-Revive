@@ -138,7 +138,7 @@ class LifestyleAPI(http.Controller):
 
     @http.route('/lifestyle/api/products', type='json', auth='public', methods=['GET', 'POST'], csrf=False)
     def products(self, category_id=None, search=None, limit=20, offset=0, **kwargs):
-        domain = [('sale_ok', '=', True), ('active', '=', True)]
+        domain = [('sale_ok', '=', True), ('active', '=', True), ('lifestyle_app_visible', '=', True)]
         if category_id:
             domain.append(('categ_id', '=', int(category_id)))
         if search:
@@ -161,7 +161,7 @@ class LifestyleAPI(http.Controller):
     @http.route('/lifestyle/api/products/<int:product_id>', type='json', auth='public', methods=['GET', 'POST'], csrf=False)
     def product_detail(self, product_id, **kwargs):
         product = request.env['product.template'].sudo().browse(product_id)
-        if not product.exists() or not product.active:
+        if not product.exists() or not product.active or not product.lifestyle_app_visible:
             return {'status': 'error', 'message': 'Product not found'}
         data = _serialize_product(product)
         data['description_full'] = product.description or ''
@@ -170,7 +170,7 @@ class LifestyleAPI(http.Controller):
     @http.route('/lifestyle/api/image/product/<int:product_id>', type='http', auth='public', methods=['GET'], csrf=False)
     def product_image(self, product_id, **kwargs):
         product = request.env['product.template'].sudo().browse(product_id)
-        if not product.exists() or not product.image_1920:
+        if not product.exists() or not product.lifestyle_app_visible or not product.image_1920:
             return request.not_found()
         return Response(
             base64.b64decode(product.image_1920),
@@ -264,13 +264,22 @@ class LifestyleAPI(http.Controller):
             if address_vals:
                 partner.sudo().write(address_vals)
 
-        Product = request.env['product.product'].sudo()
+        ProductTemplate = request.env['product.template'].sudo()
         order_lines = []
         for line in lines:
-            product = Product.browse(int(line.get('product_id', 0)))
+            template = ProductTemplate.browse(int(line.get('product_id', 0)))
             qty = float(line.get('qty', 1))
-            if not product.exists() or not product.sale_ok or qty <= 0:
+            if (
+                not template.exists()
+                or not template.active
+                or not template.sale_ok
+                or not template.lifestyle_app_visible
+                or qty <= 0
+            ):
                 return {'status': 'error', 'message': f'Invalid product or quantity: {line}'}
+            product = template.product_variant_id
+            if not product:
+                return {'status': 'error', 'message': f'No sellable variant found for: {template.name}'}
             order_lines.append((0, 0, {'product_id': product.id, 'product_uom_qty': qty}))
 
         order = request.env['sale.order'].sudo().create({
@@ -393,6 +402,32 @@ class LifestyleAPI(http.Controller):
             } for o in orders],
         }
 
+    @http.route('/lifestyle/api/vendor/orders/<int:order_id>/stage', type='json', auth='public', methods=['POST'], csrf=False)
+    def vendor_update_stage(self, order_id, stage=None, **kwargs):
+        if not _vendor_access():
+            return {'status': 'error', 'message': 'Vendor access required.'}
+        if not stage:
+            return {'status': 'error', 'message': 'stage is required.'}
+
+        order = request.env['sale.order'].sudo().browse(order_id)
+        if not order.exists():
+            return {'status': 'error', 'message': 'Order not found'}
+
+        allowed_stages = PICKUP_STAGE_SEQUENCE if order.fulfillment_type == 'pickup' else DELIVERY_STAGE_SEQUENCE
+        if stage not in allowed_stages:
+            return {'status': 'error', 'message': 'This stage is not valid for this order.'}
+        if stage == 'order_placed':
+            return {'status': 'error', 'message': 'Order Placed is set automatically when the order is created.'}
+
+        order._lifestyle_advance_stage(stage)
+        return {
+            'status': 'success',
+            'order': {
+                'id': order.id,
+                'delivery_stage': order.delivery_stage,
+                'stage_label': STAGE_LABELS.get(order.delivery_stage, order.delivery_stage),
+            },
+        }
     @http.route('/lifestyle/api/vendor/orders/<int:order_id>/photo', type='json', auth='public', methods=['POST'], csrf=False)
     def vendor_send_photo(self, order_id, image_base64=None, mimetype='image/jpeg', **kwargs):
         if not _vendor_access():

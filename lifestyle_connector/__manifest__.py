@@ -19,6 +19,7 @@
         'security/ir.model.access.csv',
         'data/product_category_data.xml',
         'views/sale_order_views.xml',
+        'views/product_template_views.xml',
     ],
     'installable': True,
     'application': True,

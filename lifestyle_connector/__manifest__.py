@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 {
     'name': 'Revive Lifestyle Connector',
     'version': '1.0.0',

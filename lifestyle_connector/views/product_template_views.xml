@@ -5,17 +5,20 @@
         <field name="model">product.template</field>
         <field name="inherit_id" ref="product.product_template_form_view"/>
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='sale_ok']" position="after">
-                <field name="lifestyle_app_visible" string="Show in App"/>
-            </xpath>
             <xpath expr="//notebook" position="inside">
                 <page string="Revive Lifestyle" name="revive_lifestyle_store">
                     <group>
-                        <group string="Color Images" col="4">
-                            <field name="lifestyle_color_image_1" string="Color 1" widget="image" class="oe_avatar"/>
-                            <field name="lifestyle_color_image_2" string="Color 2" widget="image" class="oe_avatar"/>
-                            <field name="lifestyle_color_image_3" string="Color 3" widget="image" class="oe_avatar"/>
-                            <field name="lifestyle_color_image_4" string="Color 4" widget="image" class="oe_avatar"/>
+                        <group string="Store Settings">
+                            <field name="lifestyle_app_visible" string="Show in Revive Lifestyle App"/>
+                        </group>
+                        <group string="Color Image Slots">
+                            <separator string="These images are used when customers select matching color options in the app." colspan="2"/>
+                            <group col="2">
+                                <field name="lifestyle_color_image_1" string="Color Image 1" widget="image" class="oe_avatar"/>
+                                <field name="lifestyle_color_image_2" string="Color Image 2" widget="image" class="oe_avatar"/>
+                                <field name="lifestyle_color_image_3" string="Color Image 3" widget="image" class="oe_avatar"/>
+                                <field name="lifestyle_color_image_4" string="Color Image 4" widget="image" class="oe_avatar"/>
+                            </group>
                         </group>
                     </group>
                 </page>

@@ -24,11 +24,18 @@
                 <button name="action_send_photo_to_customer" type="object"
                         string="Send Progress Update" class="btn-secondary" icon="fa-camera"
                         invisible="state not in ('sale', 'done') or delivery_stage in ('delivered', 'picked_up')"/>
+                <button name="action_unlock_stage_correction" type="object"
+                        string="Allow Stage Correction" class="btn-secondary" icon="fa-unlock"
+                        invisible="lifestyle_stage_unlocked"/>
+                <button name="action_lock_stage_correction" type="object"
+                        string="Lock Stage Correction" class="btn-secondary" icon="fa-lock"
+                        invisible="not lifestyle_stage_unlocked"/>
             </xpath>
             <xpath expr="//field[@name='partner_id']" position="after">
                 <field name="fulfillment_type"/>
                 <field name="delivery_stage" readonly="1"/>
                 <field name="lifestyle_progress_percent"/>
+                <field name="lifestyle_stage_unlocked" readonly="1"/>
             </xpath>
         </field>
     </record>

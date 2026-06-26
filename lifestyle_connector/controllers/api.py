@@ -473,6 +473,7 @@ class LifestyleAPI(http.Controller):
                 'currency': o.currency_id.symbol or o.currency_id.name,
                 'can_send_media': o._lifestyle_can_send_media(),
                 'skip_processing': o._lifestyle_skip_processing(),
+                'stage_unlocked': o.lifestyle_stage_unlocked,
             } for o in orders],
         }
 
@@ -520,15 +521,33 @@ class LifestyleAPI(http.Controller):
         if stage == 'order_placed':
             return {'status': 'error', 'message': 'Order Placed is set automatically when the order is created.'}
 
-        order._lifestyle_advance_stage(stage)
+        try:
+            order._lifestyle_advance_stage(stage, push=False)
+        except Exception as exc:
+            return {'status': 'error', 'message': str(exc)}
         return {
             'status': 'success',
             'order': {
                 'id': order.id,
                 'delivery_stage': order.delivery_stage,
                 'stage_label': STAGE_LABELS.get(order.delivery_stage, order.delivery_stage),
+                'stage_unlocked': order.lifestyle_stage_unlocked,
             },
         }
+
+    @http.route('/lifestyle/api/vendor/orders/<int:order_id>/stage/notify', type='json', auth='public', methods=['POST'], csrf=False)
+    def vendor_notify_stage(self, order_id, **kwargs):
+        if not _vendor_access():
+            return {'status': 'error', 'message': 'Vendor access required.'}
+
+        order = request.env['sale.order'].sudo().browse(order_id)
+        if not order.exists():
+            return {'status': 'error', 'message': 'Order not found'}
+        try:
+            order._lifestyle_send_stage_notification()
+        except Exception as exc:
+            return {'status': 'error', 'message': str(exc)}
+        return {'status': 'success'}
 
     @http.route('/lifestyle/api/vendor/orders/<int:order_id>/media/list', type='json', auth='public', methods=['GET', 'POST'], csrf=False)
     def vendor_order_media(self, order_id, **kwargs):
@@ -651,6 +670,8 @@ class LifestyleAPI(http.Controller):
         except Exception as exc:
             return {'status': 'error', 'message': str(exc)}
         return {'status': 'success'}
+
+
 
 
 

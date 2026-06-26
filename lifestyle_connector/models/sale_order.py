@@ -41,6 +41,16 @@ class SaleOrder(models.Model):
         tracking=True,
         help='Customer-facing build progress shown in the Revive Lifestyle app.',
     )
+    lifestyle_stage_unlocked = fields.Boolean(
+        string='Stage Correction Unlocked',
+        default=False,
+        copy=False,
+        help=(
+            'When enabled, the vendor app is allowed to move this order back to an '
+            'earlier delivery stage once (e.g. to undo an accidental "Delivered" tap). '
+            'Automatically turns back off after that one correction.'
+        ),
+    )
 
     def action_confirm(self):
         res = super().action_confirm()
@@ -79,6 +89,18 @@ class SaleOrder(models.Model):
         self.ensure_one()
         if self.delivery_stage == new_stage:
             return
+        sequence = PICKUP_STAGE_SEQUENCE if self.fulfillment_type == 'pickup' else DELIVERY_STAGE_SEQUENCE
+        if self.delivery_stage in sequence and new_stage in sequence:
+            current_index = sequence.index(self.delivery_stage)
+            new_index = sequence.index(new_stage)
+            if new_index < current_index:
+                if not self.lifestyle_stage_unlocked:
+                    raise UserError(
+                        'This order is already past that stage, so the vendor app can\'t move it back.\n\n'
+                        'If this was set by mistake, click "Allow Stage Correction" on this order in Odoo, '
+                        'then try again from the app.'
+                    )
+                self.lifestyle_stage_unlocked = False
         self.delivery_stage = new_stage
         stage_progress = {
             'order_placed': 0,
@@ -92,15 +114,37 @@ class SaleOrder(models.Model):
         self.lifestyle_progress_percent = max(self.lifestyle_progress_percent or 0, stage_progress.get(new_stage, 0))
         label = STAGE_LABELS.get(new_stage, new_stage)
         self.message_post(body=f'Order status updated: <b>{label}</b>')
-        if push and self.partner_id:
-            products = self._lifestyle_product_summary()
-            body = f'Your order ({products}) is now: {label}' if products else f'Your order is now: {label}'
-            self._lifestyle_send_push_to_partner(
-                self.partner_id,
-                title=f'Order {self.name}',
-                body=body,
-                data={'type': 'order_status', 'order_id': self.id, 'stage': new_stage},
-            )
+        if push:
+            self._lifestyle_send_stage_notification()
+
+    def _lifestyle_send_stage_notification(self):
+        self.ensure_one()
+        if not self.partner_id:
+            raise UserError('This order has no customer to notify.')
+        label = STAGE_LABELS.get(self.delivery_stage, self.delivery_stage)
+        products = self._lifestyle_product_summary()
+        body = f'Your order ({products}) is now: {label}' if products else f'Your order is now: {label}'
+        sent = self._lifestyle_send_push_to_partner(
+            self.partner_id,
+            title=f'Order {self.name}',
+            body=body,
+            data={'type': 'order_status', 'order_id': self.id, 'stage': self.delivery_stage},
+        )
+        if not sent:
+            raise UserError('Stage updated, but the customer has no registered device to notify yet.')
+        self.with_context(mail_create_nosubscribe=True, mail_notify_force_send=False).message_post(
+            body=f'Stage notification sent only to customer: {self.partner_id.display_name}.',
+            subtype_xmlid='mail.mt_note',
+        )
+
+    def action_unlock_stage_correction(self):
+        for order in self:
+            order.lifestyle_stage_unlocked = True
+            order.message_post(body='Stage correction unlocked — the vendor app may move this order back one stage.')
+
+    def action_lock_stage_correction(self):
+        for order in self:
+            order.lifestyle_stage_unlocked = False
 
     def action_mark_packing(self):
         for order in self:
@@ -234,6 +278,8 @@ class SaleOrder(models.Model):
     def action_send_photo_to_customer(self):
         self.ensure_one()
         self.action_send_media_update(new_count=1)
+
+
 
 
 

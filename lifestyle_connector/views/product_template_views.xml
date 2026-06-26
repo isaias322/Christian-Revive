@@ -11,14 +11,16 @@
                         <group string="Store Settings">
                             <field name="lifestyle_app_visible" string="Show in Revive Lifestyle App"/>
                         </group>
-                        <group string="Color Image Slots">
-                            <separator string="These images are used when customers select matching color options in the app." colspan="2"/>
-                            <group col="2">
-                                <field name="lifestyle_color_image_1" string="Color Image 1" widget="image" class="oe_avatar"/>
-                                <field name="lifestyle_color_image_2" string="Color Image 2" widget="image" class="oe_avatar"/>
-                                <field name="lifestyle_color_image_3" string="Color Image 3" widget="image" class="oe_avatar"/>
-                                <field name="lifestyle_color_image_4" string="Color Image 4" widget="image" class="oe_avatar"/>
-                            </group>
+                    </group>
+                    <separator string="Color Images"/>
+                    <group col="2">
+                        <group string="First Color Images">
+                            <field name="lifestyle_color_image_1" string="Color Image 1" widget="image" class="oe_avatar" options="{'size': [120, 120]}"/>
+                            <field name="lifestyle_color_image_2" string="Color Image 2" widget="image" class="oe_avatar" options="{'size': [120, 120]}"/>
+                        </group>
+                        <group string="More Color Images">
+                            <field name="lifestyle_color_image_3" string="Color Image 3" widget="image" class="oe_avatar" options="{'size': [120, 120]}"/>
+                            <field name="lifestyle_color_image_4" string="Color Image 4" widget="image" class="oe_avatar" options="{'size': [120, 120]}"/>
                         </group>
                     </group>
                 </page>

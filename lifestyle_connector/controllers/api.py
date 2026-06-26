@@ -52,6 +52,8 @@ def _vendor_access():
 
 def _timeline_for(order):
     sequence = PICKUP_STAGE_SEQUENCE if order.fulfillment_type == 'pickup' else DELIVERY_STAGE_SEQUENCE
+    if order._lifestyle_skip_processing():
+        sequence = [stage for stage in sequence if stage != 'processing']
     if order.delivery_stage == 'cancelled':
         return [{'key': 'cancelled', 'label': STAGE_LABELS['cancelled'], 'done': True, 'current': True}]
     try:
@@ -470,6 +472,7 @@ class LifestyleAPI(http.Controller):
                 'amount_total': o.amount_total,
                 'currency': o.currency_id.symbol or o.currency_id.name,
                 'can_send_media': o._lifestyle_can_send_media(),
+                'skip_processing': o._lifestyle_skip_processing(),
             } for o in orders],
         }
 
@@ -510,6 +513,8 @@ class LifestyleAPI(http.Controller):
             return {'status': 'error', 'message': 'Order not found'}
 
         allowed_stages = PICKUP_STAGE_SEQUENCE if order.fulfillment_type == 'pickup' else DELIVERY_STAGE_SEQUENCE
+        if order._lifestyle_skip_processing():
+            allowed_stages = [s for s in allowed_stages if s != 'processing']
         if stage not in allowed_stages:
             return {'status': 'error', 'message': 'This stage is not valid for this order.'}
         if stage == 'order_placed':
@@ -561,8 +566,10 @@ class LifestyleAPI(http.Controller):
     def vendor_send_media_batch(self, order_id, items=None, comment=None, **kwargs):
         if not _vendor_access():
             return {'status': 'error', 'message': 'Vendor access required.'}
-        if not items:
-            return {'status': 'error', 'message': 'At least one photo or video is required.'}
+        comment = (comment or '').strip()
+        if not items and not comment:
+            return {'status': 'error', 'message': 'Add a photo, video, or comment before sending.'}
+        items = items or []
 
         order = request.env['sale.order'].sudo().browse(order_id)
         if not order.exists():
@@ -573,7 +580,6 @@ class LifestyleAPI(http.Controller):
             return {'status': 'error', 'message': 'This order has already been completed â€” no further updates can be sent.'}
 
         Attachment = request.env['ir.attachment'].sudo()
-        comment = (comment or '').strip()
         created = 0
         for item in items:
             media_base64 = item.get('media_base64')
@@ -591,7 +597,16 @@ class LifestyleAPI(http.Controller):
                 'description': comment or False,
             })
 
-        if not created:
+        if not created and comment:
+            Attachment.create({
+                'name': f'{order.name}-furniture-comment.txt',
+                'res_model': 'sale.order',
+                'res_id': order.id,
+                'mimetype': 'text/plain',
+                'datas': base64.b64encode(comment.encode('utf-8')).decode('ascii'),
+                'description': comment,
+            })
+        elif not created:
             return {'status': 'error', 'message': 'No valid photos or videos were provided.'}
 
         try:
@@ -627,4 +642,6 @@ class LifestyleAPI(http.Controller):
         except Exception as exc:
             return {'status': 'error', 'message': str(exc)}
         return {'status': 'success'}
+
+
 

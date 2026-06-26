@@ -46,8 +46,25 @@ class SaleOrder(models.Model):
         res = super().action_confirm()
         for order in self:
             if order.delivery_stage == 'order_placed':
-                order._lifestyle_advance_stage('processing', push=False)
+                initial_stage = 'packing' if order._lifestyle_skip_processing() else 'processing'
+                order._lifestyle_advance_stage(initial_stage, push=False)
         return res
+
+    def _lifestyle_skip_processing(self):
+        """True when every line on this order is a Fruits & Vegetables
+        product â€” those just get packed and shipped, so there's no separate
+        build/processing step the way there is for furniture."""
+        self.ensure_one()
+        fruit_category = self.env.ref('lifestyle_connector.category_fruits_veg', raise_if_not_found=False)
+        if not fruit_category:
+            return False
+        categ_ids = self.order_line.mapped('product_id.categ_id.id')
+        if not categ_ids:
+            return False
+        fruit_descendant_ids = self.env['product.category'].search([
+            ('id', 'child_of', fruit_category.id),
+        ]).ids
+        return all(categ_id in fruit_descendant_ids for categ_id in categ_ids)
 
     def _lifestyle_product_summary(self):
         self.ensure_one()
@@ -110,9 +127,10 @@ class SaleOrder(models.Model):
         return self.env['ir.attachment'].search([
             ('res_model', '=', 'sale.order'),
             ('res_id', '=', self.id),
-            '|',
+            '|', '|',
             ('mimetype', 'like', 'image/'),
             ('mimetype', 'like', 'video/'),
+            ('mimetype', '=', 'text/plain'),
         ], order='create_date desc')
 
     def _lifestyle_latest_media_attachment(self):
@@ -150,7 +168,7 @@ class SaleOrder(models.Model):
     def _lifestyle_media_list(self):
         self.ensure_one()
         return [{
-            'url': self._lifestyle_attachment_url(attachment),
+            'url': self._lifestyle_attachment_url(attachment) if attachment.mimetype != 'text/plain' else '',
             'mimetype': attachment.mimetype,
             'comment': attachment.description or '',
         } for attachment in self._lifestyle_media_attachments()]
@@ -180,8 +198,11 @@ class SaleOrder(models.Model):
 
         media_url = self._lifestyle_attachment_url(attachment)
         is_video = (attachment.mimetype or '').startswith('video/')
+        is_comment_only = attachment.mimetype == 'text/plain'
         products = self._lifestyle_product_summary()
-        if new_count > 1:
+        if is_comment_only:
+            title = f'A workshop note about your {products}' if products else f'A workshop note about order {self.name}'
+        elif new_count > 1:
             title = f'{new_count} new updates on your {products}' if products else f'{new_count} new updates on order {self.name}'
         else:
             media_label = 'video' if is_video else 'photo'
@@ -195,9 +216,9 @@ class SaleOrder(models.Model):
                 'type': 'order_media',
                 'order_id': self.id,
                 'partner_id': customer.id,
-                'media_type': 'video' if is_video else 'image',
+                'media_type': 'comment' if is_comment_only else ('video' if is_video else 'image'),
             },
-            image_url=False if is_video else media_url,
+            image_url=False if is_video or is_comment_only else media_url,
         )
         if not sent:
             raise UserError('Media attached, but the customer has no registered device to notify yet.')
@@ -213,5 +234,6 @@ class SaleOrder(models.Model):
     def action_send_photo_to_customer(self):
         self.ensure_one()
         self.action_send_media_update(new_count=1)
+
 
 

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <record id="view_product_template_form_lifestyle" model="ir.ui.view">
         <field name="name">product.template.form.lifestyle</field>
@@ -6,15 +6,20 @@
         <field name="inherit_id" ref="product.product_template_form_view"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='sale_ok']" position="after">
-                <field name="lifestyle_app_visible"/>
-                <group string="Revive Lifestyle Color Images">
-                    <field name="lifestyle_color_image_1" widget="image"/>
-                    <field name="lifestyle_color_image_2" widget="image"/>
-                    <field name="lifestyle_color_image_3" widget="image"/>
-                    <field name="lifestyle_color_image_4" widget="image"/>
-                </group>
+                <field name="lifestyle_app_visible" string="Show in App"/>
+            </xpath>
+            <xpath expr="//notebook" position="inside">
+                <page string="Revive Lifestyle" name="revive_lifestyle_store">
+                    <group>
+                        <group string="Color Images" col="4">
+                            <field name="lifestyle_color_image_1" string="Color 1" widget="image" class="oe_avatar"/>
+                            <field name="lifestyle_color_image_2" string="Color 2" widget="image" class="oe_avatar"/>
+                            <field name="lifestyle_color_image_3" string="Color 3" widget="image" class="oe_avatar"/>
+                            <field name="lifestyle_color_image_4" string="Color 4" widget="image" class="oe_avatar"/>
+                        </group>
+                    </group>
+                </page>
             </xpath>
         </field>
     </record>
 </odoo>
-

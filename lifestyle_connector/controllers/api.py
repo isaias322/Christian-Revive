@@ -403,6 +403,8 @@ class LifestyleAPI(http.Controller):
         order = request.env['sale.order'].sudo().browse(order_id)
         if not order.exists():
             return {'status': 'error', 'message': 'Order not found'}
+        if not order.partner_id:
+            return {'status': 'error', 'message': 'This order has no customer to notify.'}
 
         request.env['ir.attachment'].sudo().create({
             'name': f'{order.name}-photo.jpg',

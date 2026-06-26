@@ -67,6 +67,10 @@ class SaleOrder(models.Model):
                 data={'type': 'order_status', 'order_id': self.id, 'stage': new_stage},
             )
 
+    def action_mark_packing(self):
+        for order in self:
+            order._lifestyle_advance_stage('packing')
+
     def action_notify_ready_for_pickup(self):
         for order in self:
             order._lifestyle_advance_stage('ready_for_pickup')
@@ -103,7 +107,8 @@ class SaleOrder(models.Model):
 
     def action_send_photo_to_customer(self):
         self.ensure_one()
-        if not self.partner_id:
+        customer = self.partner_id
+        if not customer:
             raise UserError('This order has no customer to notify.')
 
         attachment = self._lifestyle_latest_photo_attachment()
@@ -117,13 +122,21 @@ class SaleOrder(models.Model):
         products = self._lifestyle_product_summary()
         title = f'A photo of your {products}' if products else f'A photo from your order {self.name}'
 
-        self.message_post(body='Photo sent to customer for review.')
         sent = self._lifestyle_send_push_to_partner(
-            self.partner_id,
+            customer,
             title=title,
-            body='Take a look — come review it in-store or have it delivered!',
-            data={'type': 'order_photo', 'order_id': self.id},
+            body='Take a look - come review it in-store or have it delivered!',
+            data={
+                'type': 'order_photo',
+                'order_id': self.id,
+                'partner_id': customer.id,
+            },
             image_url=image_url,
         )
         if not sent:
             raise UserError('Photo attached, but the customer has no registered device to notify yet.')
+
+        self.with_context(mail_create_nosubscribe=True, mail_notify_force_send=False).message_post(
+            body=f'Photo sent only to customer: {customer.display_name}.',
+            subtype_xmlid='mail.mt_note',
+        )

@@ -4,3 +4,4 @@ from . import attachment_token
 from . import vendor_session
 from . import sale_order
 from . import stock_picking
+from . import product_template

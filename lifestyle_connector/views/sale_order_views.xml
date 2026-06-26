@@ -6,6 +6,9 @@
         <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='state'][@widget='statusbar']" position="before">
+                <button name="action_mark_packing" type="object"
+                        string="Mark Packing" class="btn-secondary"
+                        invisible="delivery_stage != 'processing'"/>
                 <button name="action_notify_ready_for_pickup" type="object"
                         string="Notify Ready for Pickup" class="btn-secondary"
                         invisible="fulfillment_type != 'pickup' or delivery_stage not in ('processing', 'packing')"/>

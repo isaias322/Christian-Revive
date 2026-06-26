@@ -147,7 +147,8 @@ def _serialize_product(product):
         'store_review_count': _store_value(product, 'store_review_count', 0) or 0,
         'store_sold_count': _store_value(product, 'store_sold_count', 0) or 0,
         'store_sequence': _store_value(product, 'store_sequence', 10) or 10,
-        'in_stock': product.qty_available > 0 if product.type == 'consu' else True,
+        'available_qty': max(0, int(product.qty_available)) if product.type in ('consu', 'product') else 999999,
+        'in_stock': product.qty_available > 0 if product.type in ('consu', 'product') else True,
     }
 
 
@@ -378,6 +379,18 @@ class LifestyleAPI(http.Controller):
             product = template.product_variant_id
             if not product:
                 return {'status': 'error', 'message': f'No sellable variant found for: {template.name}'}
+            if template.type in ('consu', 'product'):
+                requested_qty = sum(
+                    float(existing.get('qty', 1))
+                    for existing in lines
+                    if int(existing.get('product_id', 0)) == template.id
+                )
+                if requested_qty > template.qty_available:
+                    available = max(0, int(template.qty_available))
+                    return {
+                        'status': 'error',
+                        'message': f'Only {available} available for: {template.name}',
+                    }
             selected_color = (line.get('color') or '').strip()
             color_options = []
             if 'color_options' in template._fields and template.color_options:
@@ -713,6 +726,7 @@ class LifestyleAPI(http.Controller):
         except Exception as exc:
             return {'status': 'error', 'message': str(exc)}
         return {'status': 'success'}
+
 
 
 

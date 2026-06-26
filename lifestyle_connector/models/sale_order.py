@@ -104,7 +104,7 @@ class SaleOrder(models.Model):
         for order in self:
             order._lifestyle_advance_stage('picked_up')
 
-    def _lifestyle_latest_media_attachment(self):
+    def _lifestyle_media_attachments(self):
         self.ensure_one()
         return self.env['ir.attachment'].search([
             ('res_model', '=', 'sale.order'),
@@ -112,7 +112,11 @@ class SaleOrder(models.Model):
             '|',
             ('mimetype', 'like', 'image/'),
             ('mimetype', 'like', 'video/'),
-        ], order='create_date desc', limit=1)
+        ], order='create_date desc')
+
+    def _lifestyle_latest_media_attachment(self):
+        self.ensure_one()
+        return self._lifestyle_media_attachments()[:1]
 
     def _lifestyle_latest_photo_attachment(self):
         self.ensure_one()
@@ -142,7 +146,14 @@ class SaleOrder(models.Model):
         attachment = self._lifestyle_latest_media_attachment()
         return attachment.mimetype if attachment else False
 
-    def action_send_photo_to_customer(self):
+    def _lifestyle_media_list(self):
+        self.ensure_one()
+        return [{
+            'url': self._lifestyle_attachment_url(attachment),
+            'mimetype': attachment.mimetype,
+        } for attachment in self._lifestyle_media_attachments()]
+
+    def action_send_media_update(self, new_count=1):
         self.ensure_one()
         customer = self.partner_id
         if not customer:
@@ -158,8 +169,11 @@ class SaleOrder(models.Model):
         media_url = self._lifestyle_attachment_url(attachment)
         is_video = (attachment.mimetype or '').startswith('video/')
         products = self._lifestyle_product_summary()
-        media_label = 'video' if is_video else 'photo'
-        title = f'A {media_label} of your {products}' if products else f'A {media_label} from your order {self.name}'
+        if new_count > 1:
+            title = f'{new_count} new updates on your {products}' if products else f'{new_count} new updates on order {self.name}'
+        else:
+            media_label = 'video' if is_video else 'photo'
+            title = f'A {media_label} of your {products}' if products else f'A {media_label} from your order {self.name}'
 
         sent = self._lifestyle_send_push_to_partner(
             customer,
@@ -180,3 +194,7 @@ class SaleOrder(models.Model):
             body=f'Furniture progress update sent only to customer: {customer.display_name}.',
             subtype_xmlid='mail.mt_note',
         )
+
+    def action_send_photo_to_customer(self):
+        self.ensure_one()
+        self.action_send_media_update(new_count=1)

@@ -73,6 +73,10 @@ def _product_image_url(product_id):
     return f'/lifestyle/api/image/product/{product_id}'
 
 
+def _store_image_url(product_id, image_number):
+    return f'/lifestyle/api/image/product/{product_id}/store/{image_number}'
+
+
 def _app_visibility_domain(Product):
     if 'is_store_product' in Product._fields:
         return [('is_store_product', '=', True)]
@@ -87,17 +91,45 @@ def _is_app_visible(product):
     return bool(product.lifestyle_app_visible)
 
 
+def _store_value(product, field_name, default=False):
+    if field_name not in product._fields:
+        return default
+    value = getattr(product, field_name)
+    return value if value is not False else default
+
+
 def _serialize_product(product):
     return {
         'id': product.id,
         'name': product.name,
         'description': product.description_sale or '',
         'price': product.list_price,
+        'compare_price': _store_value(product, 'compare_price', 0.0) or 0.0,
         'currency': product.currency_id.symbol or product.currency_id.name,
         'category_id': product.categ_id.id,
         'category_name': product.categ_id.name,
         'has_image': bool(product.image_1920),
         'image_url': _product_image_url(product.id),
+        'additional_images': [
+            _store_image_url(product.id, image_number)
+            for image_number in (2, 3, 4)
+            if f'store_image_{image_number}' in product._fields and getattr(product, f'store_image_{image_number}')
+        ],
+        'store_description': _store_value(product, 'store_description', '') or '',
+        'color_options': [
+            value.strip()
+            for value in (_store_value(product, 'color_options', '') or '').split(',')
+            if value.strip()
+        ],
+        'size_options': [
+            value.strip()
+            for value in (_store_value(product, 'size_options', '') or '').split(',')
+            if value.strip()
+        ],
+        'store_rating': _store_value(product, 'store_rating', 0.0) or 0.0,
+        'store_review_count': _store_value(product, 'store_review_count', 0) or 0,
+        'store_sold_count': _store_value(product, 'store_sold_count', 0) or 0,
+        'store_sequence': _store_value(product, 'store_sequence', 10) or 10,
         'in_stock': product.qty_available > 0 if product.type == 'consu' else True,
     }
 
@@ -161,7 +193,8 @@ class LifestyleAPI(http.Controller):
         Product = request.env['product.template'].sudo()
         limit = min(int(limit or 20), 100)
         offset = int(offset or 0)
-        products = Product.search(domain, order='name', limit=limit, offset=offset)
+        order_by = 'store_sequence, name' if 'store_sequence' in Product._fields else 'name'
+        products = Product.search(domain, order=order_by, limit=limit, offset=offset)
         total_count = Product.search_count(domain)
 
         return {
@@ -188,6 +221,23 @@ class LifestyleAPI(http.Controller):
             return request.not_found()
         return Response(
             base64.b64decode(product.image_1920),
+            content_type='image/png',
+            headers={'Cache-Control': 'public, max-age=3600'},
+        )
+
+    @http.route('/lifestyle/api/image/product/<int:product_id>/store/<int:image_number>', type='http', auth='public', methods=['GET'], csrf=False)
+    def product_store_image(self, product_id, image_number, **kwargs):
+        if image_number not in (2, 3, 4):
+            return request.not_found()
+        product = request.env['product.template'].sudo().browse(product_id)
+        field_name = f'store_image_{image_number}'
+        if not product.exists() or not _is_app_visible(product) or field_name not in product._fields:
+            return request.not_found()
+        image_data = getattr(product, field_name)
+        if not image_data:
+            return request.not_found()
+        return Response(
+            base64.b64decode(image_data),
             content_type='image/png',
             headers={'Cache-Control': 'public, max-age=3600'},
         )
@@ -356,6 +406,7 @@ class LifestyleAPI(http.Controller):
                 'photo_url': order._lifestyle_photo_url(),
                 'media_url': order._lifestyle_media_url(),
                 'media_mimetype': order._lifestyle_media_mimetype(),
+                'media_list': order._lifestyle_media_list(),
                 'lines': [{
                     'product_id': line.product_id.id,
                     'name': line.product_id.name,
@@ -501,6 +552,45 @@ class LifestyleAPI(http.Controller):
         except Exception as exc:
             return {'status': 'error', 'message': str(exc)}
         return {'status': 'success'}
+
+    @http.route('/lifestyle/api/vendor/orders/<int:order_id>/media/batch', type='json', auth='public', methods=['POST'], csrf=False)
+    def vendor_send_media_batch(self, order_id, items=None, **kwargs):
+        if not _vendor_access():
+            return {'status': 'error', 'message': 'Vendor access required.'}
+        if not items:
+            return {'status': 'error', 'message': 'At least one photo or video is required.'}
+
+        order = request.env['sale.order'].sudo().browse(order_id)
+        if not order.exists():
+            return {'status': 'error', 'message': 'Order not found'}
+        if not order.partner_id:
+            return {'status': 'error', 'message': 'This order has no customer to notify.'}
+
+        Attachment = request.env['ir.attachment'].sudo()
+        created = 0
+        for item in items:
+            media_base64 = item.get('media_base64')
+            mimetype = item.get('mimetype') or 'image/jpeg'
+            if not media_base64 or not mimetype.startswith(('image/', 'video/')):
+                continue
+            extension = 'mp4' if mimetype.startswith('video/') else 'jpg'
+            created += 1
+            Attachment.create({
+                'name': f'{order.name}-furniture-update-{created}.{extension}',
+                'res_model': 'sale.order',
+                'res_id': order.id,
+                'mimetype': mimetype,
+                'datas': media_base64,
+            })
+
+        if not created:
+            return {'status': 'error', 'message': 'No valid photos or videos were provided.'}
+
+        try:
+            order.action_send_media_update(new_count=created)
+        except Exception as exc:
+            return {'status': 'error', 'message': str(exc)}
+        return {'status': 'success', 'count': created}
 
     @http.route('/lifestyle/api/vendor/orders/<int:order_id>/photo', type='json', auth='public', methods=['POST'], csrf=False)
     def vendor_send_photo(self, order_id, image_base64=None, mimetype='image/jpeg', **kwargs):

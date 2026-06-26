@@ -8,6 +8,7 @@
                 <field name="sequence" widget="handle"/>
                 <field name="name"/>
                 <field name="title"/>
+                <field name="background_style"/>
                 <field name="active"/>
             </list>
         </field>
@@ -26,6 +27,8 @@
                             <field name="name"/>
                             <field name="title"/>
                             <field name="subtitle"/>
+                            <field name="background_style"/>
+                            <field name="background_color" placeholder="#2E2E2A"/>
                         </group>
                         <group>
                             <field name="image" widget="image" class="oe_avatar"/>

@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 import base64
 import logging
 
@@ -202,6 +202,8 @@ class LifestyleAPI(http.Controller):
                 'subtitle': banner.subtitle or '',
                 'has_image': bool(banner.image),
                 'image_url': _banner_image_url(banner.id) if banner.image else '',
+                'background_style': banner.background_style or 'charcoal',
+                'background_color': banner.background_color or '',
             } for banner in banners],
         }
     @http.route('/lifestyle/api/categories', type='json', auth='public', methods=['GET', 'POST'], csrf=False)

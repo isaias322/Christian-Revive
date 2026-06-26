@@ -22,12 +22,13 @@
                         string="Mark Picked Up" class="btn-primary"
                         invisible="delivery_stage != 'ready_for_pickup'"/>
                 <button name="action_send_photo_to_customer" type="object"
-                        string="Send Photo to Customer" class="btn-secondary" icon="fa-camera"
+                        string="Send Progress Update" class="btn-secondary" icon="fa-camera"
                         invisible="state not in ('sale', 'done')"/>
             </xpath>
             <xpath expr="//field[@name='partner_id']" position="after">
                 <field name="fulfillment_type"/>
                 <field name="delivery_stage" readonly="1"/>
+                <field name="lifestyle_progress_percent"/>
             </xpath>
         </field>
     </record>

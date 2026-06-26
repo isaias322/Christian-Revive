@@ -33,6 +33,13 @@ class SaleOrder(models.Model):
         copy=False,
         tracking=True,
     )
+    lifestyle_progress_percent = fields.Integer(
+        string='Furniture Progress (%)',
+        default=0,
+        copy=False,
+        tracking=True,
+        help='Customer-facing build progress shown in the Revive Lifestyle app.',
+    )
 
     def action_confirm(self):
         res = super().action_confirm()
@@ -55,6 +62,16 @@ class SaleOrder(models.Model):
         if self.delivery_stage == new_stage:
             return
         self.delivery_stage = new_stage
+        stage_progress = {
+            'order_placed': 0,
+            'processing': 15,
+            'packing': 50,
+            'ready_for_pickup': 85,
+            'out_for_delivery': 85,
+            'picked_up': 100,
+            'delivered': 100,
+        }
+        self.lifestyle_progress_percent = max(self.lifestyle_progress_percent or 0, stage_progress.get(new_stage, 0))
         label = STAGE_LABELS.get(new_stage, new_stage)
         self.message_post(body=f'Order status updated: <b>{label}</b>')
         if push and self.partner_id:
@@ -87,6 +104,16 @@ class SaleOrder(models.Model):
         for order in self:
             order._lifestyle_advance_stage('picked_up')
 
+    def _lifestyle_latest_media_attachment(self):
+        self.ensure_one()
+        return self.env['ir.attachment'].search([
+            ('res_model', '=', 'sale.order'),
+            ('res_id', '=', self.id),
+            '|',
+            ('mimetype', 'like', 'image/'),
+            ('mimetype', 'like', 'video/'),
+        ], order='create_date desc', limit=1)
+
     def _lifestyle_latest_photo_attachment(self):
         self.ensure_one()
         return self.env['ir.attachment'].search([
@@ -95,15 +122,25 @@ class SaleOrder(models.Model):
             ('mimetype', 'like', 'image/'),
         ], order='create_date desc', limit=1)
 
-    def _lifestyle_photo_url(self):
-        """Public, token-gated URL for the latest vendor photo on this order, or False if none."""
-        self.ensure_one()
-        attachment = self._lifestyle_latest_photo_attachment()
+    def _lifestyle_attachment_url(self, attachment):
         if not attachment:
             return False
         token = self.env['lifestyle.attachment.token'].grant(attachment)
         base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
         return f'{base_url}/lifestyle/api/image/attachment/{attachment.id}/{token.token}'
+
+    def _lifestyle_photo_url(self):
+        self.ensure_one()
+        return self._lifestyle_attachment_url(self._lifestyle_latest_photo_attachment())
+
+    def _lifestyle_media_url(self):
+        self.ensure_one()
+        return self._lifestyle_attachment_url(self._lifestyle_latest_media_attachment())
+
+    def _lifestyle_media_mimetype(self):
+        self.ensure_one()
+        attachment = self._lifestyle_latest_media_attachment()
+        return attachment.mimetype if attachment else False
 
     def action_send_photo_to_customer(self):
         self.ensure_one()
@@ -111,32 +148,35 @@ class SaleOrder(models.Model):
         if not customer:
             raise UserError('This order has no customer to notify.')
 
-        attachment = self._lifestyle_latest_photo_attachment()
+        attachment = self._lifestyle_latest_media_attachment()
         if not attachment:
             raise UserError(
-                'No photo found on this order yet.\n\n'
-                'Attach a photo first using the paperclip icon below (chatter), then click this button again.'
+                'No photo or video found on this order yet.\n\n'
+                'Upload a furniture progress photo or video first, then send it to the customer.'
             )
 
-        image_url = self._lifestyle_photo_url()
+        media_url = self._lifestyle_attachment_url(attachment)
+        is_video = (attachment.mimetype or '').startswith('video/')
         products = self._lifestyle_product_summary()
-        title = f'A photo of your {products}' if products else f'A photo from your order {self.name}'
+        media_label = 'video' if is_video else 'photo'
+        title = f'A {media_label} of your {products}' if products else f'A {media_label} from your order {self.name}'
 
         sent = self._lifestyle_send_push_to_partner(
             customer,
             title=title,
-            body='Take a look - come review it in-store or have it delivered!',
+            body=f'Your furniture is {self.lifestyle_progress_percent or 0}% complete.',
             data={
-                'type': 'order_photo',
+                'type': 'order_media',
                 'order_id': self.id,
                 'partner_id': customer.id,
+                'media_type': 'video' if is_video else 'image',
             },
-            image_url=image_url,
+            image_url=False if is_video else media_url,
         )
         if not sent:
-            raise UserError('Photo attached, but the customer has no registered device to notify yet.')
+            raise UserError('Media attached, but the customer has no registered device to notify yet.')
 
         self.with_context(mail_create_nosubscribe=True, mail_notify_force_send=False).message_post(
-            body=f'Photo sent only to customer: {customer.display_name}.',
+            body=f'Furniture progress update sent only to customer: {customer.display_name}.',
             subtype_xmlid='mail.mt_note',
         )

@@ -73,6 +73,20 @@ def _product_image_url(product_id):
     return f'/lifestyle/api/image/product/{product_id}'
 
 
+def _app_visibility_domain(Product):
+    if 'is_store_product' in Product._fields:
+        return [('is_store_product', '=', True)]
+    return [('lifestyle_app_visible', '=', True)]
+
+
+def _is_app_visible(product):
+    if not product.exists():
+        return False
+    if 'is_store_product' in product._fields:
+        return bool(product.is_store_product)
+    return bool(product.lifestyle_app_visible)
+
+
 def _serialize_product(product):
     return {
         'id': product.id,
@@ -138,7 +152,7 @@ class LifestyleAPI(http.Controller):
 
     @http.route('/lifestyle/api/products', type='json', auth='public', methods=['GET', 'POST'], csrf=False)
     def products(self, category_id=None, search=None, limit=20, offset=0, **kwargs):
-        domain = [('sale_ok', '=', True), ('active', '=', True), ('lifestyle_app_visible', '=', True)]
+        domain = [('sale_ok', '=', True), ('active', '=', True)] + _app_visibility_domain(request.env['product.template'])
         if category_id:
             domain.append(('categ_id', '=', int(category_id)))
         if search:
@@ -161,7 +175,7 @@ class LifestyleAPI(http.Controller):
     @http.route('/lifestyle/api/products/<int:product_id>', type='json', auth='public', methods=['GET', 'POST'], csrf=False)
     def product_detail(self, product_id, **kwargs):
         product = request.env['product.template'].sudo().browse(product_id)
-        if not product.exists() or not product.active or not product.lifestyle_app_visible:
+        if not product.exists() or not product.active or not _is_app_visible(product):
             return {'status': 'error', 'message': 'Product not found'}
         data = _serialize_product(product)
         data['description_full'] = product.description or ''
@@ -170,7 +184,7 @@ class LifestyleAPI(http.Controller):
     @http.route('/lifestyle/api/image/product/<int:product_id>', type='http', auth='public', methods=['GET'], csrf=False)
     def product_image(self, product_id, **kwargs):
         product = request.env['product.template'].sudo().browse(product_id)
-        if not product.exists() or not product.lifestyle_app_visible or not product.image_1920:
+        if not product.exists() or not _is_app_visible(product) or not product.image_1920:
             return request.not_found()
         return Response(
             base64.b64decode(product.image_1920),
@@ -273,7 +287,7 @@ class LifestyleAPI(http.Controller):
                 not template.exists()
                 or not template.active
                 or not template.sale_ok
-                or not template.lifestyle_app_visible
+                or not _is_app_visible(template)
                 or qty <= 0
             ):
                 return {'status': 'error', 'message': f'Invalid product or quantity: {line}'}
@@ -310,6 +324,7 @@ class LifestyleAPI(http.Controller):
                 'fulfillment_type': o.fulfillment_type,
                 'delivery_stage': o.delivery_stage,
                 'stage_label': STAGE_LABELS.get(o.delivery_stage, o.delivery_stage),
+                'progress_percent': o.lifestyle_progress_percent or 0,
                 'amount_total': o.amount_total,
                 'currency': o.currency_id.symbol or o.currency_id.name,
             } for o in orders],
@@ -334,10 +349,13 @@ class LifestyleAPI(http.Controller):
                 'state': order.state,
                 'fulfillment_type': order.fulfillment_type,
                 'delivery_stage': order.delivery_stage,
+                'progress_percent': order.lifestyle_progress_percent or 0,
                 'amount_total': order.amount_total,
                 'currency': order.currency_id.symbol or order.currency_id.name,
                 'timeline': _timeline_for(order),
                 'photo_url': order._lifestyle_photo_url(),
+                'media_url': order._lifestyle_media_url(),
+                'media_mimetype': order._lifestyle_media_mimetype(),
                 'lines': [{
                     'product_id': line.product_id.id,
                     'name': line.product_id.name,
@@ -397,10 +415,36 @@ class LifestyleAPI(http.Controller):
                 'fulfillment_type': o.fulfillment_type,
                 'delivery_stage': o.delivery_stage,
                 'stage_label': STAGE_LABELS.get(o.delivery_stage, o.delivery_stage),
+                'progress_percent': o.lifestyle_progress_percent or 0,
                 'amount_total': o.amount_total,
                 'currency': o.currency_id.symbol or o.currency_id.name,
             } for o in orders],
         }
+
+    @http.route('/lifestyle/api/vendor/orders/<int:order_id>/progress', type='json', auth='public', methods=['POST'], csrf=False)
+    def vendor_update_progress(self, order_id, progress_percent=None, **kwargs):
+        if not _vendor_access():
+            return {'status': 'error', 'message': 'Vendor access required.'}
+
+        order = request.env['sale.order'].sudo().browse(order_id)
+        if not order.exists():
+            return {'status': 'error', 'message': 'Order not found'}
+
+        try:
+            progress = int(progress_percent)
+        except Exception:
+            return {'status': 'error', 'message': 'progress_percent must be a number.'}
+        progress = max(0, min(100, progress))
+        order.lifestyle_progress_percent = progress
+        order.message_post(body=f'Furniture progress updated: <b>{progress}%</b>')
+        if order.partner_id:
+            order._lifestyle_send_push_to_partner(
+                order.partner_id,
+                title=f'Order {order.name}',
+                body=f'Your furniture is {progress}% complete.',
+                data={'type': 'order_progress', 'order_id': order.id, 'progress_percent': progress},
+            )
+        return {'status': 'success', 'progress_percent': progress}
 
     @http.route('/lifestyle/api/vendor/orders/<int:order_id>/stage', type='json', auth='public', methods=['POST'], csrf=False)
     def vendor_update_stage(self, order_id, stage=None, **kwargs):
@@ -428,6 +472,36 @@ class LifestyleAPI(http.Controller):
                 'stage_label': STAGE_LABELS.get(order.delivery_stage, order.delivery_stage),
             },
         }
+
+    @http.route('/lifestyle/api/vendor/orders/<int:order_id>/media', type='json', auth='public', methods=['POST'], csrf=False)
+    def vendor_send_media(self, order_id, media_base64=None, mimetype='image/jpeg', **kwargs):
+        if not _vendor_access():
+            return {'status': 'error', 'message': 'Vendor access required.'}
+        if not media_base64:
+            return {'status': 'error', 'message': 'media_base64 is required.'}
+        if not (mimetype or '').startswith(('image/', 'video/')):
+            return {'status': 'error', 'message': 'Only image and video updates are supported.'}
+
+        order = request.env['sale.order'].sudo().browse(order_id)
+        if not order.exists():
+            return {'status': 'error', 'message': 'Order not found'}
+        if not order.partner_id:
+            return {'status': 'error', 'message': 'This order has no customer to notify.'}
+
+        extension = 'mp4' if (mimetype or '').startswith('video/') else 'jpg'
+        request.env['ir.attachment'].sudo().create({
+            'name': f'{order.name}-furniture-update.{extension}',
+            'res_model': 'sale.order',
+            'res_id': order.id,
+            'mimetype': mimetype,
+            'datas': media_base64,
+        })
+        try:
+            order.action_send_photo_to_customer()
+        except Exception as exc:
+            return {'status': 'error', 'message': str(exc)}
+        return {'status': 'success'}
+
     @http.route('/lifestyle/api/vendor/orders/<int:order_id>/photo', type='json', auth='public', methods=['POST'], csrf=False)
     def vendor_send_photo(self, order_id, image_base64=None, mimetype='image/jpeg', **kwargs):
         if not _vendor_access():

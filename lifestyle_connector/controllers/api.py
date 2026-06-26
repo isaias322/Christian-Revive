@@ -530,6 +530,15 @@ class LifestyleAPI(http.Controller):
             },
         }
 
+    @http.route('/lifestyle/api/vendor/orders/<int:order_id>/media/list', type='json', auth='public', methods=['GET', 'POST'], csrf=False)
+    def vendor_order_media(self, order_id, **kwargs):
+        if not _vendor_access():
+            return {'status': 'error', 'message': 'Vendor access required.'}
+        order = request.env['sale.order'].sudo().browse(order_id)
+        if not order.exists():
+            return {'status': 'error', 'message': 'Order not found'}
+        return {'status': 'success', 'media_list': order._lifestyle_media_list()}
+
     @http.route('/lifestyle/api/vendor/orders/<int:order_id>/media', type='json', auth='public', methods=['POST'], csrf=False)
     def vendor_send_media(self, order_id, media_base64=None, mimetype='image/jpeg', comment=None, **kwargs):
         if not _vendor_access():

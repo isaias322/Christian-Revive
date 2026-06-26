@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 import base64
 import logging
 
@@ -20,7 +20,7 @@ def _current_partner():
 
 def _is_staff():
     """True if the logged-in Odoo session (cookie-based) should see the app's
-    Vendor Tools. This only covers full Odoo administrators — carpenters use
+    Vendor Tools. This only covers full Odoo administrators â€” carpenters use
     a separate App Login Email + App PIN flow (see _vendor_employee) instead
     of a real Odoo account, so they never hit this check at all.
     """
@@ -418,7 +418,7 @@ class LifestyleAPI(http.Controller):
         }
 
     # ---------------------------------------------------------------
-    # Vendor tools (internal staff only — surfaced in the app's Profile
+    # Vendor tools (internal staff only â€” surfaced in the app's Profile
     # page when the logged-in account is Odoo staff, not a portal customer)
     # ---------------------------------------------------------------
     @http.route('/lifestyle/api/whoami', type='json', auth='public', methods=['GET', 'POST'], csrf=False)
@@ -469,6 +469,7 @@ class LifestyleAPI(http.Controller):
                 'progress_percent': o.lifestyle_progress_percent or 0,
                 'amount_total': o.amount_total,
                 'currency': o.currency_id.symbol or o.currency_id.name,
+                'can_send_media': o._lifestyle_can_send_media(),
             } for o in orders],
         }
 
@@ -525,7 +526,7 @@ class LifestyleAPI(http.Controller):
         }
 
     @http.route('/lifestyle/api/vendor/orders/<int:order_id>/media', type='json', auth='public', methods=['POST'], csrf=False)
-    def vendor_send_media(self, order_id, media_base64=None, mimetype='image/jpeg', **kwargs):
+    def vendor_send_media(self, order_id, media_base64=None, mimetype='image/jpeg', comment=None, **kwargs):
         if not _vendor_access():
             return {'status': 'error', 'message': 'Vendor access required.'}
         if not media_base64:
@@ -538,6 +539,8 @@ class LifestyleAPI(http.Controller):
             return {'status': 'error', 'message': 'Order not found'}
         if not order.partner_id:
             return {'status': 'error', 'message': 'This order has no customer to notify.'}
+        if not order._lifestyle_can_send_media():
+            return {'status': 'error', 'message': 'This order has already been completed â€” no further updates can be sent.'}
 
         extension = 'mp4' if (mimetype or '').startswith('video/') else 'jpg'
         request.env['ir.attachment'].sudo().create({
@@ -546,15 +549,16 @@ class LifestyleAPI(http.Controller):
             'res_id': order.id,
             'mimetype': mimetype,
             'datas': media_base64,
+            'description': (comment or '').strip() or False,
         })
         try:
-            order.action_send_photo_to_customer()
+            order.action_send_media_update(new_count=1, comment=(comment or '').strip() or None)
         except Exception as exc:
             return {'status': 'error', 'message': str(exc)}
         return {'status': 'success'}
 
     @http.route('/lifestyle/api/vendor/orders/<int:order_id>/media/batch', type='json', auth='public', methods=['POST'], csrf=False)
-    def vendor_send_media_batch(self, order_id, items=None, **kwargs):
+    def vendor_send_media_batch(self, order_id, items=None, comment=None, **kwargs):
         if not _vendor_access():
             return {'status': 'error', 'message': 'Vendor access required.'}
         if not items:
@@ -565,8 +569,11 @@ class LifestyleAPI(http.Controller):
             return {'status': 'error', 'message': 'Order not found'}
         if not order.partner_id:
             return {'status': 'error', 'message': 'This order has no customer to notify.'}
+        if not order._lifestyle_can_send_media():
+            return {'status': 'error', 'message': 'This order has already been completed â€” no further updates can be sent.'}
 
         Attachment = request.env['ir.attachment'].sudo()
+        comment = (comment or '').strip()
         created = 0
         for item in items:
             media_base64 = item.get('media_base64')
@@ -581,13 +588,14 @@ class LifestyleAPI(http.Controller):
                 'res_id': order.id,
                 'mimetype': mimetype,
                 'datas': media_base64,
+                'description': comment or False,
             })
 
         if not created:
             return {'status': 'error', 'message': 'No valid photos or videos were provided.'}
 
         try:
-            order.action_send_media_update(new_count=created)
+            order.action_send_media_update(new_count=created, comment=comment or None)
         except Exception as exc:
             return {'status': 'error', 'message': str(exc)}
         return {'status': 'success', 'count': created}
@@ -604,6 +612,8 @@ class LifestyleAPI(http.Controller):
             return {'status': 'error', 'message': 'Order not found'}
         if not order.partner_id:
             return {'status': 'error', 'message': 'This order has no customer to notify.'}
+        if not order._lifestyle_can_send_media():
+            return {'status': 'error', 'message': 'This order has already been completed â€” no further updates can be sent.'}
 
         request.env['ir.attachment'].sudo().create({
             'name': f'{order.name}-photo.jpg',
@@ -617,3 +627,4 @@ class LifestyleAPI(http.Controller):
         except Exception as exc:
             return {'status': 'error', 'message': str(exc)}
         return {'status': 'success'}
+

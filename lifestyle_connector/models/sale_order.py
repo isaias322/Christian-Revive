@@ -1,6 +1,7 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 from odoo import models, fields, api
 from odoo.exceptions import UserError
+from odoo.tools import html_escape
 
 STAGE_LABELS = {
     'order_placed': 'Order Placed',
@@ -151,10 +152,21 @@ class SaleOrder(models.Model):
         return [{
             'url': self._lifestyle_attachment_url(attachment),
             'mimetype': attachment.mimetype,
+            'comment': attachment.description or '',
         } for attachment in self._lifestyle_media_attachments()]
 
-    def action_send_media_update(self, new_count=1):
+    def _lifestyle_can_send_media(self):
+        """False once the order is fully delivered/picked up (or cancelled) â€”
+        there's no furniture left in progress, so the vendor has nothing new
+        to show the customer and shouldn't be able to send further updates."""
         self.ensure_one()
+        return self.delivery_stage not in ('delivered', 'picked_up') and self.state != 'cancel'
+
+    def action_send_media_update(self, new_count=1, comment=None):
+        self.ensure_one()
+        if not self._lifestyle_can_send_media():
+            raise UserError('This order has already been completed â€” no further updates can be sent.')
+
         customer = self.partner_id
         if not customer:
             raise UserError('This order has no customer to notify.')
@@ -178,7 +190,7 @@ class SaleOrder(models.Model):
         sent = self._lifestyle_send_push_to_partner(
             customer,
             title=title,
-            body=f'Your furniture is {self.lifestyle_progress_percent or 0}% complete.',
+            body=(comment or f'Your furniture is {self.lifestyle_progress_percent or 0}% complete.'),
             data={
                 'type': 'order_media',
                 'order_id': self.id,
@@ -191,10 +203,15 @@ class SaleOrder(models.Model):
             raise UserError('Media attached, but the customer has no registered device to notify yet.')
 
         self.with_context(mail_create_nosubscribe=True, mail_notify_force_send=False).message_post(
-            body=f'Furniture progress update sent only to customer: {customer.display_name}.',
+            body=(
+                f'Furniture progress update sent only to customer: {customer.display_name}.'
+                + (f'<br/><b>Comment:</b> {html_escape(comment)}' if comment else '')
+            ),
             subtype_xmlid='mail.mt_note',
         )
 
     def action_send_photo_to_customer(self):
         self.ensure_one()
         self.action_send_media_update(new_count=1)
+
+

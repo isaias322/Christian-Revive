@@ -23,7 +23,7 @@
                         invisible="delivery_stage != 'ready_for_pickup'"/>
                 <button name="action_send_photo_to_customer" type="object"
                         string="Send Progress Update" class="btn-secondary" icon="fa-camera"
-                        invisible="state not in ('sale', 'done')"/>
+                        invisible="state not in ('sale', 'done') or delivery_stage in ('delivered', 'picked_up')"/>
             </xpath>
             <xpath expr="//field[@name='partner_id']" position="after">
                 <field name="fulfillment_type"/>

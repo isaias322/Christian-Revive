@@ -4,4 +4,4 @@ access_lifestyle_attachment_token_user,lifestyle.attachment.token.user,model_lif
 access_lifestyle_vendor_session_user,lifestyle.vendor.session.user,model_lifestyle_vendor_session,base.group_user,1,1,1,1
 access_lifestyle_app_banner_user,lifestyle.app.banner.user,model_lifestyle_app_banner,base.group_user,1,1,1,1
 access_lifestyle_product_review_user,lifestyle.product.review.user,model_lifestyle_product_review,base.group_user,1,1,1,1
-
+access_lifestyle_product_review_read_all,lifestyle.product.review.read.all,model_lifestyle_product_review,,1,0,0,0

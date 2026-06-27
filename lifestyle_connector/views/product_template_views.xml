@@ -27,6 +27,15 @@
                             <field name="lifestyle_color_image_4" string="Color Image 4" widget="image" class="oe_avatar" options="{'size': [120, 120]}"/>
                         </group>
                     </group>
+                    <separator string="Customer Reviews"/>
+                    <field name="review_ids">
+                        <list editable="bottom">
+                            <field name="partner_id"/>
+                            <field name="rating"/>
+                            <field name="comment"/>
+                            <field name="create_date" string="Submitted"/>
+                        </list>
+                    </field>
                 </page>
             </xpath>
         </field>

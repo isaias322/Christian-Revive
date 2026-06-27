@@ -358,6 +358,29 @@ class LifestyleAPI(http.Controller):
             'review_count': product.store_review_count,
         }
 
+    @http.route('/lifestyle/api/products/<int:product_id>/reviews/delete', type='json', auth='public', methods=['POST'], csrf=False)
+    def product_review_delete(self, product_id, **kwargs):
+        partner = _current_partner()
+        if not partner:
+            return {'status': 'error', 'message': 'Authentication required. Call /web/session/authenticate first.'}
+
+        Review = request.env['lifestyle.product.review'].sudo()
+        review = Review.search([
+            ('product_tmpl_id', '=', product_id),
+            ('partner_id', '=', partner.id),
+        ], limit=1)
+        if not review:
+            return {'status': 'error', 'message': 'You have not reviewed this product.'}
+
+        product = review.product_tmpl_id
+        review.unlink()
+        product.invalidate_recordset(['store_rating', 'store_review_count'])
+        return {
+            'status': 'success',
+            'average_rating': product.store_rating,
+            'review_count': product.store_review_count,
+        }
+
     @http.route('/lifestyle/api/image/banner/<int:banner_id>', type='http', auth='public', methods=['GET'], csrf=False)
     def banner_image(self, banner_id, **kwargs):
         banner = request.env['lifestyle.app.banner'].sudo().browse(banner_id)

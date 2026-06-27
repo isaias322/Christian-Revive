@@ -44,9 +44,6 @@
                                placeholder="Skills submitted from the mobile app will appear here"/>
                     </group>
 
-                    <group string="Volunteer Skills">
-                        <field name="volunteer_skill"/>
-                    </group>
 
                     <group string="Availability">
                         <field name="availability" widget="radio"/>

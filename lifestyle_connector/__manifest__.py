@@ -14,7 +14,10 @@
         - Public/portal REST API consumed by the Flutter app (catalog, checkout, orders, device registration)
     """,
     'author': 'Revive Lifestyle',
-    'depends': ['base', 'mail', 'sale_management', 'stock', 'crm', 'delivery', 'portal', 'hr'],
+    'depends': [
+        'base', 'mail', 'sale_management', 'stock', 'crm', 'delivery', 'portal', 'hr',
+        'volunteer_and_donation_management',
+    ],
     'data': [
         'security/ir.model.access.csv',
         'data/product_category_data.xml',

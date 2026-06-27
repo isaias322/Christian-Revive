@@ -15,11 +15,15 @@
                     <separator string="Color Images"/>
                     <group col="2">
                         <group string="First Color Images">
+                            <field name="lifestyle_color_image_1_color"/>
                             <field name="lifestyle_color_image_1" string="Color Image 1" widget="image" class="oe_avatar" options="{'size': [120, 120]}"/>
+                            <field name="lifestyle_color_image_2_color"/>
                             <field name="lifestyle_color_image_2" string="Color Image 2" widget="image" class="oe_avatar" options="{'size': [120, 120]}"/>
                         </group>
                         <group string="More Color Images">
+                            <field name="lifestyle_color_image_3_color"/>
                             <field name="lifestyle_color_image_3" string="Color Image 3" widget="image" class="oe_avatar" options="{'size': [120, 120]}"/>
+                            <field name="lifestyle_color_image_4_color"/>
                             <field name="lifestyle_color_image_4" string="Color Image 4" widget="image" class="oe_avatar" options="{'size': [120, 120]}"/>
                         </group>
                     </group>

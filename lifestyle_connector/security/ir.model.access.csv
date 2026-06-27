@@ -3,4 +3,5 @@ access_lifestyle_device_token_user,lifestyle.device.token.user,model_lifestyle_d
 access_lifestyle_attachment_token_user,lifestyle.attachment.token.user,model_lifestyle_attachment_token,base.group_user,1,1,1,1
 access_lifestyle_vendor_session_user,lifestyle.vendor.session.user,model_lifestyle_vendor_session,base.group_user,1,1,1,1
 access_lifestyle_app_banner_user,lifestyle.app.banner.user,model_lifestyle_app_banner,base.group_user,1,1,1,1
+access_lifestyle_product_review_user,lifestyle.product.review.user,model_lifestyle_product_review,base.group_user,1,1,1,1
 

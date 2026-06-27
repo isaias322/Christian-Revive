@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 import base64
 import logging
 
@@ -20,7 +20,7 @@ def _current_partner():
 
 def _is_staff():
     """True if the logged-in Odoo session (cookie-based) should see the app's
-    Vendor Tools. This only covers full Odoo administrators â€” carpenters use
+    Vendor Tools. This only covers full Odoo administrators - carpenters use
     a separate App Login Email + App PIN flow (see _vendor_employee) instead
     of a real Odoo account, so they never hit this check at all.
     """
@@ -108,12 +108,71 @@ def _store_value(product, field_name, default=False):
     return value if value is not False else default
 
 
+def _product_tax_info(product):
+    taxes = product.taxes_id if 'taxes_id' in product._fields else request.env['account.tax']
+    if taxes:
+        company = product.company_id or request.env.company
+        taxes = taxes.filtered(lambda tax: not tax.company_id or tax.company_id == company)
+    if not taxes:
+        return {
+            'tax_label': '',
+            'tax_amount': 0.0,
+            'price_with_tax': product.list_price,
+            'tax_details': [],
+        }
+
+    variant = product.product_variant_id if product.product_variant_id else False
+    tax_result = taxes.compute_all(
+        product.list_price,
+        currency=product.currency_id,
+        quantity=1.0,
+        product=variant,
+        partner=False,
+    )
+    total_excluded = tax_result.get('total_excluded', product.list_price)
+    total_included = tax_result.get('total_included', product.list_price)
+    return {
+        'tax_label': ', '.join(taxes.mapped('name')),
+        'tax_amount': total_included - total_excluded,
+        'price_with_tax': total_included,
+        'tax_details': [
+            {
+                'name': tax.get('name', ''),
+                'amount': tax.get('amount', 0.0),
+            }
+            for tax in tax_result.get('taxes', [])
+        ],
+    }
+
+
 def _serialize_product(product):
+    tax_info = _product_tax_info(product)
+    color_options = [
+        value.strip()
+        for value in (_store_value(product, 'color_options', '') or '').split(',')
+        if value.strip()
+    ]
+    color_images = {}
+    for index in range(1, 5):
+        image_field = f'lifestyle_color_image_{index}'
+        color_field = f'lifestyle_color_image_{index}_color'
+        if image_field not in product._fields or not getattr(product, image_field):
+            continue
+        selected_color = getattr(product, color_field, False) if color_field in product._fields else False
+        fallback_color = color_options[index - 1] if index <= len(color_options) else ''
+        color = (selected_color or fallback_color or '').strip()
+        if color:
+            color_images[color] = _color_image_url(product.id, index)
+
     return {
         'id': product.id,
         'name': product.name,
         'description': product.description_sale or '',
         'price': product.list_price,
+        'price_with_tax': tax_info['price_with_tax'],
+        'tax_amount': tax_info['tax_amount'],
+        'tax_label': tax_info['tax_label'],
+        'tax_details': tax_info['tax_details'],
         'compare_price': _store_value(product, 'compare_price', 0.0) or 0.0,
         'currency': product.currency_id.symbol or product.currency_id.name,
         'category_id': product.categ_id.id,
@@ -126,22 +185,8 @@ def _serialize_product(product):
             if f'store_image_{image_number}' in product._fields and getattr(product, f'store_image_{image_number}')
         ],
         'store_description': _store_value(product, 'store_description', '') or '',
-        'color_options': [
-            value.strip()
-            for value in (_store_value(product, 'color_options', '') or '').split(',')
-            if value.strip()
-        ],
-        'color_images': {
-            color: _color_image_url(product.id, index)
-            for index, color in enumerate([
-                value.strip()
-                for value in (_store_value(product, 'color_options', '') or '').split(',')
-                if value.strip()
-            ], start=1)
-            if index <= 4
-            and f'lifestyle_color_image_{index}' in product._fields
-            and getattr(product, f'lifestyle_color_image_{index}')
-        },
+        'color_options': color_options,
+        'color_images': color_images,
         'size_options': [
             value.strip()
             for value in (_store_value(product, 'size_options', '') or '').split(',')
@@ -154,7 +199,6 @@ def _serialize_product(product):
         'available_qty': max(0, int(product.qty_available)) if product.type in ('consu', 'product') else 999999,
         'in_stock': product.qty_available > 0 if product.type in ('consu', 'product') else True,
     }
-
 
 class LifestyleAPI(http.Controller):
 
@@ -250,6 +294,69 @@ class LifestyleAPI(http.Controller):
         data = _serialize_product(product)
         data['description_full'] = product.description or ''
         return {'status': 'success', 'product': data}
+
+    @http.route('/lifestyle/api/products/<int:product_id>/reviews', type='json', auth='public', methods=['GET', 'POST'], csrf=False)
+    def product_reviews(self, product_id, **kwargs):
+        product = request.env['product.template'].sudo().browse(product_id)
+        if not product.exists() or not _is_app_visible(product):
+            return {'status': 'error', 'message': 'Product not found'}
+
+        partner = _current_partner()
+        my_review = None
+        if partner:
+            mine = product.review_ids.filtered(lambda r: r.partner_id.id == partner.id)
+            if mine:
+                my_review = {'id': mine.id, 'rating': mine.rating, 'comment': mine.comment or ''}
+
+        return {
+            'status': 'success',
+            'average_rating': product.store_rating,
+            'review_count': product.store_review_count,
+            'my_review': my_review,
+            'reviews': [{
+                'id': review.id,
+                'rating': review.rating,
+                'comment': review.comment or '',
+                'author_name': review.partner_id.name or 'Customer',
+                'create_date': str(review.create_date),
+            } for review in product.review_ids],
+        }
+
+    @http.route('/lifestyle/api/products/<int:product_id>/reviews/submit', type='json', auth='public', methods=['POST'], csrf=False)
+    def product_review_submit(self, product_id, rating=None, comment=None, **kwargs):
+        partner = _current_partner()
+        if not partner:
+            return {'status': 'error', 'message': 'Authentication required. Call /web/session/authenticate first.'}
+
+        product = request.env['product.template'].sudo().browse(product_id)
+        if not product.exists() or not _is_app_visible(product):
+            return {'status': 'error', 'message': 'Product not found'}
+
+        try:
+            rating = int(rating)
+        except (TypeError, ValueError):
+            return {'status': 'error', 'message': 'rating must be a number from 1 to 5.'}
+        if rating < 1 or rating > 5:
+            return {'status': 'error', 'message': 'rating must be between 1 and 5.'}
+
+        Review = request.env['lifestyle.product.review'].sudo()
+        existing = Review.search([
+            ('product_tmpl_id', '=', product.id),
+            ('partner_id', '=', partner.id),
+        ], limit=1)
+        vals = {'rating': rating, 'comment': (comment or '').strip()}
+        if existing:
+            existing.write(vals)
+        else:
+            vals.update({'product_tmpl_id': product.id, 'partner_id': partner.id})
+            Review.create(vals)
+
+        product.invalidate_recordset(['store_rating', 'store_review_count'])
+        return {
+            'status': 'success',
+            'average_rating': product.store_rating,
+            'review_count': product.store_review_count,
+        }
 
     @http.route('/lifestyle/api/image/banner/<int:banner_id>', type='http', auth='public', methods=['GET'], csrf=False)
     def banner_image(self, banner_id, **kwargs):
@@ -505,7 +612,7 @@ class LifestyleAPI(http.Controller):
         }
 
     # ---------------------------------------------------------------
-    # Vendor tools (internal staff only â€” surfaced in the app's Profile
+    # Vendor tools (internal staff only - surfaced in the app's Profile
     # page when the logged-in account is Odoo staff, not a portal customer)
     # ---------------------------------------------------------------
     @http.route('/lifestyle/api/whoami', type='json', auth='public', methods=['GET', 'POST'], csrf=False)
@@ -658,7 +765,7 @@ class LifestyleAPI(http.Controller):
         if not order.partner_id:
             return {'status': 'error', 'message': 'This order has no customer to notify.'}
         if not order._lifestyle_can_send_media():
-            return {'status': 'error', 'message': 'This order has already been completed â€” no further updates can be sent.'}
+            return {'status': 'error', 'message': 'This order has already been completed - no further updates can be sent.'}
 
         extension = 'mp4' if (mimetype or '').startswith('video/') else 'jpg'
         request.env['ir.attachment'].sudo().create({
@@ -690,7 +797,7 @@ class LifestyleAPI(http.Controller):
         if not order.partner_id:
             return {'status': 'error', 'message': 'This order has no customer to notify.'}
         if not order._lifestyle_can_send_media():
-            return {'status': 'error', 'message': 'This order has already been completed â€” no further updates can be sent.'}
+            return {'status': 'error', 'message': 'This order has already been completed - no further updates can be sent.'}
 
         Attachment = request.env['ir.attachment'].sudo()
         created = 0
@@ -741,7 +848,7 @@ class LifestyleAPI(http.Controller):
         if not order.partner_id:
             return {'status': 'error', 'message': 'This order has no customer to notify.'}
         if not order._lifestyle_can_send_media():
-            return {'status': 'error', 'message': 'This order has already been completed â€” no further updates can be sent.'}
+            return {'status': 'error', 'message': 'This order has already been completed - no further updates can be sent.'}
 
         request.env['ir.attachment'].sudo().create({
             'name': f'{order.name}-photo.jpg',
@@ -755,6 +862,8 @@ class LifestyleAPI(http.Controller):
         except Exception as exc:
             return {'status': 'error', 'message': str(exc)}
         return {'status': 'success'}
+
+
 
 
 

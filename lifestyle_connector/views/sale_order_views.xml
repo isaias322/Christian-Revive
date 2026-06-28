@@ -7,13 +7,13 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='state'][@widget='statusbar']" position="before">
                 <button name="action_mark_packing" type="object"
-                        string="Mark Packing" class="btn-secondary"
+                        string="Mark Build &amp; Packing" class="btn-secondary"
                         invisible="delivery_stage != 'processing'"/>
                 <button name="action_notify_ready_for_pickup" type="object"
-                        string="Notify Ready for Pickup" class="btn-secondary"
+                        string="Ready for Pickup" class="btn-secondary"
                         invisible="fulfillment_type != 'pickup' or delivery_stage not in ('processing', 'packing')"/>
                 <button name="action_notify_out_for_delivery" type="object"
-                        string="Notify Out for Delivery" class="btn-secondary"
+                        string="Out for Delivery" class="btn-secondary"
                         invisible="fulfillment_type != 'delivery' or delivery_stage not in ('processing', 'packing')"/>
                 <button name="action_mark_delivered" type="object"
                         string="Mark Delivered" class="btn-primary"
@@ -43,5 +43,6 @@
         </field>
     </record>
 </odoo>
+
 
 

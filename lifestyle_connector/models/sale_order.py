@@ -5,8 +5,8 @@ from odoo.tools import html_escape
 
 STAGE_LABELS = {
     'order_placed': 'Order Placed',
-    'processing': 'Processing',
-    'packing': 'Packing',
+    'processing': 'Build Started',
+    'packing': 'Build & Packing',
     'out_for_delivery': 'Out for Delivery',
     'ready_for_pickup': 'Ready for Pickup',
     'delivered': 'Delivered',
@@ -62,7 +62,7 @@ class SaleOrder(models.Model):
 
     def _lifestyle_skip_processing(self):
         """True when every line on this order is a Fruits & Vegetables
-        product â€” those just get packed and shipped, so there's no separate
+        product - those just get packed and shipped, so there's no separate
         build/processing step the way there is for furniture."""
         self.ensure_one()
         fruit_category = self.env.ref('lifestyle_connector.category_fruits_veg', raise_if_not_found=False)
@@ -123,7 +123,7 @@ class SaleOrder(models.Model):
             raise UserError('This order has no customer to notify.')
         label = STAGE_LABELS.get(self.delivery_stage, self.delivery_stage)
         products = self._lifestyle_product_summary()
-        body = f'Your order ({products}) is now: {label}' if products else f'Your order is now: {label}'
+        body = f'Your furniture order ({products}) is now: {label}' if products else f'Your furniture order is now: {label}'
         sent = self._lifestyle_send_push_to_partner(
             self.partner_id,
             title=f'Order {self.name}',
@@ -140,7 +140,7 @@ class SaleOrder(models.Model):
     def action_unlock_stage_correction(self):
         for order in self:
             order.lifestyle_stage_unlocked = True
-            order.message_post(body='Stage correction unlocked — the vendor app may move this order back one stage.')
+            order.message_post(body='Stage correction unlocked - the vendor app may move this order back one stage.')
 
     def action_lock_stage_correction(self):
         for order in self:
@@ -218,7 +218,7 @@ class SaleOrder(models.Model):
         } for attachment in self._lifestyle_media_attachments()]
 
     def _lifestyle_can_send_media(self):
-        """False once the order is fully delivered/picked up (or cancelled) â€”
+        """False once the order is fully delivered/picked up (or cancelled) -
         there's no furniture left in progress, so the vendor has nothing new
         to show the customer and shouldn't be able to send further updates."""
         self.ensure_one()
@@ -227,7 +227,7 @@ class SaleOrder(models.Model):
     def action_send_media_update(self, new_count=1, comment=None):
         self.ensure_one()
         if not self._lifestyle_can_send_media():
-            raise UserError('This order has already been completed â€” no further updates can be sent.')
+            raise UserError('This order has already been completed - no further updates can be sent.')
 
         customer = self.partner_id
         if not customer:
@@ -282,5 +282,7 @@ class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'
 
     lifestyle_color = fields.Char(string='Selected Color', copy=False)
+
+
 
 

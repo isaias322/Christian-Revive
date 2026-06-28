@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 from odoo import models, fields, api
 from odoo.exceptions import UserError
 from odoo.tools import html_escape
@@ -62,15 +62,6 @@ class SaleOrder(models.Model):
     )
 
 
-    def write(self, vals):
-        vendor_changed = 'lifestyle_vendor_id' in vals
-        before = {order.id: order.lifestyle_vendor_id.id for order in self} if vendor_changed else {}
-        res = super().write(vals)
-        if vendor_changed:
-            for order in self:
-                if order.lifestyle_vendor_id and before.get(order.id) != order.lifestyle_vendor_id.id:
-                    order._lifestyle_notify_assigned_vendor(raise_if_no_device=False)
-        return res
 
     def action_confirm(self):
         res = super().action_confirm()

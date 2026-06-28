@@ -50,6 +50,12 @@
                             <field name="lifestyle_color_image_4" string="Color Image 4" widget="image" class="oe_avatar" options="{'size': [120, 120]}"/>
                         </group>
                     </group>
+                    <separator string="Additional Store Images — Link to Another Product"/>
+                    <group string="Optional cross-sell: leave blank to just show as a photo of this product.">
+                        <field name="store_image_2_product_id" string="Image 2 Links To"/>
+                        <field name="store_image_3_product_id" string="Image 3 Links To"/>
+                        <field name="store_image_4_product_id" string="Image 4 Links To"/>
+                    </group>
                     <separator string="Customer Reviews"/>
                     <field name="review_ids">
                         <list editable="bottom">

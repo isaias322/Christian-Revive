@@ -79,6 +79,21 @@ class ProductTemplate(models.Model):
     store_image_3 = fields.Image(string='Store Image 3', max_width=1024, max_height=1024)
     store_image_4 = fields.Image(string='Store Image 4', max_width=1024, max_height=1024)
 
+    # Optional cross-sell link: when set, tapping that "More views" thumbnail
+    # in the app opens the linked product instead of just zooming the photo.
+    store_image_2_product_id = fields.Many2one(
+        'product.template', string='Image 2 Links To Product',
+        help='Optional. If set, tapping this photo in the app opens that product page instead of zooming in.',
+    )
+    store_image_3_product_id = fields.Many2one(
+        'product.template', string='Image 3 Links To Product',
+        help='Optional. If set, tapping this photo in the app opens that product page instead of zooming in.',
+    )
+    store_image_4_product_id = fields.Many2one(
+        'product.template', string='Image 4 Links To Product',
+        help='Optional. If set, tapping this photo in the app opens that product page instead of zooming in.',
+    )
+
     def action_optimize_lifestyle_images(self):
         """Re-saves every image field on these products through itself,
         which makes Odoo re-run the Image field's resize/compression step —

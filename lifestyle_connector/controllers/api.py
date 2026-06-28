@@ -212,7 +212,16 @@ def _serialize_product(product, wishlist_ids=None):
         'has_image': bool(product.image_1920),
         'image_url': _product_image_url(product.id),
         'additional_images': [
-            _store_image_url(product.id, image_number)
+            {
+                'url': _store_image_url(product.id, image_number),
+                'linked_product_id': (
+                    getattr(product, f'store_image_{image_number}_product_id').id
+                    if f'store_image_{image_number}_product_id' in product._fields
+                    and getattr(product, f'store_image_{image_number}_product_id')
+                    and _is_app_visible(getattr(product, f'store_image_{image_number}_product_id'))
+                    else None
+                ),
+            }
             for image_number in (2, 3, 4)
             if f'store_image_{image_number}' in product._fields and getattr(product, f'store_image_{image_number}')
         ],

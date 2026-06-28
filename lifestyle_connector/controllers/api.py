@@ -986,6 +986,7 @@ class LifestyleAPI(http.Controller):
             'mimetype': mimetype,
             'datas': media_base64,
             'description': (comment or '').strip() or False,
+            'lifestyle_stage_label': STAGE_LABELS.get(order.delivery_stage, order.delivery_stage),
         })
         try:
             order.action_send_media_update(new_count=1, comment=(comment or '').strip() or None)
@@ -1012,6 +1013,7 @@ class LifestyleAPI(http.Controller):
         if not order._lifestyle_can_send_media():
             return {'status': 'error', 'message': 'This order has already been completed - no further updates can be sent.'}
 
+        stage_label = STAGE_LABELS.get(order.delivery_stage, order.delivery_stage)
         Attachment = request.env['ir.attachment'].sudo()
         created = 0
         for item in items:
@@ -1028,6 +1030,7 @@ class LifestyleAPI(http.Controller):
                 'mimetype': mimetype,
                 'datas': media_base64,
                 'description': comment or False,
+                'lifestyle_stage_label': stage_label,
             })
 
         if not created and comment:
@@ -1038,6 +1041,7 @@ class LifestyleAPI(http.Controller):
                 'mimetype': 'text/plain',
                 'datas': base64.b64encode(comment.encode('utf-8')).decode('ascii'),
                 'description': comment,
+                'lifestyle_stage_label': stage_label,
             })
         elif not created:
             return {'status': 'error', 'message': 'No valid photos or videos were provided.'}
@@ -1071,6 +1075,7 @@ class LifestyleAPI(http.Controller):
             'res_id': order.id,
             'mimetype': mimetype,
             'datas': image_base64,
+            'lifestyle_stage_label': STAGE_LABELS.get(order.delivery_stage, order.delivery_stage),
         })
         try:
             order.action_send_photo_to_customer()

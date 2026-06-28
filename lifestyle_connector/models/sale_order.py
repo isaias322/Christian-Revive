@@ -269,6 +269,7 @@ class SaleOrder(models.Model):
             'url': self._lifestyle_attachment_url(attachment) if attachment.mimetype != 'text/plain' else '',
             'mimetype': attachment.mimetype,
             'comment': attachment.description or '',
+            'stage_label': attachment.lifestyle_stage_label or '',
         } for attachment in self._lifestyle_media_attachments()]
 
     def _lifestyle_can_send_media(self):

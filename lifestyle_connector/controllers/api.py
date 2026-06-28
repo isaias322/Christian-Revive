@@ -162,7 +162,14 @@ def _product_tax_info(product):
     }
 
 
-def _serialize_product(product):
+def _wishlist_product_ids(partner):
+    if not partner:
+        return set()
+    items = request.env['lifestyle.wishlist.item'].sudo().search([('partner_id', '=', partner.id)])
+    return set(items.mapped('product_tmpl_id').ids)
+
+
+def _serialize_product(product, wishlist_ids=None):
     tax_info = _product_tax_info(product)
     color_options = [
         value.strip()
@@ -223,6 +230,7 @@ def _serialize_product(product):
         'store_sequence': _store_value(product, 'store_sequence', 10) or 10,
         'available_qty': max(0, int(product.qty_available)) if product.type in ('consu', 'product') else 999999,
         'in_stock': product.qty_available > 0 if product.type in ('consu', 'product') else True,
+        'in_wishlist': product.id in (wishlist_ids or set()),
     }
 
 class LifestyleAPI(http.Controller):
@@ -302,13 +310,14 @@ class LifestyleAPI(http.Controller):
         order_by = 'store_sequence, name' if 'store_sequence' in Product._fields else 'name'
         products = Product.search(domain, order=order_by, limit=limit, offset=offset)
         total_count = Product.search_count(domain)
+        wishlist_ids = _wishlist_product_ids(_current_partner())
 
         return {
             'status': 'success',
             'total_count': total_count,
             'count': len(products),
             'offset': offset,
-            'products': [_serialize_product(p) for p in products],
+            'products': [_serialize_product(p, wishlist_ids) for p in products],
         }
 
     @http.route('/lifestyle/api/products/<int:product_id>', type='json', auth='public', methods=['GET', 'POST'], csrf=False)
@@ -316,9 +325,47 @@ class LifestyleAPI(http.Controller):
         product = request.env['product.template'].sudo().browse(product_id)
         if not product.exists() or not product.active or not _is_app_visible(product):
             return {'status': 'error', 'message': 'Product not found'}
-        data = _serialize_product(product)
+        wishlist_ids = _wishlist_product_ids(_current_partner())
+        data = _serialize_product(product, wishlist_ids)
         data['description_full'] = product.description or ''
         return {'status': 'success', 'product': data}
+
+    @http.route('/lifestyle/api/wishlist', type='json', auth='public', methods=['GET', 'POST'], csrf=False)
+    def wishlist(self, **kwargs):
+        partner = _current_partner()
+        if not partner:
+            return {'status': 'error', 'message': 'Please log in to continue.'}
+
+        items = request.env['lifestyle.wishlist.item'].sudo().search([('partner_id', '=', partner.id)])
+        wishlist_ids = set(items.mapped('product_tmpl_id').ids)
+        products = items.mapped('product_tmpl_id').filtered(lambda p: p.active and _is_app_visible(p))
+        return {
+            'status': 'success',
+            'products': [_serialize_product(p, wishlist_ids) for p in products],
+        }
+
+    @http.route('/lifestyle/api/wishlist/toggle', type='json', auth='public', methods=['POST'], csrf=False)
+    def wishlist_toggle(self, product_id=None, **kwargs):
+        partner = _current_partner()
+        if not partner:
+            return {'status': 'error', 'message': 'Please log in to continue.'}
+        if not product_id:
+            return {'status': 'error', 'message': 'product_id is required.'}
+
+        product = request.env['product.template'].sudo().browse(int(product_id))
+        if not product.exists():
+            return {'status': 'error', 'message': 'Product not found'}
+
+        Wishlist = request.env['lifestyle.wishlist.item'].sudo()
+        existing = Wishlist.search([
+            ('partner_id', '=', partner.id),
+            ('product_tmpl_id', '=', product.id),
+        ], limit=1)
+        if existing:
+            existing.unlink()
+            return {'status': 'success', 'in_wishlist': False}
+        Wishlist.create({'partner_id': partner.id, 'product_tmpl_id': product.id})
+        return {'status': 'success', 'in_wishlist': True}
 
     @http.route('/lifestyle/api/products/<int:product_id>/reviews', type='json', auth='public', methods=['GET', 'POST'], csrf=False)
     def product_reviews(self, product_id, **kwargs):

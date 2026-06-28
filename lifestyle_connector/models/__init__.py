@@ -9,5 +9,6 @@ from . import product_color_image
 from . import product_template
 from . import app_banner
 from . import hr_employee
+from . import wishlist_item
 
 

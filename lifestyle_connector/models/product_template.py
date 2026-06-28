@@ -55,13 +55,37 @@ class ProductTemplate(models.Model):
         default=False,
         help='Only products with this checked appear in the Revive Lifestyle mobile app catalog.',
     )
+    # Image (not Binary) so Odoo auto-resizes/compresses on upload instead of
+    # storing whatever full-camera-resolution file the admin picked — that
+    # was why switching colors in the app took forever to load.
     lifestyle_color_image_1_color = fields.Selection(selection='_get_lifestyle_color_selection', string='Color for Image 1')
-    lifestyle_color_image_1 = fields.Binary(string='Color Image 1')
+    lifestyle_color_image_1 = fields.Image(string='Color Image 1', max_width=1024, max_height=1024)
     lifestyle_color_image_2_color = fields.Selection(selection='_get_lifestyle_color_selection', string='Color for Image 2')
-    lifestyle_color_image_2 = fields.Binary(string='Color Image 2')
+    lifestyle_color_image_2 = fields.Image(string='Color Image 2', max_width=1024, max_height=1024)
     lifestyle_color_image_3_color = fields.Selection(selection='_get_lifestyle_color_selection', string='Color for Image 3')
-    lifestyle_color_image_3 = fields.Binary(string='Color Image 3')
+    lifestyle_color_image_3 = fields.Image(string='Color Image 3', max_width=1024, max_height=1024)
     lifestyle_color_image_4_color = fields.Selection(selection='_get_lifestyle_color_selection', string='Color for Image 4')
-    lifestyle_color_image_4 = fields.Binary(string='Color Image 4')
+    lifestyle_color_image_4 = fields.Image(string='Color Image 4', max_width=1024, max_height=1024)
+
+    # store_image_2/3/4 are plain Binary fields on volunteer_and_donation_management;
+    # redeclared here as Image for the same reason, same override pattern as store_rating above.
+    store_image_2 = fields.Image(string='Store Image 2', max_width=1024, max_height=1024)
+    store_image_3 = fields.Image(string='Store Image 3', max_width=1024, max_height=1024)
+    store_image_4 = fields.Image(string='Store Image 4', max_width=1024, max_height=1024)
+
+    def action_optimize_lifestyle_images(self):
+        """Re-saves every image field on these products through itself,
+        which makes Odoo re-run the Image field's resize/compression step —
+        shrinks any oversized photo that was uploaded before these fields
+        were switched from Binary to Image."""
+        image_fields = (
+            'lifestyle_color_image_1', 'lifestyle_color_image_2',
+            'lifestyle_color_image_3', 'lifestyle_color_image_4',
+            'store_image_2', 'store_image_3', 'store_image_4',
+        )
+        for product in self:
+            for field_name in image_fields:
+                if field_name in product._fields and getattr(product, field_name):
+                    product.write({field_name: getattr(product, field_name)})
 
 

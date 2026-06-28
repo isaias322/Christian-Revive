@@ -13,6 +13,9 @@
                         </group>
                     </group>
                     <separator string="Color Images"/>
+                    <button name="action_optimize_lifestyle_images" type="object"
+                            string="Optimize Images for App" class="btn-secondary" icon="fa-compress"
+                            help="Shrinks any oversized photo on this product so it loads quickly in the app."/>
                     <group col="2">
                         <group string="First Color Images">
                             <field name="lifestyle_color_image_1_color" string="Show Image 1 for Color"/>

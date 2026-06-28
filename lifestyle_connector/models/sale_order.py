@@ -41,6 +41,15 @@ class SaleOrder(models.Model):
         tracking=True,
         help='Customer-facing build progress shown in the Revive Lifestyle app.',
     )
+
+    lifestyle_vendor_id = fields.Many2one(
+        'hr.employee',
+        string='Assigned Vendor',
+        copy=False,
+        tracking=True,
+        domain="[('staff_role', '=', 'carpenter'), ('is_app_active', '=', True)]",
+        help='Vendor/carpenter responsible for this furniture order in the Revive Lifestyle vendor app.',
+    )
     lifestyle_stage_unlocked = fields.Boolean(
         string='Stage Correction Unlocked',
         default=False,
@@ -51,6 +60,17 @@ class SaleOrder(models.Model):
             'Automatically turns back off after that one correction.'
         ),
     )
+
+
+    def write(self, vals):
+        vendor_changed = 'lifestyle_vendor_id' in vals
+        before = {order.id: order.lifestyle_vendor_id.id for order in self} if vendor_changed else {}
+        res = super().write(vals)
+        if vendor_changed:
+            for order in self:
+                if order.lifestyle_vendor_id and before.get(order.id) != order.lifestyle_vendor_id.id:
+                    order._lifestyle_notify_assigned_vendor(raise_if_no_device=False)
+        return res
 
     def action_confirm(self):
         res = super().action_confirm()
@@ -116,6 +136,49 @@ class SaleOrder(models.Model):
         self.message_post(body=f'Order status updated: <b>{label}</b>')
         if push:
             self._lifestyle_send_stage_notification()
+
+
+    def _lifestyle_notify_assigned_vendor(self, raise_if_no_device=True):
+        self.ensure_one()
+        if not self.lifestyle_vendor_id:
+            if raise_if_no_device:
+                raise UserError('Assign a vendor before sending the work notification.')
+            return 0
+        products = self._lifestyle_product_summary()
+        body = f'New furniture job assigned: {products}' if products else f'New furniture job assigned: {self.name}'
+        try:
+            sent = self._lifestyle_send_push_to_employee(
+                self.lifestyle_vendor_id,
+                title=f'New job {self.name}',
+                body=body,
+                data={'type': 'vendor_assignment', 'order_id': self.id},
+            )
+        except UserError as exc:
+            if raise_if_no_device:
+                raise
+            self.with_context(mail_create_nosubscribe=True, mail_notify_force_send=False).message_post(
+                body=f'Assigned vendor notification was not sent: {html_escape(str(exc))}',
+                subtype_xmlid='mail.mt_note',
+            )
+            return 0
+        if not sent:
+            message = f'Assigned vendor {self.lifestyle_vendor_id.name} has no registered vendor app device yet.'
+            self.with_context(mail_create_nosubscribe=True, mail_notify_force_send=False).message_post(
+                body=message,
+                subtype_xmlid='mail.mt_note',
+            )
+            if raise_if_no_device:
+                raise UserError(message)
+            return 0
+        self.with_context(mail_create_nosubscribe=True, mail_notify_force_send=False).message_post(
+            body=f'Work notification sent to assigned vendor: {html_escape(self.lifestyle_vendor_id.name)}.',
+            subtype_xmlid='mail.mt_note',
+        )
+        return sent
+
+    def action_notify_assigned_vendor(self):
+        for order in self:
+            order._lifestyle_notify_assigned_vendor(raise_if_no_device=True)
 
     def _lifestyle_send_stage_notification(self):
         self.ensure_one()

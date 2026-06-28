@@ -63,6 +63,19 @@ def _vendor_access():
     return _is_staff() or _vendor_employee() is not None
 
 
+
+
+def _vendor_can_access_order(order):
+    """Admins can access every order; PIN vendors only access assigned orders."""
+    if _is_staff():
+        return True
+    employee = _vendor_employee()
+    return bool(employee and order.lifestyle_vendor_id and order.lifestyle_vendor_id.id == employee.id)
+
+
+def _vendor_denied_response():
+    return {'status': 'error', 'message': 'This order is not assigned to your vendor account.'}
+
 def _timeline_for(order):
     sequence = PICKUP_STAGE_SEQUENCE if order.fulfillment_type == 'pickup' else DELIVERY_STAGE_SEQUENCE
     if order._lifestyle_skip_processing():
@@ -813,13 +826,28 @@ class LifestyleAPI(http.Controller):
         vendor_session = request.env['lifestyle.vendor.session'].sudo().issue_for(employee)
         return {'status': 'success', 'token': vendor_session.token, 'name': employee.name}
 
+
+    @http.route('/lifestyle/api/vendor/device/register', type='json', auth='public', methods=['POST'], csrf=False)
+    def vendor_register_device(self, token=None, platform='android', **kwargs):
+        employee = _vendor_employee()
+        if not employee:
+            return {'status': 'error', 'message': 'Vendor access required.'}
+        if not token:
+            return {'status': 'error', 'message': 'token is required.'}
+        request.env['lifestyle.device.token'].sudo().register_vendor(employee, token, platform)
+        return {'status': 'success'}
+
     @http.route('/lifestyle/api/vendor/orders', type='json', auth='public', methods=['GET', 'POST'], csrf=False)
     def vendor_orders(self, limit=20, offset=0, **kwargs):
         if not _vendor_access():
             return {'status': 'error', 'message': 'Vendor access required.'}
 
         Order = request.env['sale.order'].sudo()
-        orders = Order.search([], order='date_order desc', limit=min(int(limit or 20), 100), offset=int(offset or 0))
+        domain = []
+        employee = _vendor_employee()
+        if employee and not _is_staff():
+            domain.append(('lifestyle_vendor_id', '=', employee.id))
+        orders = Order.search(domain, order='date_order desc', limit=min(int(limit or 20), 100), offset=int(offset or 0))
         return {
             'status': 'success',
             'orders': [{
@@ -837,6 +865,8 @@ class LifestyleAPI(http.Controller):
                 'can_send_media': o._lifestyle_can_send_media(),
                 'skip_processing': o._lifestyle_skip_processing(),
                 'stage_unlocked': o.lifestyle_stage_unlocked,
+                'assigned_vendor_id': o.lifestyle_vendor_id.id or None,
+                'assigned_vendor_name': o.lifestyle_vendor_id.name or '',
             } for o in orders],
         }
 
@@ -848,6 +878,8 @@ class LifestyleAPI(http.Controller):
         order = request.env['sale.order'].sudo().browse(order_id)
         if not order.exists():
             return {'status': 'error', 'message': 'Order not found'}
+        if not _vendor_can_access_order(order):
+            return _vendor_denied_response()
 
         try:
             progress = int(progress_percent)
@@ -875,6 +907,8 @@ class LifestyleAPI(http.Controller):
         order = request.env['sale.order'].sudo().browse(order_id)
         if not order.exists():
             return {'status': 'error', 'message': 'Order not found'}
+        if not _vendor_can_access_order(order):
+            return _vendor_denied_response()
 
         allowed_stages = PICKUP_STAGE_SEQUENCE if order.fulfillment_type == 'pickup' else DELIVERY_STAGE_SEQUENCE
         if order._lifestyle_skip_processing():
@@ -906,6 +940,8 @@ class LifestyleAPI(http.Controller):
         order = request.env['sale.order'].sudo().browse(order_id)
         if not order.exists():
             return {'status': 'error', 'message': 'Order not found'}
+        if not _vendor_can_access_order(order):
+            return _vendor_denied_response()
         try:
             order._lifestyle_send_stage_notification()
         except Exception as exc:
@@ -919,6 +955,8 @@ class LifestyleAPI(http.Controller):
         order = request.env['sale.order'].sudo().browse(order_id)
         if not order.exists():
             return {'status': 'error', 'message': 'Order not found'}
+        if not _vendor_can_access_order(order):
+            return _vendor_denied_response()
         return {'status': 'success', 'media_list': order._lifestyle_media_list()}
 
     @http.route('/lifestyle/api/vendor/orders/<int:order_id>/media', type='json', auth='public', methods=['POST'], csrf=False)
@@ -933,6 +971,8 @@ class LifestyleAPI(http.Controller):
         order = request.env['sale.order'].sudo().browse(order_id)
         if not order.exists():
             return {'status': 'error', 'message': 'Order not found'}
+        if not _vendor_can_access_order(order):
+            return _vendor_denied_response()
         if not order.partner_id:
             return {'status': 'error', 'message': 'This order has no customer to notify.'}
         if not order._lifestyle_can_send_media():
@@ -965,6 +1005,8 @@ class LifestyleAPI(http.Controller):
         order = request.env['sale.order'].sudo().browse(order_id)
         if not order.exists():
             return {'status': 'error', 'message': 'Order not found'}
+        if not _vendor_can_access_order(order):
+            return _vendor_denied_response()
         if not order.partner_id:
             return {'status': 'error', 'message': 'This order has no customer to notify.'}
         if not order._lifestyle_can_send_media():
@@ -1016,6 +1058,8 @@ class LifestyleAPI(http.Controller):
         order = request.env['sale.order'].sudo().browse(order_id)
         if not order.exists():
             return {'status': 'error', 'message': 'Order not found'}
+        if not _vendor_can_access_order(order):
+            return _vendor_denied_response()
         if not order.partner_id:
             return {'status': 'error', 'message': 'This order has no customer to notify.'}
         if not order._lifestyle_can_send_media():

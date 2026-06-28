@@ -85,6 +85,28 @@ class LifestyleFcmMixin(models.AbstractModel):
             _logger.error('FCM v1 send failed: %s', exc)
             raise
 
+
+    def _lifestyle_send_push_to_employee(self, employee, title, body, data=None, image_url=None):
+        """Send a push notification to every active vendor device for this employee."""
+        tokens = self.env['lifestyle.device.token'].sudo().search([
+            ('employee_id', '=', employee.id),
+            ('active', '=', True),
+        ])
+        if not tokens:
+            _logger.info('No FCM device tokens for employee %s, skipping push.', employee.id)
+            return 0
+
+        access_token, project_id = self._lifestyle_get_fcm_credentials()
+        sent = 0
+        for device in tokens:
+            payload = self._lifestyle_build_payload(device.token, title, body, data=data, image_url=image_url)
+            try:
+                self._lifestyle_fcm_post(access_token, project_id, payload)
+                sent += 1
+            except Exception as exc:
+                _logger.warning('Push to vendor device %s failed: %s', device.id, exc)
+        return sent
+
     def _lifestyle_send_push_to_partner(self, partner, title, body, data=None, image_url=None):
         """Send a push notification to every active device registered for this partner."""
         tokens = self.env['lifestyle.device.token'].sudo().search([

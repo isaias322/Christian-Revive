@@ -25,6 +25,7 @@
         'views/product_template_views.xml',
         'views/app_banner_views.xml',
         'views/product_review_views.xml',
+        'views/hr_employee_views.xml',
     ],
     'installable': True,
     'application': True,

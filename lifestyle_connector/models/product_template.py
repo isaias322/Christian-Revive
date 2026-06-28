@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 from odoo import api, models, fields
 
 
@@ -16,14 +16,14 @@ class ProductTemplate(models.Model):
     # module depends on that one and loads after it, so redeclaring them
     # here as computed converts them to automatic (no more hand-entry) for
     # both apps without touching the other addon's code.
-    store_rating = fields.Float(string='Rating', compute='_compute_store_rating', store=True)
-    store_review_count = fields.Integer(string='Review Count', compute='_compute_store_rating', store=True)
+    store_rating = fields.Float(string='Rating', compute='_compute_store_rating', compute_sudo=True, store=True)
+    store_review_count = fields.Integer(string='Review Count', compute='_compute_store_rating', compute_sudo=True, store=True)
     store_sold_count = fields.Integer(string='Sold Count', compute='_compute_store_sold_count')
 
     @api.depends('review_ids.rating')
     def _compute_store_rating(self):
         for product in self:
-            reviews = product.review_ids
+            reviews = product.sudo().review_ids
             product.store_review_count = len(reviews)
             product.store_rating = (sum(reviews.mapped('rating')) / len(reviews)) if reviews else 0.0
 
@@ -63,3 +63,5 @@ class ProductTemplate(models.Model):
     lifestyle_color_image_3 = fields.Binary(string='Color Image 3')
     lifestyle_color_image_4_color = fields.Selection(selection='_get_lifestyle_color_selection', string='Color for Image 4')
     lifestyle_color_image_4 = fields.Binary(string='Color Image 4')
+
+

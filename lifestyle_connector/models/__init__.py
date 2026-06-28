@@ -5,6 +5,9 @@ from . import vendor_session
 from . import sale_order
 from . import stock_picking
 from . import product_review
+from . import product_color_image
 from . import product_template
 from . import app_banner
+from . import hr_employee
+
 

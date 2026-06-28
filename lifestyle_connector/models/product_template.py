@@ -10,6 +10,12 @@ class ProductTemplate(models.Model):
     _inherit = 'product.template'
 
     review_ids = fields.One2many('lifestyle.product.review', 'product_tmpl_id', string='Reviews')
+    color_image_ids = fields.One2many(
+        'lifestyle.product.color.image',
+        'product_tmpl_id',
+        string='App Color Images',
+        help='Unlimited color/finish images used by the Revive Lifestyle app.',
+    )
 
     # store_rating/store_review_count were plain manually-typed fields on
     # volunteer_and_donation_management's product.template extension; this
@@ -87,5 +93,9 @@ class ProductTemplate(models.Model):
             for field_name in image_fields:
                 if field_name in product._fields and getattr(product, field_name):
                     product.write({field_name: getattr(product, field_name)})
+            for color_image in product.color_image_ids:
+                if color_image.image:
+                    color_image.write({'image': color_image.image})
+
 
 

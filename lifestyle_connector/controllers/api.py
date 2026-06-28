@@ -1,13 +1,26 @@
 ﻿# -*- coding: utf-8 -*-
 import base64
 import logging
+from datetime import timedelta
 
-from odoo import http
+from odoo import fields, http
+from odoo.exceptions import UserError, ValidationError
 from odoo.http import request, Response
 
 from ..models.sale_order import STAGE_LABELS, DELIVERY_STAGE_SEQUENCE, PICKUP_STAGE_SEQUENCE
 
 _logger = logging.getLogger(__name__)
+
+
+def _safe_error_message(exc):
+    """UserError/ValidationError carry a message that's meant to be shown to
+    the user, so pass those through. Anything else (a bug, a DB error, etc.)
+    gets logged in full server-side but only a generic message goes to the
+    app, so internals never leak to the client."""
+    if isinstance(exc, (UserError, ValidationError)):
+        return str(exc)
+    _logger.exception('Unexpected error in lifestyle API')
+    return 'Something went wrong. Please try again.'
 
 
 def _current_partner():
@@ -83,6 +96,10 @@ def _color_image_url(product_id, image_number):
     return f'/lifestyle/api/image/product/{product_id}/color/{image_number}'
 
 
+def _color_row_image_url(color_image_id):
+    return f'/lifestyle/api/image/product/color-row/{color_image_id}'
+
+
 def _banner_image_url(banner_id):
     return f'/lifestyle/api/image/banner/{banner_id}'
 
@@ -153,6 +170,15 @@ def _serialize_product(product):
         if value.strip()
     ]
     color_images = {}
+    if 'color_image_ids' in product._fields:
+        for color_image in product.color_image_ids.filtered(lambda row: row.active and row.image):
+            color = (color_image.color_name or '').strip()
+            if not color:
+                continue
+            color_images[color] = _color_row_image_url(color_image.id)
+            if color not in color_options:
+                color_options.append(color)
+
     for index in range(1, 5):
         image_field = f'lifestyle_color_image_{index}'
         color_field = f'lifestyle_color_image_{index}_color'
@@ -161,9 +187,8 @@ def _serialize_product(product):
         selected_color = getattr(product, color_field, False) if color_field in product._fields else False
         fallback_color = color_options[index - 1] if index <= len(color_options) else ''
         color = (selected_color or fallback_color or '').strip()
-        if color:
+        if color and color not in color_images:
             color_images[color] = _color_image_url(product.id, index)
-
     return {
         'id': product.id,
         'name': product.name,
@@ -326,7 +351,7 @@ class LifestyleAPI(http.Controller):
     def product_review_submit(self, product_id, rating=None, comment=None, **kwargs):
         partner = _current_partner()
         if not partner:
-            return {'status': 'error', 'message': 'Authentication required. Call /web/session/authenticate first.'}
+            return {'status': 'error', 'message': 'Please log in to continue.'}
 
         product = request.env['product.template'].sudo().browse(product_id)
         if not product.exists() or not _is_app_visible(product):
@@ -362,7 +387,7 @@ class LifestyleAPI(http.Controller):
     def product_review_delete(self, product_id, **kwargs):
         partner = _current_partner()
         if not partner:
-            return {'status': 'error', 'message': 'Authentication required. Call /web/session/authenticate first.'}
+            return {'status': 'error', 'message': 'Please log in to continue.'}
 
         Review = request.env['lifestyle.product.review'].sudo()
         review = Review.search([
@@ -436,6 +461,20 @@ class LifestyleAPI(http.Controller):
             headers={'Cache-Control': 'public, max-age=3600'},
         )
 
+    @http.route('/lifestyle/api/image/product/color-row/<int:color_image_id>', type='http', auth='public', methods=['GET'], csrf=False)
+    def product_color_row_image(self, color_image_id, **kwargs):
+        color_image = request.env['lifestyle.product.color.image'].sudo().browse(color_image_id)
+        if not color_image.exists() or not color_image.active or not color_image.image:
+            return request.not_found()
+        product = color_image.product_tmpl_id
+        if not product.exists() or not _is_app_visible(product):
+            return request.not_found()
+        return Response(
+            base64.b64decode(color_image.image),
+            content_type='image/png',
+            headers={'Cache-Control': 'public, max-age=3600'},
+        )
+
     @http.route('/lifestyle/api/image/attachment/<int:attachment_id>/<string:token>', type='http', auth='public', methods=['GET'], csrf=False)
     def attachment_image(self, attachment_id, token, **kwargs):
         grant = request.env['lifestyle.attachment.token'].sudo().search([
@@ -460,7 +499,7 @@ class LifestyleAPI(http.Controller):
     def register_device(self, token=None, platform='android', **kwargs):
         partner = _current_partner()
         if not partner:
-            return {'status': 'error', 'message': 'Authentication required. Call /web/session/authenticate first.'}
+            return {'status': 'error', 'message': 'Please log in to continue.'}
         if not token:
             return {'status': 'error', 'message': 'token is required.'}
         request.env['lifestyle.device.token'].sudo().register(partner, token, platform)
@@ -481,14 +520,14 @@ class LifestyleAPI(http.Controller):
     def profile(self, **kwargs):
         partner = _current_partner()
         if not partner:
-            return {'status': 'error', 'message': 'Authentication required. Call /web/session/authenticate first.'}
+            return {'status': 'error', 'message': 'Please log in to continue.'}
         return {'status': 'success', 'profile': self._serialize_profile(partner)}
 
     @http.route('/lifestyle/api/profile/update', type='json', auth='public', methods=['POST'], csrf=False)
     def update_profile(self, name=None, phone=None, street=None, street2=None, city=None, zip=None, **kwargs):
         partner = _current_partner()
         if not partner:
-            return {'status': 'error', 'message': 'Authentication required. Call /web/session/authenticate first.'}
+            return {'status': 'error', 'message': 'Please log in to continue.'}
 
         vals = {}
         if name is not None:
@@ -508,7 +547,7 @@ class LifestyleAPI(http.Controller):
                  phone=None, street=None, street2=None, city=None, zip=None, **kwargs):
         partner = _current_partner()
         if not partner:
-            return {'status': 'error', 'message': 'Authentication required. Call /web/session/authenticate first.'}
+            return {'status': 'error', 'message': 'Please log in to continue.'}
         if fulfillment_type not in ('delivery', 'pickup'):
             return {'status': 'error', 'message': 'fulfillment_type must be delivery or pickup.'}
         if not lines:
@@ -575,7 +614,7 @@ class LifestyleAPI(http.Controller):
     def orders(self, limit=20, offset=0, **kwargs):
         partner = _current_partner()
         if not partner:
-            return {'status': 'error', 'message': 'Authentication required. Call /web/session/authenticate first.'}
+            return {'status': 'error', 'message': 'Please log in to continue.'}
 
         Order = request.env['sale.order'].sudo()
         domain = [('partner_id', '=', partner.id)]
@@ -600,7 +639,7 @@ class LifestyleAPI(http.Controller):
     def order_detail(self, order_id, **kwargs):
         partner = _current_partner()
         if not partner:
-            return {'status': 'error', 'message': 'Authentication required. Call /web/session/authenticate first.'}
+            return {'status': 'error', 'message': 'Please log in to continue.'}
 
         order = request.env['sale.order'].sudo().browse(order_id)
         if not order.exists() or order.partner_id.id != partner.id:
@@ -642,7 +681,7 @@ class LifestyleAPI(http.Controller):
     def whoami(self, **kwargs):
         user = request.env.user
         if not user or user._is_public():
-            return {'status': 'error', 'message': 'Authentication required. Call /web/session/authenticate first.'}
+            return {'status': 'error', 'message': 'Please log in to continue.'}
         return {
             'status': 'success',
             'is_staff': _is_staff(),
@@ -654,12 +693,25 @@ class LifestyleAPI(http.Controller):
     def vendor_login(self, email=None, pin=None, **kwargs):
         if not email or not pin:
             return {'status': 'error', 'message': 'email and pin are required.'}
-        employee = request.env['hr.employee'].sudo().search([
-            ('app_email', '=', email),
-            ('app_pin', '=', pin),
-        ], limit=1)
-        if not employee or not employee.is_app_active:
+
+        employee = request.env['hr.employee'].sudo().search([('app_email', '=', email)], limit=1)
+        if not employee:
+            # No such login email — nothing to rate-limit, just say invalid.
             return {'status': 'error', 'message': 'Invalid email or PIN.'}
+
+        if employee.app_pin_locked_until and employee.app_pin_locked_until > fields.Datetime.now():
+            return {'status': 'error', 'message': 'Too many failed attempts. Try again in a few minutes.'}
+
+        if not employee.is_app_active or employee.app_pin != pin:
+            employee.app_pin_failed_attempts += 1
+            if employee.app_pin_failed_attempts >= 5:
+                employee.app_pin_locked_until = fields.Datetime.now() + timedelta(minutes=15)
+                employee.app_pin_failed_attempts = 0
+            return {'status': 'error', 'message': 'Invalid email or PIN.'}
+
+        employee.app_pin_failed_attempts = 0
+        employee.app_pin_locked_until = False
+
         if employee.staff_role != 'carpenter':
             return {'status': 'error', 'message': 'This account does not have vendor access.'}
         vendor_session = request.env['lifestyle.vendor.session'].sudo().issue_for(employee)
@@ -739,7 +791,7 @@ class LifestyleAPI(http.Controller):
         try:
             order._lifestyle_advance_stage(stage, push=False)
         except Exception as exc:
-            return {'status': 'error', 'message': str(exc)}
+            return {'status': 'error', 'message': _safe_error_message(exc)}
         return {
             'status': 'success',
             'order': {
@@ -761,7 +813,7 @@ class LifestyleAPI(http.Controller):
         try:
             order._lifestyle_send_stage_notification()
         except Exception as exc:
-            return {'status': 'error', 'message': str(exc)}
+            return {'status': 'error', 'message': _safe_error_message(exc)}
         return {'status': 'success'}
 
     @http.route('/lifestyle/api/vendor/orders/<int:order_id>/media/list', type='json', auth='public', methods=['GET', 'POST'], csrf=False)
@@ -802,7 +854,7 @@ class LifestyleAPI(http.Controller):
         try:
             order.action_send_media_update(new_count=1, comment=(comment or '').strip() or None)
         except Exception as exc:
-            return {'status': 'error', 'message': str(exc)}
+            return {'status': 'error', 'message': _safe_error_message(exc)}
         return {'status': 'success'}
 
     @http.route('/lifestyle/api/vendor/orders/<int:order_id>/media/batch', type='json', auth='public', methods=['POST'], csrf=False)
@@ -855,7 +907,7 @@ class LifestyleAPI(http.Controller):
         try:
             order.action_send_media_update(new_count=created, comment=comment or None)
         except Exception as exc:
-            return {'status': 'error', 'message': str(exc)}
+            return {'status': 'error', 'message': _safe_error_message(exc)}
         return {'status': 'success', 'count': created}
 
     @http.route('/lifestyle/api/vendor/orders/<int:order_id>/photo', type='json', auth='public', methods=['POST'], csrf=False)
@@ -883,8 +935,12 @@ class LifestyleAPI(http.Controller):
         try:
             order.action_send_photo_to_customer()
         except Exception as exc:
-            return {'status': 'error', 'message': str(exc)}
+            return {'status': 'error', 'message': _safe_error_message(exc)}
         return {'status': 'success'}
+
+
+
+
 
 
 

@@ -240,6 +240,11 @@ def _serialize_product(product, wishlist_ids=None):
         'available_qty': max(0, int(product.qty_available)) if product.type in ('consu', 'product') else 999999,
         'in_stock': product.qty_available > 0 if product.type in ('consu', 'product') else True,
         'in_wishlist': product.id in (wishlist_ids or set()),
+        'deal_ends_at': (
+            str(product.lifestyle_deal_ends_at)
+            if 'lifestyle_deal_ends_at' in product._fields and product.lifestyle_deal_ends_at
+            else None
+        ),
     }
 
 class LifestyleAPI(http.Controller):
@@ -306,17 +311,32 @@ class LifestyleAPI(http.Controller):
         }
 
     @http.route('/lifestyle/api/products', type='json', auth='public', methods=['GET', 'POST'], csrf=False)
-    def products(self, category_id=None, search=None, limit=20, offset=0, **kwargs):
-        domain = [('sale_ok', '=', True), ('active', '=', True)] + _app_visibility_domain(request.env['product.template'])
+    def products(self, category_id=None, search=None, limit=20, offset=0,
+                 sort=None, in_stock_only=None, min_price=None, max_price=None, **kwargs):
+        Product = request.env['product.template'].sudo()
+        domain = [('sale_ok', '=', True), ('active', '=', True)] + _app_visibility_domain(Product)
         if category_id:
             domain.append(('categ_id', '=', int(category_id)))
         if search:
             domain.append(('name', 'ilike', search))
+        if in_stock_only:
+            # Mirrors _serialize_product's in_stock rule: non stock-tracked
+            # types (services) always count as in stock.
+            domain += ['|', ('type', 'not in', ('consu', 'product')), ('qty_available', '>', 0)]
+        if min_price is not None:
+            domain.append(('list_price', '>=', float(min_price)))
+        if max_price is not None:
+            domain.append(('list_price', '<=', float(max_price)))
 
-        Product = request.env['product.template'].sudo()
         limit = min(int(limit or 20), 100)
         offset = int(offset or 0)
-        order_by = 'store_sequence, name' if 'store_sequence' in Product._fields else 'name'
+        sort_orders = {
+            'price_asc': 'list_price asc',
+            'price_desc': 'list_price desc',
+            'rating': 'store_rating desc' if 'store_rating' in Product._fields else 'name',
+            'newest': 'create_date desc',
+        }
+        order_by = sort_orders.get(sort) or ('store_sequence, name' if 'store_sequence' in Product._fields else 'name')
         products = Product.search(domain, order=order_by, limit=limit, offset=offset)
         total_count = Product.search_count(domain)
         wishlist_ids = _wishlist_product_ids(_current_partner())
@@ -338,6 +358,26 @@ class LifestyleAPI(http.Controller):
         data = _serialize_product(product, wishlist_ids)
         data['description_full'] = product.description or ''
         return {'status': 'success', 'product': data}
+
+    @http.route('/lifestyle/api/deals', type='json', auth='public', methods=['GET', 'POST'], csrf=False)
+    def deals(self, **kwargs):
+        Product = request.env['product.template'].sudo()
+        if 'lifestyle_deal_ends_at' not in Product._fields or 'compare_price' not in Product._fields:
+            return {'status': 'success', 'products': []}
+
+        domain = [
+            ('sale_ok', '=', True),
+            ('active', '=', True),
+            ('lifestyle_deal_ends_at', '>', fields.Datetime.now()),
+            ('compare_price', '>', 0),
+        ] + _app_visibility_domain(Product)
+        products = Product.search(domain, order='lifestyle_deal_ends_at asc', limit=20)
+        products = products.filtered(lambda p: p.compare_price > p.list_price)
+        wishlist_ids = _wishlist_product_ids(_current_partner())
+        return {
+            'status': 'success',
+            'products': [_serialize_product(p, wishlist_ids) for p in products],
+        }
 
     @http.route('/lifestyle/api/wishlist', type='json', auth='public', methods=['GET', 'POST'], csrf=False)
     def wishlist(self, **kwargs):

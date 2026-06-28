@@ -94,6 +94,15 @@ class ProductTemplate(models.Model):
         help='Optional. If set, tapping this photo in the app opens that product page instead of zooming in.',
     )
 
+    lifestyle_deal_ends_at = fields.Datetime(
+        string='Flash Deal Ends At',
+        help=(
+            'Optional. Requires Compare at Price to be higher than Price. '
+            'While set in the future, this product appears in the app\'s Flash Deals '
+            'carousel with a countdown until this time.'
+        ),
+    )
+
     def action_optimize_lifestyle_images(self):
         """Re-saves every image field on these products through itself,
         which makes Odoo re-run the Image field's resize/compression step —

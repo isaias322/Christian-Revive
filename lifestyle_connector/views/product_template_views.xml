@@ -50,6 +50,10 @@
                             <field name="lifestyle_color_image_4" string="Color Image 4" widget="image" class="oe_avatar" options="{'size': [120, 120]}"/>
                         </group>
                     </group>
+                    <separator string="Flash Deal"/>
+                    <group string="Set Compare at Price higher than Price, then set an end time to feature this product in the app's Flash Deals carousel.">
+                        <field name="lifestyle_deal_ends_at" string="Deal Ends At"/>
+                    </group>
                     <separator string="Additional Store Images — Link to Another Product"/>
                     <group string="Optional cross-sell: leave blank to just show as a photo of this product.">
                         <field name="store_image_2_product_id" string="Image 2 Links To"/>

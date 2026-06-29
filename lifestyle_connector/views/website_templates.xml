@@ -255,14 +255,14 @@
                                     <a href="/shop" class="btn btn-outline-light btn-lg">Browse Furniture</a>
                                 </div>
                                 <div class="rl-contact-proof-row">
-                                    <div><strong>Furniture</strong><span>custom guidance</span></div>
-                                    <div><strong>Orders</strong><span>status support</span></div>
-                                    <div><strong>Delivery</strong><span>handoff help</span></div>
+                                    <div><i class="fa fa-cube"></i><strong>Furniture</strong><span>Custom guidance</span></div>
+                                    <div><i class="fa fa-clipboard"></i><strong>Orders</strong><span>Status support</span></div>
+                                    <div><i class="fa fa-truck"></i><strong>Delivery</strong><span>Handoff help</span></div>
                                 </div>
                             </div>
                             <div class="col-12 col-lg-5">
                                 <div class="rl-contact-showpiece">
-                                    <img src="/lifestyle_connector/static/src/img/logo_wordmark.png" class="rl-contact-showpiece-logo" alt="Revive Lifestyle"/>
+                                    <div class="rl-contact-showpiece-logo-text" aria-label="Revive Lifestyle"><span>Revive</span><small>Lifestyle</small></div>
                                     <div class="rl-contact-room-card">
                                         <span class="rl-contact-room-line"></span>
                                         <div class="rl-contact-room-icon"><i class="fa fa-home"></i></div>

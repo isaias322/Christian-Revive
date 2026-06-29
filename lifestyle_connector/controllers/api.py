@@ -167,6 +167,23 @@ def _serialize_invoice(invoice):
     }
 
 
+def _customer_invoices_for_order(order):
+    Move = request.env['account.move'].sudo()
+    invoices = order.invoice_ids if 'invoice_ids' in order._fields else Move
+    linked_invoices = Move.search([
+        ('move_type', 'in', ('out_invoice', 'out_refund')),
+        ('state', '!=', 'cancel'),
+        '|',
+        ('invoice_line_ids.sale_line_ids.order_id', '=', order.id),
+        ('invoice_origin', '=', order.name),
+    ])
+    invoices |= linked_invoices
+    return invoices.filtered(
+        lambda move: move.move_type in ('out_invoice', 'out_refund')
+        and move.state != 'cancel'
+        and move.commercial_partner_id.id == order.partner_id.commercial_partner_id.id
+    ).sorted(key=lambda move: (move.invoice_date or move.create_date, move.id), reverse=True)
+
 def _app_visibility_domain(Product):
     if 'is_store_product' in Product._fields:
         return [('is_store_product', '=', True)]
@@ -902,9 +919,7 @@ class LifestyleAPI(http.Controller):
                 'media_list': order._lifestyle_media_list(),
                 'invoices': [
                     _serialize_invoice(invoice)
-                    for invoice in order.invoice_ids.filtered(
-                        lambda move: move.move_type in ('out_invoice', 'out_refund') and move.state != 'cancel'
-                    ).sorted(key=lambda move: (move.invoice_date or move.create_date, move.id), reverse=True)
+                    for invoice in _customer_invoices_for_order(order)
                 ],
                 'lines': [{
                     'product_id': line.product_id.id,

@@ -1,6 +1,9 @@
 // Revive Lifestyle brand styling on top of Odoo's compiled Bootstrap -
 // fonts, card shapes, and shadows matching the Flutter app's look.
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&family=Fraunces:wght@600&display=swap');
+// The Google Fonts <link> itself is injected via website_templates.xml's
+// <head> instead of an SCSS @import - Odoo concatenates every module's SCSS
+// into one bundle before compiling, and an @import not at the very top of
+// that combined file breaks the whole bundle's compilation.
 
 body {
     font-family: 'Manrope', sans-serif;

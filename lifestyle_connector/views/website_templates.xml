@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <!-- Every page goes through website.layout, so its <head> is a safe,
+         universal place to load the brand fonts (kept out of the SCSS
+         bundle - see lifestyle_web_theme.scss for why). -->
+    <template id="lifestyle_web_fonts" inherit_id="website.layout" name="Revive Lifestyle Fonts">
+        <xpath expr="//head" position="inside">
+            <link rel="preconnect" href="https://fonts.googleapis.com"/>
+            <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&amp;family=Fraunces:wght@600&amp;display=swap" rel="stylesheet"/>
+        </xpath>
+    </template>
+
     <!-- Anchored on div#introduction, a stable top-level child of
          sale.sale_order_portal_content that has existed across many Odoo
          versions - verified against the Odoo 18 source before writing this,

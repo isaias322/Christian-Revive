@@ -50,12 +50,7 @@ a {
 }
 
 .oe_product_image {
-    aspect-ratio: 1 / 1;
     background-color: #F7F5F0;
-}
-
-.oe_product_image img {
-    object-fit: cover;
 }
 
 .o_wsale_product_information {
@@ -714,4 +709,10 @@ a {
     .rl-contact-floating-note {
         display: none;
     }
+}
+/* The shop is the homepage for Revive Lifestyle, so hide the separate Home menu item. */
+header a.nav-link[href="/"],
+header .nav-item > a[href="/"],
+header #top_menu a[href="/"] {
+    display: none !important;
 }

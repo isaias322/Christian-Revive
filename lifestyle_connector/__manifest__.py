@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Revive Lifestyle Connector',
-    'version': '1.0.0',
+    'version': '1.0.1',
     'category': 'Sales',
     'summary': 'Mobile app glue: order fulfillment timeline, FCM push notifications, REST API for the Revive Lifestyle Flutter app',
     'description': """

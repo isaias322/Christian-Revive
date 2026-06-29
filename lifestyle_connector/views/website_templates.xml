@@ -10,6 +10,68 @@
         </xpath>
     </template>
 
+    <!-- Replaces the whole #wrap div rather than patching its current
+         contents, since the homepage's body is onboarding-generated content
+         stored in the database (not the module's own static template) -
+         #wrap itself is the one anchor guaranteed to exist regardless of
+         whatever placeholder content is currently inside it. -->
+    <template id="lifestyle_homepage" inherit_id="website.homepage" name="Revive Lifestyle Homepage">
+        <xpath expr="//div[@id='wrap']" position="replace">
+            <div id="wrap" class="oe_structure">
+                <section class="py-5" style="background-color: #F7F5F0;">
+                    <div class="container py-5 text-center">
+                        <h1 class="display-4 mb-3">Furniture, fresh produce &amp; pantry essentials</h1>
+                        <p class="lead text-muted mb-4">
+                            Everything for your home, delivered or ready for pickup - with build progress
+                            and delivery tracked every step of the way.
+                        </p>
+                        <a href="/shop" class="btn btn-primary btn-lg">Shop Now</a>
+                    </div>
+                </section>
+                <section class="py-5">
+                    <div class="container">
+                        <div class="row g-4">
+                            <div class="col-12 col-md-4">
+                                <div class="lifestyle-card h-100 text-center">
+                                    <h4 class="mb-2">Furniture &amp; Home</h4>
+                                    <p class="text-muted mb-3">Handmade pieces, built to order and tracked from
+                                        workshop to your door.</p>
+                                    <a href="/shop" class="btn btn-outline-secondary">Browse Furniture</a>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-4">
+                                <div class="lifestyle-card h-100 text-center">
+                                    <h4 class="mb-2">Fruits &amp; Vegetables</h4>
+                                    <p class="text-muted mb-3">Fresh produce, picked and packed for delivery
+                                        or in-store pickup.</p>
+                                    <a href="/shop" class="btn btn-outline-secondary">Browse Produce</a>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-4">
+                                <div class="lifestyle-card h-100 text-center">
+                                    <h4 class="mb-2">Healthy Pantry</h4>
+                                    <p class="text-muted mb-3">Pantry staples and healthy essentials for
+                                        everyday cooking.</p>
+                                    <a href="/shop" class="btn btn-outline-secondary">Browse Pantry</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section class="py-5" style="background-color: #E3EADB;">
+                    <div class="container text-center">
+                        <h3 class="mb-3">Track every order, every step</h3>
+                        <p class="text-muted mb-0">
+                            From order placed to build started, packing, and delivery - follow your
+                            furniture's progress and see workshop photos as they're sent, right from
+                            your account.
+                        </p>
+                    </div>
+                </section>
+            </div>
+        </xpath>
+    </template>
+
     <!-- Anchored on div#introduction, a stable top-level child of
          sale.sale_order_portal_content that has existed across many Odoo
          versions - verified against the Odoo 18 source before writing this,

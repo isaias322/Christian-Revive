@@ -1,9 +1,5 @@
-﻿// Revive Lifestyle brand styling on top of Odoo's compiled Bootstrap -
-// fonts, card shapes, and shadows matching the Flutter app's look.
-// The Google Fonts <link> itself is injected via website_templates.xml's
-// <head> instead of an SCSS @import - Odoo concatenates every module's SCSS
-// into one bundle before compiling, and an @import not at the very top of
-// that combined file breaks the whole bundle's compilation.
+﻿// Revive Lifestyle brand styling. Fonts are loaded via a head link tag
+// elsewhere, not an SCSS @import (that broke the whole bundle before).
 
 body {
     font-family: 'Manrope', sans-serif;
@@ -1459,5 +1455,174 @@ header #top_menu a[href="/"] {
     .oe_website_sale .wizard .breadcrumb,
     .oe_website_sale .o_wsale_checkout_nav .breadcrumb {
         row-gap: 0.7rem;
+    }
+}
+
+/* Revive checkout address strong visual pass */
+.oe_website_sale #wrap > .container,
+.oe_website_sale .oe_cart > .container {
+    max-width: 1320px;
+}
+
+.oe_website_sale form.checkout_autoformat,
+.oe_website_sale form[action*="/shop/address"],
+.oe_website_sale form[action*="address"] {
+    position: relative;
+    margin-top: 1rem;
+    padding: 1.45rem;
+    border: 1px solid rgba(92, 112, 80, 0.14);
+    border-radius: 26px;
+    background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.94), rgba(248, 246, 241, 0.88)),
+        radial-gradient(circle at 100% 0%, rgba(227, 234, 219, 0.72), transparent 19rem);
+    box-shadow: 0 24px 62px rgba(46, 46, 42, 0.09);
+}
+
+.oe_website_sale form.checkout_autoformat::before,
+.oe_website_sale form[action*="/shop/address"]::before,
+.oe_website_sale form[action*="address"]::before {
+    content: "Delivery details";
+    display: inline-flex;
+    align-items: center;
+    margin-bottom: 1.15rem;
+    padding: 0.45rem 0.85rem;
+    border-radius: 999px;
+    color: #4F6545;
+    background: #E3EADB;
+    font-size: 0.84rem;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+}
+
+.oe_website_sale form.checkout_autoformat .row,
+.oe_website_sale form[action*="/shop/address"] .row,
+.oe_website_sale form[action*="address"] .row {
+    row-gap: 1.05rem;
+}
+
+.oe_website_sale form.checkout_autoformat label,
+.oe_website_sale form[action*="/shop/address"] label,
+.oe_website_sale form[action*="address"] label {
+    color: #384034;
+    font-size: 0.94rem;
+}
+
+.oe_website_sale form.checkout_autoformat .form-control,
+.oe_website_sale form.checkout_autoformat .form-select,
+.oe_website_sale form.checkout_autoformat select,
+.oe_website_sale form[action*="/shop/address"] .form-control,
+.oe_website_sale form[action*="/shop/address"] .form-select,
+.oe_website_sale form[action*="/shop/address"] select,
+.oe_website_sale form[action*="address"] .form-control,
+.oe_website_sale form[action*="address"] .form-select,
+.oe_website_sale form[action*="address"] select {
+    min-height: 52px;
+    border-width: 1px;
+    border-color: rgba(92, 112, 80, 0.20);
+    border-radius: 16px;
+    background: #FFFFFF;
+}
+
+.oe_website_sale .alert-warning,
+.oe_website_sale .oe_cart .alert-warning,
+.oe_website_sale #wrap .alert-warning {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.8rem;
+    padding: 1rem 1.1rem;
+    border: 1px solid rgba(92, 112, 80, 0.18) !important;
+    border-radius: 18px;
+    color: #4F6545 !important;
+    background: linear-gradient(135deg, #F2F6EC 0%, #FFFDF4 100%) !important;
+    box-shadow: 0 16px 36px rgba(46, 46, 42, 0.06);
+    font-size: 0 !important;
+}
+
+.oe_website_sale .alert-warning::before,
+.oe_website_sale .oe_cart .alert-warning::before,
+.oe_website_sale #wrap .alert-warning::before {
+    content: "";
+    width: 34px;
+    height: 34px;
+    flex: 0 0 34px;
+    border-radius: 12px;
+    background:
+        linear-gradient(135deg, rgba(92, 112, 80, 0.22), rgba(175, 192, 157, 0.38)),
+        #FFFFFF;
+    box-shadow: inset 0 0 0 1px rgba(92, 112, 80, 0.14);
+}
+
+.oe_website_sale .alert-warning::after,
+.oe_website_sale .oe_cart .alert-warning::after,
+.oe_website_sale #wrap .alert-warning::after {
+    content: "Your account details are used for this order. Please confirm your delivery address below.";
+    display: block;
+    max-width: 720px;
+    color: #4F6545;
+    font-size: 1rem;
+    line-height: 1.45;
+    font-weight: 700;
+}
+
+.oe_website_sale #wrap h1,
+.oe_website_sale #wrap h2,
+.oe_website_sale #wrap h3 {
+    color: #2E2E2A;
+}
+
+.oe_website_sale #wrap h3:first-of-type,
+.oe_website_sale #wrap h2:first-of-type,
+.oe_website_sale #wrap h1:first-of-type {
+    margin-bottom: 1rem;
+}
+
+.oe_website_sale #cart_total,
+.oe_website_sale .o_total_card,
+.oe_website_sale #wrap .card:has(.oe_currency_value) {
+    border: 1px solid rgba(92, 112, 80, 0.16) !important;
+    background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.96), rgba(248, 246, 241, 0.92)) !important;
+    box-shadow: 0 28px 78px rgba(46, 46, 42, 0.15) !important;
+}
+
+.oe_website_sale #cart_total .btn-primary,
+.oe_website_sale #wrap .btn-primary {
+    min-height: 54px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #839A73 0%, #5D744F 100%) !important;
+    box-shadow: 0 18px 38px rgba(92, 112, 80, 0.28);
+}
+
+.oe_website_sale #cart_total .btn-primary:hover,
+.oe_website_sale #wrap .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 24px 48px rgba(92, 112, 80, 0.34);
+}
+
+.oe_website_sale .wizard,
+.oe_website_sale .o_wsale_checkout_nav {
+    margin-bottom: 1.15rem;
+}
+
+.oe_website_sale .wizard .breadcrumb-item,
+.oe_website_sale .o_wsale_checkout_nav .breadcrumb-item {
+    background: rgba(255, 255, 255, 0.86);
+}
+
+@media (max-width: 991.98px) {
+    .oe_website_sale form.checkout_autoformat,
+    .oe_website_sale form[action*="/shop/address"],
+    .oe_website_sale form[action*="address"] {
+        padding: 1.05rem;
+        border-radius: 20px;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .oe_website_sale .alert-warning::after,
+    .oe_website_sale .oe_cart .alert-warning::after,
+    .oe_website_sale #wrap .alert-warning::after {
+        font-size: 0.92rem;
     }
 }

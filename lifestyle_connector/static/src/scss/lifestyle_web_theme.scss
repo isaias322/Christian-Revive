@@ -633,7 +633,7 @@ a {
     position: absolute;
     left: 50%;
     top: 6rem;
-    width: min(980px, 82vw);
+    width: #{"min(980px, 82vw)"};
     height: 240px;
     border-radius: 999px;
     background: rgba(124, 144, 112, 0.14);
@@ -737,4 +737,64 @@ header a.nav-link[href="/"],
 header .nav-item > a[href="/"],
 header #top_menu a[href="/"] {
     display: none !important;
+}
+/* final hero stability overrides */
+.rl-contact-direct .rl-contact-proof-row,
+.rl-contact-direct .rl-contact-floating-note {
+    display: none !important;
+}
+
+.rl-contact-direct .rl-contact-showpiece {
+    min-height: 360px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.rl-contact-direct .rl-contact-showpiece::before {
+    inset: 28px 36px 42px 36px;
+}
+
+.rl-contact-direct .rl-contact-showpiece::after {
+    inset: 66px 42px 34px 72px;
+}
+
+.rl-contact-direct .rl-contact-showpiece-logo-text {
+    position: static !important;
+    min-width: #{"min(100%, 430px)"};
+    margin: 0 auto 1.35rem;
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+    backdrop-filter: none;
+    padding: 0;
+}
+
+.rl-contact-direct .rl-contact-showpiece-logo-text span {
+    font-size: clamp(4rem, 8vw, 6.4rem);
+    color: #AFC09D;
+}
+
+.rl-contact-direct .rl-contact-showpiece-logo-text small {
+    color: #AFC09D;
+}
+
+.rl-contact-direct .rl-contact-room-card {
+    position: relative !important;
+    inset: auto !important;
+    z-index: 3;
+    max-width: 430px;
+    margin: 0 auto;
+}
+
+.rl-contact-direct .rl-contact-room-card h3,
+.rl-contact-direct .rl-contact-room-card p {
+    overflow-wrap: anywhere;
+}
+
+@media (max-width: 991.98px) {
+    .rl-contact-direct .rl-contact-showpiece {
+        min-height: auto;
+        display: block;
+    }
 }

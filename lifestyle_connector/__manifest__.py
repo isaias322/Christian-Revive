@@ -29,6 +29,7 @@
         'views/hr_employee_views.xml',
         'views/website_templates.xml',
         'views/vendor_portal_templates.xml',
+        'data/website_branding_data.xml',
     ],
     'assets': {
         'web._assets_primary_variables': [

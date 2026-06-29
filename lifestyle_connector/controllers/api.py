@@ -1,5 +1,7 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 import base64
+import hashlib
+import hmac
 import logging
 from datetime import timedelta
 
@@ -115,6 +117,54 @@ def _color_row_image_url(color_image_id):
 
 def _banner_image_url(banner_id):
     return f'/lifestyle/api/image/banner/{banner_id}'
+
+def _invoice_pdf_token(invoice):
+    secret = request.env['ir.config_parameter'].sudo().get_param('database.secret') or request.env.cr.dbname
+    payload = f'{invoice.id}:{invoice.partner_id.id}:{invoice.write_date or invoice.create_date or ""}'
+    return hmac.new(secret.encode('utf-8'), payload.encode('utf-8'), hashlib.sha256).hexdigest()
+
+
+def _invoice_pdf_url(invoice):
+    return f'/lifestyle/api/invoices/{invoice.id}/pdf/{_invoice_pdf_token(invoice)}?db={request.env.cr.dbname}'
+
+
+def _payment_state_label(payment_state):
+    return {
+        'not_paid': 'Not paid',
+        'in_payment': 'Payment processing',
+        'paid': 'Paid',
+        'partial': 'Partially paid',
+        'reversed': 'Reversed',
+        'blocked': 'Blocked',
+        'invoicing_legacy': 'Legacy invoice',
+    }.get(payment_state or '', payment_state or '')
+
+
+def _invoice_state_label(state):
+    return {
+        'draft': 'Draft',
+        'posted': 'Posted',
+        'cancel': 'Cancelled',
+    }.get(state or '', state or '')
+
+
+def _serialize_invoice(invoice):
+    return {
+        'id': invoice.id,
+        'name': invoice.name if invoice.name and invoice.name != '/' else 'Draft invoice',
+        'state': invoice.state,
+        'state_label': _invoice_state_label(invoice.state),
+        'payment_state': invoice.payment_state or '',
+        'payment_state_label': _payment_state_label(invoice.payment_state),
+        'invoice_date': str(invoice.invoice_date) if invoice.invoice_date else '',
+        'invoice_date_due': str(invoice.invoice_date_due) if invoice.invoice_date_due else '',
+        'amount_untaxed': invoice.amount_untaxed,
+        'amount_tax': invoice.amount_tax,
+        'amount_total': invoice.amount_total,
+        'amount_residual': invoice.amount_residual,
+        'currency': invoice.currency_id.symbol or invoice.currency_id.name,
+        'pdf_url': _invoice_pdf_url(invoice),
+    }
 
 
 def _app_visibility_domain(Product):
@@ -850,6 +900,12 @@ class LifestyleAPI(http.Controller):
                 'media_url': order._lifestyle_media_url(),
                 'media_mimetype': order._lifestyle_media_mimetype(),
                 'media_list': order._lifestyle_media_list(),
+                'invoices': [
+                    _serialize_invoice(invoice)
+                    for invoice in order.invoice_ids.filtered(
+                        lambda move: move.move_type in ('out_invoice', 'out_refund') and move.state != 'cancel'
+                    ).sorted(key=lambda move: (move.invoice_date or move.create_date, move.id), reverse=True)
+                ],
                 'lines': [{
                     'product_id': line.product_id.id,
                     'name': line.product_id.name,
@@ -861,6 +917,34 @@ class LifestyleAPI(http.Controller):
             },
         }
 
+    @http.route('/lifestyle/api/invoices/<int:invoice_id>/pdf/<string:token>', type='http', auth='public', methods=['GET'], csrf=False)
+    def invoice_pdf(self, invoice_id, token, **kwargs):
+        invoice = request.env['account.move'].sudo().browse(invoice_id)
+        if (
+            not invoice.exists()
+            or invoice.move_type not in ('out_invoice', 'out_refund')
+            or invoice.state == 'cancel'
+            or not hmac.compare_digest(token or '', _invoice_pdf_token(invoice))
+        ):
+            return request.not_found()
+
+        try:
+            pdf, _ = request.env['ir.actions.report'].sudo()._render_qweb_pdf('account.account_invoices', [invoice.id])
+        except TypeError:
+            report = request.env.ref('account.account_invoices', raise_if_not_found=False)
+            if not report:
+                return request.not_found()
+            pdf, _ = report.sudo()._render_qweb_pdf([invoice.id])
+
+        filename = (invoice.name if invoice.name and invoice.name != '/' else f'invoice-{invoice.id}').replace('/', '-')
+        return Response(
+            pdf,
+            content_type='application/pdf',
+            headers={
+                'Content-Disposition': f'inline; filename="{filename}.pdf"',
+                'Cache-Control': 'private, max-age=300',
+            },
+        )
     # ---------------------------------------------------------------
     # Vendor tools (internal staff only - surfaced in the app's Profile
     # page when the logged-in account is Odoo staff, not a portal customer)

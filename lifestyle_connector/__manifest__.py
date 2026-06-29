@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 {
     'name': 'Revive Lifestyle Connector',
     'version': '1.0.2',
@@ -38,6 +38,7 @@
         ],
         'web.assets_frontend': [
             'lifestyle_connector/static/src/scss/lifestyle_web_theme.scss',
+            'lifestyle_connector/static/src/js/lifestyle_web_animations.js',
         ],
     },
     'installable': True,
@@ -45,5 +46,3 @@
     'license': 'LGPL-3',
     'post_init_hook': 'post_init_hook',
 }
-
-

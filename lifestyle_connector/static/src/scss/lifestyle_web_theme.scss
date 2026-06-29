@@ -1,4 +1,4 @@
-﻿// Revive Lifestyle brand styling. Fonts are loaded via a head link tag
+// Revive Lifestyle brand styling. Fonts are loaded via a head link tag
 // elsewhere, not an SCSS @import (that broke the whole bundle before).
 
 body {
@@ -1578,8 +1578,7 @@ header #top_menu a[href="/"] {
 }
 
 .oe_website_sale #cart_total,
-.oe_website_sale .o_total_card,
-.oe_website_sale #wrap .card:has(.oe_currency_value) {
+.oe_website_sale .o_total_card {
     border: 1px solid rgba(92, 112, 80, 0.16) !important;
     background:
         linear-gradient(145deg, rgba(255, 255, 255, 0.96), rgba(248, 246, 241, 0.92)) !important;
@@ -1626,14 +1625,25 @@ header #top_menu a[href="/"] {
         font-size: 0.92rem;
     }
 }
-/* Keep address helper copy off the payment step. */
-.oe_website_sale:not(:has(form.checkout_autoformat)) .alert-warning::before,
-.oe_website_sale:not(:has(form.checkout_autoformat)) .alert-warning::after {
-    content: none !important;
+
+
+// Shop page search bar - bigger and brighter
+.o_wsale_products_searchbar_form .search-query {
+    height: 52px;
+    padding: 0.75rem 1.1rem;
+    font-size: 1.05rem;
+    border-radius: 14px;
+    border: 1px solid rgba(92, 112, 80, 0.18);
+    background-color: #FFFDF9;
 }
 
-.oe_website_sale:not(:has(form.checkout_autoformat)) .alert-warning {
-    font-size: inherit !important;
+.o_wsale_products_searchbar_form .search-query:focus {
+    border-color: #7C9070;
+    box-shadow: 0 0 0 3px rgba(124, 144, 112, 0.15);
 }
 
+.o_wsale_products_searchbar_form .oe_search_button {
+    height: 52px;
+    border-radius: 14px;
+}
 

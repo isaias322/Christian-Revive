@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 {
     'name': 'Revive Lifestyle Connector',
     'version': '1.0.2',
@@ -45,4 +45,5 @@
     'license': 'LGPL-3',
     'post_init_hook': 'post_init_hook',
 }
+
 

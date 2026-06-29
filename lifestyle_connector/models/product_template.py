@@ -26,12 +26,21 @@ class ProductTemplate(models.Model):
     store_review_count = fields.Integer(string='Review Count', compute='_compute_store_rating', compute_sudo=True, store=True)
     store_sold_count = fields.Integer(string='Sold Count', compute='_compute_store_sold_count')
 
-    @api.depends('review_ids.rating')
+    @api.depends('review_ids.rating', 'review_ids.write_date')
     def _compute_store_rating(self):
         for product in self:
-            reviews = product.sudo().review_ids
-            product.store_review_count = len(reviews)
-            product.store_rating = (sum(reviews.mapped('rating')) / len(reviews)) if reviews else 0.0
+            reviews = product.sudo().review_ids.sorted(
+                key=lambda review: (review.write_date or review.create_date, review.id),
+                reverse=True,
+            )
+            latest_by_partner = {}
+            for review in reviews:
+                latest_by_partner.setdefault(review.partner_id.id, review)
+            unique_reviews = list(latest_by_partner.values())
+            product.store_review_count = len(unique_reviews)
+            product.store_rating = (
+                sum(review.rating for review in unique_reviews) / len(unique_reviews)
+            ) if unique_reviews else 0.0
 
     def _compute_store_sold_count(self):
         SaleLine = self.env['sale.order.line'].sudo()
@@ -182,6 +191,7 @@ class ProductTemplate(models.Model):
             for color_image in product.color_image_ids:
                 if color_image.image:
                     color_image.write({'image': color_image.image})
+
 
 
 

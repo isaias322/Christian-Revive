@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 from odoo import http
 from odoo.http import request
 
@@ -23,10 +23,7 @@ class LifestyleWebsiteReviews(http.Controller):
             rating = 0
         if 1 <= rating <= 5:
             Review = request.env['lifestyle.product.review'].sudo()
-            existing = Review.search([
-                ('product_tmpl_id', '=', product.id),
-                ('partner_id', '=', partner.id),
-            ], limit=1)
+            existing = Review._dedupe_for_product_partner(product.id, partner.id)
             vals = {'rating': rating, 'comment': (comment or '').strip()}
             if existing:
                 existing.write(vals)
@@ -34,3 +31,4 @@ class LifestyleWebsiteReviews(http.Controller):
                 Review.create({**vals, 'product_tmpl_id': product.id, 'partner_id': partner.id})
 
         return request.redirect(f'{product.website_url}#reviews')
+

@@ -1705,3 +1705,43 @@ header #top_menu a[href="/"] {
     background-color: #E3EADB;
     border-radius: 12px;
 }
+
+// Shop sidebar filters and category tabs
+.o_wsale_products_grid_before_rail {
+    background-color: #FFFDF9;
+    border-radius: 18px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+    padding: 1.25rem !important;
+}
+
+#o_wsale_price_range_option .accordion-button {
+    font-family: 'Fraunces', serif;
+    color: #2E2E2A;
+}
+
+#o_wsale_price_range_option .form-range::-webkit-slider-thumb {
+    background-color: #7C9070;
+}
+
+#o_wsale_price_range_option .form-range::-moz-range-thumb {
+    background-color: #7C9070;
+}
+
+.o_wsale_filmstip_container {
+    margin-bottom: 1.5rem !important;
+}
+
+.o_wsale_filmstip .btn {
+    border-radius: 999px !important;
+    border: 1px solid rgba(92, 112, 80, 0.18) !important;
+    background-color: #FFFDF9;
+    color: #2E2E2A;
+    font-weight: 600;
+    margin-right: 8px;
+}
+
+.o_wsale_filmstip .btn.border-primary {
+    background-color: #7C9070 !important;
+    border-color: #7C9070 !important;
+    color: #FFFDF9 !important;
+}

@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 import base64
 import hashlib
 import hmac
@@ -534,10 +534,14 @@ class LifestyleAPI(http.Controller):
         if not product.exists() or not _is_app_visible(product):
             return {'status': 'error', 'message': 'Product not found'}
 
+        Review = request.env['lifestyle.product.review'].sudo()
+        Review._dedupe_duplicate_reviews(product.id)
+        reviews = Review.search([('product_tmpl_id', '=', product.id)], order='write_date desc, create_date desc, id desc')
+
         partner = _current_partner()
         my_review = None
         if partner:
-            mine = product.review_ids.filtered(lambda r: r.partner_id.id == partner.id)
+            mine = reviews.filtered(lambda r: r.partner_id.id == partner.id)[:1]
             if mine:
                 my_review = {'id': mine.id, 'rating': mine.rating, 'comment': mine.comment or ''}
 
@@ -552,7 +556,8 @@ class LifestyleAPI(http.Controller):
                 'comment': review.comment or '',
                 'author_name': review.partner_id.name or 'Customer',
                 'create_date': str(review.create_date),
-            } for review in product.review_ids],
+                'is_mine': bool(partner and review.partner_id.id == partner.id),
+            } for review in reviews],
         }
 
     @http.route('/lifestyle/api/products/<int:product_id>/reviews/submit', type='json', auth='public', methods=['POST'], csrf=False)
@@ -573,20 +578,21 @@ class LifestyleAPI(http.Controller):
             return {'status': 'error', 'message': 'rating must be between 1 and 5.'}
 
         Review = request.env['lifestyle.product.review'].sudo()
-        existing = Review.search([
-            ('product_tmpl_id', '=', product.id),
-            ('partner_id', '=', partner.id),
-        ], limit=1)
+        existing = Review._dedupe_for_product_partner(product.id, partner.id)
         vals = {'rating': rating, 'comment': (comment or '').strip()}
+        action = 'updated' if existing else 'created'
         if existing:
             existing.write(vals)
         else:
             vals.update({'product_tmpl_id': product.id, 'partner_id': partner.id})
-            Review.create(vals)
+            existing = Review.create(vals)
 
+        Review._dedupe_for_product_partner(product.id, partner.id)
         product.invalidate_recordset(['store_rating', 'store_review_count'])
         return {
             'status': 'success',
+            'action': action,
+            'review_id': existing.id,
             'average_rating': product.store_rating,
             'review_count': product.store_review_count,
         }
@@ -598,15 +604,15 @@ class LifestyleAPI(http.Controller):
             return {'status': 'error', 'message': 'Please log in to continue.'}
 
         Review = request.env['lifestyle.product.review'].sudo()
-        review = Review.search([
+        reviews = Review.search([
             ('product_tmpl_id', '=', product_id),
             ('partner_id', '=', partner.id),
-        ], limit=1)
-        if not review:
+        ])
+        if not reviews:
             return {'status': 'error', 'message': 'You have not reviewed this product.'}
 
-        product = review.product_tmpl_id
-        review.unlink()
+        product = reviews[:1].product_tmpl_id
+        reviews.unlink()
         product.invalidate_recordset(['store_rating', 'store_review_count'])
         return {
             'status': 'success',
@@ -976,7 +982,7 @@ class LifestyleAPI(http.Controller):
 
         employee = request.env['hr.employee'].sudo().search([('app_email', '=', email)], limit=1)
         if not employee:
-            # No such login email — nothing to rate-limit, just say invalid.
+            # No such login email â€” nothing to rate-limit, just say invalid.
             return {'status': 'error', 'message': 'Invalid email or PIN.'}
 
         if employee.app_pin_locked_until and employee.app_pin_locked_until > fields.Datetime.now():
@@ -1253,6 +1259,10 @@ class LifestyleAPI(http.Controller):
         except Exception as exc:
             return {'status': 'error', 'message': _safe_error_message(exc)}
         return {'status': 'success'}
+
+
+
+
 
 
 

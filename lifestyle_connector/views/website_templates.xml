@@ -36,6 +36,51 @@
                     <strong>Sizes:</strong> <t t-esc="product.size_options"/>
                 </p>
             </div>
+
+            <div id="reviews" class="lifestyle-card mt-3">
+                <h5 class="mb-3">Customer Reviews</h5>
+                <div t-if="not product.review_ids" class="text-muted mb-3">No reviews yet.</div>
+                <div t-foreach="product.review_ids" t-as="review" class="mb-3 pb-3 border-bottom">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <strong t-esc="review.partner_id.name or 'Customer'"/>
+                        <span class="lifestyle-badge"><t t-esc="review.rating"/>/5</span>
+                    </div>
+                    <p t-if="review.comment" t-esc="review.comment" class="mb-0 mt-1"/>
+                </div>
+
+                <t t-set="current_partner"
+                   t-value="(not request.env.user._is_public()) and request.env.user.partner_id"/>
+                <t t-if="current_partner">
+                    <t t-set="my_review" t-value="product.review_ids.filtered(lambda r: r.partner_id.id == current_partner.id)"/>
+                    <h6 class="mt-4 mb-2">
+                        <t t-esc="'Update your review' if my_review else 'Write a review'"/>
+                    </h6>
+                    <form t-attf-action="/shop/product/#{product.id}/review/submit" method="post">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                        <div class="mb-2">
+                            <select name="rating" class="form-select" style="max-width: 160px;">
+                                <t t-foreach="[5, 4, 3, 2, 1]" t-as="star">
+                                    <option t-att-value="star"
+                                            t-att-selected="'selected' if (my_review and my_review.rating == star) else None">
+                                        <t t-esc="star"/> stars
+                                    </option>
+                                </t>
+                            </select>
+                        </div>
+                        <div class="mb-2">
+                            <textarea name="comment" class="form-control" rows="3"
+                                      placeholder="Share your thoughts (optional)"
+                                      t-esc="my_review.comment if my_review else ''"/>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-sm">Submit Review</button>
+                    </form>
+                </t>
+                <t t-else="">
+                    <p class="text-muted mt-3 mb-0">
+                        <a t-attf-href="/web/login?redirect=#{product.website_url}">Log in</a> to write a review.
+                    </p>
+                </t>
+            </div>
         </xpath>
     </template>
 

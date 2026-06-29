@@ -1,4 +1,4 @@
-// Revive Lifestyle brand styling. Fonts are loaded via a head link tag
+﻿// Revive Lifestyle brand styling. Fonts are loaded via a head link tag
 // elsewhere, not an SCSS @import (that broke the whole bundle before).
 
 body {
@@ -1524,9 +1524,9 @@ header #top_menu a[href="/"] {
     background: #FFFFFF;
 }
 
-.oe_website_sale .alert-warning,
-.oe_website_sale .oe_cart .alert-warning,
-.oe_website_sale #wrap .alert-warning {
+.oe_website_sale form.checkout_autoformat .alert-warning,
+.oe_website_sale form[action*="/shop/address"] .alert-warning,
+.oe_website_sale form[action*="address"] .alert-warning {
     display: flex;
     align-items: flex-start;
     gap: 0.8rem;
@@ -1539,9 +1539,9 @@ header #top_menu a[href="/"] {
     font-size: 0 !important;
 }
 
-.oe_website_sale .alert-warning::before,
-.oe_website_sale .oe_cart .alert-warning::before,
-.oe_website_sale #wrap .alert-warning::before {
+.oe_website_sale form.checkout_autoformat .alert-warning::before,
+.oe_website_sale form[action*="/shop/address"] .alert-warning::before,
+.oe_website_sale form[action*="address"] .alert-warning::before {
     content: "";
     width: 34px;
     height: 34px;
@@ -1553,9 +1553,9 @@ header #top_menu a[href="/"] {
     box-shadow: inset 0 0 0 1px rgba(92, 112, 80, 0.14);
 }
 
-.oe_website_sale .alert-warning::after,
-.oe_website_sale .oe_cart .alert-warning::after,
-.oe_website_sale #wrap .alert-warning::after {
+.oe_website_sale form.checkout_autoformat .alert-warning::after,
+.oe_website_sale form[action*="/shop/address"] .alert-warning::after,
+.oe_website_sale form[action*="address"] .alert-warning::after {
     content: "Your account details are used for this order. Please confirm your delivery address below.";
     display: block;
     max-width: 720px;
@@ -1620,9 +1620,20 @@ header #top_menu a[href="/"] {
 }
 
 @media (max-width: 575.98px) {
-    .oe_website_sale .alert-warning::after,
-    .oe_website_sale .oe_cart .alert-warning::after,
-    .oe_website_sale #wrap .alert-warning::after {
+    .oe_website_sale form.checkout_autoformat .alert-warning::after,
+.oe_website_sale form[action*="/shop/address"] .alert-warning::after,
+.oe_website_sale form[action*="address"] .alert-warning::after {
         font-size: 0.92rem;
     }
 }
+/* Keep address helper copy off the payment step. */
+.oe_website_sale:not(:has(form.checkout_autoformat)) .alert-warning::before,
+.oe_website_sale:not(:has(form.checkout_autoformat)) .alert-warning::after {
+    content: none !important;
+}
+
+.oe_website_sale:not(:has(form.checkout_autoformat)) .alert-warning {
+    font-size: inherit !important;
+}
+
+

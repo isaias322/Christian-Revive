@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <!-- Every page goes through website.layout, so its <head> is a safe,
          universal place to load the brand fonts (kept out of the SCSS
@@ -125,7 +125,7 @@
                         <div class="row align-items-end g-4">
                             <div class="col-12 col-lg-7">
                                 <span class="rl-contact-kicker">Revive Lifestyle Support</span>
-                                <h1>Let’s shape your home together</h1>
+                                <h1>Letâ€™s shape your home together</h1>
                                 <p>
                                     Questions about a furniture piece, custom finish, delivery, or an active order?
                                     Send a note and our team will help you with the next clear step.
@@ -254,23 +254,15 @@
                                     <a href="#rl_contact_form" class="btn btn-primary btn-lg">Write to Us</a>
                                     <a href="/shop" class="btn btn-outline-light btn-lg">Browse Furniture</a>
                                 </div>
-                                <div class="rl-contact-proof-row">
-                                    <div><i class="fa fa-cube"></i><strong>Furniture</strong><span>Custom guidance</span></div>
-                                    <div><i class="fa fa-clipboard"></i><strong>Orders</strong><span>Status support</span></div>
-                                    <div><i class="fa fa-truck"></i><strong>Delivery</strong><span>Handoff help</span></div>
-                                </div>
                             </div>
                             <div class="col-12 col-lg-5">
                                 <div class="rl-contact-showpiece">
-                                    <div class="rl-contact-showpiece-logo-text" aria-label="Revive Lifestyle"><span>Revive</span><small>Lifestyle</small></div>
                                     <div class="rl-contact-room-card">
                                         <span class="rl-contact-room-line"></span>
                                         <div class="rl-contact-room-icon"><i class="fa fa-home"></i></div>
                                         <h3>Designed for real homes</h3>
                                         <p>Ask about sizes, colors, delivery timing, or your current furniture build.</p>
                                     </div>
-                                    <div class="rl-contact-floating-note rl-note-one"><i class="fa fa-check"></i> Same-day review</div>
-                                    <div class="rl-contact-floating-note rl-note-two"><i class="fa fa-truck"></i> Delivery guidance</div>
                                 </div>
                             </div>
                         </div>
@@ -367,3 +359,5 @@
         </t>
     </template>
 </odoo>
+
+

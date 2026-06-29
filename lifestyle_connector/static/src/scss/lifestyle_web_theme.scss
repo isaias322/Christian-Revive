@@ -1647,3 +1647,50 @@ header #top_menu a[href="/"] {
     border-radius: 14px;
 }
 
+
+// Top navigation polish
+#top_menu .nav-link {
+    font-weight: 600;
+    color: #2E2E2A;
+    padding: 0.5rem 1rem;
+    position: relative;
+}
+
+#top_menu .nav-link:hover,
+#top_menu .nav-link.active {
+    color: #5C7050;
+}
+
+#top_menu .nav-link::after {
+    content: "";
+    position: absolute;
+    left: 1rem;
+    right: 1rem;
+    bottom: 0.25rem;
+    height: 2px;
+    background-color: #7C9070;
+    transform: scaleX(0);
+    transition: transform 0.2s ease;
+}
+
+#top_menu .nav-link:hover::after,
+#top_menu .nav-link.active::after {
+    transform: scaleX(1);
+}
+
+#top_menu .dropdown-menu {
+    border-radius: 14px;
+    border: none;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+    padding: 0.5rem;
+}
+
+#top_menu .dropdown-item {
+    border-radius: 10px;
+    padding: 0.5rem 0.9rem;
+}
+
+#top_menu .dropdown-item:hover {
+    background-color: #E3EADB;
+    color: #5C7050;
+}

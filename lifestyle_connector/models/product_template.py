@@ -66,13 +66,37 @@ class ProductTemplate(models.Model):
     def create(self, vals_list):
         records = super().create(vals_list)
         records._lifestyle_sync_website_published()
+        records._lifestyle_sync_public_category()
         return records
 
     def write(self, vals):
         res = super().write(vals)
         if 'is_store_product' in vals or 'lifestyle_app_visible' in vals:
             self._lifestyle_sync_website_published()
+        if 'categ_id' in vals:
+            self._lifestyle_sync_public_category()
         return res
+
+    def _lifestyle_sync_public_category(self):
+        """Tags each product into the website's public category matching
+        its internal Revive Lifestyle category, so the Shop menu's category
+        dropdown filters correctly without admins managing two separate
+        category trees by hand."""
+        if 'public_categ_ids' not in self._fields:
+            return
+        mapping = [
+            ('lifestyle_connector.category_furniture_home', 'lifestyle_connector.public_category_furniture'),
+            ('lifestyle_connector.category_fruits_veg', 'lifestyle_connector.public_category_fruits_veg'),
+            ('lifestyle_connector.category_healthy_pantry', 'lifestyle_connector.public_category_pantry'),
+        ]
+        for internal_xml_id, public_xml_id in mapping:
+            internal_categ = self.env.ref(internal_xml_id, raise_if_not_found=False)
+            public_categ = self.env.ref(public_xml_id, raise_if_not_found=False)
+            if not internal_categ or not public_categ:
+                continue
+            matching = self.filtered(lambda p: p.categ_id.id == internal_categ.id or p.categ_id.parent_path and str(internal_categ.id) in p.categ_id.parent_path.split('/'))
+            if matching:
+                matching.write({'public_categ_ids': [(4, public_categ.id)]})
 
     def _lifestyle_is_app_visible(self):
         self.ensure_one()

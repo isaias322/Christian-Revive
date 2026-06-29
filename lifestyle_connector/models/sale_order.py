@@ -69,14 +69,6 @@ class SaleOrder(models.Model):
 
 
 
-    def action_confirm(self):
-        res = super().action_confirm()
-        for order in self:
-            if order.delivery_stage == 'order_placed':
-                initial_stage = 'packing' if order._lifestyle_skip_processing() else 'processing'
-                order._lifestyle_advance_stage(initial_stage, push=False)
-        return res
-
     def _lifestyle_skip_processing(self):
         """True when every line on this order is a Fruits & Vegetables
         product - those just get packed and shipped, so there's no separate

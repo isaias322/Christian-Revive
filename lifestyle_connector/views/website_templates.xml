@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Anchored on div#introduction, a stable top-level child of
+         sale.sale_order_portal_content that has existed across many Odoo
+         versions - verified against the Odoo 18 source before writing this,
+         to avoid an xpath-not-found error blocking the whole module install. -->
+    <template id="portal_order_lifestyle_progress" inherit_id="sale.sale_order_portal_content"
+              name="Revive Lifestyle Delivery Progress">
+        <xpath expr="//div[@id='introduction']" position="after">
+            <div t-if="sale_order.delivery_stage" class="lifestyle-card mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h5 class="mb-0">Furniture Progress</h5>
+                    <span class="lifestyle-badge">
+                        <t t-esc="sale_order.lifestyle_progress_percent"/>%
+                    </span>
+                </div>
+                <div class="lifestyle-progress mb-3">
+                    <div t-attf-style="width: #{sale_order.lifestyle_progress_percent}%;"/>
+                </div>
+                <div class="d-flex flex-wrap gap-2">
+                    <t t-foreach="sale_order._lifestyle_timeline()" t-as="step">
+                        <span t-attf-class="lifestyle-badge #{'' if step['done'] else 'opacity-50'}">
+                            <t t-esc="step['label']"/>
+                            <t t-if="step['current']"> (current)</t>
+                        </span>
+                    </t>
+                </div>
+            </div>
+            <t t-set="lifestyle_media" t-value="sale_order._lifestyle_media_list()"/>
+            <div t-if="lifestyle_media" class="lifestyle-card mb-4">
+                <h5 class="mb-3">Latest Workshop Update</h5>
+                <t t-set="latest" t-value="lifestyle_media[0]"/>
+                <span t-if="latest['stage_label']" class="lifestyle-badge mb-2 d-inline-block">
+                    <t t-esc="latest['stage_label']"/>
+                </span>
+                <div t-if="latest['url'] and not latest['mimetype'].startswith('video/')" class="mb-2">
+                    <img t-att-src="latest['url']" class="img-fluid rounded" style="max-height: 320px; object-fit: cover;"/>
+                </div>
+                <div t-if="latest['url'] and latest['mimetype'].startswith('video/')" class="mb-2">
+                    <video controls="controls" class="img-fluid rounded" style="max-height: 320px;">
+                        <source t-att-src="latest['url']" t-att-type="latest['mimetype']"/>
+                    </video>
+                </div>
+                <p t-if="latest['comment']" t-esc="latest['comment']" class="mb-0"/>
+            </div>
+        </xpath>
+    </template>
+</odoo>

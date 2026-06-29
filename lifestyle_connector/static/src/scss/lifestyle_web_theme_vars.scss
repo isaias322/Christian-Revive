@@ -1,0 +1,7 @@
+// Revive Lifestyle brand palette - overrides Odoo's default Bootstrap
+// variables before the website's CSS compiles, so the built-in theme
+// (buttons, links, nav) already matches the Flutter app without touching
+// any internal Odoo template structure.
+$primary: #7C9070; // sage
+$secondary: #C97D60; // terracotta
+$body-bg: #F7F5F0; // off-white

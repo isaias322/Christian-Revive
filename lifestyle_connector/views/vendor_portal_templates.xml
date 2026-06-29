@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="vendor_portal_login" name="Vendor Portal Login">
+        <t t-call="website.layout">
+            <div id="wrap">
+                <div class="container py-5" style="max-width: 420px;">
+                    <h2 class="mb-4">Vendor Login</h2>
+                    <div t-if="error" class="alert alert-danger" t-esc="error"/>
+                    <form action="/vendor/login/submit" method="post" class="lifestyle-card">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                        <div class="mb-3">
+                            <label class="form-label">App Login Email</label>
+                            <input type="email" name="email" class="form-control" required="required"/>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">App PIN</label>
+                            <input type="password" name="pin" class="form-control" inputmode="numeric" required="required"/>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Log In</button>
+                    </form>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <template id="vendor_portal_orders" name="Vendor Portal Orders">
+        <t t-call="website.layout">
+            <div id="wrap">
+                <div class="container py-5">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div>
+                            <h2 class="mb-0">My Orders</h2>
+                            <span class="text-muted">Logged in as <t t-esc="employee.name"/></span>
+                        </div>
+                        <a href="/vendor/logout" class="btn btn-outline-secondary">Log Out</a>
+                    </div>
+                    <div t-if="not orders" class="lifestyle-card text-center text-muted">
+                        No orders assigned to you yet.
+                    </div>
+                    <div t-foreach="orders" t-as="order" class="lifestyle-card mb-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <a t-attf-href="/vendor/orders/#{order.id}" class="h5 mb-1 d-block">
+                                    <t t-esc="order.name"/>
+                                </a>
+                                <span class="text-muted" t-esc="order.partner_id.name"/>
+                            </div>
+                            <div class="text-end">
+                                <span class="lifestyle-badge d-block mb-1">
+                                    <t t-esc="stage_labels.get(order.delivery_stage, order.delivery_stage)"/>
+                                </span>
+                                <span class="text-muted">
+                                    <t t-esc="order.lifestyle_progress_percent"/>%
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <template id="vendor_portal_order_detail" name="Vendor Portal Order Detail">
+        <t t-call="website.layout">
+            <div id="wrap">
+                <div class="container py-5" style="max-width: 720px;">
+                    <a href="/vendor/orders" class="d-inline-block mb-3">&#8592; All orders</a>
+                    <h2 class="mb-1"><t t-esc="order.name"/></h2>
+                    <p class="text-muted mb-4">
+                        <t t-esc="order.partner_id.name"/> -
+                        <t t-esc="'In-store Pickup' if order.fulfillment_type == 'pickup' else 'Home Delivery'"/>
+                    </p>
+
+                    <div t-if="error" class="alert alert-danger" t-esc="error"/>
+
+                    <div class="lifestyle-card mb-4">
+                        <h5 class="mb-3">Update Stage</h5>
+                        <div class="d-flex flex-wrap gap-2">
+                            <form t-foreach="available_stages" t-as="stage_key"
+                                  t-attf-action="/vendor/orders/#{order.id}/stage" method="post" class="d-inline">
+                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                <input type="hidden" name="stage" t-att-value="stage_key"/>
+                                <button type="submit"
+                                        t-attf-class="btn btn-sm #{'btn-primary' if stage_key == order.delivery_stage else 'btn-outline-secondary'}">
+                                    <t t-esc="stage_labels.get(stage_key, stage_key)"/>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="lifestyle-card mb-4">
+                        <h5 class="mb-3">Send Photo / Video Update</h5>
+                        <form t-attf-action="/vendor/orders/#{order.id}/media" method="post"
+                              enctype="multipart/form-data">
+                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                            <div class="mb-3">
+                                <input type="file" name="media" class="form-control" multiple="multiple" accept="image/*,video/*"/>
+                            </div>
+                            <div class="mb-3">
+                                <textarea name="comment" class="form-control" rows="2" placeholder="Optional note for the customer"/>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Send to Customer</button>
+                        </form>
+                    </div>
+
+                    <h5 class="mb-3">Update History</h5>
+                    <div t-if="not media_list" class="text-muted">No updates sent yet.</div>
+                    <div t-foreach="media_list" t-as="media" class="lifestyle-card mb-3">
+                        <span t-if="media['stage_label']" class="lifestyle-badge mb-2 d-inline-block">
+                            <t t-esc="media['stage_label']"/>
+                        </span>
+                        <div t-if="media['url'] and not media['mimetype'].startswith('video/')">
+                            <img t-att-src="media['url']" class="img-fluid rounded mb-2" style="max-height: 280px; object-fit: cover;"/>
+                        </div>
+                        <div t-if="media['url'] and media['mimetype'].startswith('video/')">
+                            <video controls="controls" class="img-fluid rounded mb-2" style="max-height: 280px;">
+                                <source t-att-src="media['url']" t-att-type="media['mimetype']"/>
+                            </video>
+                        </div>
+                        <p t-if="media['comment']" t-esc="media['comment']" class="mb-0"/>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>

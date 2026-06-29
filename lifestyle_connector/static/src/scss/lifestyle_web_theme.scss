@@ -1,0 +1,63 @@
+// Revive Lifestyle brand styling on top of Odoo's compiled Bootstrap -
+// fonts, card shapes, and shadows matching the Flutter app's look.
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&family=Fraunces:wght@600&display=swap');
+
+body {
+    font-family: 'Manrope', sans-serif;
+    color: #2E2E2A;
+}
+
+h1, h2, h3, .h1, .h2, .h3 {
+    font-family: 'Fraunces', serif;
+}
+
+a {
+    color: #5C7050;
+}
+
+.btn-primary {
+    background-color: #7C9070;
+    border-color: #7C9070;
+}
+
+.btn-primary:hover, .btn-primary:focus {
+    background-color: #5C7050;
+    border-color: #5C7050;
+}
+
+.oe_product, .card, .o_wsale_product_grid_wrapper .card {
+    border-radius: 16px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+    border: none;
+}
+
+.lifestyle-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    background-color: #E3EADB;
+    color: #5C7050;
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+.lifestyle-progress {
+    height: 10px;
+    border-radius: 999px;
+    background-color: #E3EADB;
+    overflow: hidden;
+}
+
+.lifestyle-progress > div {
+    height: 100%;
+    background-color: #7C9070;
+}
+
+.lifestyle-card {
+    background-color: #FFFDF9;
+    border-radius: 18px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+    padding: 1.25rem;
+}

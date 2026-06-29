@@ -61,6 +61,35 @@ class ProductTemplate(models.Model):
         default=False,
         help='Only products with this checked appear in the Revive Lifestyle mobile app catalog.',
     )
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        records = super().create(vals_list)
+        records._lifestyle_sync_website_published()
+        return records
+
+    def write(self, vals):
+        res = super().write(vals)
+        if 'is_store_product' in vals or 'lifestyle_app_visible' in vals:
+            self._lifestyle_sync_website_published()
+        return res
+
+    def _lifestyle_is_app_visible(self):
+        self.ensure_one()
+        if 'is_store_product' in self._fields:
+            return bool(self.is_store_product)
+        return bool(self.lifestyle_app_visible)
+
+    def _lifestyle_sync_website_published(self):
+        """Keeps the public website in lockstep with whichever flag already
+        controls the Revive Lifestyle app catalog, so admins manage product
+        visibility in one place instead of two separate toggles."""
+        if 'website_published' not in self._fields:
+            return
+        for product in self:
+            visible = product._lifestyle_is_app_visible()
+            if product.website_published != visible:
+                product.website_published = visible
     # Image (not Binary) so Odoo auto-resizes/compresses on upload instead of
     # storing whatever full-camera-resolution file the admin picked — that
     # was why switching colors in the app took forever to load.

@@ -69,6 +69,33 @@ class SaleOrder(models.Model):
 
 
 
+    def _lifestyle_timeline(self):
+        """Same stage timeline shown in the Revive Lifestyle app, reused by
+        the customer website portal page so both surfaces stay in sync."""
+        self.ensure_one()
+        sequence = PICKUP_STAGE_SEQUENCE if self.fulfillment_type == 'pickup' else DELIVERY_STAGE_SEQUENCE
+        if self._lifestyle_skip_processing():
+            sequence = [stage for stage in sequence if stage != 'processing']
+        if self.delivery_stage == 'cancelled':
+            return [{'key': 'cancelled', 'label': STAGE_LABELS['cancelled'], 'done': True, 'current': True}]
+        try:
+            current_index = sequence.index(self.delivery_stage)
+        except ValueError:
+            current_index = 0
+        return [
+            {
+                'key': key,
+                'label': STAGE_LABELS[key],
+                'done': idx <= current_index,
+                'current': idx == current_index,
+            }
+            for idx, key in enumerate(sequence)
+        ]
+
+    def _lifestyle_stage_label(self):
+        self.ensure_one()
+        return STAGE_LABELS.get(self.delivery_stage, self.delivery_stage)
+
     def _lifestyle_skip_processing(self):
         """True when every line on this order is a Fruits & Vegetables
         product - those just get packed and shipped, so there's no separate

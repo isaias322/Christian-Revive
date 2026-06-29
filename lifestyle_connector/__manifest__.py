@@ -16,6 +16,7 @@
     'author': 'Revive Lifestyle',
     'depends': [
         'base', 'mail', 'account', 'sale_management', 'stock', 'crm', 'delivery', 'portal', 'hr',
+        'website', 'website_sale',
         'volunteer_and_donation_management',
     ],
     'data': [
@@ -26,7 +27,17 @@
         'views/app_banner_views.xml',
         'views/product_review_views.xml',
         'views/hr_employee_views.xml',
+        'views/website_templates.xml',
+        'views/vendor_portal_templates.xml',
     ],
+    'assets': {
+        'web._assets_primary_variables': [
+            'lifestyle_connector/static/src/scss/lifestyle_web_theme_vars.scss',
+        ],
+        'web.assets_frontend': [
+            'lifestyle_connector/static/src/scss/lifestyle_web_theme.scss',
+        ],
+    },
     'installable': True,
     'application': True,
     'license': 'LGPL-3',

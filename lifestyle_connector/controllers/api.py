@@ -79,24 +79,7 @@ def _vendor_denied_response():
     return {'status': 'error', 'message': 'This order is not assigned to your vendor account.'}
 
 def _timeline_for(order):
-    sequence = PICKUP_STAGE_SEQUENCE if order.fulfillment_type == 'pickup' else DELIVERY_STAGE_SEQUENCE
-    if order._lifestyle_skip_processing():
-        sequence = [stage for stage in sequence if stage != 'processing']
-    if order.delivery_stage == 'cancelled':
-        return [{'key': 'cancelled', 'label': STAGE_LABELS['cancelled'], 'done': True, 'current': True}]
-    try:
-        current_index = sequence.index(order.delivery_stage)
-    except ValueError:
-        current_index = 0
-    return [
-        {
-            'key': key,
-            'label': STAGE_LABELS[key],
-            'done': idx <= current_index,
-            'current': idx == current_index,
-        }
-        for idx, key in enumerate(sequence)
-    ]
+    return order._lifestyle_timeline()
 
 
 def _product_image_url(product_id):

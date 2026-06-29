@@ -117,4 +117,253 @@
             </div>
         </xpath>
     </template>
+    <template id="lifestyle_contactus_page" inherit_id="website.contactus" name="Revive Lifestyle Contact Page">
+        <xpath expr="//div[@id='wrap']" position="replace">
+            <div id="wrap" class="oe_structure rl-contact-page">
+                <section class="rl-contact-hero">
+                    <div class="container position-relative">
+                        <div class="row align-items-end g-4">
+                            <div class="col-12 col-lg-7">
+                                <span class="rl-contact-kicker">Revive Lifestyle Support</span>
+                                <h1>Let’s shape your home together</h1>
+                                <p>
+                                    Questions about a furniture piece, custom finish, delivery, or an active order?
+                                    Send a note and our team will help you with the next clear step.
+                                </p>
+                                <div class="rl-contact-hero-actions">
+                                    <a href="#rl_contact_form" class="btn btn-primary btn-lg">Write to Us</a>
+                                    <a href="/shop" class="btn btn-outline-light btn-lg">Browse Furniture</a>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-5">
+                                <div class="rl-contact-hero-card">
+                                    <img src="/lifestyle_connector/static/src/img/logo_wordmark.png" class="rl-contact-logo-mark" alt="Revive Lifestyle"/>
+                                    <div class="rl-contact-swatch rl-contact-swatch-dark"></div>
+                                    <div class="rl-contact-swatch rl-contact-swatch-sage"></div>
+                                    <div>
+                                        <span>Response goal</span>
+                                        <strong>Same business day</strong>
+                                        <p>Order help, product details, custom furniture questions, and delivery support.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="rl-contact-content">
+                    <div class="container">
+                        <div class="row g-4 g-lg-5">
+                            <div class="col-12 col-lg-7">
+                                <div class="rl-contact-panel rl-animate-up" id="rl_contact_form">
+                                    <span class="rl-contact-kicker text-sage">Contact Form</span>
+                                    <h2>Tell us what you need</h2>
+                                    <p class="text-muted mb-4">
+                                        Share the product, room, order number, or delivery question. The more detail you add,
+                                        the faster we can guide you.
+                                    </p>
+                                    <form action="/website/form/" method="post" enctype="multipart/form-data"
+                                          class="s_website_form rl-contact-form"
+                                          data-model_name="crm.lead" data-success-mode="redirect"
+                                          data-success-page="/contactus-thank-you">
+                                        <div class="row g-3">
+                                            <div class="col-12 col-md-6 s_website_form_field s_website_form_required" data-type="char" data-name="Field">
+                                                <label class="form-label" for="rl_contact_name">Name *</label>
+                                                <input id="rl_contact_name" type="text" name="contact_name" class="form-control" required="required"/>
+                                            </div>
+                                            <div class="col-12 col-md-6 s_website_form_field" data-type="tel" data-name="Field">
+                                                <label class="form-label" for="rl_contact_phone">Phone Number</label>
+                                                <input id="rl_contact_phone" type="tel" name="phone" class="form-control"/>
+                                            </div>
+                                            <div class="col-12 col-md-6 s_website_form_field s_website_form_required" data-type="email" data-name="Field">
+                                                <label class="form-label" for="rl_contact_email">Email *</label>
+                                                <input id="rl_contact_email" type="email" name="email_from" class="form-control" required="required"/>
+                                            </div>
+                                            <div class="col-12 col-md-6 s_website_form_field" data-type="char" data-name="Field">
+                                                <label class="form-label" for="rl_contact_company">Company</label>
+                                                <input id="rl_contact_company" type="text" name="partner_name" class="form-control"/>
+                                            </div>
+                                            <div class="col-12 s_website_form_field s_website_form_required" data-type="char" data-name="Field">
+                                                <label class="form-label" for="rl_contact_subject">Subject *</label>
+                                                <input id="rl_contact_subject" type="text" name="name" class="form-control" required="required"/>
+                                            </div>
+                                            <div class="col-12 s_website_form_field s_website_form_required" data-type="text" data-name="Field">
+                                                <label class="form-label" for="rl_contact_question">Question *</label>
+                                                <textarea id="rl_contact_question" name="description" class="form-control" rows="7" required="required"></textarea>
+                                            </div>
+                                            <div class="col-12 d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-3 pt-2">
+                                                <p class="rl-contact-note mb-0">We usually reply with product guidance, delivery options, or order next steps.</p>
+                                                <button type="submit" class="btn btn-primary btn-lg s_website_form_send">Send Message</button>
+                                                <span id="s_website_form_result"></span>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-5">
+                                <div class="rl-contact-stack">
+                                    <div class="rl-contact-info-card rl-animate-up rl-delay-1">
+                                        <span class="rl-contact-kicker text-sage">Visit &amp; Support</span>
+                                        <h3>Revive Lifestyle</h3>
+                                        <ul class="rl-contact-list">
+                                            <li><i class="fa fa-map-marker"></i><span>Karachi, Pakistan</span></li>
+                                            <li><i class="fa fa-phone"></i><span>+1 555-555-5556</span></li>
+                                            <li><i class="fa fa-envelope"></i><span>info@yourcompany.example.com</span></li>
+                                        </ul>
+                                    </div>
+                                    <div class="rl-contact-mini-grid">
+                                        <div class="rl-contact-mini rl-animate-up rl-delay-2">
+                                            <i class="fa fa-truck"></i>
+                                            <strong>Delivery help</strong>
+                                            <span>Track handoff, delivery timing, and pickup questions.</span>
+                                        </div>
+                                        <div class="rl-contact-mini rl-animate-up rl-delay-3">
+                                            <i class="fa fa-home"></i>
+                                            <strong>Furniture guidance</strong>
+                                            <span>Ask about finishes, sizes, colors, and room fit.</span>
+                                        </div>
+                                    </div>
+                                    <div class="rl-contact-process rl-animate-up rl-delay-4">
+                                        <div><span>01</span><p>Send your message</p></div>
+                                        <div><span>02</span><p>We review the details</p></div>
+                                        <div><span>03</span><p>You get clear next steps</p></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </xpath>
+    </template>
+    <template id="lifestyle_contactus_direct_page" name="Revive Lifestyle Direct Contact Page">
+        <t t-call="website.layout">
+            <div id="wrap" class="oe_structure rl-contact-page rl-contact-direct">
+                <section class="rl-contact-hero rl-contact-hero-premium">
+                    <div class="rl-contact-grain"></div>
+                    <div class="container position-relative">
+                        <div class="row align-items-center g-5">
+                            <div class="col-12 col-lg-7">
+                                <span class="rl-contact-kicker">Revive Lifestyle Support</span>
+                                <h1>Let's shape your home together</h1>
+                                <p>
+                                    Questions about furniture, finishes, delivery, or an active order? Send us the details
+                                    and we will help you choose the next clear step.
+                                </p>
+                                <div class="rl-contact-hero-actions">
+                                    <a href="#rl_contact_form" class="btn btn-primary btn-lg">Write to Us</a>
+                                    <a href="/shop" class="btn btn-outline-light btn-lg">Browse Furniture</a>
+                                </div>
+                                <div class="rl-contact-proof-row">
+                                    <div><strong>Furniture</strong><span>custom guidance</span></div>
+                                    <div><strong>Orders</strong><span>status support</span></div>
+                                    <div><strong>Delivery</strong><span>handoff help</span></div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-5">
+                                <div class="rl-contact-showpiece">
+                                    <img src="/lifestyle_connector/static/src/img/logo_wordmark.png" class="rl-contact-showpiece-logo" alt="Revive Lifestyle"/>
+                                    <div class="rl-contact-room-card">
+                                        <span class="rl-contact-room-line"></span>
+                                        <div class="rl-contact-room-icon"><i class="fa fa-home"></i></div>
+                                        <h3>Designed for real homes</h3>
+                                        <p>Ask about sizes, colors, delivery timing, or your current furniture build.</p>
+                                    </div>
+                                    <div class="rl-contact-floating-note rl-note-one"><i class="fa fa-check"></i> Same-day review</div>
+                                    <div class="rl-contact-floating-note rl-note-two"><i class="fa fa-truck"></i> Delivery guidance</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="rl-contact-content rl-contact-content-premium">
+                    <div class="container">
+                        <div class="row g-4 g-lg-5 align-items-start">
+                            <div class="col-12 col-lg-7">
+                                <div class="rl-contact-panel rl-contact-panel-premium rl-animate-up" id="rl_contact_form">
+                                    <div class="d-flex align-items-start justify-content-between gap-3 mb-4">
+                                        <div>
+                                            <span class="rl-contact-kicker text-sage">Contact Form</span>
+                                            <h2>Tell us what you need</h2>
+                                            <p class="text-muted mb-0">
+                                                Include the product name, room size, finish, order number, or delivery question.
+                                            </p>
+                                        </div>
+                                        <div class="rl-contact-form-icon"><i class="fa fa-pencil"></i></div>
+                                    </div>
+                                    <form action="/website/form/" method="post" enctype="multipart/form-data"
+                                          class="s_website_form rl-contact-form"
+                                          data-model_name="crm.lead" data-success-mode="redirect"
+                                          data-success-page="/contactus-thank-you">
+                                        <div class="row g-3">
+                                            <div class="col-12 col-md-6 s_website_form_field s_website_form_required" data-type="char" data-name="Field">
+                                                <label class="form-label" for="rl_contact_name">Name *</label>
+                                                <input id="rl_contact_name" type="text" name="contact_name" class="form-control" required="required" placeholder="Your name"/>
+                                            </div>
+                                            <div class="col-12 col-md-6 s_website_form_field" data-type="tel" data-name="Field">
+                                                <label class="form-label" for="rl_contact_phone">Phone Number</label>
+                                                <input id="rl_contact_phone" type="tel" name="phone" class="form-control" placeholder="Your phone"/>
+                                            </div>
+                                            <div class="col-12 col-md-6 s_website_form_field s_website_form_required" data-type="email" data-name="Field">
+                                                <label class="form-label" for="rl_contact_email">Email *</label>
+                                                <input id="rl_contact_email" type="email" name="email_from" class="form-control" required="required" placeholder="you@example.com"/>
+                                            </div>
+                                            <div class="col-12 col-md-6 s_website_form_field" data-type="char" data-name="Field">
+                                                <label class="form-label" for="rl_contact_company">Company</label>
+                                                <input id="rl_contact_company" type="text" name="partner_name" class="form-control" placeholder="Optional"/>
+                                            </div>
+                                            <div class="col-12 s_website_form_field s_website_form_required" data-type="char" data-name="Field">
+                                                <label class="form-label" for="rl_contact_subject">Subject *</label>
+                                                <input id="rl_contact_subject" type="text" name="name" class="form-control" required="required" placeholder="Furniture question, delivery help, order support..."/>
+                                            </div>
+                                            <div class="col-12 s_website_form_field s_website_form_required" data-type="text" data-name="Field">
+                                                <label class="form-label" for="rl_contact_question">Question *</label>
+                                                <textarea id="rl_contact_question" name="description" class="form-control" rows="7" required="required" placeholder="Tell us what you are looking for..."></textarea>
+                                            </div>
+                                            <div class="col-12 d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-3 pt-2">
+                                                <p class="rl-contact-note mb-0">We reply with product guidance, delivery options, or order next steps.</p>
+                                                <button type="submit" class="btn btn-primary btn-lg s_website_form_send">Send Message</button>
+                                                <span id="s_website_form_result"></span>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-5">
+                                <div class="rl-contact-stack rl-contact-sticky">
+                                    <div class="rl-contact-info-card rl-animate-up rl-delay-1">
+                                        <span class="rl-contact-kicker text-sage">Contact Details</span>
+                                        <h3>Revive Lifestyle</h3>
+                                        <ul class="rl-contact-list">
+                                            <li><i class="fa fa-map-marker"></i><span>Karachi, Pakistan</span></li>
+                                            <li><i class="fa fa-phone"></i><span>+1 555-555-5556</span></li>
+                                            <li><i class="fa fa-envelope"></i><span>info@yourcompany.example.com</span></li>
+                                        </ul>
+                                    </div>
+                                    <div class="rl-contact-mini-grid">
+                                        <div class="rl-contact-mini rl-animate-up rl-delay-2">
+                                            <i class="fa fa-cube"></i>
+                                            <strong>Custom furniture</strong>
+                                            <span>Finishes, sizes, room fit, and product details.</span>
+                                        </div>
+                                        <div class="rl-contact-mini rl-animate-up rl-delay-3">
+                                            <i class="fa fa-truck"></i>
+                                            <strong>Order handoff</strong>
+                                            <span>Delivery timing, pickup, and active order questions.</span>
+                                        </div>
+                                    </div>
+                                    <div class="rl-contact-process rl-animate-up rl-delay-4">
+                                        <div><span>01</span><p>Send your message</p></div>
+                                        <div><span>02</span><p>We review the details</p></div>
+                                        <div><span>03</span><p>You get clear next steps</p></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </t>
+    </template>
 </odoo>

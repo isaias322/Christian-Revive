@@ -16,7 +16,7 @@
     'author': 'Revive Lifestyle',
     'depends': [
         'base', 'mail', 'account', 'sale_management', 'stock', 'crm', 'delivery', 'portal', 'hr',
-        'website', 'website_sale',
+        'website', 'website_sale', 'website_crm',
         'volunteer_and_donation_management',
     ],
     'data': [

@@ -182,6 +182,45 @@ def _wishlist_product_ids(partner):
     return set(items.mapped('product_tmpl_id').ids)
 
 
+def _find_valid_coupon(code, partner):
+    """Looks up a customer-entered coupon code against Odoo's built-in
+    Promotions/Loyalty app (loyalty.card / loyalty.program). Only supports
+    the one case this app's checkout can apply correctly: a single,
+    order-wide percentage or fixed discount triggered by a code. Any other
+    coupon type (free product, points, gift card, auto-applied promo) is
+    reported as unsupported rather than guessed at, so keep promos simple
+    in Odoo if you want them usable from the app.
+
+    Returns (card, reward) on success, or (None, error_message) on failure.
+    """
+    code = (code or '').strip()
+    if not code:
+        return None, 'Enter a coupon code.'
+    if 'loyalty.card' not in request.env:
+        return None, 'Coupons are not enabled on this store yet.'
+
+    card = request.env['loyalty.card'].sudo().search([('code', '=', code)], limit=1)
+    if not card:
+        return None, 'This coupon code is not valid.'
+    if card.partner_id and card.partner_id.id != partner.id:
+        return None, 'This coupon is not valid for your account.'
+    if card.points <= 0:
+        return None, 'This coupon has already been used.'
+    if card.expiration_date and card.expiration_date < fields.Date.today():
+        return None, 'This coupon has expired.'
+
+    program = card.program_id
+    if not program.active or program.program_type != 'coupons' or program.trigger != 'with_code':
+        return None, 'This coupon is not valid for app orders.'
+
+    rewards = program.reward_ids.filtered(
+        lambda r: r.reward_type == 'discount' and r.discount_applicability == 'order'
+    )
+    if not rewards:
+        return None, 'This coupon type is not supported in the app yet.'
+    return card, rewards[0]
+
+
 def _serialize_product(product, wishlist_ids=None):
     tax_info = _product_tax_info(product)
     color_options = [
@@ -651,9 +690,27 @@ class LifestyleAPI(http.Controller):
     # ---------------------------------------------------------------
     # Checkout & Orders (require login)
     # ---------------------------------------------------------------
+    @http.route('/lifestyle/api/coupons/validate', type='json', auth='public', methods=['POST'], csrf=False)
+    def validate_coupon(self, code=None, **kwargs):
+        partner = _current_partner()
+        if not partner:
+            return {'status': 'error', 'message': 'Please log in to continue.'}
+        card, result = _find_valid_coupon(code, partner)
+        if not card:
+            return {'status': 'success', 'valid': False, 'message': result}
+        reward = result
+        return {
+            'status': 'success',
+            'valid': True,
+            'code': card.code,
+            'program_name': card.program_id.name,
+            'discount_mode': reward.discount_mode,
+            'discount': reward.discount,
+        }
+
     @http.route('/lifestyle/api/checkout', type='json', auth='public', methods=['POST'], csrf=False)
     def checkout(self, fulfillment_type='delivery', lines=None, note=None,
-                 phone=None, street=None, street2=None, city=None, zip=None, **kwargs):
+                 phone=None, street=None, street2=None, city=None, zip=None, coupon_code=None, **kwargs):
         partner = _current_partner()
         if not partner:
             return {'status': 'error', 'message': 'Please log in to continue.'}
@@ -661,6 +718,14 @@ class LifestyleAPI(http.Controller):
             return {'status': 'error', 'message': 'fulfillment_type must be delivery or pickup.'}
         if not lines:
             return {'status': 'error', 'message': 'At least one order line is required.'}
+
+        coupon_card = None
+        coupon_reward = None
+        if coupon_code:
+            coupon_card, coupon_result = _find_valid_coupon(coupon_code, partner)
+            if not coupon_card:
+                return {'status': 'error', 'message': coupon_result}
+            coupon_reward = coupon_result
 
         if fulfillment_type == 'delivery':
             address_vals = {}
@@ -672,6 +737,7 @@ class LifestyleAPI(http.Controller):
 
         ProductTemplate = request.env['product.template'].sudo()
         order_lines = []
+        subtotal = 0.0
         for line in lines:
             template = ProductTemplate.browse(int(line.get('product_id', 0)))
             qty = float(line.get('qty', 1))
@@ -708,15 +774,28 @@ class LifestyleAPI(http.Controller):
             if selected_color:
                 line_vals['lifestyle_color'] = selected_color
                 line_vals['name'] = f'{product.display_name}\nColor: {selected_color}'
+            subtotal += qty * template.list_price
             order_lines.append((0, 0, line_vals))
+
+        if coupon_card:
+            if coupon_reward.discount_mode == 'percent':
+                discount_percent = min(coupon_reward.discount, 100)
+            else:
+                discount_percent = min((coupon_reward.discount / subtotal) * 100, 100) if subtotal > 0 else 0
+            if discount_percent > 0:
+                for _, _, line_vals in order_lines:
+                    line_vals['discount'] = discount_percent
 
         order = request.env['sale.order'].sudo().create({
             'partner_id': partner.id,
             'fulfillment_type': fulfillment_type,
             'note': note or False,
             'order_line': order_lines,
+            'lifestyle_coupon_code': coupon_card.code if coupon_card else False,
         })
         order.action_confirm()
+        if coupon_card:
+            coupon_card.sudo().write({'points': coupon_card.points - 1})
         return {'status': 'success', 'order_id': order.id, 'order_name': order.name}
 
     @http.route('/lifestyle/api/orders', type='json', auth='public', methods=['GET', 'POST'], csrf=False)

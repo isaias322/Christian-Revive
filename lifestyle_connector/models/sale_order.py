@@ -42,6 +42,12 @@ class SaleOrder(models.Model):
         help='Customer-facing build progress shown in the Revive Lifestyle app.',
     )
 
+    lifestyle_coupon_code = fields.Char(
+        string='App Coupon Code Used',
+        copy=False,
+        help='The Promotions/Loyalty coupon code (if any) the customer applied to this order in the app.',
+    )
+
     lifestyle_vendor_id = fields.Many2one(
         'hr.employee',
         string='Assigned Vendor',

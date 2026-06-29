@@ -43,6 +43,7 @@
                 <field name="delivery_stage" readonly="1"/>
                 <field name="lifestyle_progress_percent"/>
                 <field name="lifestyle_stage_unlocked" readonly="1"/>
+                <field name="lifestyle_coupon_code" readonly="1"/>
             </xpath>
         </field>
     </record>

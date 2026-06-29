@@ -1,4 +1,4 @@
-// Revive Lifestyle brand styling on top of Odoo's compiled Bootstrap -
+﻿// Revive Lifestyle brand styling on top of Odoo's compiled Bootstrap -
 // fonts, card shapes, and shadows matching the Flutter app's look.
 // The Google Fonts <link> itself is injected via website_templates.xml's
 // <head> instead of an SCSS @import - Odoo concatenates every module's SCSS
@@ -53,8 +53,14 @@ a {
     background-color: #F7F5F0;
 }
 
-.o_wsale_product_information {
-    padding: 1rem 1.1rem;
+.oe_product_cart .o_wsale_product_information {
+    padding: 1rem 1.25rem !important;
+}
+
+.oe_product_cart .o_wsale_product_information_text,
+.oe_product_cart .o_wsale_product_sub {
+    padding-left: 0;
+    padding-right: 0;
 }
 
 .o_wsale_products_item_title a {
@@ -1040,3 +1046,191 @@ header #top_menu a[href="/"] {
         border-radius: 18px !important;
     }
 }
+
+/* Revive checkout premium refinements */
+.oe_website_sale .oe_cart {
+    padding-top: 2.25rem;
+    padding-bottom: 3.5rem;
+}
+
+.oe_website_sale .oe_cart > .container,
+.oe_website_sale #wrap > .container {
+    position: relative;
+}
+
+.oe_website_sale .oe_cart .row,
+.oe_website_sale #wrap > .container > .row {
+    align-items: flex-start;
+}
+
+.oe_website_sale .oe_cart .col-lg-8,
+.oe_website_sale #wrap > .container > .row > .col-lg-8:first-child {
+    padding: 1.45rem 1.55rem 1.6rem;
+    border: 1px solid rgba(92, 112, 80, 0.10);
+    border-radius: 26px;
+    background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.80), rgba(248, 246, 241, 0.66)),
+        radial-gradient(circle at 0% 0%, rgba(227, 234, 219, 0.68), transparent 18rem);
+    box-shadow: 0 24px 64px rgba(46, 46, 42, 0.08);
+}
+
+.oe_website_sale .oe_cart .col-lg-8 > h3,
+.oe_website_sale #wrap > .container > .row > .col-lg-8:first-child > h3,
+.oe_website_sale .oe_cart .col-lg-8 > h4,
+.oe_website_sale #wrap > .container > .row > .col-lg-8:first-child > h4 {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    margin-bottom: 1.35rem !important;
+    font-size: clamp(1.65rem, 2.3vw, 2.25rem);
+}
+
+.oe_website_sale .oe_cart .col-lg-8 > h3::before,
+.oe_website_sale #wrap > .container > .row > .col-lg-8:first-child > h3::before,
+.oe_website_sale .oe_cart .col-lg-8 > h4::before,
+.oe_website_sale #wrap > .container > .row > .col-lg-8:first-child > h4::before {
+    content: "";
+    width: 42px;
+    height: 42px;
+    flex: 0 0 42px;
+    border-radius: 14px;
+    background:
+        linear-gradient(135deg, rgba(92, 112, 80, 0.18), rgba(175, 192, 157, 0.32)),
+        #F8FAF4;
+    box-shadow: inset 0 0 0 1px rgba(92, 112, 80, 0.16);
+}
+
+.oe_website_sale #cart_products {
+    width: 100%;
+    margin-bottom: 0.8rem;
+}
+
+.oe_website_sale #cart_products tbody tr td,
+.oe_website_sale .oe_cart table tbody tr td {
+    background: rgba(255, 255, 255, 0.92);
+    border-top: 1px solid rgba(92, 112, 80, 0.10) !important;
+    border-bottom: 1px solid rgba(92, 112, 80, 0.10) !important;
+}
+
+.oe_website_sale #cart_products tbody tr td:first-child,
+.oe_website_sale .oe_cart table tbody tr td:first-child {
+    border-left: 1px solid rgba(92, 112, 80, 0.10) !important;
+    border-radius: 20px 0 0 20px;
+}
+
+.oe_website_sale #cart_products tbody tr td:last-child,
+.oe_website_sale .oe_cart table tbody tr td:last-child {
+    border-right: 1px solid rgba(92, 112, 80, 0.10) !important;
+    border-radius: 0 20px 20px 0;
+}
+
+.oe_website_sale #cart_products td:nth-last-child(2),
+.oe_website_sale #cart_products td:last-child {
+    color: #2E2E2A;
+    font-weight: 800;
+}
+
+.oe_website_sale #cart_products .text-muted,
+.oe_website_sale .oe_cart table tbody .text-muted {
+    color: #7C8176 !important;
+}
+
+.oe_website_sale #cart_products img,
+.oe_website_sale .oe_cart table tbody img {
+    box-shadow: 0 12px 26px rgba(46, 46, 42, 0.10);
+}
+
+.oe_website_sale .css_quantity,
+.oe_website_sale .input-group.oe_website_spinner {
+    box-shadow: inset 0 0 0 1px rgba(92, 112, 80, 0.04), 0 10px 22px rgba(46, 46, 42, 0.05);
+}
+
+.oe_website_sale .oe_cart .col-lg-4,
+.oe_website_sale #wrap > .container > .row > .col-lg-4:last-child {
+    padding-left: clamp(1rem, 3vw, 2.5rem);
+}
+
+.oe_website_sale #cart_total {
+    overflow: hidden;
+    padding: 1.55rem !important;
+}
+
+.oe_website_sale #cart_total::before {
+    content: "Order total";
+    display: block;
+    margin: -1.55rem -1.55rem 1.15rem;
+    padding: 1rem 1.55rem;
+    color: #2E2E2A;
+    background: linear-gradient(135deg, #E3EADB 0%, #F8F6F1 100%);
+    border-bottom: 1px solid rgba(92, 112, 80, 0.12);
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.oe_website_sale #cart_total::after {
+    content: "Secure checkout - Build progress tracked - Customer support";
+    display: block;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(92, 112, 80, 0.10);
+    color: #6D7469;
+    font-size: 0.86rem;
+    line-height: 1.5;
+    text-align: center;
+}
+
+.oe_website_sale #cart_total .btn-primary,
+.oe_website_sale .oe_cart .btn-primary,
+.oe_website_sale a[href*="/shop/checkout"].btn {
+    min-height: 54px;
+    border-radius: 16px;
+    letter-spacing: 0;
+}
+
+.oe_website_sale .wizard,
+.oe_website_sale .o_wsale_checkout_nav {
+    padding: 0.2rem 0.1rem;
+}
+
+.oe_website_sale .wizard .breadcrumb-item.active,
+.oe_website_sale .o_wsale_checkout_nav .breadcrumb-item.active {
+    box-shadow: 0 10px 24px rgba(92, 112, 80, 0.12);
+}
+
+@media (max-width: 991.98px) {
+    .oe_website_sale .oe_cart .col-lg-8,
+    .oe_website_sale #wrap > .container > .row > .col-lg-8:first-child {
+        padding: 1.15rem;
+        border-radius: 22px;
+    }
+
+    .oe_website_sale .oe_cart .col-lg-4,
+    .oe_website_sale #wrap > .container > .row > .col-lg-4:last-child {
+        padding-left: calc(var(--bs-gutter-x) * 0.5);
+    }
+}
+
+@media (max-width: 575.98px) {
+    .oe_website_sale .oe_cart {
+        padding-top: 1.25rem;
+    }
+
+    .oe_website_sale .oe_cart .col-lg-8,
+    .oe_website_sale #wrap > .container > .row > .col-lg-8:first-child {
+        padding: 0.9rem;
+        border-radius: 18px;
+    }
+
+    .oe_website_sale #cart_products tbody tr td:first-child,
+    .oe_website_sale .oe_cart table tbody tr td:first-child,
+    .oe_website_sale #cart_products tbody tr td:last-child,
+    .oe_website_sale .oe_cart table tbody tr td:last-child {
+        border-radius: 14px;
+    }
+
+    .oe_website_sale #cart_total::after {
+        font-size: 0.8rem;
+    }
+}
+

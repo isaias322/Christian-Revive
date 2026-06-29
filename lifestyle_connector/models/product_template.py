@@ -80,6 +80,15 @@ class ProductTemplate(models.Model):
             return bool(self.is_store_product)
         return bool(self.lifestyle_app_visible)
 
+    @api.model
+    def _lifestyle_app_visibility_domain(self):
+        """Single source of truth for "is this product part of the Revive
+        Lifestyle catalog" - shared by the app's API and the website's shop
+        domain so the two surfaces can never drift apart."""
+        if 'is_store_product' in self._fields:
+            return [('is_store_product', '=', True)]
+        return [('lifestyle_app_visible', '=', True)]
+
     def _lifestyle_sync_website_published(self):
         """Keeps the public website in lockstep with whichever flag already
         controls the Revive Lifestyle app catalog, so admins manage product

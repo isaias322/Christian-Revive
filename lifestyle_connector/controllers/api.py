@@ -182,17 +182,13 @@ def _customer_invoices_for_order(order):
 
 
 def _app_visibility_domain(Product):
-    if 'is_store_product' in Product._fields:
-        return [('is_store_product', '=', True)]
-    return [('lifestyle_app_visible', '=', True)]
+    return Product._lifestyle_app_visibility_domain()
 
 
 def _is_app_visible(product):
     if not product.exists():
         return False
-    if 'is_store_product' in product._fields:
-        return bool(product.is_store_product)
-    return bool(product.lifestyle_app_visible)
+    return product._lifestyle_is_app_visible()
 
 
 def _store_value(product, field_name, default=False):

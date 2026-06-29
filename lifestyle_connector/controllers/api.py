@@ -169,20 +169,34 @@ def _serialize_invoice(invoice):
 
 def _customer_invoices_for_order(order):
     Move = request.env['account.move'].sudo()
-    invoices = order.invoice_ids if 'invoice_ids' in order._fields else Move
-    linked_invoices = Move.search([
+    invoices = Move.browse()
+
+    if 'invoice_ids' in order._fields:
+        invoices |= order.invoice_ids
+
+    if order.order_line and 'invoice_lines' in order.order_line._fields:
+        invoices |= order.order_line.mapped('invoice_lines.move_id')
+
+    move_domain = [
         ('move_type', 'in', ('out_invoice', 'out_refund')),
         ('state', '!=', 'cancel'),
-        '|',
-        ('invoice_line_ids.sale_line_ids.order_id', '=', order.id),
-        ('invoice_origin', '=', order.name),
-    ])
-    invoices |= linked_invoices
+        ('commercial_partner_id', '=', order.partner_id.commercial_partner_id.id),
+    ]
+    origin_domain = []
+    if 'invoice_origin' in Move._fields:
+        origin_domain = [('invoice_origin', 'ilike', order.name)]
+    elif 'ref' in Move._fields:
+        origin_domain = [('ref', 'ilike', order.name)]
+    if origin_domain:
+        invoices |= Move.search(move_domain + origin_domain)
+
     return invoices.filtered(
-        lambda move: move.move_type in ('out_invoice', 'out_refund')
+        lambda move: move.exists()
+        and move.move_type in ('out_invoice', 'out_refund')
         and move.state != 'cancel'
         and move.commercial_partner_id.id == order.partner_id.commercial_partner_id.id
     ).sorted(key=lambda move: (move.invoice_date or move.create_date, move.id), reverse=True)
+
 
 def _app_visibility_domain(Product):
     if 'is_store_product' in Product._fields:

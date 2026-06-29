@@ -5,6 +5,10 @@ from odoo.http import request
 
 class LifestyleWebsite(http.Controller):
 
+    @http.route('/', type='http', auth='public', website=True, sitemap=True)
+    def homepage(self, **kwargs):
+        return request.redirect('/shop', code=302)
+
     @http.route(['/contactus', '/contact-us'], type='http', auth='public', website=True, sitemap=True)
     def contactus(self, **kwargs):
         return request.render('lifestyle_connector.lifestyle_contactus_direct_page', {})

@@ -1694,3 +1694,14 @@ header #top_menu a[href="/"] {
     background-color: #E3EADB;
     color: #5C7050;
 }
+
+// Header logo - the leaf icon was nearly invisible at its default tiny
+// size with no background contrast against the white header.
+.navbar-brand.logo img {
+    width: 48px !important;
+    height: 48px !important;
+    object-fit: contain;
+    padding: 7px;
+    background-color: #E3EADB;
+    border-radius: 12px;
+}

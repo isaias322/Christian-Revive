@@ -10,6 +10,35 @@
         </xpath>
     </template>
 
+    <!-- Anchored on div#product_details, a stable top-level wrapper in
+         website_sale.product - verified against the Odoo 18 source before
+         writing this, same as the order-portal anchor below. -->
+    <template id="lifestyle_product_extra_details" inherit_id="website_sale.product"
+              name="Revive Lifestyle Product Details">
+        <xpath expr="//div[@id='product_details']" position="inside">
+            <div class="lifestyle-card mt-3"
+                 t-if="product.store_description or product.store_rating or product.color_options or product.size_options or product.store_sold_count">
+                <div class="d-flex flex-wrap gap-2 mb-2">
+                    <span t-if="product.store_rating" class="lifestyle-badge">
+                        <t t-esc="'%.1f' % product.store_rating"/> rating
+                        (<t t-esc="product.store_review_count"/>
+                        <t t-esc="'review' if product.store_review_count == 1 else 'reviews'"/>)
+                    </span>
+                    <span t-if="product.store_sold_count" class="lifestyle-badge">
+                        <t t-esc="product.store_sold_count"/> sold
+                    </span>
+                </div>
+                <p t-if="product.store_description" t-esc="product.store_description"/>
+                <p t-if="product.color_options" class="mb-1">
+                    <strong>Colors:</strong> <t t-esc="product.color_options"/>
+                </p>
+                <p t-if="product.size_options" class="mb-0">
+                    <strong>Sizes:</strong> <t t-esc="product.size_options"/>
+                </p>
+            </div>
+        </xpath>
+    </template>
+
     <!-- Replaces the whole #wrap div rather than patching its current
          contents, since the homepage's body is onboarding-generated content
          stored in the database (not the module's own static template) -

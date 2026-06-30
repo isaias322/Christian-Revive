@@ -157,6 +157,16 @@ class ProductTemplate(models.Model):
         for product in products:
             sizes.update(value.strip() for value in (product.size_options or '').split(',') if value.strip())
         return sorted(sizes)
+
+    @api.model
+    def _lifestyle_available_years(self):
+        """Years products were added to the store (create_date), newest
+        first, for the "Year" shop filter."""
+        products = self.sudo().search(
+            self._lifestyle_app_visibility_domain() + [('sale_ok', '=', True), ('active', '=', True)]
+        )
+        years = {product.create_date.year for product in products if product.create_date}
+        return sorted(years, reverse=True)
     # Image (not Binary) so Odoo auto-resizes/compresses on upload instead of
     # storing whatever full-camera-resolution file the admin picked — that
     # was why switching colors in the app took forever to load.

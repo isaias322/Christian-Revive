@@ -458,8 +458,42 @@
         <xpath expr="//div[contains(@t-attf-class, 'products_attributes_filters')]" position="inside">
             <t t-set="lifestyle_active_color" t-value="request.params.get('lifestyle_color')"/>
             <t t-set="lifestyle_active_size" t-value="request.params.get('lifestyle_size')"/>
+            <t t-set="lifestyle_active_availability" t-value="request.params.get('lifestyle_availability')"/>
+            <t t-set="lifestyle_active_year" t-value="request.params.get('lifestyle_year')"/>
             <t t-set="lifestyle_colors" t-value="request.env['product.template'].sudo()._lifestyle_available_colors()"/>
             <t t-set="lifestyle_sizes" t-value="request.env['product.template'].sudo()._lifestyle_available_sizes()"/>
+            <t t-set="lifestyle_years" t-value="request.env['product.template'].sudo()._lifestyle_available_years()"/>
+            <div class="mb-3">
+                <h6 class="mb-2"><b>Availability</b></h6>
+                <div class="d-flex flex-wrap gap-2">
+                    <a t-att-href="keep('/shop', lifestyle_availability=None)"
+                       t-attf-class="lifestyle-badge text-decoration-none #{'' if not lifestyle_active_availability else 'opacity-50'}">
+                        All
+                    </a>
+                    <a t-att-href="keep('/shop', lifestyle_availability='in_stock')"
+                       t-attf-class="lifestyle-badge text-decoration-none #{'' if lifestyle_active_availability == 'in_stock' else 'opacity-50'}">
+                        In Stock
+                    </a>
+                    <a t-att-href="keep('/shop', lifestyle_availability='out_of_stock')"
+                       t-attf-class="lifestyle-badge text-decoration-none #{'' if lifestyle_active_availability == 'out_of_stock' else 'opacity-50'}">
+                        Not Available
+                    </a>
+                </div>
+            </div>
+            <div t-if="lifestyle_years" class="mb-3">
+                <h6 class="mb-2"><b>Year</b></h6>
+                <div class="d-flex flex-wrap gap-2">
+                    <a t-att-href="keep('/shop', lifestyle_year=None)"
+                       t-attf-class="lifestyle-badge text-decoration-none #{'' if not lifestyle_active_year else 'opacity-50'}">
+                        All
+                    </a>
+                    <a t-foreach="lifestyle_years" t-as="year_value"
+                       t-att-href="keep('/shop', lifestyle_year=year_value)"
+                       t-attf-class="lifestyle-badge text-decoration-none #{'' if lifestyle_active_year == str(year_value) else 'opacity-50'}">
+                        <t t-esc="year_value"/>
+                    </a>
+                </div>
+            </div>
             <div t-if="lifestyle_colors" class="mb-3">
                 <h6 class="mb-2"><b>Color</b></h6>
                 <div class="d-flex flex-wrap gap-2">

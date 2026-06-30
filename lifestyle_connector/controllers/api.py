@@ -429,12 +429,13 @@ class LifestyleAPI(http.Controller):
             'status': 'success',
             'colors': Product._lifestyle_available_colors(),
             'sizes': Product._lifestyle_available_sizes(),
+            'years': Product._lifestyle_available_years(),
         }
 
     @http.route('/lifestyle/api/products', type='json', auth='public', methods=['GET', 'POST'], csrf=False)
     def products(self, category_id=None, search=None, limit=20, offset=0,
-                 sort=None, in_stock_only=None, min_price=None, max_price=None,
-                 color=None, size=None, **kwargs):
+                 sort=None, in_stock_only=None, out_of_stock_only=None, min_price=None, max_price=None,
+                 color=None, size=None, year=None, **kwargs):
         Product = request.env['product.template'].sudo()
         domain = [('sale_ok', '=', True), ('active', '=', True)] + _app_visibility_domain(Product)
         if category_id:
@@ -445,6 +446,8 @@ class LifestyleAPI(http.Controller):
             # Mirrors _serialize_product's in_stock rule: non stock-tracked
             # types (services) always count as in stock.
             domain += ['|', ('type', 'not in', ('consu', 'product')), ('qty_available', '>', 0)]
+        if out_of_stock_only:
+            domain += [('type', 'in', ('consu', 'product')), ('qty_available', '<=', 0)]
         if min_price is not None:
             domain.append(('list_price', '>=', float(min_price)))
         if max_price is not None:
@@ -453,6 +456,12 @@ class LifestyleAPI(http.Controller):
             domain.append(('color_options', 'ilike', color))
         if size:
             domain.append(('size_options', 'ilike', size))
+        if year:
+            year = int(year)
+            domain += [
+                ('create_date', '>=', f'{year}-01-01 00:00:00'),
+                ('create_date', '<', f'{year + 1}-01-01 00:00:00'),
+            ]
 
         limit = min(int(limit or 20), 100)
         offset = int(offset or 0)

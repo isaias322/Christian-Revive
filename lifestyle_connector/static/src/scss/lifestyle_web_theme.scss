@@ -2341,3 +2341,153 @@ footer a:hover,
         width: 100%;
     }
 }
+/* Moving decorative shop layer */
+.rl-shop-page .oe_website_sale #wrap {
+    position: relative;
+    overflow: hidden;
+}
+
+.rl-shop-page .oe_website_sale #wrap::before,
+.rl-shop-page .oe_website_sale #wrap::after,
+.rl-shop-page .oe_website_sale #products_grid::before,
+.rl-shop-page .oe_website_sale #products_grid::after {
+    content: "";
+    position: absolute;
+    pointer-events: none;
+}
+
+.rl-shop-page .oe_website_sale #wrap::before {
+    right: -12rem;
+    top: 11rem;
+    width: 34rem;
+    height: 34rem;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(124, 144, 112, 0.18), rgba(124, 144, 112, 0.04) 58%, transparent 70%);
+    animation: rlShopDrift 13s ease-in-out infinite;
+}
+
+.rl-shop-page .oe_website_sale #wrap::after {
+    right: 7vw;
+    top: 7.5rem;
+    width: 17rem;
+    height: 8.5rem;
+    border: 1px solid rgba(92, 112, 80, 0.16);
+    border-radius: 2rem;
+    transform: rotate(-7deg);
+    background: rgba(255, 253, 249, 0.16);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+    animation: rlShopPanelFloat 11s ease-in-out infinite;
+}
+
+.rl-shop-page .oe_website_sale #products_grid {
+    position: relative;
+    isolation: isolate;
+}
+
+.rl-shop-page .oe_website_sale #products_grid > * {
+    position: relative;
+    z-index: 1;
+}
+
+.rl-shop-page .oe_website_sale #products_grid::before {
+    top: -1.6rem;
+    right: 1.5rem;
+    z-index: 0;
+    width: min(27vw, 24rem);
+    min-width: 17rem;
+    height: 10.5rem;
+    border: 1px solid rgba(92, 112, 80, 0.16);
+    border-radius: 2rem;
+    background:
+        linear-gradient(135deg, rgba(255, 253, 249, 0.50), rgba(227, 234, 219, 0.26)),
+        radial-gradient(circle at 86% 18%, rgba(124, 144, 112, 0.22), transparent 38%);
+    box-shadow: 0 22px 70px rgba(46, 46, 42, 0.10);
+    backdrop-filter: blur(14px);
+    transform: rotate(2deg);
+    animation: rlShopGlassFloat 9s ease-in-out infinite;
+}
+
+.rl-shop-page .oe_website_sale #products_grid::after {
+    top: 0.25rem;
+    right: calc(1.5rem + min(17vw, 13rem));
+    z-index: 0;
+    width: 5.5rem;
+    height: 0.28rem;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #D9B777, rgba(227, 234, 219, 0.92));
+    box-shadow: 0 10px 24px rgba(217, 183, 119, 0.22);
+    animation: rlShopLineGlow 4.5s ease-in-out infinite;
+}
+
+.rl-shop-page .oe_website_sale .o_wsale_products_grid_before_rail,
+.rl-shop-page .oe_website_sale .o_wsale_products_searchbar_form,
+.rl-shop-page .oe_website_sale .o_sortby_dropdown,
+.rl-shop-page .oe_website_sale .o_wsale_sort_dropdown,
+.rl-shop-page .oe_website_sale .dropdown_sorty_by,
+.rl-shop-page .oe_website_sale .oe_product_cart {
+    position: relative;
+    z-index: 2;
+}
+
+@keyframes rlShopDrift {
+    0%, 100% {
+        transform: translate3d(0, 0, 0) scale(1);
+    }
+    50% {
+        transform: translate3d(-1.4rem, 1rem, 0) scale(1.04);
+    }
+}
+
+@keyframes rlShopPanelFloat {
+    0%, 100% {
+        transform: translate3d(0, 0, 0) rotate(-7deg);
+    }
+    50% {
+        transform: translate3d(-0.8rem, 0.7rem, 0) rotate(-4deg);
+    }
+}
+
+@keyframes rlShopGlassFloat {
+    0%, 100% {
+        transform: translate3d(0, 0, 0) rotate(2deg);
+    }
+    50% {
+        transform: translate3d(0.9rem, -0.5rem, 0) rotate(-1deg);
+    }
+}
+
+@keyframes rlShopLineGlow {
+    0%, 100% {
+        opacity: 0.55;
+        transform: scaleX(0.74);
+        transform-origin: left center;
+    }
+    50% {
+        opacity: 1;
+        transform: scaleX(1);
+        transform-origin: left center;
+    }
+}
+
+@media (max-width: 991.98px) {
+    .rl-shop-page .oe_website_sale #wrap::after,
+    .rl-shop-page .oe_website_sale #products_grid::before,
+    .rl-shop-page .oe_website_sale #products_grid::after {
+        display: none;
+    }
+
+    .rl-shop-page .oe_website_sale #wrap::before {
+        right: -18rem;
+        top: 8rem;
+        opacity: 0.7;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .rl-shop-page .oe_website_sale #wrap::before,
+    .rl-shop-page .oe_website_sale #wrap::after,
+    .rl-shop-page .oe_website_sale #products_grid::before,
+    .rl-shop-page .oe_website_sale #products_grid::after {
+        animation: none !important;
+    }
+}

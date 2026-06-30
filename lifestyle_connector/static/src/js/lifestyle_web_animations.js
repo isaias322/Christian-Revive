@@ -94,8 +94,17 @@ function keepShopClean() {
     observer.observe(scope, { childList: true, subtree: true });
 }
 
+
+function markShopPage() {
+    const path = window.location.pathname;
+    const isShopListing = path === '/shop' || path.startsWith('/shop/category') || path.startsWith('/shop/page');
+    if (isShopListing) {
+        document.documentElement.classList.add('rl-shop-page');
+    }
+}
 function enhanceWebsite() {
     document.documentElement.classList.add('rl-site-ready');
+    markShopPage();
     keepShopClean();
     const targets = prepareRevealTargets();
     setupRevealObserver(targets);

@@ -58,7 +58,8 @@ function hideShopCategoryTabs() {
     const scope = document.querySelector('#wrap') || document.body;
     const matchingLinks = Array.from(scope.querySelectorAll('a')).filter((link) => {
         const label = link.textContent.replace(/\s+/g, ' ').trim();
-        return categoryLabels.includes(label) || link.getAttribute('href')?.includes('/shop/category/');
+        const href = link.getAttribute('href') || '';
+        return categoryLabels.includes(label) || href.indexOf('/shop/category/') !== -1;
     });
 
     if (!matchingLinks.length) return;
@@ -102,10 +103,71 @@ function markShopPage() {
         document.documentElement.classList.add('rl-shop-page');
     }
 }
+
+function parseMoneyValue(text) {
+    const cleaned = (text || '').replace(/[^0-9.,-]/g, '').replace(/,/g, '');
+    const value = parseFloat(cleaned);
+    return isFinite(value) ? value : 0;
+}
+
+function formatMoneyValue(value) {
+    return value.toLocaleString(undefined, {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+    });
+}
+
+function findProductPriceValueElement() {
+    return document.querySelector('#product_detail .oe_price .oe_currency_value')
+        || document.querySelector('#product_detail .product_price .oe_currency_value')
+        || document.querySelector('#product_details .oe_price .oe_currency_value')
+        || document.querySelector('#product_details .product_price .oe_currency_value')
+        || document.querySelector('.oe_website_sale #product_detail [itemprop="price"]')
+        || document.querySelector('.oe_website_sale #product_details [itemprop="price"]');
+}
+
+function getProductQuantityInput() {
+    return document.querySelector('#product_detail input[name="add_qty"]')
+        || document.querySelector('#product_details input[name="add_qty"]')
+        || document.querySelector('#product_detail .css_quantity input')
+        || document.querySelector('#product_details .css_quantity input')
+        || document.querySelector('.oe_website_sale input[name="add_qty"]');
+}
+
+function updateProductTotalPrice() {
+    const quantityInput = getProductQuantityInput();
+    const priceElement = findProductPriceValueElement();
+    if (!quantityInput || !priceElement) return;
+
+    const quantity = Math.max(1, parseFloat(quantityInput.value || '1') || 1);
+    if (!priceElement.dataset.rlUnitPrice) {
+        const currentPrice = parseMoneyValue(priceElement.textContent);
+        priceElement.dataset.rlUnitPrice = String(currentPrice / quantity);
+    }
+
+    const unitPrice = parseFloat(priceElement.dataset.rlUnitPrice || '0') || 0;
+    priceElement.textContent = formatMoneyValue(unitPrice * quantity);
+}
+
+function setupProductQuantityPrice() {
+    const quantityInput = getProductQuantityInput();
+    if (!quantityInput) return;
+
+    updateProductTotalPrice();
+    quantityInput.addEventListener('input', updateProductTotalPrice);
+    quantityInput.addEventListener('change', updateProductTotalPrice);
+
+    const quantityBox = quantityInput.closest('.css_quantity') || quantityInput.parentElement;
+    if (quantityBox) {
+        quantityBox.addEventListener('click', () => window.setTimeout(updateProductTotalPrice, 40));
+    }
+
+}
 function enhanceWebsite() {
     document.documentElement.classList.add('rl-site-ready');
     markShopPage();
     keepShopClean();
+    setupProductQuantityPrice();
     const targets = prepareRevealTargets();
     setupRevealObserver(targets);
 }

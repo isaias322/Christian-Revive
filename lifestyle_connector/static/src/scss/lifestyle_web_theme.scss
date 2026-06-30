@@ -2176,7 +2176,7 @@ footer a:hover,
 .oe_website_sale .o_wsale_products_main_row h1 {
     margin-bottom: 1.1rem;
     color: #2E2E2A;
-    font-size: clamp(2rem, 2.8vw, 3.25rem);
+    font-size: 3.05rem;
     line-height: 1.05;
 }
 
@@ -2393,7 +2393,7 @@ footer a:hover,
     top: -1.6rem;
     right: 1.5rem;
     z-index: 0;
-    width: min(27vw, 24rem);
+    width: 24rem;
     min-width: 17rem;
     height: 10.5rem;
     border: 1px solid rgba(92, 112, 80, 0.16);
@@ -2409,7 +2409,7 @@ footer a:hover,
 
 .rl-shop-page .oe_website_sale #products_grid::after {
     top: 0.25rem;
-    right: calc(1.5rem + min(17vw, 13rem));
+    right: 14.5rem;
     z-index: 0;
     width: 5.5rem;
     height: 0.28rem;
@@ -2489,5 +2489,20 @@ footer a:hover,
     .rl-shop-page .oe_website_sale #products_grid::before,
     .rl-shop-page .oe_website_sale #products_grid::after {
         animation: none !important;
+    }
+}
+@media (max-width: 1199.98px) {
+    .rl-shop-page .oe_website_sale #products_grid::before {
+        width: 18rem;
+    }
+
+    .rl-shop-page .oe_website_sale #products_grid::after {
+        right: 10rem;
+    }
+
+    .oe_website_sale #products_grid h1,
+    .oe_website_sale #products_grid .h1,
+    .oe_website_sale .o_wsale_products_main_row h1 {
+        font-size: 2.55rem;
     }
 }

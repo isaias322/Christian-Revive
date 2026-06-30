@@ -2544,3 +2544,25 @@ footer a:hover,
     z-index: 2;
 }
 
+.rl-shop-page .oe_website_sale #products_grid .dropdown,
+.rl-shop-page .oe_website_sale #products_grid .btn-group,
+.rl-shop-page .oe_website_sale #products_grid .o_sortby_dropdown,
+.rl-shop-page .oe_website_sale #products_grid .o_wsale_sort_dropdown,
+.rl-shop-page .oe_website_sale #products_grid .dropdown_sorty_by {
+    position: relative !important;
+    z-index: 6000 !important;
+}
+
+.rl-shop-page .oe_website_sale #products_grid .dropdown.show,
+.rl-shop-page .oe_website_sale #products_grid .btn-group.show,
+.rl-shop-page .oe_website_sale #products_grid .o_sortby_dropdown.show,
+.rl-shop-page .oe_website_sale #products_grid .o_wsale_sort_dropdown.show,
+.rl-shop-page .oe_website_sale #products_grid .dropdown_sorty_by.show {
+    z-index: 7000 !important;
+}
+
+.rl-shop-page .oe_website_sale #products_grid .dropdown-menu,
+.rl-shop-page .oe_website_sale #products_grid .dropdown-menu.show {
+    z-index: 7001 !important;
+}
+

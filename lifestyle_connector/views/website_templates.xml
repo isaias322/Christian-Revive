@@ -463,9 +463,13 @@
             <div t-if="lifestyle_colors" class="mb-3">
                 <h6 class="mb-2"><b>Color</b></h6>
                 <div class="d-flex flex-wrap gap-2">
+                    <a t-att-href="keep('/shop', lifestyle_color=None)"
+                       t-attf-class="lifestyle-badge text-decoration-none #{'' if not lifestyle_active_color else 'opacity-50'}">
+                        All
+                    </a>
                     <a t-foreach="lifestyle_colors" t-as="color_value"
-                       t-att-href="keep('/shop', lifestyle_color=(None if lifestyle_active_color == color_value else color_value))"
-                       t-attf-class="lifestyle-badge text-decoration-none #{'' if (not lifestyle_active_color or lifestyle_active_color == color_value) else 'opacity-50'}">
+                       t-att-href="keep('/shop', lifestyle_color=color_value)"
+                       t-attf-class="lifestyle-badge text-decoration-none #{'' if lifestyle_active_color == color_value else 'opacity-50'}">
                         <t t-esc="color_value"/>
                     </a>
                 </div>
@@ -473,9 +477,13 @@
             <div t-if="lifestyle_sizes" class="mb-3">
                 <h6 class="mb-2"><b>Size</b></h6>
                 <div class="d-flex flex-wrap gap-2">
+                    <a t-att-href="keep('/shop', lifestyle_size=None)"
+                       t-attf-class="lifestyle-badge text-decoration-none #{'' if not lifestyle_active_size else 'opacity-50'}">
+                        All
+                    </a>
                     <a t-foreach="lifestyle_sizes" t-as="size_value"
-                       t-att-href="keep('/shop', lifestyle_size=(None if lifestyle_active_size == size_value else size_value))"
-                       t-attf-class="lifestyle-badge text-decoration-none #{'' if (not lifestyle_active_size or lifestyle_active_size == size_value) else 'opacity-50'}">
+                       t-att-href="keep('/shop', lifestyle_size=size_value)"
+                       t-attf-class="lifestyle-badge text-decoration-none #{'' if lifestyle_active_size == size_value else 'opacity-50'}">
                         <t t-esc="size_value"/>
                     </a>
                 </div>

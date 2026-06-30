@@ -37,6 +37,21 @@
                 </p>
             </div>
 
+            <div id="notify_stock" class="lifestyle-card mt-3"
+                 t-if="product.type in ('consu', 'product') and product.qty_available &lt;= 0">
+                <h6 class="mb-2">Notify me when back in stock</h6>
+                <p t-if="request.params.get('notify_success')" class="text-success mb-0">
+                    Thanks! We'll let you know when this is back in stock.
+                </p>
+                <form t-else="" t-attf-action="/shop/product/#{product.id}/notify-stock" method="post"
+                      class="d-flex gap-2 flex-wrap">
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                    <input type="email" name="email" class="form-control" style="max-width: 280px;"
+                           placeholder="Your email" required="required"/>
+                    <button type="submit" class="btn btn-primary">Notify Me</button>
+                </form>
+            </div>
+
             <div id="reviews" class="lifestyle-card mt-3">
                 <h5 class="mb-3">Customer Reviews</h5>
                 <div t-if="not product.review_ids" class="text-muted mb-3">No reviews yet.</div>
@@ -431,6 +446,41 @@
                 </section>
             </div>
         </t>
+    </template>
+
+    <!-- Anchored on the products_attributes_filters div, the official
+         extension point website_sale's own products_attributes template
+         uses for its native attribute filters - verified against the
+         Odoo 18 source. color_options/size_options are plain Char fields,
+         not real Odoo attributes, so they need this separate filter. -->
+    <template id="lifestyle_color_size_filters" inherit_id="website_sale.products"
+              name="Revive Lifestyle Color/Size Filters">
+        <xpath expr="//div[contains(@t-attf-class, 'products_attributes_filters')]" position="inside">
+            <t t-set="lifestyle_active_color" t-value="request.params.get('lifestyle_color')"/>
+            <t t-set="lifestyle_active_size" t-value="request.params.get('lifestyle_size')"/>
+            <t t-set="lifestyle_colors" t-value="request.env['product.template'].sudo()._lifestyle_available_colors()"/>
+            <t t-set="lifestyle_sizes" t-value="request.env['product.template'].sudo()._lifestyle_available_sizes()"/>
+            <div t-if="lifestyle_colors" class="mb-3">
+                <h6 class="mb-2"><b>Color</b></h6>
+                <div class="d-flex flex-wrap gap-2">
+                    <a t-foreach="lifestyle_colors" t-as="color_value"
+                       t-att-href="keep('/shop', lifestyle_color=(None if lifestyle_active_color == color_value else color_value))"
+                       t-attf-class="lifestyle-badge text-decoration-none #{'' if (not lifestyle_active_color or lifestyle_active_color == color_value) else 'opacity-50'}">
+                        <t t-esc="color_value"/>
+                    </a>
+                </div>
+            </div>
+            <div t-if="lifestyle_sizes" class="mb-3">
+                <h6 class="mb-2"><b>Size</b></h6>
+                <div class="d-flex flex-wrap gap-2">
+                    <a t-foreach="lifestyle_sizes" t-as="size_value"
+                       t-att-href="keep('/shop', lifestyle_size=(None if lifestyle_active_size == size_value else size_value))"
+                       t-attf-class="lifestyle-badge text-decoration-none #{'' if (not lifestyle_active_size or lifestyle_active_size == size_value) else 'opacity-50'}">
+                        <t t-esc="size_value"/>
+                    </a>
+                </div>
+            </div>
+        </xpath>
     </template>
 </odoo>
 

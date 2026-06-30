@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_lifestyle_stock_notification_list" model="ir.ui.view">
+        <field name="name">lifestyle.stock.notification.list</field>
+        <field name="model">lifestyle.stock.notification</field>
+        <field name="arch" type="xml">
+            <list string="Stock Notification Requests" decoration-muted="notified">
+                <field name="create_date" string="Requested"/>
+                <field name="product_tmpl_id"/>
+                <field name="email"/>
+                <field name="partner_id" string="Customer"/>
+                <field name="notified"/>
+                <button name="action_mark_notified" type="object" string="Mark Notified" icon="fa-check"
+                        invisible="notified"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_lifestyle_stock_notification" model="ir.actions.act_window">
+        <field name="name">Stock Notification Requests</field>
+        <field name="res_model">lifestyle.stock.notification</field>
+        <field name="view_mode">list</field>
+    </record>
+
+    <menuitem id="menu_lifestyle_stock_notification"
+              name="Stock Notification Requests"
+              parent="sale.sale_menu_root"
+              action="action_lifestyle_stock_notification"
+              sequence="60"/>
+</odoo>

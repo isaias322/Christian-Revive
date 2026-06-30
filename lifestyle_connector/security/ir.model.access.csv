@@ -8,3 +8,4 @@ access_lifestyle_product_review_read_all,lifestyle.product.review.read.all,model
 access_lifestyle_product_color_image_user,lifestyle.product.color.image.user,model_lifestyle_product_color_image,base.group_user,1,1,1,1
 access_lifestyle_product_color_image_read_all,lifestyle.product.color.image.read.all,model_lifestyle_product_color_image,,1,0,0,0
 access_lifestyle_wishlist_item_user,lifestyle.wishlist.item.user,model_lifestyle_wishlist_item,base.group_user,1,1,1,1
+access_lifestyle_stock_notification_user,lifestyle.stock.notification.user,model_lifestyle_stock_notification,base.group_user,1,1,1,1

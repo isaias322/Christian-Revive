@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Revive Lifestyle Connector',
-    'version': '1.0.2',
+    'version': '1.0.3',
     'category': 'Sales',
     'summary': 'Mobile app glue: order fulfillment timeline, FCM push notifications, REST API for the Revive Lifestyle Flutter app',
     'description': """
@@ -31,6 +31,7 @@
         'views/vendor_portal_templates.xml',
         'data/website_branding_data.xml',
         'data/website_categories_data.xml',
+        'views/stock_notification_views.xml',
     ],
     'assets': {
         'web._assets_primary_variables': [

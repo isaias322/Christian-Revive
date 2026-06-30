@@ -2357,26 +2357,28 @@ footer a:hover,
 }
 
 .rl-shop-page .oe_website_sale #wrap::before {
-    right: -12rem;
-    top: 11rem;
-    width: 34rem;
-    height: 34rem;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(124, 144, 112, 0.18), rgba(124, 144, 112, 0.04) 58%, transparent 70%);
-    animation: rlShopDrift 13s ease-in-out infinite;
+    left: 18rem;
+    right: -8rem;
+    top: 4.7rem;
+    height: 14rem;
+    border-radius: 0 0 0 5rem;
+    background:
+        radial-gradient(circle at 88% 20%, rgba(124, 144, 112, 0.18), transparent 17rem),
+        linear-gradient(115deg, rgba(255, 253, 249, 0.08), rgba(227, 234, 219, 0.28));
+    animation: rlShopWashFloat 14s ease-in-out infinite;
 }
 
 .rl-shop-page .oe_website_sale #wrap::after {
-    right: 7vw;
-    top: 7.5rem;
-    width: 17rem;
-    height: 8.5rem;
-    border: 1px solid rgba(92, 112, 80, 0.16);
-    border-radius: 2rem;
-    transform: rotate(-7deg);
-    background: rgba(255, 253, 249, 0.16);
-    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
-    animation: rlShopPanelFloat 11s ease-in-out infinite;
+    right: 3.5rem;
+    top: 5.9rem;
+    width: 15rem;
+    height: 6.8rem;
+    border: 1px solid rgba(92, 112, 80, 0.12);
+    border-radius: 1.7rem;
+    transform: rotate(-5deg);
+    opacity: 0.58;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.24);
+    animation: rlShopOutlineFloat 12s ease-in-out infinite;
 }
 
 .rl-shop-page .oe_website_sale #products_grid {
@@ -2386,37 +2388,30 @@ footer a:hover,
 
 .rl-shop-page .oe_website_sale #products_grid > * {
     position: relative;
-    z-index: 1;
+    z-index: 2;
 }
 
 .rl-shop-page .oe_website_sale #products_grid::before {
-    top: -1.6rem;
-    right: 1.5rem;
+    top: -5.6rem;
+    right: 4rem;
     z-index: 0;
-    width: 24rem;
-    min-width: 17rem;
-    height: 10.5rem;
-    border: 1px solid rgba(92, 112, 80, 0.16);
-    border-radius: 2rem;
-    background:
-        linear-gradient(135deg, rgba(255, 253, 249, 0.50), rgba(227, 234, 219, 0.26)),
-        radial-gradient(circle at 86% 18%, rgba(124, 144, 112, 0.22), transparent 38%);
-    box-shadow: 0 22px 70px rgba(46, 46, 42, 0.10);
-    backdrop-filter: blur(14px);
-    transform: rotate(2deg);
-    animation: rlShopGlassFloat 9s ease-in-out infinite;
+    width: 12.5rem;
+    height: 12.5rem;
+    border-radius: 50%;
+    background: rgba(124, 144, 112, 0.10);
+    animation: rlShopCircleFloat 13s ease-in-out infinite;
 }
 
 .rl-shop-page .oe_website_sale #products_grid::after {
-    top: 0.25rem;
-    right: 14.5rem;
+    top: -2.9rem;
+    right: 20rem;
     z-index: 0;
-    width: 5.5rem;
-    height: 0.28rem;
+    width: 5.8rem;
+    height: 0.25rem;
     border-radius: 999px;
-    background: linear-gradient(90deg, #D9B777, rgba(227, 234, 219, 0.92));
-    box-shadow: 0 10px 24px rgba(217, 183, 119, 0.22);
-    animation: rlShopLineGlow 4.5s ease-in-out infinite;
+    background: linear-gradient(90deg, #D9B777, rgba(227, 234, 219, 0.86));
+    box-shadow: 0 10px 24px rgba(217, 183, 119, 0.18);
+    animation: rlShopLineGlow 4.8s ease-in-out infinite;
 }
 
 .rl-shop-page .oe_website_sale .o_wsale_products_grid_before_rail,
@@ -2426,33 +2421,33 @@ footer a:hover,
 .rl-shop-page .oe_website_sale .dropdown_sorty_by,
 .rl-shop-page .oe_website_sale .oe_product_cart {
     position: relative;
-    z-index: 2;
+    z-index: 3;
 }
 
-@keyframes rlShopDrift {
+@keyframes rlShopWashFloat {
+    0%, 100% {
+        transform: translate3d(0, 0, 0);
+    }
+    50% {
+        transform: translate3d(-0.7rem, 0.55rem, 0);
+    }
+}
+
+@keyframes rlShopOutlineFloat {
+    0%, 100% {
+        transform: translate3d(0, 0, 0) rotate(-5deg);
+    }
+    50% {
+        transform: translate3d(-0.55rem, 0.45rem, 0) rotate(-2deg);
+    }
+}
+
+@keyframes rlShopCircleFloat {
     0%, 100% {
         transform: translate3d(0, 0, 0) scale(1);
     }
     50% {
-        transform: translate3d(-1.4rem, 1rem, 0) scale(1.04);
-    }
-}
-
-@keyframes rlShopPanelFloat {
-    0%, 100% {
-        transform: translate3d(0, 0, 0) rotate(-7deg);
-    }
-    50% {
-        transform: translate3d(-0.8rem, 0.7rem, 0) rotate(-4deg);
-    }
-}
-
-@keyframes rlShopGlassFloat {
-    0%, 100% {
-        transform: translate3d(0, 0, 0) rotate(2deg);
-    }
-    50% {
-        transform: translate3d(0.9rem, -0.5rem, 0) rotate(-1deg);
+        transform: translate3d(0.8rem, -0.45rem, 0) scale(1.04);
     }
 }
 
@@ -2469,6 +2464,27 @@ footer a:hover,
     }
 }
 
+@media (max-width: 1199.98px) {
+    .rl-shop-page .oe_website_sale #wrap::before {
+        left: 12rem;
+    }
+
+    .rl-shop-page .oe_website_sale #wrap::after {
+        right: 1.5rem;
+        width: 12rem;
+    }
+
+    .rl-shop-page .oe_website_sale #products_grid::after {
+        right: 14rem;
+    }
+
+    .oe_website_sale #products_grid h1,
+    .oe_website_sale #products_grid .h1,
+    .oe_website_sale .o_wsale_products_main_row h1 {
+        font-size: 2.55rem;
+    }
+}
+
 @media (max-width: 991.98px) {
     .rl-shop-page .oe_website_sale #wrap::after,
     .rl-shop-page .oe_website_sale #products_grid::before,
@@ -2477,9 +2493,11 @@ footer a:hover,
     }
 
     .rl-shop-page .oe_website_sale #wrap::before {
-        right: -18rem;
-        top: 8rem;
-        opacity: 0.7;
+        left: 0;
+        right: -12rem;
+        top: 5rem;
+        height: 11rem;
+        opacity: 0.75;
     }
 }
 
@@ -2491,22 +2509,6 @@ footer a:hover,
         animation: none !important;
     }
 }
-@media (max-width: 1199.98px) {
-    .rl-shop-page .oe_website_sale #products_grid::before {
-        width: 18rem;
-    }
-
-    .rl-shop-page .oe_website_sale #products_grid::after {
-        right: 10rem;
-    }
-
-    .oe_website_sale #products_grid h1,
-    .oe_website_sale #products_grid .h1,
-    .oe_website_sale .o_wsale_products_main_row h1 {
-        font-size: 2.55rem;
-    }
-}
-
 // The "Sort By" dropdown was rendering behind the product grid because a
 // product-card z-index rule elsewhere put cards above it in the stacking
 // order. Gives the dropdown its own higher stacking context so it always

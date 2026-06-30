@@ -2800,6 +2800,37 @@ footer a:hover,
     animation: rlHomeOutlineDrift 12s ease-in-out infinite;
 }
 
+.rl-home-hero-track {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    min-height: 500px;
+}
+
+.rl-home-hero-content-slide {
+    position: absolute !important;
+    top: 0;
+    left: 0;
+    right: 0;
+    opacity: 0;
+    transform: translateY(1.4rem);
+    pointer-events: none;
+    animation: rlHomeFullSlide 18s ease-in-out infinite;
+}
+
+.rl-home-hero-content-slide:nth-child(2) {
+    animation-delay: 6s;
+}
+
+.rl-home-hero-content-slide:nth-child(3) {
+    animation-delay: 12s;
+}
+
+.rl-home-hero-content-slide .btn,
+.rl-home-hero-content-slide a {
+    pointer-events: auto;
+}
+
 .rl-home-hero h1,
 .rl-home-section-head h2,
 .rl-home-process h2,
@@ -3201,6 +3232,24 @@ footer a:hover,
     }
 }
 
+@keyframes rlHomeFullSlide {
+    0%, 8% {
+        opacity: 0;
+        transform: translateY(1.4rem);
+        pointer-events: none;
+    }
+    11%, 30% {
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
+    }
+    36%, 100% {
+        opacity: 0;
+        transform: translateY(-1.4rem);
+        pointer-events: none;
+    }
+}
+
 @keyframes rlHomeSlideCycle {
     0%, 7% {
         opacity: 0;
@@ -3233,6 +3282,10 @@ footer a:hover,
         padding: 5rem 0 4rem;
     }
 
+    .rl-home-hero-track {
+        min-height: 760px;
+    }
+
     .rl-home-hero h1 {
         font-size: 3.3rem;
     }
@@ -3262,6 +3315,10 @@ footer a:hover,
 }
 
 @media (max-width: 575.98px) {
+    .rl-home-hero-track {
+        min-height: 820px;
+    }
+
     .rl-home-hero h1 {
         font-size: 2.65rem;
     }
@@ -3292,6 +3349,7 @@ footer a:hover,
     .rl-home-hero::before,
     .rl-home-hero::after,
     .rl-home-hero-scene,
+    .rl-home-hero-content-slide,
     .rl-home-showcase-card,
     .rl-home-slider-window,
     .rl-home-slide,
@@ -3312,6 +3370,17 @@ footer a:hover,
     .rl-home-hero-scene:first-child {
         opacity: 1;
         transform: none;
+    }
+
+    .rl-home-hero-content-slide {
+        opacity: 0;
+        transform: none;
+        pointer-events: none;
+    }
+
+    .rl-home-hero-content-slide:first-child {
+        opacity: 1;
+        pointer-events: auto;
     }
 }
 /* Revive contact thank-you page */

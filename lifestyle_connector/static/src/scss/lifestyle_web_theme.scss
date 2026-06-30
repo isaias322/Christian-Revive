@@ -2050,4 +2050,75 @@ footer a:hover,
         transform: none !important;
     }
 }
+/* Shop category tabs and sort control */
+.oe_website_sale .o_wsale_filmstip_container,
+.oe_website_sale .o_wsale_filmstip,
+.oe_website_sale #wsale_products_categories_top {
+    display: none !important;
+}
 
+.oe_website_sale .o_sortby_dropdown,
+.oe_website_sale .o_wsale_sort_dropdown,
+.oe_website_sale .dropdown_sorty_by {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.oe_website_sale .o_sortby_dropdown .dropdown-toggle,
+.oe_website_sale .o_wsale_sort_dropdown .dropdown-toggle,
+.oe_website_sale .dropdown_sorty_by .dropdown-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    min-height: 42px;
+    padding: 0.55rem 0.9rem !important;
+    border: 1px solid rgba(92, 112, 80, 0.22) !important;
+    border-radius: 999px !important;
+    color: #2E2E2A !important;
+    background: rgba(255, 253, 249, 0.94) !important;
+    box-shadow: 0 12px 28px rgba(46, 46, 42, 0.08);
+    font-weight: 700;
+}
+
+.oe_website_sale .o_sortby_dropdown .dropdown-toggle span:first-child,
+.oe_website_sale .o_wsale_sort_dropdown .dropdown-toggle span:first-child,
+.oe_website_sale .dropdown_sorty_by .dropdown-toggle span:first-child {
+    color: #5C7050;
+    font-weight: 800;
+}
+
+.oe_website_sale .o_sortby_dropdown .dropdown-toggle:hover,
+.oe_website_sale .o_wsale_sort_dropdown .dropdown-toggle:hover,
+.oe_website_sale .dropdown_sorty_by .dropdown-toggle:hover,
+.oe_website_sale .o_sortby_dropdown .dropdown-toggle:focus,
+.oe_website_sale .o_wsale_sort_dropdown .dropdown-toggle:focus,
+.oe_website_sale .dropdown_sorty_by .dropdown-toggle:focus {
+    border-color: rgba(92, 112, 80, 0.42) !important;
+    background: #FFFDF9 !important;
+    box-shadow: 0 18px 38px rgba(46, 46, 42, 0.12);
+    transform: translateY(-1px);
+}
+
+.oe_website_sale .o_sortby_dropdown .dropdown-menu,
+.oe_website_sale .o_wsale_sort_dropdown .dropdown-menu,
+.oe_website_sale .dropdown_sorty_by .dropdown-menu {
+    border: 1px solid rgba(92, 112, 80, 0.12);
+    border-radius: 16px;
+    box-shadow: 0 20px 46px rgba(46, 46, 42, 0.14);
+    padding: 0.45rem;
+}
+
+.oe_website_sale .o_sortby_dropdown .dropdown-item,
+.oe_website_sale .o_wsale_sort_dropdown .dropdown-item,
+.oe_website_sale .dropdown_sorty_by .dropdown-item {
+    border-radius: 12px;
+    font-weight: 600;
+}
+
+.oe_website_sale .o_sortby_dropdown .dropdown-item:hover,
+.oe_website_sale .o_wsale_sort_dropdown .dropdown-item:hover,
+.oe_website_sale .dropdown_sorty_by .dropdown-item:hover {
+    color: #2E2E2A;
+    background: #E3EADB;
+}

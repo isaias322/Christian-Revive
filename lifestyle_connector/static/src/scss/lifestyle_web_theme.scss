@@ -2707,6 +2707,69 @@ footer a:hover,
         linear-gradient(135deg, #252821 0%, #354030 52%, #5C7050 100%);
 }
 
+.rl-home-hero-bg {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.rl-home-hero-scene {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transform: scale(1.04);
+    animation: rlHomeHeroScene 18s ease-in-out infinite;
+}
+
+.rl-home-hero-scene::before,
+.rl-home-hero-scene::after {
+    content: "";
+    position: absolute;
+    pointer-events: none;
+}
+
+.rl-home-hero-scene::before {
+    right: -6rem;
+    bottom: -11rem;
+    width: 34rem;
+    height: 34rem;
+    border-radius: 50%;
+    background: rgba(227, 234, 219, 0.14);
+}
+
+.rl-home-hero-scene::after {
+    top: 7rem;
+    right: 9%;
+    width: 17rem;
+    height: 9rem;
+    border: 1px solid rgba(255, 253, 249, 0.18);
+    border-radius: 2rem;
+    transform: rotate(-7deg);
+}
+
+.rl-home-hero-scene-one {
+    background:
+        radial-gradient(circle at 82% 78%, rgba(124, 144, 112, 0.45), transparent 21rem),
+        linear-gradient(135deg, #252821 0%, #354030 52%, #5C7050 100%);
+}
+
+.rl-home-hero-scene-two {
+    animation-delay: 6s;
+    background:
+        radial-gradient(circle at 68% 24%, rgba(217, 183, 119, 0.18), transparent 18rem),
+        radial-gradient(circle at 92% 92%, rgba(227, 234, 219, 0.18), transparent 24rem),
+        linear-gradient(135deg, #273027 0%, #45543B 55%, #718461 100%);
+}
+
+.rl-home-hero-scene-three {
+    animation-delay: 12s;
+    background:
+        radial-gradient(circle at 78% 66%, rgba(255, 253, 249, 0.13), transparent 17rem),
+        radial-gradient(circle at 22% 28%, rgba(217, 183, 119, 0.13), transparent 18rem),
+        linear-gradient(135deg, #242622 0%, #3C4838 48%, #63795A 100%);
+}
+
 .rl-home-hero::before,
 .rl-home-hero::after {
     content: "";
@@ -2715,6 +2778,7 @@ footer a:hover,
 }
 
 .rl-home-hero::before {
+    z-index: 1;
     right: -8rem;
     bottom: -12rem;
     width: 32rem;
@@ -2725,6 +2789,7 @@ footer a:hover,
 }
 
 .rl-home-hero::after {
+    z-index: 1;
     top: 7rem;
     right: 9%;
     width: 17rem;
@@ -3121,6 +3186,21 @@ footer a:hover,
     }
 }
 
+@keyframes rlHomeHeroScene {
+    0%, 8% {
+        opacity: 0;
+        transform: scale(1.04);
+    }
+    11%, 30% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    36%, 100% {
+        opacity: 0;
+        transform: scale(1.03);
+    }
+}
+
 @keyframes rlHomeSlideCycle {
     0%, 7% {
         opacity: 0;
@@ -3211,6 +3291,7 @@ footer a:hover,
 @media (prefers-reduced-motion: reduce) {
     .rl-home-hero::before,
     .rl-home-hero::after,
+    .rl-home-hero-scene,
     .rl-home-showcase-card,
     .rl-home-slider-window,
     .rl-home-slide,
@@ -3226,6 +3307,11 @@ footer a:hover,
 
     .rl-home-slide:first-child {
         opacity: 1;
+    }
+
+    .rl-home-hero-scene:first-child {
+        opacity: 1;
+        transform: none;
     }
 }
 /* Revive contact thank-you page */

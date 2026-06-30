@@ -20,6 +20,10 @@ class LifestyleWebsite(http.Controller):
     def contactus(self, **kwargs):
         return request.render('lifestyle_connector.lifestyle_contactus_direct_page', {})
 
+    @http.route('/contactus-thank-you', type='http', auth='public', website=True, sitemap=False)
+    def contactus_thank_you(self, **kwargs):
+        return request.render('lifestyle_connector.lifestyle_contactus_thank_you_page', {})
+
 class LifestyleWebsiteSale(WebsiteSale):
     """Website checkout customizations for Revive Lifestyle."""
 

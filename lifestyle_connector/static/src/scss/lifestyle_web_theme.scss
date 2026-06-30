@@ -3120,3 +3120,210 @@ footer a:hover,
         animation: none !important;
     }
 }
+/* Revive contact thank-you page */
+.rl-thank-page {
+    overflow: hidden;
+    min-height: 72vh;
+    background: #F7F5F0;
+    color: #2E2E2A;
+}
+
+.rl-thank-hero {
+    position: relative;
+    padding: 5.5rem 0 6rem;
+    background:
+        radial-gradient(circle at 18% 12%, rgba(227, 234, 219, 0.95), transparent 19rem),
+        radial-gradient(circle at 86% 16%, rgba(217, 183, 119, 0.18), transparent 16rem),
+        linear-gradient(180deg, #FFFDF9 0%, #F7F5F0 100%);
+}
+
+.rl-thank-hero::before,
+.rl-thank-hero::after {
+    content: "";
+    position: absolute;
+    pointer-events: none;
+}
+
+.rl-thank-hero::before {
+    right: -8rem;
+    top: 4rem;
+    width: 24rem;
+    height: 24rem;
+    border-radius: 50%;
+    background: rgba(92, 112, 80, 0.10);
+    animation: rlThankFloat 14s ease-in-out infinite;
+}
+
+.rl-thank-hero::after {
+    left: 9%;
+    bottom: 4rem;
+    width: 14rem;
+    height: 7rem;
+    border: 1px solid rgba(92, 112, 80, 0.14);
+    border-radius: 1.6rem;
+    transform: rotate(-7deg);
+    animation: rlThankOutline 12s ease-in-out infinite;
+}
+
+.rl-thank-panel {
+    position: relative;
+    z-index: 2;
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 3rem;
+    border: 1px solid rgba(92, 112, 80, 0.12);
+    border-radius: 2rem;
+    background: rgba(255, 253, 249, 0.92);
+    box-shadow: 0 30px 90px rgba(46, 46, 42, 0.12);
+    text-align: center;
+    backdrop-filter: blur(10px);
+    animation: rlThankRise 0.55s ease both;
+}
+
+.rl-thank-icon {
+    display: inline-flex;
+    width: 5.2rem;
+    height: 5.2rem;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.25rem;
+    border-radius: 50%;
+    color: #FFFDF9;
+    background: linear-gradient(135deg, #7C9070, #5C7050);
+    box-shadow: 0 18px 42px rgba(92, 112, 80, 0.26);
+    font-size: 2rem;
+}
+
+.rl-thank-kicker {
+    display: block;
+    margin-bottom: 0.65rem;
+    color: #5C7050;
+    font-size: 0.78rem;
+    font-weight: 900;
+    letter-spacing: 0.08rem;
+    text-transform: uppercase;
+}
+
+.rl-thank-panel h1 {
+    max-width: 760px;
+    margin: 0 auto 1rem;
+    color: #2E2E2A;
+    font-family: 'Fraunces', serif;
+    font-size: 3.3rem;
+    line-height: 1.05;
+}
+
+.rl-thank-panel p {
+    max-width: 680px;
+    margin: 0 auto;
+    color: #66675F;
+    font-size: 1.08rem;
+    line-height: 1.7;
+}
+
+.rl-thank-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+    margin: 2rem 0 2.25rem;
+}
+
+.rl-thank-next-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+    text-align: left;
+}
+
+.rl-thank-next-grid div {
+    min-height: 165px;
+    padding: 1.2rem;
+    border: 1px solid rgba(92, 112, 80, 0.10);
+    border-radius: 1.2rem;
+    background: rgba(227, 234, 219, 0.45);
+}
+
+.rl-thank-next-grid i {
+    display: inline-flex;
+    width: 2.55rem;
+    height: 2.55rem;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.85rem;
+    border-radius: 0.85rem;
+    color: #5C7050;
+    background: #FFFDF9;
+}
+
+.rl-thank-next-grid strong,
+.rl-thank-next-grid span {
+    display: block;
+}
+
+.rl-thank-next-grid strong {
+    margin-bottom: 0.35rem;
+    color: #2E2E2A;
+    font-size: 1rem;
+}
+
+.rl-thank-next-grid span {
+    color: #6F6B63;
+    line-height: 1.5;
+}
+
+@keyframes rlThankRise {
+    from {
+        opacity: 0;
+        transform: translate3d(0, 1rem, 0);
+    }
+    to {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+@keyframes rlThankFloat {
+    0%, 100% {
+        transform: translate3d(0, 0, 0);
+    }
+    50% {
+        transform: translate3d(-0.8rem, 0.7rem, 0);
+    }
+}
+
+@keyframes rlThankOutline {
+    0%, 100% {
+        transform: translate3d(0, 0, 0) rotate(-7deg);
+    }
+    50% {
+        transform: translate3d(0.7rem, -0.45rem, 0) rotate(-3deg);
+    }
+}
+
+@media (max-width: 767.98px) {
+    .rl-thank-hero {
+        padding: 3.5rem 0 4rem;
+    }
+
+    .rl-thank-panel {
+        padding: 2rem 1.25rem;
+        border-radius: 1.4rem;
+    }
+
+    .rl-thank-panel h1 {
+        font-size: 2.4rem;
+    }
+
+    .rl-thank-next-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .rl-thank-hero::before,
+    .rl-thank-hero::after,
+    .rl-thank-panel {
+        animation: none !important;
+    }
+}

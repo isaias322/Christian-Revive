@@ -329,7 +329,7 @@
                         <div class="row align-items-end g-4">
                             <div class="col-12 col-lg-7">
                                 <span class="rl-contact-kicker">Revive Lifestyle Support</span>
-                                <h1>Letâ€™s shape your home together</h1>
+                                <h1>LetÃ¢â‚¬â„¢s shape your home together</h1>
                                 <p>
                                     Questions about a furniture piece, custom finish, delivery, or an active order?
                                     Send a note and our team will help you with the next clear step.
@@ -563,6 +563,46 @@
         </t>
     </template>
 
+    <template id="lifestyle_contactus_thank_you_page" name="Revive Lifestyle Contact Thank You Page">
+        <t t-call="website.layout">
+            <div id="wrap" class="oe_structure rl-thank-page">
+                <section class="rl-thank-hero">
+                    <div class="container">
+                        <div class="rl-thank-panel">
+                            <div class="rl-thank-icon"><i class="fa fa-paper-plane"></i></div>
+                            <span class="rl-thank-kicker">Message Sent</span>
+                            <h1>Thank you for reaching out</h1>
+                            <p>
+                                Your message has been received by the Revive Lifestyle team. We will review the details
+                                and get back to you with the next clear step.
+                            </p>
+                            <div class="rl-thank-actions">
+                                <a href="/shop" class="btn btn-primary btn-lg">Shop Furniture</a>
+                                <a href="/contactus" class="btn btn-outline-secondary btn-lg">Send Another Message</a>
+                            </div>
+                            <div class="rl-thank-next-grid">
+                                <div>
+                                    <i class="fa fa-envelope-open"></i>
+                                    <strong>We review your note</strong>
+                                    <span>Product details, custom requests, delivery questions, or order help.</span>
+                                </div>
+                                <div>
+                                    <i class="fa fa-comments"></i>
+                                    <strong>We reply with guidance</strong>
+                                    <span>You will get clear next steps from our team.</span>
+                                </div>
+                                <div>
+                                    <i class="fa fa-home"></i>
+                                    <strong>You keep building your home</strong>
+                                    <span>Browse furniture while we prepare your response.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </t>
+    </template>
     <!-- Anchored on the products_attributes_filters div, the official
          extension point website_sale's own products_attributes template
          uses for its native attribute filters - verified against the

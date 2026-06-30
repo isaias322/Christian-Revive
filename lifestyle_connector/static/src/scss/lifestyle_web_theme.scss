@@ -2565,4 +2565,22 @@ footer a:hover,
 .rl-shop-page .oe_website_sale #products_grid .dropdown-menu.show {
     z-index: 7001 !important;
 }
+.rl-shop-page .oe_website_sale #products_grid .o_wsale_products_grid_table_wrapper,
+.rl-shop-page .oe_website_sale #products_grid .products_grid,
+.rl-shop-page .oe_website_sale #products_grid .o_wsale_products_grid_table,
+.rl-shop-page .oe_website_sale #products_grid table.o_wsale_products_grid_table {
+    position: relative;
+    z-index: 1 !important;
+    overflow: visible;
+}
+
+.rl-shop-page .oe_website_sale #products_grid .o_wsale_products_header,
+.rl-shop-page .oe_website_sale #products_grid .o_wsale_products_top,
+.rl-shop-page .oe_website_sale #products_grid .o_wsale_products_searchbar_form,
+.rl-shop-page .oe_website_sale #products_grid .o_sortby_dropdown,
+.rl-shop-page .oe_website_sale #products_grid .o_wsale_sort_dropdown,
+.rl-shop-page .oe_website_sale #products_grid .dropdown_sorty_by {
+    position: relative !important;
+    z-index: 8000 !important;
+}
 

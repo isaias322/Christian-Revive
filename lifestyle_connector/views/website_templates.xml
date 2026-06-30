@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <!-- Every page goes through website.layout, so its <head> is a safe,
          universal place to load the brand fonts (kept out of the SCSS
@@ -161,6 +161,121 @@
         </xpath>
     </template>
 
+    <template id="lifestyle_homepage_direct_page" name="Revive Lifestyle Home Page">
+        <t t-call="website.layout">
+            <div id="wrap" class="oe_structure rl-home-page">
+                <section class="rl-home-hero">
+                    <div class="rl-home-hero-bg"></div>
+                    <div class="container position-relative">
+                        <div class="row align-items-center g-5">
+                            <div class="col-12 col-lg-6">
+                                <span class="rl-home-kicker">Revive Lifestyle Furniture</span>
+                                <h1>Furniture made for real homes</h1>
+                                <p>
+                                    Shop furniture pieces, choose the right finish, and follow your order from build
+                                    to packing and delivery with clear progress updates.
+                                </p>
+                                <div class="rl-home-actions">
+                                    <a href="/shop" class="btn btn-primary btn-lg">Shop Furniture</a>
+                                    <a href="/contactus" class="btn btn-outline-light btn-lg">Ask a Question</a>
+                                </div>
+                                <div class="rl-home-trust-row">
+                                    <span><i class="fa fa-check"></i> Build tracking</span>
+                                    <span><i class="fa fa-camera"></i> Workshop updates</span>
+                                    <span><i class="fa fa-truck"></i> Delivery support</span>
+                                </div>
+                            </div>
+                            <div class="col-12 col-lg-6">
+                                <div class="rl-home-showcase">
+                                    <div class="rl-home-showcase-card rl-home-showcase-main">
+                                        <span class="rl-home-room-line"></span>
+                                        <i class="fa fa-home"></i>
+                                        <h3>Designed around your room</h3>
+                                        <p>Browse beds, tables, sofas, desks, and home pieces with details before you order.</p>
+                                    </div>
+                                    <div class="rl-home-floating-card rl-home-floating-one">
+                                        <strong>50%</strong>
+                                        <span>Build progress</span>
+                                    </div>
+                                    <div class="rl-home-floating-card rl-home-floating-two">
+                                        <i class="fa fa-bell"></i>
+                                        <span>Vendor updates</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="rl-home-featured">
+                    <div class="container">
+                        <div class="rl-home-section-head">
+                            <span class="rl-home-kicker text-sage">Featured Pieces</span>
+                            <h2>Start with what your home needs</h2>
+                            <a href="/shop" class="rl-home-link">View all products <i class="fa fa-arrow-right"></i></a>
+                        </div>
+                        <div t-if="featured_products" class="row g-4">
+                            <div t-foreach="featured_products" t-as="product" class="col-12 col-sm-6 col-lg-3">
+                                <a t-att-href="product.website_url or ('/shop/product/%s' % product.id)" class="rl-home-product-card">
+                                    <div class="rl-home-product-image">
+                                        <img t-att-src="'/web/image/product.template/%s/image_512' % product.id" t-att-alt="product.name" loading="lazy"/>
+                                    </div>
+                                    <div class="rl-home-product-body">
+                                        <span t-if="product.public_categ_ids" t-esc="product.public_categ_ids[0].name"/>
+                                        <h3 t-esc="product.name"/>
+                                        <strong>
+                                            <t t-esc="product.currency_id.symbol or 'Rs.'"/>
+                                            <t t-esc="'%.2f' % product.list_price"/>
+                                        </strong>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                        <div t-else="" class="rl-home-empty-products">
+                            <h3>Products will appear here when you publish them for Revive Lifestyle.</h3>
+                            <a href="/shop" class="btn btn-primary">Go to Shop</a>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="rl-home-process">
+                    <div class="container">
+                        <div class="row g-4 align-items-center">
+                            <div class="col-12 col-lg-5">
+                                <span class="rl-home-kicker text-sage">Order Confidence</span>
+                                <h2>Customers can follow every step</h2>
+                                <p>
+                                    Revive Lifestyle is built for furniture orders where customers care about progress.
+                                    From order placed to build, packing, delivery, and invoice, the flow stays clear.
+                                </p>
+                            </div>
+                            <div class="col-12 col-lg-7">
+                                <div class="rl-home-process-grid">
+                                    <div><i class="fa fa-shopping-bag"></i><strong>Order placed</strong><span>Customer chooses the product and quantity.</span></div>
+                                    <div><i class="fa fa-wrench"></i><strong>Build starts</strong><span>Vendor updates progress from their side.</span></div>
+                                    <div><i class="fa fa-camera"></i><strong>Photo updates</strong><span>Images, videos, and notes can be shared.</span></div>
+                                    <div><i class="fa fa-truck"></i><strong>Delivered</strong><span>The order reaches the customer with a clear record.</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="rl-home-cta">
+                    <div class="container">
+                        <div class="rl-home-cta-panel">
+                            <div>
+                                <span class="rl-home-kicker">Need help choosing?</span>
+                                <h2>Tell us your room, color, and size.</h2>
+                                <p>We can help with furniture questions before you order.</p>
+                            </div>
+                            <a href="/contactus" class="btn btn-primary btn-lg">Contact Us</a>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </t>
+    </template>
     <!-- Anchored on div#introduction, a stable top-level child of
          sale.sale_order_portal_content that has existed across many Odoo
          versions - verified against the Odoo 18 source before writing this,

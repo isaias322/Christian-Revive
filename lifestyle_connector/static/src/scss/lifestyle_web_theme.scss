@@ -2506,3 +2506,16 @@ footer a:hover,
         font-size: 2.55rem;
     }
 }
+
+// The "Sort By" dropdown was rendering behind the product grid because a
+// product-card z-index rule elsewhere put cards above it in the stacking
+// order. Gives the dropdown its own higher stacking context so it always
+// renders on top regardless of other z-index rules on the page.
+.o_sortby_dropdown {
+    position: relative;
+    z-index: 1050;
+}
+
+.o_sortby_dropdown .dropdown-menu {
+    z-index: 1050;
+}

@@ -38,7 +38,7 @@
             </div>
 
             <div id="notify_stock" class="lifestyle-card mt-3"
-                 t-if="product.type in ('consu', 'product') and product.qty_available &lt;= 0">
+                 t-if="product.type in ('consu', 'product') and product.sudo().qty_available &lt;= 0">
                 <h6 class="mb-2">Notify me when back in stock</h6>
                 <p t-if="request.params.get('notify_success')" class="text-success mb-0">
                     Thanks! We'll let you know when this is back in stock.

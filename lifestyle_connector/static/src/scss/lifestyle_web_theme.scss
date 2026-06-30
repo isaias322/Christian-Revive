@@ -2509,15 +2509,38 @@ footer a:hover,
         animation: none !important;
     }
 }
-// The "Sort By" dropdown was rendering behind the product grid because a
-// product-card z-index rule elsewhere put cards above it in the stacking
-// order. Gives the dropdown its own higher stacking context so it always
-// renders on top regardless of other z-index rules on the page.
-.o_sortby_dropdown {
-    position: relative;
-    z-index: 1050;
+// Keep shop sort menus above product cards when the dropdown opens.
+.rl-shop-page .oe_website_sale #products_grid,
+.rl-shop-page .oe_website_sale .o_wsale_products_main_row {
+    overflow: visible;
 }
 
-.o_sortby_dropdown .dropdown-menu {
-    z-index: 1050;
+.rl-shop-page .oe_website_sale .o_sortby_dropdown,
+.rl-shop-page .oe_website_sale .o_wsale_sort_dropdown,
+.rl-shop-page .oe_website_sale .dropdown_sorty_by,
+.rl-shop-page .oe_website_sale .o_sortby_dropdown.show,
+.rl-shop-page .oe_website_sale .o_wsale_sort_dropdown.show,
+.rl-shop-page .oe_website_sale .dropdown_sorty_by.show {
+    position: relative !important;
+    z-index: 3000 !important;
 }
+
+.rl-shop-page .oe_website_sale .o_sortby_dropdown .dropdown-menu,
+.rl-shop-page .oe_website_sale .o_wsale_sort_dropdown .dropdown-menu,
+.rl-shop-page .oe_website_sale .dropdown_sorty_by .dropdown-menu {
+    position: absolute;
+    z-index: 3001 !important;
+}
+
+.rl-shop-page .oe_website_sale #products_grid .oe_product_cart,
+.rl-shop-page .oe_website_sale #products_grid .oe_product,
+.rl-shop-page .oe_website_sale #products_grid .o_wsale_product_grid_wrapper .card {
+    z-index: 1;
+}
+
+.rl-shop-page .oe_website_sale #products_grid .oe_product_cart:hover,
+.rl-shop-page .oe_website_sale #products_grid .oe_product:hover,
+.rl-shop-page .oe_website_sale #products_grid .o_wsale_product_grid_wrapper .card:hover {
+    z-index: 2;
+}
+

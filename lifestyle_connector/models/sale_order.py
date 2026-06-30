@@ -246,8 +246,16 @@ class SaleOrder(models.Model):
             order._lifestyle_advance_stage('picked_up')
 
     def _lifestyle_media_attachments(self):
+        # sudo: this is a data-fetching helper, not an access-control point -
+        # whether the caller is allowed to see THIS order's media at all is
+        # already decided before this gets called (the app's JSON API sudos
+        # the order itself; the website portal's own record rules already
+        # restrict /my/orders/<id> to the order's own customer). Without
+        # sudo here, a non-sudo caller (the portal page) would hit an
+        # AccessError on ir.attachment, which customers have no direct
+        # access to by default.
         self.ensure_one()
-        return self.env['ir.attachment'].search([
+        return self.env['ir.attachment'].sudo().search([
             ('res_model', '=', 'sale.order'),
             ('res_id', '=', self.id),
             '|', '|',
@@ -262,7 +270,7 @@ class SaleOrder(models.Model):
 
     def _lifestyle_latest_photo_attachment(self):
         self.ensure_one()
-        return self.env['ir.attachment'].search([
+        return self.env['ir.attachment'].sudo().search([
             ('res_model', '=', 'sale.order'),
             ('res_id', '=', self.id),
             ('mimetype', 'like', 'image/'),
@@ -271,7 +279,10 @@ class SaleOrder(models.Model):
     def _lifestyle_attachment_url(self, attachment):
         if not attachment:
             return False
-        token = self.env['lifestyle.attachment.token'].grant(attachment)
+        # lifestyle.attachment.token is only ACL-granted to internal staff,
+        # so this also needs sudo when called from a non-sudo (portal
+        # customer) context - see _lifestyle_media_attachments above.
+        token = self.env['lifestyle.attachment.token'].sudo().grant(attachment)
         base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
         return f'{base_url}/lifestyle/api/image/attachment/{attachment.id}/{token.token}'
 

@@ -132,6 +132,31 @@ class ProductTemplate(models.Model):
             visible = product._lifestyle_is_app_visible()
             if product.website_published != visible:
                 product.website_published = visible
+
+    @api.model
+    def _lifestyle_available_colors(self):
+        """Distinct colors across the visible catalog, for the website's
+        color filter - color_options is a plain comma-separated Char field,
+        not a real Odoo attribute, so this can't use the native filters."""
+        products = self.sudo().search(
+            self._lifestyle_app_visibility_domain()
+            + [('sale_ok', '=', True), ('active', '=', True), ('color_options', '!=', False)]
+        )
+        colors = set()
+        for product in products:
+            colors.update(value.strip() for value in (product.color_options or '').split(',') if value.strip())
+        return sorted(colors)
+
+    @api.model
+    def _lifestyle_available_sizes(self):
+        products = self.sudo().search(
+            self._lifestyle_app_visibility_domain()
+            + [('sale_ok', '=', True), ('active', '=', True), ('size_options', '!=', False)]
+        )
+        sizes = set()
+        for product in products:
+            sizes.update(value.strip() for value in (product.size_options or '').split(',') if value.strip())
+        return sorted(sizes)
     # Image (not Binary) so Odoo auto-resizes/compresses on upload instead of
     # storing whatever full-camera-resolution file the admin picked — that
     # was why switching colors in the app took forever to load.

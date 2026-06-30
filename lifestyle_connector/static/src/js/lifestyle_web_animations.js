@@ -51,8 +51,40 @@ function setupRevealObserver(targets) {
     targets.forEach((target) => observer.observe(target));
 }
 
+function hideShopCategoryTabs() {
+    if (!window.location.pathname.startsWith('/shop')) return;
+
+    const categoryLabels = ['Furniture & Home', 'Fruits & Vegetables', 'Healthy Pantry'];
+    const scope = document.querySelector('#wrap') || document.body;
+    const matchingLinks = Array.from(scope.querySelectorAll('a')).filter((link) => (
+        categoryLabels.includes(link.textContent.trim())
+    ));
+
+    if (!matchingLinks.length) return;
+
+    const containers = new Set();
+    matchingLinks.forEach((link) => {
+        const container = link.closest('.nav, .nav-pills, .nav-tabs, .o_wsale_filmstip_container, ul, .btn-group, .list-group, .d-flex');
+        if (container) containers.add(container);
+    });
+
+    containers.forEach((container) => {
+        const text = container.textContent || '';
+        const matchCount = categoryLabels.filter((label) => text.includes(label)).length;
+        if (matchCount >= 2) {
+            container.classList.add('d-none');
+        }
+    });
+
+    matchingLinks.forEach((link) => {
+        const isHidden = link.closest('.d-none');
+        if (!isHidden) link.classList.add('d-none');
+    });
+}
+
 function enhanceWebsite() {
     document.documentElement.classList.add('rl-site-ready');
+    hideShopCategoryTabs();
     const targets = prepareRevealTargets();
     setupRevealObserver(targets);
 }

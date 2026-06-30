@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from odoo import models
+from odoo.http import request
 
 
 class Website(models.Model):
@@ -12,4 +13,15 @@ class Website(models.Model):
 
     def _product_domain(self):
         domain = super()._product_domain()
-        return domain + self.env['product.template']._lifestyle_app_visibility_domain()
+        domain = domain + self.env['product.template']._lifestyle_app_visibility_domain()
+
+        # color_options/size_options are plain comma-separated Char fields,
+        # not real Odoo attributes, so the native attribute filters can't
+        # see them - the shop's color/size filter links read these instead.
+        color = request.params.get('lifestyle_color')
+        if color:
+            domain = domain + [('color_options', 'ilike', color)]
+        size = request.params.get('lifestyle_size')
+        if size:
+            domain = domain + [('size_options', 'ilike', size)]
+        return domain

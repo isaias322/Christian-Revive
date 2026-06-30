@@ -2053,7 +2053,12 @@ footer a:hover,
 /* Shop category tabs and sort control */
 .oe_website_sale .o_wsale_filmstip_container,
 .oe_website_sale .o_wsale_filmstip,
-.oe_website_sale #wsale_products_categories_top {
+.oe_website_sale #wsale_products_categories_top,
+.oe_website_sale .o_wsale_categories_top,
+.oe_website_sale .o_wsale_categories_nav,
+.oe_website_sale .o_wsale_products_categories,
+.oe_website_sale .o_wsale_products_categories_top,
+.oe_website_sale .o_wsale_category_nav {
     display: none !important;
 }
 

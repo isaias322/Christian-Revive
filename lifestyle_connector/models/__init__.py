@@ -12,5 +12,6 @@ from . import hr_employee
 from . import wishlist_item
 from . import attachment_stage
 from . import website
+from . import stock_notification
 
 

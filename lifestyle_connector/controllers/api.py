@@ -422,9 +422,19 @@ class LifestyleAPI(http.Controller):
             'categories': [{'id': c.id, 'name': c.name} for c in cats],
         }
 
+    @http.route('/lifestyle/api/filters', type='json', auth='public', methods=['GET', 'POST'], csrf=False)
+    def filters(self, **kwargs):
+        Product = request.env['product.template'].sudo()
+        return {
+            'status': 'success',
+            'colors': Product._lifestyle_available_colors(),
+            'sizes': Product._lifestyle_available_sizes(),
+        }
+
     @http.route('/lifestyle/api/products', type='json', auth='public', methods=['GET', 'POST'], csrf=False)
     def products(self, category_id=None, search=None, limit=20, offset=0,
-                 sort=None, in_stock_only=None, min_price=None, max_price=None, **kwargs):
+                 sort=None, in_stock_only=None, min_price=None, max_price=None,
+                 color=None, size=None, **kwargs):
         Product = request.env['product.template'].sudo()
         domain = [('sale_ok', '=', True), ('active', '=', True)] + _app_visibility_domain(Product)
         if category_id:
@@ -439,6 +449,10 @@ class LifestyleAPI(http.Controller):
             domain.append(('list_price', '>=', float(min_price)))
         if max_price is not None:
             domain.append(('list_price', '<=', float(max_price)))
+        if color:
+            domain.append(('color_options', 'ilike', color))
+        if size:
+            domain.append(('size_options', 'ilike', size))
 
         limit = min(int(limit or 20), 100)
         offset = int(offset or 0)
@@ -470,6 +484,29 @@ class LifestyleAPI(http.Controller):
         data = _serialize_product(product, wishlist_ids)
         data['description_full'] = product.description or ''
         return {'status': 'success', 'product': data}
+
+    @http.route('/lifestyle/api/products/<int:product_id>/notify-stock', type='json', auth='public', methods=['POST'], csrf=False)
+    def notify_stock(self, product_id, email=None, **kwargs):
+        product = request.env['product.template'].sudo().browse(product_id)
+        if not product.exists():
+            return {'status': 'error', 'message': 'Product not found'}
+        email = (email or '').strip()
+        if not email:
+            return {'status': 'error', 'message': 'Email is required.'}
+
+        partner = _current_partner()
+        Notification = request.env['lifestyle.stock.notification'].sudo()
+        existing = Notification.search([
+            ('product_tmpl_id', '=', product.id),
+            ('email', '=', email),
+        ], limit=1)
+        if not existing:
+            Notification.create({
+                'product_tmpl_id': product.id,
+                'email': email,
+                'partner_id': partner.id if partner else False,
+            })
+        return {'status': 'success'}
 
     @http.route('/lifestyle/api/deals', type='json', auth='public', methods=['GET', 'POST'], csrf=False)
     def deals(self, **kwargs):

@@ -57,7 +57,7 @@
                 <div t-if="not product.review_ids" class="text-muted mb-3">No reviews yet.</div>
                 <div t-foreach="product.review_ids" t-as="review" class="mb-3 pb-3 border-bottom">
                     <div class="d-flex justify-content-between align-items-start">
-                        <strong t-esc="review.partner_id.name or 'Customer'"/>
+                        <strong t-esc="review.partner_id.sudo().name or 'Customer'"/>
                         <span class="lifestyle-badge"><t t-esc="review.rating"/>/5</span>
                     </div>
                     <p t-if="review.comment" t-esc="review.comment" class="mb-0 mt-1"/>
@@ -165,7 +165,11 @@
         <t t-call="website.layout">
             <div id="wrap" class="oe_structure rl-home-page">
                 <section class="rl-home-hero">
-                    <div class="rl-home-hero-bg"></div>
+                    <div class="rl-home-hero-bg" aria-hidden="true">
+                        <span class="rl-home-hero-scene rl-home-hero-scene-one"></span>
+                        <span class="rl-home-hero-scene rl-home-hero-scene-two"></span>
+                        <span class="rl-home-hero-scene rl-home-hero-scene-three"></span>
+                    </div>
                     <div class="container position-relative">
                         <div class="row align-items-center g-5">
                             <div class="col-12 col-lg-6">
@@ -699,4 +703,3 @@
         </xpath>
     </template>
 </odoo>
-

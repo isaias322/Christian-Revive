@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 from odoo import http
 from odoo.http import request
 from odoo.addons.website_sale.controllers.main import WebsiteSale
@@ -8,7 +8,13 @@ class LifestyleWebsite(http.Controller):
 
     @http.route('/', type='http', auth='public', website=True, sitemap=True)
     def homepage(self, **kwargs):
-        return request.redirect('/shop', code=302)
+        featured_products = request.env['product.template'].sudo().search([
+            ('sale_ok', '=', True),
+            ('lifestyle_app_visible', '=', True),
+        ], order='store_sequence asc, id desc', limit=4)
+        return request.render('lifestyle_connector.lifestyle_homepage_direct_page', {
+            'featured_products': featured_products,
+        })
 
     @http.route(['/contactus', '/contact-us'], type='http', auth='public', website=True, sitemap=True)
     def contactus(self, **kwargs):

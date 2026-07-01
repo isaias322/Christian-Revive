@@ -217,111 +217,103 @@
                     </div>
                 </section>
 
-                <section t-if="not homepage_sections_ready or featured_section" t-attf-class="rl-home-featured rl-home-section-style-#{featured_section and featured_section.background_style or 'light'}" t-att-style="'--rl-section-bg:%s; --rl-section-bg-2:%s; --rl-section-text:%s; --rl-section-accent:%s; --rl-section-card-bg:%s;' % ((featured_section and featured_section.background_color) or '', (featured_section and featured_section.background_color_2) or '', (featured_section and featured_section.text_color) or '', (featured_section and featured_section.accent_color) or '', (featured_section and featured_section.card_background_color) or '')">
-                    <div class="rl-home-featured-glow" aria-hidden="true"></div>
-                    <div class="container position-relative">
-                        <div class="rl-home-section-head rl-home-featured-head">
-                            <div>
-                                <span class="rl-home-kicker text-sage" t-esc="(featured_section and featured_section.kicker) or 'Featured Pieces'"/>
-                                <h2 t-esc="(featured_section and featured_section.title) or 'Start with what your home needs'"/>
-                                <p t-if="not featured_section or featured_section.subtitle" t-esc="(featured_section and featured_section.subtitle) or 'Freshly selected furniture pieces with clear pricing, availability, and order tracking.'"/>
-                            </div>
-                            <a t-if="not featured_section or (featured_section.show_button and featured_section.button_label)" t-att-href="(featured_section and featured_section.button_url) or '/shop'" class="rl-home-link rl-home-featured-link">
-                                <t t-esc="(featured_section and featured_section.button_label) or 'View all products'"/>
-                                <i t-att-class="'fa ' + ((featured_section and featured_section.button_icon) or 'fa-arrow-right')"></i>
-                            </a>
-                        </div>
-                        <div t-if="featured_products and (not featured_section or featured_section.show_products)" class="row g-4 rl-home-product-grid">
-                            <div t-foreach="featured_products" t-as="product" class="col-12 col-sm-6 col-lg-3">
-                                <a t-att-href="product.website_url or ('/shop/product/%s' % product.id)" class="rl-home-product-card">
-                                    <div class="rl-home-product-image">
-                                        <span t-if="not featured_section or featured_section.show_status_badge" class="rl-home-product-status">
-                                            <i class="fa fa-check"></i>
-                                            <t t-esc="'Ready' if product.sudo().qty_available &gt; 0 else 'Order'"/>
-                                        </span>
-                                        <img t-att-src="'/web/image/product.template/%s/image_512' % product.id" t-att-alt="product.name" loading="lazy"/>
-                                    </div>
-                                    <div class="rl-home-product-body">
-                                        <span t-if="product.public_categ_ids" t-esc="product.public_categ_ids[0].name"/>
-                                        <h3 t-esc="product.name"/>
-                                        <div class="rl-home-product-meta">
-                                            <strong>
-                                                <t t-esc="product.currency_id.symbol or 'Rs.'"/>
-                                                <t t-esc="'%.2f' % product.list_price"/>
-                                            </strong>
-                                            <em><i class="fa fa-arrow-right"></i></em>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                        <div t-if="not featured_products and (not featured_section or featured_section.show_products)" class="rl-home-empty-products">
-                            <h3 t-esc="(featured_section and featured_section.empty_title) or 'Products will appear here when you publish them for Revive Lifestyle.'"/>
-                            <a t-att-href="(featured_section and featured_section.empty_button_url) or '/shop'" class="btn btn-primary" t-esc="(featured_section and featured_section.empty_button_label) or 'Go to Shop'"/>
-                        </div>
-                    </div>
-                </section>
+                <t t-if="homepage_sections_ready">
+                    <t t-foreach="homepage_sections" t-as="section">
+                        <t t-set="section_items" t-value="homepage_section_items_by_section.get(section.id)"/>
+                        <t t-set="section_products" t-value="featured_products_by_section.get(section.id)"/>
 
-                <section t-if="not homepage_sections_ready or process_section" t-attf-class="rl-home-process rl-home-section-style-#{process_section and process_section.background_style or 'sage'} rl-home-layout-#{process_section and process_section.layout or 'split'}" t-att-style="'--rl-section-bg:%s; --rl-section-bg-2:%s; --rl-section-text:%s; --rl-section-accent:%s; --rl-section-card-bg:%s;' % ((process_section and process_section.background_color) or '', (process_section and process_section.background_color_2) or '', (process_section and process_section.text_color) or '', (process_section and process_section.accent_color) or '', (process_section and process_section.card_background_color) or '')">
-                    <div class="container">
-                        <div t-attf-class="row g-4 align-items-center #{'flex-lg-row-reverse' if process_section and process_section.layout == 'reverse' else ''} #{'justify-content-center text-center' if process_section and process_section.layout == 'center' else ''}">
-                            <div class="col-12 col-lg-5">
-                                <span class="rl-home-kicker text-sage" t-esc="(process_section and process_section.kicker) or 'Order Confidence'"/>
-                                <h2 t-esc="(process_section and process_section.title) or 'Customers can follow every step'"/>
-                                <p t-esc="(process_section and process_section.subtitle) or 'Revive Lifestyle is built for furniture orders where customers care about progress. From order placed to build, packing, delivery, and invoice, the flow stays clear.'"/>
-                                <img t-if="process_section and process_section.image" class="rl-home-section-image" t-att-src="'/web/image/lifestyle.homepage.section/%s/image' % process_section.id" t-att-alt="process_section.title" loading="lazy"/>
-                            </div>
-                            <div t-if="not process_section or process_section.show_items" class="col-12 col-lg-7">
-                                <div class="rl-home-process-grid">
-                                    <t t-if="process_items">
-                                        <div t-foreach="process_items" t-as="item" t-att-style="'--rl-item-color:%s; --rl-item-bg:%s;' % (item.color or '', item.background_color or '')">
-                                            <img t-if="item.image" t-att-src="'/web/image/lifestyle.homepage.section.item/%s/image' % item.id" t-att-alt="item.title" loading="lazy"/>
-                                            <i t-if="item.icon" t-att-class="'fa ' + item.icon"></i>
-                                            <strong t-esc="item.title"/>
-                                            <span t-if="item.text" t-esc="item.text"/>
-                                        </div>
-                                    </t>
-                                    <t t-else="">
-                                        <div><i class="fa fa-shopping-bag"></i><strong>Order placed</strong><span>Customer chooses the product and quantity.</span></div>
-                                        <div><i class="fa fa-wrench"></i><strong>Build starts</strong><span>Vendor updates progress from their side.</span></div>
-                                        <div><i class="fa fa-camera"></i><strong>Photo updates</strong><span>Images, videos, and notes can be shared.</span></div>
-                                        <div><i class="fa fa-truck"></i><strong>Delivered</strong><span>The order reaches the customer with a clear record.</span></div>
-                                    </t>
+                        <section t-if="section.section_key == 'featured'" t-attf-class="rl-home-featured rl-home-section-style-#{section.background_style or 'light'}" t-att-style="'--rl-section-bg:%s; --rl-section-bg-2:%s; --rl-section-text:%s; --rl-section-accent:%s; --rl-section-card-bg:%s;' % (section.background_color or '', section.background_color_2 or '', section.text_color or '', section.accent_color or '', section.card_background_color or '')">
+                            <div class="rl-home-featured-glow" aria-hidden="true"></div>
+                            <div class="container position-relative">
+                                <div class="rl-home-section-head rl-home-featured-head">
+                                    <div>
+                                        <span t-if="section.kicker" class="rl-home-kicker text-sage" t-esc="section.kicker"/>
+                                        <h2 t-esc="section.title"/>
+                                        <p t-if="section.subtitle" t-esc="section.subtitle"/>
+                                    </div>
+                                    <a t-if="section.show_button and section.button_label" t-att-href="section.button_url or '/shop'" class="rl-home-link rl-home-featured-link">
+                                        <t t-esc="section.button_label"/>
+                                        <i t-if="section.button_icon" t-att-class="'fa ' + section.button_icon"></i>
+                                    </a>
+                                </div>
+                                <div t-if="section_products and section.show_products" class="row g-4 rl-home-product-grid">
+                                    <div t-foreach="section_products" t-as="product" class="col-12 col-sm-6 col-lg-3">
+                                        <a t-att-href="product.website_url or ('/shop/product/%s' % product.id)" class="rl-home-product-card">
+                                            <div class="rl-home-product-image">
+                                                <span t-if="section.show_status_badge" class="rl-home-product-status">
+                                                    <i class="fa fa-check"></i>
+                                                    <t t-esc="'Ready' if product.sudo().qty_available &gt; 0 else 'Order'"/>
+                                                </span>
+                                                <img t-att-src="'/web/image/product.template/%s/image_512' % product.id" t-att-alt="product.name" loading="lazy"/>
+                                            </div>
+                                            <div class="rl-home-product-body">
+                                                <span t-if="product.public_categ_ids" t-esc="product.public_categ_ids[0].name"/>
+                                                <h3 t-esc="product.name"/>
+                                                <div class="rl-home-product-meta">
+                                                    <strong>
+                                                        <t t-esc="product.currency_id.symbol or 'Rs.'"/>
+                                                        <t t-esc="'%.2f' % product.list_price"/>
+                                                    </strong>
+                                                    <em><i class="fa fa-arrow-right"></i></em>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div t-if="not section_products and section.show_products" class="rl-home-empty-products">
+                                    <h3 t-esc="section.empty_title or 'Products will appear here when you publish them for Revive Lifestyle.'"/>
+                                    <a t-att-href="section.empty_button_url or '/shop'" class="btn btn-primary" t-esc="section.empty_button_label or 'Go to Shop'"/>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                </section>
+                        </section>
 
-                <section t-if="not homepage_sections_ready or cta_section" t-attf-class="rl-home-cta rl-home-section-style-#{cta_section and cta_section.background_style or 'charcoal'}" t-att-style="'--rl-section-bg:%s; --rl-section-bg-2:%s; --rl-section-text:%s; --rl-section-accent:%s; --rl-section-card-bg:%s;' % ((cta_section and cta_section.background_color) or '', (cta_section and cta_section.background_color_2) or '', (cta_section and cta_section.text_color) or '', (cta_section and cta_section.accent_color) or '', (cta_section and cta_section.card_background_color) or '')">
-                    <div class="container">
-                        <div class="rl-home-cta-panel">
-                            <div class="rl-home-cta-copy">
-                                <span class="rl-home-kicker" t-esc="(cta_section and cta_section.kicker) or 'Need help choosing?'"/>
-                                <h2 t-esc="(cta_section and cta_section.title) or 'Tell us your room, color, and size.'"/>
-                                <p t-esc="(cta_section and cta_section.subtitle) or 'Share your space, preferred finish, and delivery questions. We will help you pick the next clear step.'"/>
-                                <div t-if="not cta_section or cta_section.show_items" class="rl-home-cta-proof">
-                                    <t t-if="cta_items">
-                                        <span t-foreach="cta_items" t-as="item" t-att-style="'--rl-item-color:%s; --rl-item-bg:%s;' % (item.color or '', item.background_color or '')"><i t-if="item.icon" t-att-class="'fa ' + item.icon"></i> <t t-esc="item.title"/></span>
-                                    </t>
-                                    <t t-else="">
-                                        <span><i class="fa fa-check"></i> Finish guidance</span>
-                                        <span><i class="fa fa-cube"></i> Size help</span>
-                                        <span><i class="fa fa-truck"></i> Delivery advice</span>
-                                    </t>
+                        <section t-if="section.section_key == 'process'" t-attf-class="rl-home-process rl-home-section-style-#{section.background_style or 'sage'} rl-home-layout-#{section.layout or 'split'}" t-att-style="'--rl-section-bg:%s; --rl-section-bg-2:%s; --rl-section-text:%s; --rl-section-accent:%s; --rl-section-card-bg:%s;' % (section.background_color or '', section.background_color_2 or '', section.text_color or '', section.accent_color or '', section.card_background_color or '')">
+                            <div class="container">
+                                <div t-attf-class="row g-4 align-items-center #{'flex-lg-row-reverse' if section.layout == 'reverse' else ''} #{'justify-content-center text-center' if section.layout == 'center' else ''}">
+                                    <div class="col-12 col-lg-5">
+                                        <span t-if="section.kicker" class="rl-home-kicker text-sage" t-esc="section.kicker"/>
+                                        <h2 t-esc="section.title"/>
+                                        <p t-if="section.subtitle" t-esc="section.subtitle"/>
+                                        <img t-if="section.image" class="rl-home-section-image" t-att-src="'/web/image/lifestyle.homepage.section/%s/image' % section.id" t-att-alt="section.title" loading="lazy"/>
+                                    </div>
+                                    <div t-if="section.show_items and section_items" class="col-12 col-lg-7">
+                                        <div class="rl-home-process-grid">
+                                            <div t-foreach="section_items" t-as="item" t-att-style="'--rl-item-color:%s; --rl-item-bg:%s;' % (item.color or '', item.background_color or '')">
+                                                <img t-if="item.image" t-att-src="'/web/image/lifestyle.homepage.section.item/%s/image' % item.id" t-att-alt="item.title" loading="lazy"/>
+                                                <i t-if="item.icon" t-att-class="'fa ' + item.icon"></i>
+                                                <strong t-esc="item.title"/>
+                                                <span t-if="item.text" t-esc="item.text"/>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="rl-home-cta-action">
-                                <img t-if="cta_section and cta_section.image" class="rl-home-cta-image" t-att-src="'/web/image/lifestyle.homepage.section/%s/image' % cta_section.id" t-att-alt="cta_section.title" loading="lazy"/>
-                                <div class="rl-home-cta-icon"><i t-att-class="'fa ' + ((cta_section and cta_section.button_icon) or 'fa-comments')"></i></div>
-                                <a t-if="not cta_section or (cta_section.show_button and cta_section.button_label)" t-att-href="(cta_section and cta_section.button_url) or '/contactus'" class="btn btn-primary btn-lg">
-                                    <t t-esc="(cta_section and cta_section.button_label) or 'Contact Us'"/>
-                                    <i t-att-class="'fa ' + ((cta_section and cta_section.button_icon) or 'fa-arrow-right')"></i>
-                                </a>
+                        </section>
+
+                        <section t-if="section.section_key == 'cta'" t-attf-class="rl-home-cta rl-home-section-style-#{section.background_style or 'charcoal'}" t-att-style="'--rl-section-bg:%s; --rl-section-bg-2:%s; --rl-section-text:%s; --rl-section-accent:%s; --rl-section-card-bg:%s;' % (section.background_color or '', section.background_color_2 or '', section.text_color or '', section.accent_color or '', section.card_background_color or '')">
+                            <div class="container">
+                                <div class="rl-home-cta-panel">
+                                    <div class="rl-home-cta-copy">
+                                        <span t-if="section.kicker" class="rl-home-kicker" t-esc="section.kicker"/>
+                                        <h2 t-esc="section.title"/>
+                                        <p t-if="section.subtitle" t-esc="section.subtitle"/>
+                                        <div t-if="section.show_items and section_items" class="rl-home-cta-proof">
+                                            <span t-foreach="section_items" t-as="item" t-att-style="'--rl-item-color:%s; --rl-item-bg:%s;' % (item.color or '', item.background_color or '')"><i t-if="item.icon" t-att-class="'fa ' + item.icon"></i> <t t-esc="item.title"/></span>
+                                        </div>
+                                    </div>
+                                    <div class="rl-home-cta-action">
+                                        <img t-if="section.image" class="rl-home-cta-image" t-att-src="'/web/image/lifestyle.homepage.section/%s/image' % section.id" t-att-alt="section.title" loading="lazy"/>
+                                        <div class="rl-home-cta-icon"><i t-att-class="'fa ' + (section.button_icon or 'fa-comments')"></i></div>
+                                        <a t-if="section.show_button and section.button_label" t-att-href="section.button_url or '/contactus'" class="btn btn-primary btn-lg">
+                                            <t t-esc="section.button_label"/>
+                                            <i t-if="section.button_icon" t-att-class="'fa ' + section.button_icon"></i>
+                                        </a>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                </section>
+                        </section>
+                    </t>
+                </t>
             </div>
         </t>
     </template>

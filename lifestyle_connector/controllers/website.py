@@ -15,6 +15,8 @@ class LifestyleWebsite(http.Controller):
         cta_section = request.env['ir.ui.view'].browse()
         process_items = request.env['ir.ui.view'].browse()
         cta_items = request.env['ir.ui.view'].browse()
+        homepage_section_items_by_section = {}
+        featured_products_by_section = {}
 
         if request.env.registry.get('lifestyle.homepage.slide'):
             homepage_slides = request.env['lifestyle.homepage.slide'].sudo().search([
@@ -27,15 +29,24 @@ class LifestyleWebsite(http.Controller):
             homepage_sections = request.env['lifestyle.homepage.section'].sudo().search([
                 ('active', '=', True),
             ], order='sequence, id')
-            featured_section = homepage_sections.filtered(lambda section: section.section_key == 'featured')[:1]
+            featured_sections = homepage_sections.filtered(lambda section: section.section_key == 'featured')
+            featured_section = featured_sections[:1]
             process_section = homepage_sections.filtered(lambda section: section.section_key == 'process')[:1]
             cta_section = homepage_sections.filtered(lambda section: section.section_key == 'cta')[:1]
-            if featured_section and featured_section.product_limit:
-                featured_limit = max(1, min(featured_section.product_limit, 12))
+            if featured_sections:
+                featured_limit = max(1, min(max(featured_sections.mapped('product_limit') or [4]), 12))
+            for section in homepage_sections:
+                homepage_section_items_by_section[section.id] = section.item_ids.filtered(lambda item: item.active).sorted('sequence')
+            for section in featured_sections:
+                section_limit = max(1, min(section.product_limit or 4, 12))
+                featured_products_by_section[section.id] = request.env['product.template'].sudo().search([
+                    ('sale_ok', '=', True),
+                    ('lifestyle_app_visible', '=', True),
+                ], order='store_sequence asc, id desc', limit=section_limit)
             if process_section:
-                process_items = process_section.item_ids.filtered(lambda item: item.active).sorted('sequence')
+                process_items = homepage_section_items_by_section.get(process_section.id, request.env['ir.ui.view'].browse())
             if cta_section:
-                cta_items = cta_section.item_ids.filtered(lambda item: item.active).sorted('sequence')
+                cta_items = homepage_section_items_by_section.get(cta_section.id, request.env['ir.ui.view'].browse())
 
         featured_products = request.env['product.template'].sudo().search([
             ('sale_ok', '=', True),
@@ -47,6 +58,8 @@ class LifestyleWebsite(http.Controller):
             'homepage_slides': homepage_slides,
             'homepage_sections': homepage_sections,
             'homepage_sections_ready': homepage_sections_ready,
+            'homepage_section_items_by_section': homepage_section_items_by_section,
+            'featured_products_by_section': featured_products_by_section,
             'featured_section': featured_section,
             'process_section': process_section,
             'process_items': process_items,

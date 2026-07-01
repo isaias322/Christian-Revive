@@ -218,25 +218,36 @@
                 </section>
 
                 <section class="rl-home-featured">
-                    <div class="container">
-                        <div class="rl-home-section-head">
-                            <span class="rl-home-kicker text-sage">Featured Pieces</span>
-                            <h2>Start with what your home needs</h2>
-                            <a href="/shop" class="rl-home-link">View all products <i class="fa fa-arrow-right"></i></a>
+                    <div class="rl-home-featured-glow" aria-hidden="true"></div>
+                    <div class="container position-relative">
+                        <div class="rl-home-section-head rl-home-featured-head">
+                            <div>
+                                <span class="rl-home-kicker text-sage">Featured Pieces</span>
+                                <h2>Start with what your home needs</h2>
+                                <p>Freshly selected furniture pieces with clear pricing, availability, and order tracking.</p>
+                            </div>
+                            <a href="/shop" class="rl-home-link rl-home-featured-link">View all products <i class="fa fa-arrow-right"></i></a>
                         </div>
-                        <div t-if="featured_products" class="row g-4">
+                        <div t-if="featured_products" class="row g-4 rl-home-product-grid">
                             <div t-foreach="featured_products" t-as="product" class="col-12 col-sm-6 col-lg-3">
                                 <a t-att-href="product.website_url or ('/shop/product/%s' % product.id)" class="rl-home-product-card">
                                     <div class="rl-home-product-image">
+                                        <span class="rl-home-product-status">
+                                            <i class="fa fa-check"></i>
+                                            <t t-esc="'Ready' if product.sudo().qty_available &gt; 0 else 'Order'"/>
+                                        </span>
                                         <img t-att-src="'/web/image/product.template/%s/image_512' % product.id" t-att-alt="product.name" loading="lazy"/>
                                     </div>
                                     <div class="rl-home-product-body">
                                         <span t-if="product.public_categ_ids" t-esc="product.public_categ_ids[0].name"/>
                                         <h3 t-esc="product.name"/>
-                                        <strong>
-                                            <t t-esc="product.currency_id.symbol or 'Rs.'"/>
-                                            <t t-esc="'%.2f' % product.list_price"/>
-                                        </strong>
+                                        <div class="rl-home-product-meta">
+                                            <strong>
+                                                <t t-esc="product.currency_id.symbol or 'Rs.'"/>
+                                                <t t-esc="'%.2f' % product.list_price"/>
+                                            </strong>
+                                            <em><i class="fa fa-arrow-right"></i></em>
+                                        </div>
                                     </div>
                                 </a>
                             </div>

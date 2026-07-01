@@ -795,6 +795,11 @@ a {
         display: block;
     }
 }
+/* Hide Odoo's default "30-day money-back / 2-3 Business Days" trust text on the product page. */
+#o_product_terms_and_share p.text-muted {
+    display: none !important;
+}
+
 /* Revive checkout polish */
 .oe_website_sale {
     background:

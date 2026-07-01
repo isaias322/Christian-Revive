@@ -140,26 +140,43 @@ function updateProductTotalPrice() {
     if (!quantityInput || !priceElement) return;
 
     const quantity = Math.max(1, parseFloat(quantityInput.value || '1') || 1);
-    if (!priceElement.dataset.rlUnitPrice) {
+    if (!quantityInput.dataset.rlUnitPrice) {
         const currentPrice = parseMoneyValue(priceElement.textContent);
-        priceElement.dataset.rlUnitPrice = String(currentPrice / quantity);
+        quantityInput.dataset.rlUnitPrice = String(currentPrice / quantity);
     }
 
-    const unitPrice = parseFloat(priceElement.dataset.rlUnitPrice || '0') || 0;
-    priceElement.textContent = formatMoneyValue(unitPrice * quantity);
+    const unitPrice = parseFloat(quantityInput.dataset.rlUnitPrice || '0') || 0;
+    const totalPrice = formatMoneyValue(unitPrice * quantity);
+    if (priceElement.textContent.trim() !== totalPrice) {
+        priceElement.textContent = totalPrice;
+    }
 }
 
 function setupProductQuantityPrice() {
     const quantityInput = getProductQuantityInput();
     if (!quantityInput) return;
 
+    const runPriceUpdate = () => {
+        updateProductTotalPrice();
+        window.setTimeout(updateProductTotalPrice, 60);
+        window.setTimeout(updateProductTotalPrice, 180);
+        window.setTimeout(updateProductTotalPrice, 420);
+    };
+
     updateProductTotalPrice();
-    quantityInput.addEventListener('input', updateProductTotalPrice);
-    quantityInput.addEventListener('change', updateProductTotalPrice);
+    quantityInput.addEventListener('input', runPriceUpdate);
+    quantityInput.addEventListener('change', runPriceUpdate);
 
     const quantityBox = quantityInput.closest('.css_quantity') || quantityInput.parentElement;
     if (quantityBox) {
-        quantityBox.addEventListener('click', () => window.setTimeout(updateProductTotalPrice, 40));
+        quantityBox.addEventListener('click', runPriceUpdate);
+    }
+
+    const priceElement = findProductPriceValueElement();
+    const priceContainer = priceElement?.closest('.product_price, .oe_price, #product_detail, #product_details');
+    if (priceContainer && 'MutationObserver' in window) {
+        const observer = new MutationObserver(() => window.requestAnimationFrame(updateProductTotalPrice));
+        observer.observe(priceContainer, { childList: true, characterData: true, subtree: true });
     }
 
 }

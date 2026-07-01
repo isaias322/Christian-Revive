@@ -285,12 +285,20 @@
                 <section class="rl-home-cta">
                     <div class="container">
                         <div class="rl-home-cta-panel">
-                            <div>
+                            <div class="rl-home-cta-copy">
                                 <span class="rl-home-kicker">Need help choosing?</span>
                                 <h2>Tell us your room, color, and size.</h2>
-                                <p>We can help with furniture questions before you order.</p>
+                                <p>Share your space, preferred finish, and delivery questions. We will help you pick the next clear step.</p>
+                                <div class="rl-home-cta-proof">
+                                    <span><i class="fa fa-check"></i> Finish guidance</span>
+                                    <span><i class="fa fa-cube"></i> Size help</span>
+                                    <span><i class="fa fa-truck"></i> Delivery advice</span>
+                                </div>
                             </div>
-                            <a href="/contactus" class="btn btn-primary btn-lg">Contact Us</a>
+                            <div class="rl-home-cta-action">
+                                <div class="rl-home-cta-icon"><i class="fa fa-comments"></i></div>
+                                <a href="/contactus" class="btn btn-primary btn-lg">Contact Us <i class="fa fa-arrow-right"></i></a>
+                            </div>
                         </div>
                     </div>
                 </section>

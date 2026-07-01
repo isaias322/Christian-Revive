@@ -195,15 +195,27 @@ function setupHomepageHeroSlider() {
     let timer = null;
     activeIndex = activeIndex >= 0 ? activeIndex : 0;
 
+    function paintDots() {
+        dots.forEach((dot, dotIndex) => {
+            const isActive = dotIndex === activeIndex;
+            dot.removeAttribute('aria-current');
+            dot.style.width = isActive ? '2rem' : '0.62rem';
+            dot.style.height = '0.62rem';
+            dot.style.borderRadius = '999px';
+            dot.style.background = isActive ? '#D9B777' : 'rgba(255, 253, 249, 0.42)';
+            dot.style.boxShadow = 'none';
+            dot.style.outline = '0';
+            if (isActive) {
+                dot.setAttribute('aria-current', 'true');
+            }
+        });
+    }
+
     function showSlide(index) {
         activeIndex = (index + slides.length) % slides.length;
         slides.forEach((slide) => slide.classList.remove('is-active'));
-        dots.forEach((dot) => {
-            dot.removeAttribute('aria-current');
-        });
-
         slides[activeIndex]?.classList.add('is-active');
-        dots[activeIndex]?.setAttribute('aria-current', 'true');
+        paintDots();
     }
 
     function startAutoplay() {
@@ -230,6 +242,10 @@ function setupHomepageHeroSlider() {
     });
 
     dots.forEach((dot) => {
+        dot.addEventListener('focus', paintDots);
+        dot.addEventListener('blur', paintDots);
+        dot.addEventListener('mouseenter', paintDots);
+        dot.addEventListener('mouseleave', paintDots);
         dot.addEventListener('click', () => {
             const index = parseInt(dot.dataset.rlHomeDot || '0', 10);
             stopAutoplay();
@@ -244,12 +260,25 @@ function setupHomepageHeroSlider() {
     startAutoplay();
 }
 
+function setupSaveForLaterRedirect() {
+    if (!window.location.pathname.startsWith('/shop/cart')) return;
+    document.addEventListener('click', function (e) {
+        if (!e.target.closest('.o_add_wishlist.js_delete_product')) return;
+        // Odoo's handlers (add to wishlist + remove from cart) run async via RPC.
+        // Wait for them to finish, then navigate to the wishlist page.
+        window.setTimeout(function () {
+            window.location.href = '/shop/wishlist';
+        }, 900);
+    });
+}
+
 function enhanceWebsite() {
     document.documentElement.classList.add('rl-site-ready');
     markShopPage();
     keepShopClean();
     setupProductQuantityPrice();
     setupHomepageHeroSlider();
+    setupSaveForLaterRedirect();
     const targets = prepareRevealTargets();
     setupRevealObserver(targets);
 }

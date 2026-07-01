@@ -163,11 +163,75 @@ function setupProductQuantityPrice() {
     }
 
 }
+
+function setupHomepageHeroSlider() {
+    const slider = document.querySelector('[data-rl-home-slider]');
+    if (!slider) return;
+
+    const slides = Array.from(slider.querySelectorAll('.rl-home-hero-content-slide'));
+    if (slides.length <= 1) return;
+
+    const prevButton = slider.querySelector('[data-rl-home-prev]');
+    const nextButton = slider.querySelector('[data-rl-home-next]');
+    const dots = Array.from(slider.querySelectorAll('[data-rl-home-dot]'));
+    let activeIndex = slides.findIndex((slide) => slide.classList.contains('is-active'));
+    let timer = null;
+    activeIndex = activeIndex >= 0 ? activeIndex : 0;
+
+    function showSlide(index) {
+        activeIndex = (index + slides.length) % slides.length;
+        slides.forEach((slide, slideIndex) => {
+            slide.classList.toggle('is-active', slideIndex === activeIndex);
+        });
+        dots.forEach((dot, dotIndex) => {
+            dot.classList.toggle('is-active', dotIndex === activeIndex);
+        });
+    }
+
+    function startAutoplay() {
+        if (reduceMotion || timer) return;
+        timer = window.setInterval(() => showSlide(activeIndex + 1), 7000);
+    }
+
+    function stopAutoplay() {
+        if (!timer) return;
+        window.clearInterval(timer);
+        timer = null;
+    }
+
+    prevButton?.addEventListener('click', () => {
+        stopAutoplay();
+        showSlide(activeIndex - 1);
+        startAutoplay();
+    });
+
+    nextButton?.addEventListener('click', () => {
+        stopAutoplay();
+        showSlide(activeIndex + 1);
+        startAutoplay();
+    });
+
+    dots.forEach((dot) => {
+        dot.addEventListener('click', () => {
+            const index = parseInt(dot.dataset.rlHomeDot || '0', 10);
+            stopAutoplay();
+            showSlide(index);
+            startAutoplay();
+        });
+    });
+
+    slider.addEventListener('mouseenter', stopAutoplay);
+    slider.addEventListener('mouseleave', startAutoplay);
+    showSlide(activeIndex);
+    startAutoplay();
+}
+
 function enhanceWebsite() {
     document.documentElement.classList.add('rl-site-ready');
     markShopPage();
     keepShopClean();
     setupProductQuantityPrice();
+    setupHomepageHeroSlider();
     const targets = prepareRevealTargets();
     setupRevealObserver(targets);
 }

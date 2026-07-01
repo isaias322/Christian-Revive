@@ -1,4 +1,4 @@
-﻿from . import fcm_sender
+from . import fcm_sender
 from . import device_token
 from . import attachment_token
 from . import vendor_session
@@ -8,10 +8,10 @@ from . import product_review
 from . import product_color_image
 from . import product_template
 from . import app_banner
+from . import homepage_slide
 from . import hr_employee
 from . import wishlist_item
 from . import attachment_stage
 from . import website
 from . import stock_notification
-
 

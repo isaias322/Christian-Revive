@@ -164,129 +164,55 @@
     <template id="lifestyle_homepage_direct_page" name="Revive Lifestyle Home Page">
         <t t-call="website.layout">
             <div id="wrap" class="oe_structure rl-home-page">
-                <section class="rl-home-hero">
-                    <div class="rl-home-hero-bg" aria-hidden="true">
-                        <span class="rl-home-hero-scene rl-home-hero-scene-one"></span>
-                        <span class="rl-home-hero-scene rl-home-hero-scene-two"></span>
-                        <span class="rl-home-hero-scene rl-home-hero-scene-three"></span>
-                    </div>
+                <section class="rl-home-hero rl-home-hero--dynamic" data-rl-home-slider="1">
+                    <div class="rl-home-hero-bg" aria-hidden="true"></div>
                     <div class="rl-home-hero-track">
-                        <div class="container position-relative rl-home-hero-content-slide">
+                        <div t-foreach="homepage_slides" t-as="slide" t-att-class="'container position-relative rl-home-hero-content-slide rl-home-hero-style-' + (slide.background_style or 'charcoal') + (' is-active' if slide_index == 0 else '')" t-att-data-rl-slide-index="slide_index">
+                            <div t-if="slide.image" class="rl-home-slide-image-bg" t-attf-style="background-image: linear-gradient(90deg, rgba(37, 40, 33, 0.92), rgba(37, 40, 33, 0.72)), url('/web/image/lifestyle.homepage.slide/#{slide.id}/image');"></div>
                             <div class="row align-items-center g-5">
                                 <div class="col-12 col-lg-6">
-                                    <span class="rl-home-kicker">Revive Lifestyle Furniture</span>
-                                    <h1>Furniture made for real homes</h1>
-                                    <p>
-                                        Shop furniture pieces, choose the right finish, and follow your order from build
-                                        to packing and delivery with clear progress updates.
-                                    </p>
+                                    <span class="rl-home-kicker" t-esc="slide.kicker"/>
+                                    <h1 t-esc="slide.title"/>
+                                    <p t-if="slide.subtitle" t-esc="slide.subtitle"/>
                                     <div class="rl-home-actions">
-                                        <a href="/shop" class="btn btn-primary btn-lg">Shop Furniture</a>
-                                        <a href="/contactus" class="btn btn-outline-light btn-lg">Ask a Question</a>
+                                        <a t-if="slide.primary_button_label" t-att-href="slide.primary_button_url or '/shop'" class="btn btn-primary btn-lg" t-esc="slide.primary_button_label"/>
+                                        <a t-if="slide.secondary_button_label" t-att-href="slide.secondary_button_url or '/contactus'" class="btn btn-outline-light btn-lg" t-esc="slide.secondary_button_label"/>
                                     </div>
                                     <div class="rl-home-trust-row">
-                                        <span><i class="fa fa-check"></i> Build tracking</span>
-                                        <span><i class="fa fa-camera"></i> Workshop updates</span>
-                                        <span><i class="fa fa-truck"></i> Delivery support</span>
+                                        <span t-if="slide.trust_1_text"><i t-att-class="'fa ' + (slide.trust_1_icon or 'fa-check')"></i> <t t-esc="slide.trust_1_text"/></span>
+                                        <span t-if="slide.trust_2_text"><i t-att-class="'fa ' + (slide.trust_2_icon or 'fa-camera')"></i> <t t-esc="slide.trust_2_text"/></span>
+                                        <span t-if="slide.trust_3_text"><i t-att-class="'fa ' + (slide.trust_3_icon or 'fa-truck')"></i> <t t-esc="slide.trust_3_text"/></span>
                                     </div>
                                 </div>
                                 <div class="col-12 col-lg-6">
                                     <div class="rl-home-showcase">
                                         <div class="rl-home-showcase-card rl-home-showcase-main">
+                                            <img t-if="slide.image" class="rl-home-card-image" t-att-src="'/web/image/lifestyle.homepage.slide/%s/image' % slide.id" t-att-alt="slide.title" loading="lazy"/>
                                             <span class="rl-home-room-line"></span>
-                                            <i class="fa fa-home"></i>
-                                            <h3>Designed around your room</h3>
-                                            <p>Browse beds, tables, sofas, desks, and home pieces with details before you order.</p>
+                                            <i t-att-class="'fa ' + (slide.card_icon or 'fa-home')"></i>
+                                            <h3 t-esc="slide.card_title or slide.title"/>
+                                            <p t-if="slide.card_text" t-esc="slide.card_text"/>
                                         </div>
-                                        <div class="rl-home-floating-card rl-home-floating-one">
-                                            <strong>50%</strong>
-                                            <span>Build progress</span>
+                                        <div class="rl-home-floating-card rl-home-floating-one" t-if="slide.badge_1_value or slide.badge_1_label">
+                                            <strong t-if="slide.badge_1_value" t-esc="slide.badge_1_value"/>
+                                            <span t-if="slide.badge_1_label" t-esc="slide.badge_1_label"/>
                                         </div>
-                                        <div class="rl-home-floating-card rl-home-floating-two">
-                                            <i class="fa fa-bell"></i>
-                                            <span>Vendor updates</span>
+                                        <div class="rl-home-floating-card rl-home-floating-two" t-if="slide.badge_2_icon or slide.badge_2_label">
+                                            <i t-if="slide.badge_2_icon" t-att-class="'fa ' + slide.badge_2_icon"></i>
+                                            <span t-if="slide.badge_2_label" t-esc="slide.badge_2_label"/>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="container position-relative rl-home-hero-content-slide">
-                            <div class="row align-items-center g-5">
-                                <div class="col-12 col-lg-6">
-                                    <span class="rl-home-kicker">Built With Confidence</span>
-                                    <h1>Track every step from workshop to home</h1>
-                                    <p>
-                                        See when your furniture build starts, when it moves into packing, and when it is
-                                        ready for delivery.
-                                    </p>
-                                    <div class="rl-home-actions">
-                                        <a href="/shop" class="btn btn-primary btn-lg">Browse Pieces</a>
-                                        <a href="/contactus" class="btn btn-outline-light btn-lg">Delivery Help</a>
-                                    </div>
-                                    <div class="rl-home-trust-row">
-                                        <span><i class="fa fa-wrench"></i> Build stages</span>
-                                        <span><i class="fa fa-clock-o"></i> Live progress</span>
-                                        <span><i class="fa fa-check"></i> Clear handoff</span>
-                                    </div>
-                                </div>
-                                <div class="col-12 col-lg-6">
-                                    <div class="rl-home-showcase">
-                                        <div class="rl-home-showcase-card rl-home-showcase-main">
-                                            <span class="rl-home-room-line"></span>
-                                            <i class="fa fa-wrench"></i>
-                                            <h3>Follow every build stage</h3>
-                                            <p>Track build started, packing, delivery, and final handoff with clear updates.</p>
-                                        </div>
-                                        <div class="rl-home-floating-card rl-home-floating-one">
-                                            <strong>4</strong>
-                                            <span>Active stages</span>
-                                        </div>
-                                        <div class="rl-home-floating-card rl-home-floating-two">
-                                            <i class="fa fa-truck"></i>
-                                            <span>Delivery ready</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="container position-relative rl-home-hero-content-slide">
-                            <div class="row align-items-center g-5">
-                                <div class="col-12 col-lg-6">
-                                    <span class="rl-home-kicker">Workshop Updates</span>
-                                    <h1>Photos and notes before delivery</h1>
-                                    <p>
-                                        Vendors can send photos, videos, and comments so customers know exactly what is
-                                        happening with their order.
-                                    </p>
-                                    <div class="rl-home-actions">
-                                        <a href="/shop" class="btn btn-primary btn-lg">Shop Furniture</a>
-                                        <a href="/contactus" class="btn btn-outline-light btn-lg">Talk to Us</a>
-                                    </div>
-                                    <div class="rl-home-trust-row">
-                                        <span><i class="fa fa-camera"></i> Photo updates</span>
-                                        <span><i class="fa fa-play"></i> Video notes</span>
-                                        <span><i class="fa fa-bell"></i> Vendor alerts</span>
-                                    </div>
-                                </div>
-                                <div class="col-12 col-lg-6">
-                                    <div class="rl-home-showcase">
-                                        <div class="rl-home-showcase-card rl-home-showcase-main">
-                                            <span class="rl-home-room-line"></span>
-                                            <i class="fa fa-camera"></i>
-                                            <h3>See real workshop updates</h3>
-                                            <p>Photos, videos, and vendor notes keep every customer confident before delivery.</p>
-                                        </div>
-                                        <div class="rl-home-floating-card rl-home-floating-one">
-                                            <strong>New</strong>
-                                            <span>Photo sent</span>
-                                        </div>
-                                        <div class="rl-home-floating-card rl-home-floating-two">
-                                            <i class="fa fa-comment"></i>
-                                            <span>Vendor note</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                        <button t-if="len(homepage_slides) > 1" type="button" class="rl-home-arrow rl-home-arrow-prev" data-rl-home-prev="1" aria-label="Previous homepage slide">
+                            <i class="fa fa-chevron-left"></i>
+                        </button>
+                        <button t-if="len(homepage_slides) > 1" type="button" class="rl-home-arrow rl-home-arrow-next" data-rl-home-next="1" aria-label="Next homepage slide">
+                            <i class="fa fa-chevron-right"></i>
+                        </button>
+                        <div t-if="len(homepage_slides) > 1" class="rl-home-hero-dots" aria-label="Homepage slide controls">
+                            <button t-foreach="homepage_slides" t-as="slide_dot" type="button" t-att-class="'rl-home-hero-dot' + (' is-active' if slide_dot_index == 0 else '')" t-att-data-rl-home-dot="slide_dot_index" t-att-aria-label="'Go to slide %s' % (slide_dot_index + 1)"></button>
                         </div>
                     </div>
                 </section>

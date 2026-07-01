@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_lifestyle_homepage_slide_list" model="ir.ui.view">
+        <field name="name">lifestyle.homepage.slide.list</field>
+        <field name="model">lifestyle.homepage.slide</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="title"/>
+                <field name="background_style"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_lifestyle_homepage_slide_form" model="ir.ui.view">
+        <field name="name">lifestyle.homepage.slide.form</field>
+        <field name="model">lifestyle.homepage.slide</field>
+        <field name="arch" type="xml">
+            <form string="Homepage Hero Slide">
+                <sheet>
+                    <group>
+                        <group string="Slide Content">
+                            <field name="active"/>
+                            <field name="sequence"/>
+                            <field name="name"/>
+                            <field name="kicker"/>
+                            <field name="title"/>
+                            <field name="subtitle"/>
+                            <field name="background_style"/>
+                        </group>
+                        <group string="Hero Image">
+                            <field name="image" widget="image" class="oe_avatar"/>
+                        </group>
+                    </group>
+                    <group string="Buttons" col="2">
+                        <group>
+                            <field name="primary_button_label"/>
+                            <field name="primary_button_url"/>
+                        </group>
+                        <group>
+                            <field name="secondary_button_label"/>
+                            <field name="secondary_button_url"/>
+                        </group>
+                    </group>
+                    <group string="Small Feature Chips" col="3">
+                        <group>
+                            <field name="trust_1_icon"/>
+                            <field name="trust_1_text"/>
+                        </group>
+                        <group>
+                            <field name="trust_2_icon"/>
+                            <field name="trust_2_text"/>
+                        </group>
+                        <group>
+                            <field name="trust_3_icon"/>
+                            <field name="trust_3_text"/>
+                        </group>
+                    </group>
+                    <group string="Right Card" col="2">
+                        <group>
+                            <field name="card_icon"/>
+                            <field name="card_title"/>
+                            <field name="card_text"/>
+                        </group>
+                        <group>
+                            <field name="badge_1_value"/>
+                            <field name="badge_1_label"/>
+                            <field name="badge_2_icon"/>
+                            <field name="badge_2_label"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_lifestyle_homepage_slide" model="ir.actions.act_window">
+        <field name="name">Homepage Slides</field>
+        <field name="res_model">lifestyle.homepage.slide</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_lifestyle_homepage_slide"
+              name="Homepage Slides"
+              parent="sale.sale_menu_root"
+              action="action_lifestyle_homepage_slide"
+              sequence="94"/>
+</odoo>

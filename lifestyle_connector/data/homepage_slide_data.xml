@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="homepage_slide_furniture" model="lifestyle.homepage.slide">
+        <field name="sequence">1</field>
+        <field name="name">Furniture Hero</field>
+        <field name="kicker">Revive Lifestyle Furniture</field>
+        <field name="title">Furniture made for real homes</field>
+        <field name="subtitle">Shop furniture pieces, choose the right finish, and follow your order from build to packing and delivery with clear progress updates.</field>
+        <field name="primary_button_label">Shop Furniture</field>
+        <field name="primary_button_url">/shop</field>
+        <field name="secondary_button_label">Ask a Question</field>
+        <field name="secondary_button_url">/contactus</field>
+        <field name="trust_1_icon">fa-check</field>
+        <field name="trust_1_text">Build tracking</field>
+        <field name="trust_2_icon">fa-camera</field>
+        <field name="trust_2_text">Workshop updates</field>
+        <field name="trust_3_icon">fa-truck</field>
+        <field name="trust_3_text">Delivery support</field>
+        <field name="card_icon">fa-home</field>
+        <field name="card_title">Designed around your room</field>
+        <field name="card_text">Browse beds, tables, sofas, desks, and home pieces with details before you order.</field>
+        <field name="badge_1_value">50%</field>
+        <field name="badge_1_label">Build progress</field>
+        <field name="badge_2_icon">fa-bell</field>
+        <field name="badge_2_label">Vendor updates</field>
+        <field name="background_style">charcoal</field>
+    </record>
+
+    <record id="homepage_slide_tracking" model="lifestyle.homepage.slide">
+        <field name="sequence">2</field>
+        <field name="name">Build Tracking Hero</field>
+        <field name="kicker">Built With Confidence</field>
+        <field name="title">Track every step from workshop to home</field>
+        <field name="subtitle">See when your furniture build starts, when it moves into packing, and when it is ready for delivery.</field>
+        <field name="primary_button_label">Browse Pieces</field>
+        <field name="primary_button_url">/shop</field>
+        <field name="secondary_button_label">Delivery Help</field>
+        <field name="secondary_button_url">/contactus</field>
+        <field name="trust_1_icon">fa-wrench</field>
+        <field name="trust_1_text">Build stages</field>
+        <field name="trust_2_icon">fa-clock-o</field>
+        <field name="trust_2_text">Live progress</field>
+        <field name="trust_3_icon">fa-check</field>
+        <field name="trust_3_text">Clear handoff</field>
+        <field name="card_icon">fa-wrench</field>
+        <field name="card_title">Follow every build stage</field>
+        <field name="card_text">Track build started, packing, delivery, and final handoff with clear updates.</field>
+        <field name="badge_1_value">4</field>
+        <field name="badge_1_label">Active stages</field>
+        <field name="badge_2_icon">fa-truck</field>
+        <field name="badge_2_label">Delivery ready</field>
+        <field name="background_style">sage</field>
+    </record>
+
+    <record id="homepage_slide_updates" model="lifestyle.homepage.slide">
+        <field name="sequence">3</field>
+        <field name="name">Workshop Updates Hero</field>
+        <field name="kicker">Workshop Updates</field>
+        <field name="title">Photos and notes before delivery</field>
+        <field name="subtitle">Vendors can send photos, videos, and comments so customers know exactly what is happening with their order.</field>
+        <field name="primary_button_label">Shop Furniture</field>
+        <field name="primary_button_url">/shop</field>
+        <field name="secondary_button_label">Talk to Us</field>
+        <field name="secondary_button_url">/contactus</field>
+        <field name="trust_1_icon">fa-camera</field>
+        <field name="trust_1_text">Photo updates</field>
+        <field name="trust_2_icon">fa-play</field>
+        <field name="trust_2_text">Video notes</field>
+        <field name="trust_3_icon">fa-bell</field>
+        <field name="trust_3_text">Vendor alerts</field>
+        <field name="card_icon">fa-camera</field>
+        <field name="card_title">See real workshop updates</field>
+        <field name="card_text">Photos, videos, and vendor notes keep every customer confident before delivery.</field>
+        <field name="badge_1_value">New</field>
+        <field name="badge_1_label">Photo sent</field>
+        <field name="badge_2_icon">fa-comment</field>
+        <field name="badge_2_label">Vendor note</field>
+        <field name="background_style">olive</field>
+    </record>
+</odoo>

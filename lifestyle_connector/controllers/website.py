@@ -12,8 +12,12 @@ class LifestyleWebsite(http.Controller):
             ('sale_ok', '=', True),
             ('lifestyle_app_visible', '=', True),
         ], order='store_sequence asc, id desc', limit=4)
+        homepage_slides = request.env['lifestyle.homepage.slide'].sudo().search([
+            ('active', '=', True),
+        ], order='sequence, id')
         return request.render('lifestyle_connector.lifestyle_homepage_direct_page', {
             'featured_products': featured_products,
+            'homepage_slides': homepage_slides,
         })
 
     @http.route(['/contactus', '/contact-us'], type='http', auth='public', website=True, sitemap=True)

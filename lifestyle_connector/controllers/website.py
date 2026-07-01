@@ -8,18 +8,50 @@ class LifestyleWebsite(http.Controller):
 
     @http.route('/', type='http', auth='public', website=True, sitemap=True)
     def homepage(self, **kwargs):
-        featured_products = request.env['product.template'].sudo().search([
-            ('sale_ok', '=', True),
-            ('lifestyle_app_visible', '=', True),
-        ], order='store_sequence asc, id desc', limit=4)
         homepage_slides = request.env['ir.ui.view'].browse()
+        homepage_sections = request.env['ir.ui.view'].browse()
+        featured_section = request.env['ir.ui.view'].browse()
+        process_section = request.env['ir.ui.view'].browse()
+        cta_section = request.env['ir.ui.view'].browse()
+        process_items = request.env['ir.ui.view'].browse()
+        cta_items = request.env['ir.ui.view'].browse()
+
         if request.env.registry.get('lifestyle.homepage.slide'):
             homepage_slides = request.env['lifestyle.homepage.slide'].sudo().search([
                 ('active', '=', True),
             ], order='sequence, id')
+
+        featured_limit = 4
+        homepage_sections_ready = bool(request.env.registry.get('lifestyle.homepage.section'))
+        if homepage_sections_ready:
+            homepage_sections = request.env['lifestyle.homepage.section'].sudo().search([
+                ('active', '=', True),
+            ], order='sequence, id')
+            featured_section = homepage_sections.filtered(lambda section: section.section_key == 'featured')[:1]
+            process_section = homepage_sections.filtered(lambda section: section.section_key == 'process')[:1]
+            cta_section = homepage_sections.filtered(lambda section: section.section_key == 'cta')[:1]
+            if featured_section and featured_section.product_limit:
+                featured_limit = max(1, min(featured_section.product_limit, 12))
+            if process_section:
+                process_items = process_section.item_ids.filtered(lambda item: item.active).sorted('sequence')
+            if cta_section:
+                cta_items = cta_section.item_ids.filtered(lambda item: item.active).sorted('sequence')
+
+        featured_products = request.env['product.template'].sudo().search([
+            ('sale_ok', '=', True),
+            ('lifestyle_app_visible', '=', True),
+        ], order='store_sequence asc, id desc', limit=featured_limit)
+
         return request.render('lifestyle_connector.lifestyle_homepage_direct_page', {
             'featured_products': featured_products,
             'homepage_slides': homepage_slides,
+            'homepage_sections': homepage_sections,
+            'homepage_sections_ready': homepage_sections_ready,
+            'featured_section': featured_section,
+            'process_section': process_section,
+            'process_items': process_items,
+            'cta_section': cta_section,
+            'cta_items': cta_items,
         })
 
     @http.route(['/contactus', '/contact-us'], type='http', auth='public', website=True, sitemap=True)

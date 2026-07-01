@@ -8,14 +8,16 @@
         Revive Homepage Slider
         ======================
         Reusable website hero slides with editable images, text, buttons,
-        feature chips, right-card content, and background styles.
+        feature chips, right-card content, background styles, and editable homepage sections.
     """,
     'author': 'Revive Lifestyle',
     'depends': ['base', 'website'],
     'data': [
         'security/ir.model.access.csv',
         'views/homepage_slide_views.xml',
+        'views/homepage_section_views.xml',
         'data/homepage_slide_data.xml',
+        'data/homepage_section_data.xml',
     ],
     'installable': True,
     'application': True,

@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="homepage_section_featured" model="lifestyle.homepage.section">
+        <field name="sequence">10</field>
+        <field name="section_key">featured</field>
+        <field name="name">Featured Products</field>
+        <field name="kicker">Featured Pieces</field>
+        <field name="title">Start with what your home needs</field>
+        <field name="subtitle">Freshly selected furniture pieces with clear pricing, availability, and order tracking.</field>
+        <field name="button_label">View all products</field>
+        <field name="button_url">/shop</field>
+        <field name="button_icon">fa-arrow-right</field>
+        <field name="product_limit">4</field>
+        <field name="background_style">light</field>
+        <field name="accent_color">#5C7050</field>
+    </record>
+
+    <record id="homepage_section_process" model="lifestyle.homepage.section">
+        <field name="sequence">20</field>
+        <field name="section_key">process</field>
+        <field name="name">Order Process</field>
+        <field name="kicker">Order Confidence</field>
+        <field name="title">Customers can follow every step</field>
+        <field name="subtitle">Revive Lifestyle is built for furniture orders where customers care about progress. From order placed to build, packing, delivery, and invoice, the flow stays clear.</field>
+        <field name="background_style">sage</field>
+        <field name="accent_color">#5C7050</field>
+    </record>
+
+    <record id="homepage_process_item_order" model="lifestyle.homepage.section.item">
+        <field name="section_id" ref="homepage_section_process"/>
+        <field name="sequence">10</field>
+        <field name="item_style">card</field>
+        <field name="icon">fa-shopping-bag</field>
+        <field name="title">Order placed</field>
+        <field name="text">Customer chooses the product and quantity.</field>
+    </record>
+
+    <record id="homepage_process_item_build" model="lifestyle.homepage.section.item">
+        <field name="section_id" ref="homepage_section_process"/>
+        <field name="sequence">20</field>
+        <field name="item_style">card</field>
+        <field name="icon">fa-wrench</field>
+        <field name="title">Build starts</field>
+        <field name="text">Vendor updates progress from their side.</field>
+    </record>
+
+    <record id="homepage_process_item_photo" model="lifestyle.homepage.section.item">
+        <field name="section_id" ref="homepage_section_process"/>
+        <field name="sequence">30</field>
+        <field name="item_style">card</field>
+        <field name="icon">fa-camera</field>
+        <field name="title">Photo updates</field>
+        <field name="text">Images, videos, and notes can be shared.</field>
+    </record>
+
+    <record id="homepage_process_item_delivery" model="lifestyle.homepage.section.item">
+        <field name="section_id" ref="homepage_section_process"/>
+        <field name="sequence">40</field>
+        <field name="item_style">card</field>
+        <field name="icon">fa-truck</field>
+        <field name="title">Delivered</field>
+        <field name="text">The order reaches the customer with a clear record.</field>
+    </record>
+
+    <record id="homepage_section_cta" model="lifestyle.homepage.section">
+        <field name="sequence">30</field>
+        <field name="section_key">cta</field>
+        <field name="name">Homepage Contact CTA</field>
+        <field name="kicker">Need help choosing?</field>
+        <field name="title">Tell us your room, color, and size.</field>
+        <field name="subtitle">Share your space, preferred finish, and delivery questions. We will help you pick the next clear step.</field>
+        <field name="button_label">Contact Us</field>
+        <field name="button_url">/contactus</field>
+        <field name="button_icon">fa-arrow-right</field>
+        <field name="background_style">charcoal</field>
+        <field name="accent_color">#D9B777</field>
+        <field name="card_background_color">rgba(255, 253, 249, 0.08)</field>
+    </record>
+
+    <record id="homepage_cta_item_finish" model="lifestyle.homepage.section.item">
+        <field name="section_id" ref="homepage_section_cta"/>
+        <field name="sequence">10</field>
+        <field name="item_style">chip</field>
+        <field name="icon">fa-check</field>
+        <field name="title">Finish guidance</field>
+    </record>
+
+    <record id="homepage_cta_item_size" model="lifestyle.homepage.section.item">
+        <field name="section_id" ref="homepage_section_cta"/>
+        <field name="sequence">20</field>
+        <field name="item_style">chip</field>
+        <field name="icon">fa-cube</field>
+        <field name="title">Size help</field>
+    </record>
+
+    <record id="homepage_cta_item_delivery" model="lifestyle.homepage.section.item">
+        <field name="section_id" ref="homepage_section_cta"/>
+        <field name="sequence">30</field>
+        <field name="item_style">chip</field>
+        <field name="icon">fa-truck</field>
+        <field name="title">Delivery advice</field>
+    </record>
+</odoo>

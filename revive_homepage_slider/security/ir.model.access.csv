@@ -1,3 +1,7 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_revive_homepage_slide_user,revive.homepage.slide.user,model_lifestyle_homepage_slide,base.group_user,1,1,1,1
 access_revive_homepage_slide_read_all,revive.homepage.slide.read.all,model_lifestyle_homepage_slide,,1,0,0,0
+access_revive_homepage_section_user,revive.homepage.section.user,model_lifestyle_homepage_section,base.group_user,1,1,1,1
+access_revive_homepage_section_read_all,revive.homepage.section.read.all,model_lifestyle_homepage_section,,1,0,0,0
+access_revive_homepage_section_item_user,revive.homepage.section.item.user,model_lifestyle_homepage_section_item,base.group_user,1,1,1,1
+access_revive_homepage_section_item_read_all,revive.homepage.section.item.read.all,model_lifestyle_homepage_section_item,,1,0,0,0

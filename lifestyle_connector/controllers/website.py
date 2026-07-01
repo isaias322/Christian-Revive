@@ -12,9 +12,11 @@ class LifestyleWebsite(http.Controller):
             ('sale_ok', '=', True),
             ('lifestyle_app_visible', '=', True),
         ], order='store_sequence asc, id desc', limit=4)
-        homepage_slides = request.env['lifestyle.homepage.slide'].sudo().search([
-            ('active', '=', True),
-        ], order='sequence, id')
+        homepage_slides = request.env['ir.ui.view'].browse()
+        if request.env.registry.get('lifestyle.homepage.slide'):
+            homepage_slides = request.env['lifestyle.homepage.slide'].sudo().search([
+                ('active', '=', True),
+            ], order='sequence, id')
         return request.render('lifestyle_connector.lifestyle_homepage_direct_page', {
             'featured_products': featured_products,
             'homepage_slides': homepage_slides,
@@ -65,5 +67,3 @@ class LifestyleWebsiteSale(WebsiteSale):
             invalid_fields.discard(field_name)
         elif field_name in invalid_fields:
             invalid_fields.remove(field_name)
-
-

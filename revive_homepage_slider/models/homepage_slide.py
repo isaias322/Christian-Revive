@@ -2,9 +2,9 @@
 from odoo import fields, models
 
 
-class LifestyleHomepageSlide(models.Model):
+class ReviveHomepageSlide(models.Model):
     _name = 'lifestyle.homepage.slide'
-    _description = 'Revive Lifestyle Homepage Hero Slide'
+    _description = 'Revive Website Hero Slide'
     _order = 'sequence, id'
 
     name = fields.Char(string='Internal Name', required=True)

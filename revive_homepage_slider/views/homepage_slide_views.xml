@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <record id="view_lifestyle_homepage_slide_list" model="ir.ui.view">
+    <record id="view_revive_homepage_slide_list" model="ir.ui.view">
         <field name="name">lifestyle.homepage.slide.list</field>
         <field name="model">lifestyle.homepage.slide</field>
         <field name="arch" type="xml">
@@ -14,11 +14,11 @@
         </field>
     </record>
 
-    <record id="view_lifestyle_homepage_slide_form" model="ir.ui.view">
+    <record id="view_revive_homepage_slide_form" model="ir.ui.view">
         <field name="name">lifestyle.homepage.slide.form</field>
         <field name="model">lifestyle.homepage.slide</field>
         <field name="arch" type="xml">
-            <form string="Homepage Hero Slide">
+            <form string="Website Hero Slide">
                 <sheet>
                     <group>
                         <group string="Slide Content">
@@ -76,15 +76,19 @@
         </field>
     </record>
 
-    <record id="action_lifestyle_homepage_slide" model="ir.actions.act_window">
+    <record id="action_revive_homepage_slide" model="ir.actions.act_window">
         <field name="name">Homepage Slides</field>
         <field name="res_model">lifestyle.homepage.slide</field>
         <field name="view_mode">list,form</field>
     </record>
 
-    <menuitem id="menu_lifestyle_homepage_slide"
+    <menuitem id="menu_revive_website_root"
+              name="Revive Website"
+              sequence="58"/>
+
+    <menuitem id="menu_revive_homepage_slide"
               name="Homepage Slides"
-              parent="sale.sale_menu_root"
-              action="action_lifestyle_homepage_slide"
-              sequence="94"/>
+              parent="menu_revive_website_root"
+              action="action_revive_homepage_slide"
+              sequence="10"/>
 </odoo>

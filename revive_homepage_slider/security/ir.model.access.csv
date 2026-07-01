@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_revive_homepage_slide_user,revive.homepage.slide.user,model_lifestyle_homepage_slide,base.group_user,1,1,1,1
+access_revive_homepage_slide_read_all,revive.homepage.slide.read.all,model_lifestyle_homepage_slide,,1,0,0,0

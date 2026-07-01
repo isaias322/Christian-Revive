@@ -9,6 +9,7 @@
                 <field name="name"/>
                 <field name="title"/>
                 <field name="background_style"/>
+                <field name="content_layout"/>
                 <field name="active"/>
             </list>
         </field>
@@ -28,10 +29,27 @@
                             <field name="kicker"/>
                             <field name="title"/>
                             <field name="subtitle"/>
-                            <field name="background_style"/>
                         </group>
                         <group string="Hero Image">
                             <field name="image" widget="image" class="oe_avatar"/>
+                            <field name="image_fit"/>
+                        </group>
+                    </group>
+                    <group string="Design &amp; Layout" col="2">
+                        <group>
+                            <field name="background_style"/>
+                            <field name="background_color" invisible="background_style != 'custom'"/>
+                            <field name="background_color_2" invisible="background_style != 'custom'"/>
+                            <field name="text_color"/>
+                            <field name="accent_color"/>
+                            <field name="overlay_opacity"/>
+                        </group>
+                        <group>
+                            <field name="hero_height"/>
+                            <field name="text_alignment"/>
+                            <field name="content_layout"/>
+                            <field name="button_style"/>
+                            <field name="autoplay_seconds"/>
                         </group>
                     </group>
                     <group string="Buttons" col="2">
@@ -58,13 +76,17 @@
                             <field name="trust_3_text"/>
                         </group>
                     </group>
-                    <group string="Right Card" col="2">
+                    <group string="Visual Card Options" col="2">
+                        <field name="show_visual_card"/>
+                        <field name="show_badges"/>
+                    </group>
+                    <group string="Right Card" col="2" invisible="not show_visual_card">
                         <group>
                             <field name="card_icon"/>
                             <field name="card_title"/>
                             <field name="card_text"/>
                         </group>
-                        <group>
+                        <group invisible="not show_badges">
                             <field name="badge_1_value"/>
                             <field name="badge_1_label"/>
                             <field name="badge_2_icon"/>

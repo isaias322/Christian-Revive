@@ -42,4 +42,59 @@ class ReviveHomepageSlide(models.Model):
         ('sage', 'Sage Green'),
         ('olive', 'Olive'),
         ('warm', 'Warm Wood'),
+        ('walnut', 'Walnut Brown'),
+        ('midnight', 'Midnight'),
+        ('cream', 'Cream Light'),
+        ('terracotta', 'Terracotta'),
+        ('custom', 'Custom Colors'),
     ], string='Background Style', default='charcoal')
+    background_color = fields.Char(
+        string='Custom Background Color',
+        default='#252821',
+        help='Use a hex color like #2E2E2A. Used when Background Style is Custom Colors.',
+    )
+    background_color_2 = fields.Char(
+        string='Custom Second Color',
+        default='#5C7050',
+        help='Optional second hex color for the gradient, like #5C7050.',
+    )
+    text_color = fields.Char(
+        string='Text Color',
+        help='Optional hex color for the slide text. Leave empty for automatic white/dark text.',
+    )
+    accent_color = fields.Char(
+        string='Accent Color',
+        help='Optional hex color for highlights, dots, and small decorative lines.',
+    )
+    overlay_opacity = fields.Selection([
+        ('0.35', 'Light'),
+        ('0.55', 'Medium'),
+        ('0.72', 'Strong'),
+        ('0.86', 'Very Strong'),
+    ], string='Image Overlay', default='0.72')
+    text_alignment = fields.Selection([
+        ('left', 'Left'),
+        ('center', 'Center'),
+    ], string='Text Alignment', default='left')
+    content_layout = fields.Selection([
+        ('split', 'Text Left, Visual Right'),
+        ('reverse', 'Visual Left, Text Right'),
+        ('center', 'Centered Text'),
+    ], string='Slide Layout', default='split')
+    hero_height = fields.Selection([
+        ('compact', 'Compact'),
+        ('default', 'Default'),
+        ('tall', 'Tall'),
+    ], string='Hero Height', default='default')
+    image_fit = fields.Selection([
+        ('cover', 'Cover'),
+        ('contain', 'Contain'),
+    ], string='Hero Image Fit', default='cover')
+    button_style = fields.Selection([
+        ('filled', 'Filled Primary'),
+        ('outline', 'Outline Primary'),
+        ('soft', 'Soft Light'),
+    ], string='Button Style', default='filled')
+    show_visual_card = fields.Boolean(string='Show Right Visual Card', default=True)
+    show_badges = fields.Boolean(string='Show Floating Badges', default=True)
+    autoplay_seconds = fields.Integer(string='Autoplay Seconds', default=5)

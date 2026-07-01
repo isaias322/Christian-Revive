@@ -191,18 +191,23 @@ function setupHomepageHeroSlider() {
     const prevButton = slider.querySelector('[data-rl-home-prev]');
     const nextButton = slider.querySelector('[data-rl-home-next]');
     const dots = Array.from(slider.querySelectorAll('[data-rl-home-dot]'));
+    const autoplayInterval = Math.max(2500, parseInt(slider.dataset.rlHomeInterval || '4500', 10) || 4500);
     let activeIndex = slides.findIndex((slide) => slide.classList.contains('is-active'));
     let timer = null;
     activeIndex = activeIndex >= 0 ? activeIndex : 0;
 
     function paintDots() {
+        const activeSlide = slides[activeIndex];
+        const activeAccent = activeSlide
+            ? getComputedStyle(activeSlide).getPropertyValue('--rl-slide-accent').trim() || '#D9B777'
+            : '#D9B777';
         dots.forEach((dot, dotIndex) => {
             const isActive = dotIndex === activeIndex;
             dot.removeAttribute('aria-current');
             dot.style.width = isActive ? '2rem' : '0.62rem';
             dot.style.height = '0.62rem';
             dot.style.borderRadius = '999px';
-            dot.style.background = isActive ? '#D9B777' : 'rgba(255, 253, 249, 0.42)';
+            dot.style.background = isActive ? activeAccent : 'rgba(255, 253, 249, 0.42)';
             dot.style.boxShadow = 'none';
             dot.style.outline = '0';
             if (isActive) {
@@ -220,7 +225,7 @@ function setupHomepageHeroSlider() {
 
     function startAutoplay() {
         if (reduceMotion || timer) return;
-        timer = window.setInterval(() => showSlide(activeIndex + 1), 4500);
+        timer = window.setInterval(() => showSlide(activeIndex + 1), autoplayInterval);
     }
 
     function stopAutoplay() {

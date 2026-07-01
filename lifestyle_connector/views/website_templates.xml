@@ -164,12 +164,12 @@
     <template id="lifestyle_homepage_direct_page" name="Revive Lifestyle Home Page">
         <t t-call="website.layout">
             <div id="wrap" class="oe_structure rl-home-page">
-                <section class="rl-home-hero rl-home-hero--dynamic" data-rl-home-slider="1">
+                <section class="rl-home-hero rl-home-hero--dynamic" data-rl-home-slider="1" t-att-data-rl-home-interval="((homepage_slides and homepage_slides[0].autoplay_seconds) or 5) * 1000">
                     <div class="rl-home-hero-bg" aria-hidden="true"></div>
                     <div class="rl-home-hero-track">
-                        <div t-foreach="homepage_slides" t-as="slide" t-att-class="'container position-relative rl-home-hero-content-slide rl-home-hero-style-' + (slide.background_style or 'charcoal') + (' is-active' if slide_index == 0 else '')" t-att-data-rl-slide-index="slide_index">
-                            <div t-if="slide.image" class="rl-home-slide-image-bg" t-attf-style="background-image: linear-gradient(90deg, rgba(37, 40, 33, 0.92), rgba(37, 40, 33, 0.72)), url('/web/image/lifestyle.homepage.slide/#{slide.id}/image');"></div>
-                            <div class="row align-items-center g-5">
+                        <div t-foreach="homepage_slides" t-as="slide" t-att-class="'container position-relative rl-home-hero-content-slide rl-home-hero-style-' + (slide.background_style or 'charcoal') + ' rl-home-layout-' + (slide.content_layout or 'split') + ' rl-home-align-' + (slide.text_alignment or 'left') + ' rl-home-height-' + (slide.hero_height or 'default') + ' rl-home-image-fit-' + (slide.image_fit or 'cover') + ' rl-home-button-' + (slide.button_style or 'filled') + (' is-active' if slide_index == 0 else '')" t-att-style="'--rl-slide-bg:%s; --rl-slide-bg-2:%s; --rl-slide-text:%s; --rl-slide-accent:%s; --rl-slide-overlay:%s;' % (slide.background_color or '', slide.background_color_2 or '', slide.text_color or '', slide.accent_color or '', slide.overlay_opacity or '0.72')" t-att-data-rl-slide-index="slide_index">
+                            <div t-if="slide.image" class="rl-home-slide-image-bg" t-attf-style="background-image: linear-gradient(90deg, rgba(37, 40, 33, #{slide.overlay_opacity or '0.72'}), rgba(37, 40, 33, #{slide.overlay_opacity or '0.72'})), url('/web/image/lifestyle.homepage.slide/#{slide.id}/image');"></div>
+                            <div t-attf-class="row align-items-center g-5 #{'flex-lg-row-reverse' if slide.content_layout == 'reverse' else ''} #{'justify-content-center text-center' if slide.content_layout == 'center' else ''}">
                                 <div class="col-12 col-lg-6">
                                     <span class="rl-home-kicker" t-esc="slide.kicker"/>
                                     <h1 t-esc="slide.title"/>
@@ -184,7 +184,7 @@
                                         <span t-if="slide.trust_3_text"><i t-att-class="'fa ' + (slide.trust_3_icon or 'fa-truck')"></i> <t t-esc="slide.trust_3_text"/></span>
                                     </div>
                                 </div>
-                                <div class="col-12 col-lg-6">
+                                <div t-if="slide.show_visual_card and slide.content_layout != 'center'" class="col-12 col-lg-6">
                                     <div class="rl-home-showcase">
                                         <div class="rl-home-showcase-card rl-home-showcase-main">
                                             <img t-if="slide.image" class="rl-home-card-image" t-att-src="'/web/image/lifestyle.homepage.slide/%s/image' % slide.id" t-att-alt="slide.title" loading="lazy"/>
@@ -193,11 +193,11 @@
                                             <h3 t-esc="slide.card_title or slide.title"/>
                                             <p t-if="slide.card_text" t-esc="slide.card_text"/>
                                         </div>
-                                        <div class="rl-home-floating-card rl-home-floating-one" t-if="slide.badge_1_value or slide.badge_1_label">
+                                        <div class="rl-home-floating-card rl-home-floating-one" t-if="slide.show_badges and (slide.badge_1_value or slide.badge_1_label)">
                                             <strong t-if="slide.badge_1_value" t-esc="slide.badge_1_value"/>
                                             <span t-if="slide.badge_1_label" t-esc="slide.badge_1_label"/>
                                         </div>
-                                        <div class="rl-home-floating-card rl-home-floating-two" t-if="slide.badge_2_icon or slide.badge_2_label">
+                                        <div class="rl-home-floating-card rl-home-floating-two" t-if="slide.show_badges and (slide.badge_2_icon or slide.badge_2_label)">
                                             <i t-if="slide.badge_2_icon" t-att-class="'fa ' + slide.badge_2_icon"></i>
                                             <span t-if="slide.badge_2_label" t-esc="slide.badge_2_label"/>
                                         </div>

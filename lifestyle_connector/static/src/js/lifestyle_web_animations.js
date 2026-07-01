@@ -199,12 +199,10 @@ function setupHomepageHeroSlider() {
         activeIndex = (index + slides.length) % slides.length;
         slides.forEach((slide) => slide.classList.remove('is-active'));
         dots.forEach((dot) => {
-            dot.classList.remove('is-active');
             dot.removeAttribute('aria-current');
         });
 
         slides[activeIndex]?.classList.add('is-active');
-        dots[activeIndex]?.classList.add('is-active');
         dots[activeIndex]?.setAttribute('aria-current', 'true');
     }
 

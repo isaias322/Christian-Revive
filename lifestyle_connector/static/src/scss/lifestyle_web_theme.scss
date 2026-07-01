@@ -3145,23 +3145,31 @@ footer a:hover,
 .rl-home-hero-dot {
     appearance: none;
     -webkit-appearance: none;
-    width: 0.62rem;
+    width: 0.62rem !important;
     height: 0.62rem;
     padding: 0;
-    border: 0;
+    border: 0 !important;
+    outline: 0 !important;
     border-radius: 999px;
-    background: rgba(255, 253, 249, 0.42);
+    background: rgba(255, 253, 249, 0.42) !important;
+    box-shadow: none !important;
     transition: width 180ms ease, background 180ms ease;
 }
 
-.rl-home-hero-dot.is-active {
-    width: 2rem !important;
-    background: #D9B777 !important;
-}
-
-.rl-home-hero-dot:not(.is-active) {
+.rl-home-hero-dot:hover,
+.rl-home-hero-dot:focus,
+.rl-home-hero-dot:focus-visible,
+.rl-home-hero-dot:active,
+.rl-home-hero-dot.is-active:not([aria-current="true"]),
+.rl-home-hero-dot:not([aria-current="true"]) {
     width: 0.62rem !important;
     background: rgba(255, 253, 249, 0.42) !important;
+    box-shadow: none !important;
+}
+
+.rl-home-hero-dot[aria-current="true"] {
+    width: 2rem !important;
+    background: #D9B777 !important;
 }
 
 .rl-home-featured,

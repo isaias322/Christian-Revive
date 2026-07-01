@@ -212,7 +212,7 @@
                             <i class="fa fa-chevron-right"></i>
                         </button>
                         <div t-if="len(homepage_slides) > 1" class="rl-home-hero-dots" aria-label="Homepage slide controls">
-                            <button t-foreach="homepage_slides" t-as="slide_dot" type="button" t-att-class="'rl-home-hero-dot' + (' is-active' if slide_dot_index == 0 else '')" t-att-data-rl-home-dot="slide_dot_index" t-att-aria-label="'Go to slide %s' % (slide_dot_index + 1)"></button>
+                            <button t-foreach="homepage_slides" t-as="slide_dot" type="button" class="rl-home-hero-dot" t-att-data-rl-home-dot="slide_dot_index" t-att-aria-current="'true' if slide_dot_index == 0 else None" t-att-aria-label="'Go to slide %s' % (slide_dot_index + 1)"></button>
                         </div>
                     </div>
                 </section>

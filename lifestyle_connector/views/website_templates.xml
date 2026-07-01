@@ -164,6 +164,41 @@
     <template id="lifestyle_homepage_direct_page" name="Revive Lifestyle Home Page">
         <t t-call="website.layout">
             <div id="wrap" class="oe_structure rl-home-page">
+                <t t-if="homepage_sections_ready">
+                    <t t-foreach="homepage_top_sections" t-as="section">
+                        <t t-set="section_items" t-value="homepage_section_items_by_section.get(section.id)"/>
+                        <t t-set="section_products" t-value="featured_products_by_section.get(section.id)"/>
+                        <section t-if="section.section_key in ('content', 'header', 'footer')" t-attf-class="rl-home-custom-section rl-home-custom-section-#{section.section_key} rl-home-section-style-#{section.background_style or 'light'} rl-home-layout-#{section.layout or 'split'}" t-att-style="'--rl-section-bg:%s; --rl-section-bg-2:%s; --rl-section-text:%s; --rl-section-accent:%s; --rl-section-card-bg:%s;' % (section.background_color or '', section.background_color_2 or '', section.text_color or '', section.accent_color or '', section.card_background_color or '')">
+                            <div class="rl-home-custom-glow" aria-hidden="true"></div>
+                            <div class="container position-relative">
+                                <div t-attf-class="rl-home-custom-panel #{'rl-home-custom-panel-reverse' if section.layout == 'reverse' else ''} #{'rl-home-custom-panel-center' if section.layout == 'center' else ''}">
+                                    <div class="rl-home-custom-copy">
+                                        <span t-if="section.kicker" class="rl-home-kicker" t-esc="section.kicker"/>
+                                        <h2 t-esc="section.title"/>
+                                        <p t-if="section.subtitle" t-esc="section.subtitle"/>
+                                        <div t-if="section.show_items and section_items" class="rl-home-custom-chips">
+                                            <span t-foreach="section_items" t-as="item" t-att-style="'--rl-item-color:%s; --rl-item-bg:%s;' % (item.color or '', item.background_color or '')"><i t-if="item.icon" t-att-class="'fa ' + item.icon"></i> <t t-esc="item.title"/></span>
+                                        </div>
+                                        <a t-if="section.show_button and section.button_label" t-att-href="section.button_url or '#'" class="btn btn-primary btn-lg rl-home-custom-button">
+                                            <t t-esc="section.button_label"/>
+                                            <i t-if="section.button_icon" t-att-class="'fa ' + section.button_icon"></i>
+                                        </a>
+                                    </div>
+                                    <div t-if="section.image or (section.show_items and section_items)" class="rl-home-custom-media">
+                                        <img t-if="section.image" class="rl-home-custom-image" t-att-src="'/web/image/lifestyle.homepage.section/%s/image' % section.id" t-att-alt="section.title" loading="lazy"/>
+                                        <div t-if="section.show_items and section_items" class="rl-home-custom-item-grid">
+                                            <a t-foreach="section_items" t-as="item" t-att-href="item.url or '#'" t-attf-class="rl-home-custom-item rl-home-custom-item-#{item.item_style or 'card'}" t-att-style="'--rl-item-color:%s; --rl-item-bg:%s;' % (item.color or '', item.background_color or '')">
+                                                <img t-if="item.image" t-att-src="'/web/image/lifestyle.homepage.section.item/%s/image' % item.id" t-att-alt="item.title" loading="lazy"/>
+                                                <i t-if="item.icon" t-att-class="'fa ' + item.icon"></i>
+                                                <strong t-esc="item.title"/>
+                                                <span t-if="item.text" t-esc="item.text"/>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>                    </t>
+                </t>
                 <section class="rl-home-hero rl-home-hero--dynamic" data-rl-home-slider="1" t-att-data-rl-home-interval="((homepage_slides and homepage_slides[0].autoplay_seconds) or 5) * 1000">
                     <div class="rl-home-hero-bg" aria-hidden="true"></div>
                     <div class="rl-home-hero-track">
@@ -218,7 +253,7 @@
                 </section>
 
                 <t t-if="homepage_sections_ready">
-                    <t t-foreach="homepage_sections" t-as="section">
+                    <t t-foreach="homepage_main_sections" t-as="section">
                         <t t-set="section_items" t-value="homepage_section_items_by_section.get(section.id)"/>
                         <t t-set="section_products" t-value="featured_products_by_section.get(section.id)"/>
 
@@ -312,7 +347,72 @@
                                 </div>
                             </div>
                         </section>
-                    </t>
+
+                        <section t-if="section.section_key in ('content', 'header', 'footer')" t-attf-class="rl-home-custom-section rl-home-custom-section-#{section.section_key} rl-home-section-style-#{section.background_style or 'light'} rl-home-layout-#{section.layout or 'split'}" t-att-style="'--rl-section-bg:%s; --rl-section-bg-2:%s; --rl-section-text:%s; --rl-section-accent:%s; --rl-section-card-bg:%s;' % (section.background_color or '', section.background_color_2 or '', section.text_color or '', section.accent_color or '', section.card_background_color or '')">
+                            <div class="rl-home-custom-glow" aria-hidden="true"></div>
+                            <div class="container position-relative">
+                                <div t-attf-class="rl-home-custom-panel #{'rl-home-custom-panel-reverse' if section.layout == 'reverse' else ''} #{'rl-home-custom-panel-center' if section.layout == 'center' else ''}">
+                                    <div class="rl-home-custom-copy">
+                                        <span t-if="section.kicker" class="rl-home-kicker" t-esc="section.kicker"/>
+                                        <h2 t-esc="section.title"/>
+                                        <p t-if="section.subtitle" t-esc="section.subtitle"/>
+                                        <div t-if="section.show_items and section_items" class="rl-home-custom-chips">
+                                            <span t-foreach="section_items" t-as="item" t-att-style="'--rl-item-color:%s; --rl-item-bg:%s;' % (item.color or '', item.background_color or '')"><i t-if="item.icon" t-att-class="'fa ' + item.icon"></i> <t t-esc="item.title"/></span>
+                                        </div>
+                                        <a t-if="section.show_button and section.button_label" t-att-href="section.button_url or '#'" class="btn btn-primary btn-lg rl-home-custom-button">
+                                            <t t-esc="section.button_label"/>
+                                            <i t-if="section.button_icon" t-att-class="'fa ' + section.button_icon"></i>
+                                        </a>
+                                    </div>
+                                    <div t-if="section.image or (section.show_items and section_items)" class="rl-home-custom-media">
+                                        <img t-if="section.image" class="rl-home-custom-image" t-att-src="'/web/image/lifestyle.homepage.section/%s/image' % section.id" t-att-alt="section.title" loading="lazy"/>
+                                        <div t-if="section.show_items and section_items" class="rl-home-custom-item-grid">
+                                            <a t-foreach="section_items" t-as="item" t-att-href="item.url or '#'" t-attf-class="rl-home-custom-item rl-home-custom-item-#{item.item_style or 'card'}" t-att-style="'--rl-item-color:%s; --rl-item-bg:%s;' % (item.color or '', item.background_color or '')">
+                                                <img t-if="item.image" t-att-src="'/web/image/lifestyle.homepage.section.item/%s/image' % item.id" t-att-alt="item.title" loading="lazy"/>
+                                                <i t-if="item.icon" t-att-class="'fa ' + item.icon"></i>
+                                                <strong t-esc="item.title"/>
+                                                <span t-if="item.text" t-esc="item.text"/>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>                    </t>
+                </t>
+                <t t-if="homepage_sections_ready">
+                    <t t-foreach="homepage_bottom_sections" t-as="section">
+                        <t t-set="section_items" t-value="homepage_section_items_by_section.get(section.id)"/>
+                        <t t-set="section_products" t-value="featured_products_by_section.get(section.id)"/>
+                        <section t-if="section.section_key in ('content', 'header', 'footer')" t-attf-class="rl-home-custom-section rl-home-custom-section-#{section.section_key} rl-home-section-style-#{section.background_style or 'light'} rl-home-layout-#{section.layout or 'split'}" t-att-style="'--rl-section-bg:%s; --rl-section-bg-2:%s; --rl-section-text:%s; --rl-section-accent:%s; --rl-section-card-bg:%s;' % (section.background_color or '', section.background_color_2 or '', section.text_color or '', section.accent_color or '', section.card_background_color or '')">
+                            <div class="rl-home-custom-glow" aria-hidden="true"></div>
+                            <div class="container position-relative">
+                                <div t-attf-class="rl-home-custom-panel #{'rl-home-custom-panel-reverse' if section.layout == 'reverse' else ''} #{'rl-home-custom-panel-center' if section.layout == 'center' else ''}">
+                                    <div class="rl-home-custom-copy">
+                                        <span t-if="section.kicker" class="rl-home-kicker" t-esc="section.kicker"/>
+                                        <h2 t-esc="section.title"/>
+                                        <p t-if="section.subtitle" t-esc="section.subtitle"/>
+                                        <div t-if="section.show_items and section_items" class="rl-home-custom-chips">
+                                            <span t-foreach="section_items" t-as="item" t-att-style="'--rl-item-color:%s; --rl-item-bg:%s;' % (item.color or '', item.background_color or '')"><i t-if="item.icon" t-att-class="'fa ' + item.icon"></i> <t t-esc="item.title"/></span>
+                                        </div>
+                                        <a t-if="section.show_button and section.button_label" t-att-href="section.button_url or '#'" class="btn btn-primary btn-lg rl-home-custom-button">
+                                            <t t-esc="section.button_label"/>
+                                            <i t-if="section.button_icon" t-att-class="'fa ' + section.button_icon"></i>
+                                        </a>
+                                    </div>
+                                    <div t-if="section.image or (section.show_items and section_items)" class="rl-home-custom-media">
+                                        <img t-if="section.image" class="rl-home-custom-image" t-att-src="'/web/image/lifestyle.homepage.section/%s/image' % section.id" t-att-alt="section.title" loading="lazy"/>
+                                        <div t-if="section.show_items and section_items" class="rl-home-custom-item-grid">
+                                            <a t-foreach="section_items" t-as="item" t-att-href="item.url or '#'" t-attf-class="rl-home-custom-item rl-home-custom-item-#{item.item_style or 'card'}" t-att-style="'--rl-item-color:%s; --rl-item-bg:%s;' % (item.color or '', item.background_color or '')">
+                                                <img t-if="item.image" t-att-src="'/web/image/lifestyle.homepage.section.item/%s/image' % item.id" t-att-alt="item.title" loading="lazy"/>
+                                                <i t-if="item.icon" t-att-class="'fa ' + item.icon"></i>
+                                                <strong t-esc="item.title"/>
+                                                <span t-if="item.text" t-esc="item.text"/>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>                    </t>
                 </t>
             </div>
         </t>

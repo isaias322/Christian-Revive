@@ -10,6 +10,9 @@ class LifestyleWebsite(http.Controller):
     def homepage(self, **kwargs):
         homepage_slides = request.env['ir.ui.view'].browse()
         homepage_sections = request.env['ir.ui.view'].browse()
+        homepage_top_sections = request.env['ir.ui.view'].browse()
+        homepage_main_sections = request.env['ir.ui.view'].browse()
+        homepage_bottom_sections = request.env['ir.ui.view'].browse()
         featured_section = request.env['ir.ui.view'].browse()
         process_section = request.env['ir.ui.view'].browse()
         cta_section = request.env['ir.ui.view'].browse()
@@ -29,6 +32,9 @@ class LifestyleWebsite(http.Controller):
             homepage_sections = request.env['lifestyle.homepage.section'].sudo().search([
                 ('active', '=', True),
             ], order='sequence, id')
+            homepage_top_sections = homepage_sections.filtered(lambda section: section.placement == 'before_hero')
+            homepage_main_sections = homepage_sections.filtered(lambda section: not section.placement or section.placement == 'main')
+            homepage_bottom_sections = homepage_sections.filtered(lambda section: section.placement == 'before_footer')
             featured_sections = homepage_sections.filtered(lambda section: section.section_key == 'featured')
             featured_section = featured_sections[:1]
             process_section = homepage_sections.filtered(lambda section: section.section_key == 'process')[:1]
@@ -57,6 +63,9 @@ class LifestyleWebsite(http.Controller):
             'featured_products': featured_products,
             'homepage_slides': homepage_slides,
             'homepage_sections': homepage_sections,
+            'homepage_top_sections': homepage_top_sections,
+            'homepage_main_sections': homepage_main_sections,
+            'homepage_bottom_sections': homepage_bottom_sections,
             'homepage_sections_ready': homepage_sections_ready,
             'homepage_section_items_by_section': homepage_section_items_by_section,
             'featured_products_by_section': featured_products_by_section,

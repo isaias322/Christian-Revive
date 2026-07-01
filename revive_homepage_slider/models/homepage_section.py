@@ -14,7 +14,16 @@ class ReviveHomepageSection(models.Model):
         ('featured', 'Featured Products'),
         ('process', 'Order Process'),
         ('cta', 'Call To Action'),
+        ('content', 'Custom Content'),
+        ('header', 'Header Section'),
+        ('footer', 'Footer Section'),
     ], string='Homepage Area', required=True, default='featured')
+    placement = fields.Selection([
+        ('before_hero', 'Before Hero Slider'),
+        ('main', 'Main Content'),
+        ('before_footer', 'Before Footer'),
+    ], string='Page Position', required=True, default='main',
+       help='Choose where this standalone homepage section should appear.')
 
     kicker = fields.Char(string='Small Heading')
     title = fields.Char(string='Title', required=True)

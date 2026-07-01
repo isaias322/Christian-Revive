@@ -8,6 +8,7 @@
                 <field name="sequence" widget="handle"/>
                 <field name="name"/>
                 <field name="section_key"/>
+                <field name="placement"/>
                 <field name="title"/>
                 <field name="background_style"/>
                 <field name="active"/>
@@ -26,6 +27,7 @@
                             <field name="active"/>
                             <field name="sequence"/>
                             <field name="section_key"/>
+                            <field name="placement"/>
                             <field name="name"/>
                             <field name="kicker"/>
                             <field name="title"/>

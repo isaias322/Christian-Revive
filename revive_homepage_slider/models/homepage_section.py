@@ -74,7 +74,22 @@ class ReviveHomepageSectionItem(models.Model):
     section_id = fields.Many2one('lifestyle.homepage.section', string='Homepage Section', required=True, ondelete='cascade')
     active = fields.Boolean(default=True)
     sequence = fields.Integer(default=10)
-    icon = fields.Char(string='Icon', default='fa-check')
+    icon_type = fields.Selection([
+        ('fontawesome', 'FontAwesome Class'),
+        ('upload', 'Uploaded Icon'),
+        ('custom', 'Pasted Custom Icon'),
+    ], string='Icon Type', default='fontawesome', required=True)
+    icon = fields.Char(
+        string='FontAwesome Icon',
+        default='fa-check',
+        help='Use a FontAwesome class like fa-truck, fa-home, fa-check, or fa-couch.',
+    )
+    icon_image = fields.Binary(string='Uploaded Icon')
+    custom_icon_html = fields.Html(
+        string='Pasted Custom Icon',
+        sanitize=True,
+        help='Paste a small SVG or safe HTML icon. Odoo sanitizes this field before it is shown on the website.',
+    )
     title = fields.Char(string='Title', required=True)
     text = fields.Text(string='Text')
     image = fields.Binary(string='Image')

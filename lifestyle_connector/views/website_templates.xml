@@ -177,7 +177,7 @@
                                         <h2 t-esc="section.title"/>
                                         <p t-if="section.subtitle" t-esc="section.subtitle"/>
                                         <div t-if="section.show_items and section_items" class="rl-home-custom-chips">
-                                            <span t-foreach="section_items" t-as="item" t-att-style="'--rl-item-color:%s; --rl-item-bg:%s;' % (item.color or '', item.background_color or '')"><i t-if="item.icon" t-att-class="'fa ' + item.icon"></i> <t t-esc="item.title"/></span>
+                                            <span t-foreach="section_items" t-as="item" t-att-style="'--rl-item-color:%s; --rl-item-bg:%s;' % (item.color or '', item.background_color or '')"><t t-if="item.icon_type == 'upload' and item.icon_image"><img class="rl-home-item-icon-image rl-home-item-icon-inline" t-att-src="'/web/image/lifestyle.homepage.section.item/%s/icon_image' % item.id" t-att-alt="item.title" loading="lazy"/></t><t t-elif="item.icon_type == 'custom' and item.custom_icon_html"><span class="rl-home-item-icon-custom rl-home-item-icon-inline" t-field="item.custom_icon_html"/></t><i t-elif="item.icon" t-att-class="'fa ' + item.icon"></i> <t t-esc="item.title"/></span>
                                         </div>
                                         <a t-if="section.show_button and section.button_label" t-att-href="section.button_url or '#'" class="btn btn-primary btn-lg rl-home-custom-button">
                                             <t t-esc="section.button_label"/>
@@ -189,7 +189,7 @@
                                         <div t-if="section.show_items and section_items" class="rl-home-custom-item-grid">
                                             <a t-foreach="section_items" t-as="item" t-att-href="item.url or '#'" t-attf-class="rl-home-custom-item rl-home-custom-item-#{item.item_style or 'card'}" t-att-style="'--rl-item-color:%s; --rl-item-bg:%s;' % (item.color or '', item.background_color or '')">
                                                 <img t-if="item.image" t-att-src="'/web/image/lifestyle.homepage.section.item/%s/image' % item.id" t-att-alt="item.title" loading="lazy"/>
-                                                <i t-if="item.icon" t-att-class="'fa ' + item.icon"></i>
+                                                <t t-if="item.icon_type == 'upload' and item.icon_image"><img class="rl-home-item-icon-image" t-att-src="'/web/image/lifestyle.homepage.section.item/%s/icon_image' % item.id" t-att-alt="item.title" loading="lazy"/></t><t t-elif="item.icon_type == 'custom' and item.custom_icon_html"><span class="rl-home-item-icon-custom" t-field="item.custom_icon_html"/></t><i t-elif="item.icon" t-att-class="'fa ' + item.icon"></i>
                                                 <strong t-esc="item.title"/>
                                                 <span t-if="item.text" t-esc="item.text"/>
                                             </a>
@@ -315,7 +315,7 @@
                                         <div class="rl-home-process-grid">
                                             <div t-foreach="section_items" t-as="item" t-att-style="'--rl-item-color:%s; --rl-item-bg:%s;' % (item.color or '', item.background_color or '')">
                                                 <img t-if="item.image" t-att-src="'/web/image/lifestyle.homepage.section.item/%s/image' % item.id" t-att-alt="item.title" loading="lazy"/>
-                                                <i t-if="item.icon" t-att-class="'fa ' + item.icon"></i>
+                                                <t t-if="item.icon_type == 'upload' and item.icon_image"><img class="rl-home-item-icon-image" t-att-src="'/web/image/lifestyle.homepage.section.item/%s/icon_image' % item.id" t-att-alt="item.title" loading="lazy"/></t><t t-elif="item.icon_type == 'custom' and item.custom_icon_html"><span class="rl-home-item-icon-custom" t-field="item.custom_icon_html"/></t><i t-elif="item.icon" t-att-class="'fa ' + item.icon"></i>
                                                 <strong t-esc="item.title"/>
                                                 <span t-if="item.text" t-esc="item.text"/>
                                             </div>
@@ -333,7 +333,7 @@
                                         <h2 t-esc="section.title"/>
                                         <p t-if="section.subtitle" t-esc="section.subtitle"/>
                                         <div t-if="section.show_items and section_items" class="rl-home-cta-proof">
-                                            <span t-foreach="section_items" t-as="item" t-att-style="'--rl-item-color:%s; --rl-item-bg:%s;' % (item.color or '', item.background_color or '')"><i t-if="item.icon" t-att-class="'fa ' + item.icon"></i> <t t-esc="item.title"/></span>
+                                            <span t-foreach="section_items" t-as="item" t-att-style="'--rl-item-color:%s; --rl-item-bg:%s;' % (item.color or '', item.background_color or '')"><t t-if="item.icon_type == 'upload' and item.icon_image"><img class="rl-home-item-icon-image rl-home-item-icon-inline" t-att-src="'/web/image/lifestyle.homepage.section.item/%s/icon_image' % item.id" t-att-alt="item.title" loading="lazy"/></t><t t-elif="item.icon_type == 'custom' and item.custom_icon_html"><span class="rl-home-item-icon-custom rl-home-item-icon-inline" t-field="item.custom_icon_html"/></t><i t-elif="item.icon" t-att-class="'fa ' + item.icon"></i> <t t-esc="item.title"/></span>
                                         </div>
                                     </div>
                                     <div class="rl-home-cta-action">
@@ -357,7 +357,7 @@
                                         <h2 t-esc="section.title"/>
                                         <p t-if="section.subtitle" t-esc="section.subtitle"/>
                                         <div t-if="section.show_items and section_items" class="rl-home-custom-chips">
-                                            <span t-foreach="section_items" t-as="item" t-att-style="'--rl-item-color:%s; --rl-item-bg:%s;' % (item.color or '', item.background_color or '')"><i t-if="item.icon" t-att-class="'fa ' + item.icon"></i> <t t-esc="item.title"/></span>
+                                            <span t-foreach="section_items" t-as="item" t-att-style="'--rl-item-color:%s; --rl-item-bg:%s;' % (item.color or '', item.background_color or '')"><t t-if="item.icon_type == 'upload' and item.icon_image"><img class="rl-home-item-icon-image rl-home-item-icon-inline" t-att-src="'/web/image/lifestyle.homepage.section.item/%s/icon_image' % item.id" t-att-alt="item.title" loading="lazy"/></t><t t-elif="item.icon_type == 'custom' and item.custom_icon_html"><span class="rl-home-item-icon-custom rl-home-item-icon-inline" t-field="item.custom_icon_html"/></t><i t-elif="item.icon" t-att-class="'fa ' + item.icon"></i> <t t-esc="item.title"/></span>
                                         </div>
                                         <a t-if="section.show_button and section.button_label" t-att-href="section.button_url or '#'" class="btn btn-primary btn-lg rl-home-custom-button">
                                             <t t-esc="section.button_label"/>
@@ -369,7 +369,7 @@
                                         <div t-if="section.show_items and section_items" class="rl-home-custom-item-grid">
                                             <a t-foreach="section_items" t-as="item" t-att-href="item.url or '#'" t-attf-class="rl-home-custom-item rl-home-custom-item-#{item.item_style or 'card'}" t-att-style="'--rl-item-color:%s; --rl-item-bg:%s;' % (item.color or '', item.background_color or '')">
                                                 <img t-if="item.image" t-att-src="'/web/image/lifestyle.homepage.section.item/%s/image' % item.id" t-att-alt="item.title" loading="lazy"/>
-                                                <i t-if="item.icon" t-att-class="'fa ' + item.icon"></i>
+                                                <t t-if="item.icon_type == 'upload' and item.icon_image"><img class="rl-home-item-icon-image" t-att-src="'/web/image/lifestyle.homepage.section.item/%s/icon_image' % item.id" t-att-alt="item.title" loading="lazy"/></t><t t-elif="item.icon_type == 'custom' and item.custom_icon_html"><span class="rl-home-item-icon-custom" t-field="item.custom_icon_html"/></t><i t-elif="item.icon" t-att-class="'fa ' + item.icon"></i>
                                                 <strong t-esc="item.title"/>
                                                 <span t-if="item.text" t-esc="item.text"/>
                                             </a>
@@ -392,7 +392,7 @@
                                         <h2 t-esc="section.title"/>
                                         <p t-if="section.subtitle" t-esc="section.subtitle"/>
                                         <div t-if="section.show_items and section_items" class="rl-home-custom-chips">
-                                            <span t-foreach="section_items" t-as="item" t-att-style="'--rl-item-color:%s; --rl-item-bg:%s;' % (item.color or '', item.background_color or '')"><i t-if="item.icon" t-att-class="'fa ' + item.icon"></i> <t t-esc="item.title"/></span>
+                                            <span t-foreach="section_items" t-as="item" t-att-style="'--rl-item-color:%s; --rl-item-bg:%s;' % (item.color or '', item.background_color or '')"><t t-if="item.icon_type == 'upload' and item.icon_image"><img class="rl-home-item-icon-image rl-home-item-icon-inline" t-att-src="'/web/image/lifestyle.homepage.section.item/%s/icon_image' % item.id" t-att-alt="item.title" loading="lazy"/></t><t t-elif="item.icon_type == 'custom' and item.custom_icon_html"><span class="rl-home-item-icon-custom rl-home-item-icon-inline" t-field="item.custom_icon_html"/></t><i t-elif="item.icon" t-att-class="'fa ' + item.icon"></i> <t t-esc="item.title"/></span>
                                         </div>
                                         <a t-if="section.show_button and section.button_label" t-att-href="section.button_url or '#'" class="btn btn-primary btn-lg rl-home-custom-button">
                                             <t t-esc="section.button_label"/>
@@ -404,7 +404,7 @@
                                         <div t-if="section.show_items and section_items" class="rl-home-custom-item-grid">
                                             <a t-foreach="section_items" t-as="item" t-att-href="item.url or '#'" t-attf-class="rl-home-custom-item rl-home-custom-item-#{item.item_style or 'card'}" t-att-style="'--rl-item-color:%s; --rl-item-bg:%s;' % (item.color or '', item.background_color or '')">
                                                 <img t-if="item.image" t-att-src="'/web/image/lifestyle.homepage.section.item/%s/image' % item.id" t-att-alt="item.title" loading="lazy"/>
-                                                <i t-if="item.icon" t-att-class="'fa ' + item.icon"></i>
+                                                <t t-if="item.icon_type == 'upload' and item.icon_image"><img class="rl-home-item-icon-image" t-att-src="'/web/image/lifestyle.homepage.section.item/%s/icon_image' % item.id" t-att-alt="item.title" loading="lazy"/></t><t t-elif="item.icon_type == 'custom' and item.custom_icon_html"><span class="rl-home-item-icon-custom" t-field="item.custom_icon_html"/></t><i t-elif="item.icon" t-att-class="'fa ' + item.icon"></i>
                                                 <strong t-esc="item.title"/>
                                                 <span t-if="item.text" t-esc="item.text"/>
                                             </a>

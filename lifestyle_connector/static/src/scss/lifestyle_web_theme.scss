@@ -4619,3 +4619,62 @@ footer .rounded-circle,
         grid-template-columns: 1fr;
     }
 }
+/* Revive homepage custom uploaded/pasted icons */
+.rl-home-item-icon-image,
+.rl-home-item-icon-custom {
+    display: inline-flex;
+    width: 2.6rem;
+    height: 2.6rem;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.8rem;
+    border-radius: 0.85rem;
+    color: var(--rl-item-color, var(--rl-section-accent, #5C7050));
+    background: rgba(227, 234, 219, 0.72);
+    object-fit: contain;
+}
+
+.rl-home-item-icon-image {
+    padding: 0.45rem;
+}
+
+.rl-home-item-icon-custom svg,
+.rl-home-item-icon-custom img {
+    display: block;
+    width: 1.35rem;
+    height: 1.35rem;
+    max-width: 1.35rem;
+    max-height: 1.35rem;
+}
+
+.rl-home-item-icon-inline {
+    width: 1.25rem;
+    height: 1.25rem;
+    margin: 0;
+    padding: 0.18rem;
+    border-radius: 0.35rem;
+    background: transparent;
+}
+
+.rl-home-item-icon-inline svg,
+.rl-home-item-icon-inline img {
+    width: 1rem;
+    height: 1rem;
+    max-width: 1rem;
+    max-height: 1rem;
+}
+
+.rl-home-process-grid .rl-home-item-icon-image,
+.rl-home-custom-item .rl-home-item-icon-image,
+.rl-home-custom-item .rl-home-item-icon-custom {
+    width: 2.8rem;
+    height: 2.8rem;
+}
+
+.rl-home-custom-item img.rl-home-item-icon-image,
+.rl-home-process-grid img.rl-home-item-icon-image {
+    height: 2.8rem;
+    margin-bottom: 0.8rem;
+    border-radius: 0.85rem;
+    object-fit: contain;
+}

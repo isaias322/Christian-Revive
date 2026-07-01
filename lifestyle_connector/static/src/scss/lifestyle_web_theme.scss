@@ -3416,17 +3416,6 @@ footer a:hover,
     }
 }
 
-@keyframes rlHomeDotCycle {
-    0%, 8%, 36%, 100% {
-        width: 0.52rem;
-        background: rgba(255, 253, 249, 0.34);
-    }
-    10%, 30% {
-        width: 1.65rem;
-        background: #D9B777;
-    }
-}
-
 @media (max-width: 991.98px) {
     .rl-home-hero {
         min-height: auto;

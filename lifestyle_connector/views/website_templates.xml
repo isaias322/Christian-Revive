@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <!-- Disable the default "30-day money-back / 2-3 Business Days" block — not accurate for a made-to-order furniture business. -->
+    <record id="website_sale.product_custom_text" model="ir.ui.view">
+        <field name="active" eval="False"/>
+    </record>
+
     <!-- Every page goes through website.layout, so its <head> is a safe,
          universal place to load the brand fonts (kept out of the SCSS
          bundle - see lifestyle_web_theme.scss for why). -->

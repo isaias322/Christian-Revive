@@ -3060,15 +3060,7 @@ footer a:hover,
     height: 0.52rem;
     border-radius: 999px;
     background: rgba(255, 253, 249, 0.34);
-    animation: rlHomeDotCycle 12s ease-in-out infinite;
-}
-
-.rl-home-slider-dots span:nth-child(2) {
-    animation-delay: 4s;
-}
-
-.rl-home-slider-dots span:nth-child(3) {
-    animation-delay: 8s;
+    animation: none;
 }
 
 .rl-home-floating-card {
@@ -3151,6 +3143,8 @@ footer a:hover,
 }
 
 .rl-home-hero-dot {
+    appearance: none;
+    -webkit-appearance: none;
     width: 0.62rem;
     height: 0.62rem;
     padding: 0;
@@ -3161,8 +3155,13 @@ footer a:hover,
 }
 
 .rl-home-hero-dot.is-active {
-    width: 2rem;
-    background: #D9B777;
+    width: 2rem !important;
+    background: #D9B777 !important;
+}
+
+.rl-home-hero-dot:not(.is-active) {
+    width: 0.62rem !important;
+    background: rgba(255, 253, 249, 0.42) !important;
 }
 
 .rl-home-featured,

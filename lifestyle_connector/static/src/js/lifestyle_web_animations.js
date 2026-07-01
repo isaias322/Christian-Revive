@@ -180,17 +180,20 @@ function setupHomepageHeroSlider() {
 
     function showSlide(index) {
         activeIndex = (index + slides.length) % slides.length;
-        slides.forEach((slide, slideIndex) => {
-            slide.classList.toggle('is-active', slideIndex === activeIndex);
+        slides.forEach((slide) => slide.classList.remove('is-active'));
+        dots.forEach((dot) => {
+            dot.classList.remove('is-active');
+            dot.removeAttribute('aria-current');
         });
-        dots.forEach((dot, dotIndex) => {
-            dot.classList.toggle('is-active', dotIndex === activeIndex);
-        });
+
+        slides[activeIndex]?.classList.add('is-active');
+        dots[activeIndex]?.classList.add('is-active');
+        dots[activeIndex]?.setAttribute('aria-current', 'true');
     }
 
     function startAutoplay() {
         if (reduceMotion || timer) return;
-        timer = window.setInterval(() => showSlide(activeIndex + 1), 7000);
+        timer = window.setInterval(() => showSlide(activeIndex + 1), 4500);
     }
 
     function stopAutoplay() {

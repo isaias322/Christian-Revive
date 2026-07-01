@@ -186,7 +186,7 @@ function setupHomepageHeroSlider() {
     if (!slider) return;
 
     const slides = Array.from(slider.querySelectorAll('.rl-home-hero-content-slide'));
-    if (slides.length <= 1) return;
+    if (!slides.length) return;
 
     const prevButton = slider.querySelector('[data-rl-home-prev]');
     const nextButton = slider.querySelector('[data-rl-home-next]');
@@ -196,11 +196,41 @@ function setupHomepageHeroSlider() {
     let timer = null;
     activeIndex = activeIndex >= 0 ? activeIndex : 0;
 
-    function paintDots() {
+    function getActiveAccent() {
         const activeSlide = slides[activeIndex];
-        const activeAccent = activeSlide
+        return activeSlide
             ? getComputedStyle(activeSlide).getPropertyValue('--rl-slide-accent').trim() || '#D9B777'
             : '#D9B777';
+    }
+
+    function syncHeroTheme() {
+        const activeSlide = slides[activeIndex];
+        if (!activeSlide) return;
+
+        Array.from(slider.classList).forEach((className) => {
+            if (className.indexOf('rl-home-active-style-') === 0) {
+                slider.classList.remove(className);
+            }
+        });
+
+        const styleClass = Array.from(activeSlide.classList).find((className) => className.indexOf('rl-home-hero-style-') === 0);
+        if (styleClass) {
+            slider.classList.add(styleClass.replace('rl-home-hero-style-', 'rl-home-active-style-'));
+        }
+
+        const activeStyle = getComputedStyle(activeSlide);
+        ['--rl-slide-bg', '--rl-slide-bg-2', '--rl-slide-text', '--rl-slide-accent', '--rl-slide-overlay'].forEach((propertyName) => {
+            const value = activeStyle.getPropertyValue(propertyName).trim();
+            if (value) {
+                slider.style.setProperty(propertyName, value);
+            } else {
+                slider.style.removeProperty(propertyName);
+            }
+        });
+    }
+
+    function paintDots() {
+        const activeAccent = getActiveAccent();
         dots.forEach((dot, dotIndex) => {
             const isActive = dotIndex === activeIndex;
             dot.removeAttribute('aria-current');
@@ -220,6 +250,7 @@ function setupHomepageHeroSlider() {
         activeIndex = (index + slides.length) % slides.length;
         slides.forEach((slide) => slide.classList.remove('is-active'));
         slides[activeIndex]?.classList.add('is-active');
+        syncHeroTheme();
         paintDots();
     }
 
@@ -245,6 +276,10 @@ function setupHomepageHeroSlider() {
         showSlide(activeIndex + 1);
         startAutoplay();
     });
+
+    showSlide(activeIndex);
+
+    if (slides.length <= 1) return;
 
     dots.forEach((dot) => {
         dot.addEventListener('focus', paintDots);

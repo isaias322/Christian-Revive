@@ -2838,7 +2838,60 @@ footer a:hover,
 
 .rl-home-hero--dynamic {
     overflow: hidden;
-    background: #252821;
+    background:
+        radial-gradient(circle at 82% 78%, rgba(124, 144, 112, 0.45), transparent 21rem),
+        linear-gradient(135deg, #252821 0%, #354030 52%, #5C7050 100%);
+    transition: background 520ms ease;
+}
+
+.rl-home-hero--dynamic.rl-home-active-style-sage {
+    background:
+        radial-gradient(circle at 68% 24%, rgba(217, 183, 119, 0.18), transparent 18rem),
+        radial-gradient(circle at 92% 92%, rgba(227, 234, 219, 0.18), transparent 24rem),
+        linear-gradient(135deg, #273027 0%, #45543B 55%, #718461 100%);
+}
+
+.rl-home-hero--dynamic.rl-home-active-style-olive {
+    background:
+        radial-gradient(circle at 78% 66%, rgba(255, 253, 249, 0.13), transparent 17rem),
+        radial-gradient(circle at 22% 28%, rgba(217, 183, 119, 0.13), transparent 18rem),
+        linear-gradient(135deg, #242622 0%, #3C4838 48%, #63795A 100%);
+}
+
+.rl-home-hero--dynamic.rl-home-active-style-warm {
+    background:
+        radial-gradient(circle at 78% 72%, rgba(217, 183, 119, 0.24), transparent 21rem),
+        linear-gradient(135deg, #2E2A24 0%, #4F4636 52%, #756B55 100%);
+}
+
+.rl-home-hero--dynamic.rl-home-active-style-walnut {
+    background:
+        radial-gradient(circle at 78% 68%, rgba(217, 183, 119, 0.24), transparent 18rem),
+        linear-gradient(135deg, #2B211B 0%, #5C4033 52%, #8A6A4F 100%);
+}
+
+.rl-home-hero--dynamic.rl-home-active-style-midnight {
+    background:
+        radial-gradient(circle at 78% 24%, rgba(175, 192, 157, 0.18), transparent 18rem),
+        linear-gradient(135deg, #111714 0%, #1F2C2D 52%, #334846 100%);
+}
+
+.rl-home-hero--dynamic.rl-home-active-style-cream {
+    background:
+        radial-gradient(circle at 78% 24%, rgba(124, 144, 112, 0.18), transparent 18rem),
+        linear-gradient(135deg, #F8F3E7 0%, #E9DFCC 52%, #D5C3A3 100%);
+}
+
+.rl-home-hero--dynamic.rl-home-active-style-terracotta {
+    background:
+        radial-gradient(circle at 76% 28%, rgba(255, 253, 249, 0.18), transparent 17rem),
+        linear-gradient(135deg, #36241E 0%, #8C4D3B 52%, #B97458 100%);
+}
+
+.rl-home-hero--dynamic.rl-home-active-style-custom {
+    background:
+        radial-gradient(circle at 82% 76%, rgba(255, 253, 249, 0.14), transparent 20rem),
+        linear-gradient(135deg, var(--rl-slide-bg, #252821) 0%, var(--rl-slide-bg-2, #5C7050) 100%);
 }
 
 .rl-home-hero--dynamic .rl-home-hero-content-slide {

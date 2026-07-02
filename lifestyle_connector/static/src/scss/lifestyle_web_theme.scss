@@ -5278,6 +5278,29 @@ footer .rounded-circle,
     gap: 0.5rem;
 }
 
+/* Compare-at-price on product detail page */
+.rl-pd-compare-price-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin: 0.2rem 0 0.4rem;
+}
+
+.rl-pd-was-price {
+    font-size: 1rem;
+    color: #999;
+    text-decoration: line-through;
+}
+
+.rl-pd-discount-badge {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #c0392b;
+    background: rgba(192, 57, 43, 0.1);
+    border-radius: 0.4rem;
+    padding: 0.15rem 0.5rem;
+}
+
 /* Compare-at-price row on product cards */
 .rl-card-deal-row {
     display: flex;

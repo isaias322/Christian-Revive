@@ -10,6 +10,23 @@
         </xpath>
     </template>
 
+    <!-- Compare-at-price displayed between the product title and the current price -->
+    <template id="lifestyle_product_compare_price_pdp" inherit_id="website_sale.product"
+              name="Revive Lifestyle Compare Price on PDP">
+        <xpath expr="//div[@id='product_details']//h1[1]" position="after">
+            <t t-if="product.sudo().compare_price and product.sudo().compare_price &gt; product.list_price">
+                <div class="rl-pd-compare-price-row">
+                    <span class="rl-pd-was-price">
+                        Rs. <t t-esc="'{:,.0f}'.format(product.sudo().compare_price)"/>
+                    </span>
+                    <span class="rl-pd-discount-badge">
+                        <t t-esc="'{:.0f}% OFF'.format((product.sudo().compare_price - product.list_price) / product.sudo().compare_price * 100)"/>
+                    </span>
+                </div>
+            </t>
+        </xpath>
+    </template>
+
     <!-- Anchored on div#product_details, a stable top-level wrapper in
          website_sale.product - verified against the Odoo 18 source before
          writing this, same as the order-portal anchor below. -->

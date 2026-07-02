@@ -17,13 +17,13 @@
               name="Revive Lifestyle Product Details">
         <xpath expr="//div[@id='product_details']" position="inside">
 
-            <!-- Stock availability badge -->
+            <!-- Stock availability badge (uses virtual_available = on-hand minus reserved) -->
             <div t-if="product.type in ('consu', 'product')" class="rl-pd-stock-row mt-3">
-                <span t-if="product.sudo().qty_available &gt; 5" class="rl-pd-stock rl-pd-stock-ok">
-                    <i class="fa fa-check-circle"/> In stock — <t t-esc="int(product.sudo().qty_available)"/> available
+                <span t-if="product.sudo().virtual_available &gt; 5" class="rl-pd-stock rl-pd-stock-ok">
+                    <i class="fa fa-check-circle"/> In stock — <t t-esc="int(product.sudo().virtual_available)"/> available
                 </span>
-                <span t-elif="product.sudo().qty_available &gt; 0" class="rl-pd-stock rl-pd-stock-low">
-                    <i class="fa fa-exclamation-circle"/> Only <t t-esc="int(product.sudo().qty_available)"/> left — order soon
+                <span t-elif="product.sudo().virtual_available &gt; 0" class="rl-pd-stock rl-pd-stock-low">
+                    <i class="fa fa-exclamation-circle"/> Only <t t-esc="int(product.sudo().virtual_available)"/> left — order soon
                 </span>
                 <span t-else="" class="rl-pd-stock rl-pd-stock-mto">
                     <i class="fa fa-clock-o"/> Made to order
@@ -100,7 +100,7 @@
 
             <!-- Notify me when back in stock -->
             <div id="notify_stock" class="lifestyle-card mt-3"
-                 t-if="product.type in ('consu', 'product') and product.sudo().qty_available &lt;= 0">
+                 t-if="product.type in ('consu', 'product') and product.sudo().virtual_available &lt;= 0">
                 <h6 class="mb-2">Notify me when back in stock</h6>
                 <p t-if="request.params.get('notify_success')" class="text-success mb-0">
                     Thanks! We'll let you know when this is back in stock.
@@ -345,7 +345,7 @@
                                             <div class="rl-home-product-image">
                                                 <span t-if="section.show_status_badge" class="rl-home-product-status">
                                                     <i class="fa fa-check"></i>
-                                                    <t t-esc="'Ready' if product.sudo().qty_available &gt; 0 else 'Order'"/>
+                                                    <t t-esc="'Ready' if product.sudo().virtual_available &gt; 0 else 'Order'"/>
                                                 </span>
                                                 <img t-att-src="'/web/image/product.template/%s/image_512' % product.id" t-att-alt="product.name" loading="lazy"/>
                                             </div>
@@ -944,11 +944,11 @@
 
     <template id="lifestyle_shop_product_card_extras" inherit_id="website_sale.products_item" name="Revive Lifestyle Product Card Extras">
         <xpath expr="//div[contains(concat(' ', normalize-space(@class), ' '), ' o_wsale_product_information ')]" position="inside">
-            <t t-if="product.type in ('consu', 'product') and product.sudo().qty_available &lt;= 0">
+            <t t-if="product.type in ('consu', 'product') and product.sudo().virtual_available &lt;= 0">
                 <span class="rl-card-badge rl-card-badge-mto">Made to order</span>
             </t>
-            <t t-elif="product.type in ('consu', 'product') and product.sudo().qty_available &lt;= 2">
-                <span class="rl-card-badge rl-card-badge-low">Only <t t-esc="int(product.sudo().qty_available)"/> left</span>
+            <t t-elif="product.type in ('consu', 'product') and product.sudo().virtual_available &lt;= 2">
+                <span class="rl-card-badge rl-card-badge-low">Only <t t-esc="int(product.sudo().virtual_available)"/> left</span>
             </t>
             <div t-if="product.lifestyle_room_ids" class="rl-card-rooms">
                 <t t-foreach="product.lifestyle_room_ids.sudo()[:3]" t-as="room">

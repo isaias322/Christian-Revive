@@ -25,6 +25,11 @@ class ProductTemplate(models.Model):
     store_rating = fields.Float(string='Rating', compute='_compute_store_rating', compute_sudo=True, store=True)
     store_review_count = fields.Integer(string='Review Count', compute='_compute_store_rating', compute_sudo=True, store=True)
     store_sold_count = fields.Integer(string='Sold Count', compute='_compute_store_sold_count')
+    rl_available_qty = fields.Integer(
+        string='Available to Promise',
+        compute='_compute_rl_available_qty',
+        help='On-hand stock minus undelivered confirmed order quantities.',
+    )
     lifestyle_room = fields.Selection([
         ('bedroom', 'Bedroom'),
         ('living_room', 'Living Room'),
@@ -72,6 +77,28 @@ class ProductTemplate(models.Model):
                 ('order_id.state', 'in', ('sale', 'done')),
             ])
             product.store_sold_count = int(sum(lines.mapped('product_uom_qty')))
+
+    def _compute_rl_available_qty(self):
+        """On-hand stock minus qty in confirmed orders not yet delivered.
+
+        virtual_available only drops when delivery stock moves are reserved
+        (Check Availability). This field always reflects pending orders.
+        """
+        SaleLine = self.env['sale.order.line'].sudo()
+        for product in self:
+            if product.type != 'product':
+                product.rl_available_qty = 0
+                continue
+            variant_ids = product.product_variant_ids.ids
+            if not variant_ids:
+                product.rl_available_qty = max(0, int(product.qty_available))
+                continue
+            lines = SaleLine.search([
+                ('product_id', 'in', variant_ids),
+                ('state', 'in', ('sale', 'done')),
+            ])
+            pending = sum(max(0.0, l.product_uom_qty - l.qty_delivered) for l in lines)
+            product.rl_available_qty = max(0, int(product.qty_available - pending))
 
     def _get_lifestyle_color_selection(self):
         colors = set()

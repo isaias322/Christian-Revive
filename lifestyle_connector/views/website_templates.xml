@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <!-- Every page goes through website.layout, so its <head> is a safe,
          universal place to load the brand fonts (kept out of the SCSS
@@ -17,16 +17,16 @@
               name="Revive Lifestyle Product Details">
         <xpath expr="//div[@id='product_details']" position="inside">
 
-            <!-- Stock availability badge (uses virtual_available = on-hand minus reserved) -->
-            <div t-if="product.type in ('consu', 'product')" class="rl-pd-stock-row mt-3">
-                <span t-if="product.sudo().virtual_available &gt; 5" class="rl-pd-stock rl-pd-stock-ok">
-                    <i class="fa fa-check-circle"/> In stock — <t t-esc="int(product.sudo().virtual_available)"/> available
+            <!-- Stock availability badge: on-hand minus undelivered confirmed orders -->
+            <div t-if=”product.type in ('consu', 'product')” class=”rl-pd-stock-row mt-3”>
+                <span t-if=”product.sudo().rl_available_qty &gt; 5” class=”rl-pd-stock rl-pd-stock-ok”>
+                    <i class=”fa fa-check-circle”/> In stock &#8212; <t t-esc=”product.sudo().rl_available_qty”/> available
                 </span>
-                <span t-elif="product.sudo().virtual_available &gt; 0" class="rl-pd-stock rl-pd-stock-low">
-                    <i class="fa fa-exclamation-circle"/> Only <t t-esc="int(product.sudo().virtual_available)"/> left — order soon
+                <span t-elif=”product.sudo().rl_available_qty &gt; 0” class=”rl-pd-stock rl-pd-stock-low”>
+                    <i class=”fa fa-exclamation-circle”/> Only <t t-esc=”product.sudo().rl_available_qty”/> left &#8212; order soon
                 </span>
-                <span t-else="" class="rl-pd-stock rl-pd-stock-mto">
-                    <i class="fa fa-clock-o"/> Made to order
+                <span t-else=”” class=”rl-pd-stock rl-pd-stock-mto”>
+                    <i class=”fa fa-clock-o”/> Made to order
                 </span>
             </div>
 
@@ -54,8 +54,9 @@
             <p t-if="product.store_description" class="rl-pd-description mt-3"
                t-esc="product.store_description"/>
 
-            <!-- Color swatches — clickable, selected color flows to sale order -->
+            <!-- Color swatches â€” clickable, selected color flows to sale order -->
             <div t-if="product.color_options" class="rl-pd-section mt-3" id="rl_color_picker">
+                <input type="hidden" name="lifestyle_color" id="rl_selected_color_input"/>
                 <p class="rl-pd-label">Available Colors</p>
                 <div class="rl-pd-swatches" role="radiogroup" aria-label="Choose a color">
                     <t t-foreach="product.color_options.split(',')[:8]" t-as="col">
@@ -100,7 +101,7 @@
 
             <!-- Notify me when back in stock -->
             <div id="notify_stock" class="lifestyle-card mt-3"
-                 t-if="product.type in ('consu', 'product') and product.sudo().virtual_available &lt;= 0">
+                 t-if="product.type in ('consu', 'product') and product.sudo().rl_available_qty &lt;= 0">
                 <h6 class="mb-2">Notify me when back in stock</h6>
                 <p t-if="request.params.get('notify_success')" class="text-success mb-0">
                     Thanks! We'll let you know when this is back in stock.
@@ -542,7 +543,7 @@
                         <div class="row align-items-end g-4">
                             <div class="col-12 col-lg-7">
                                 <span class="rl-contact-kicker">Revive Lifestyle Support</span>
-                                <h1>LetÃ¢â‚¬â„¢s shape your home together</h1>
+                                <h1>LetÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢s shape your home together</h1>
                                 <p>
                                     Questions about a furniture piece, custom finish, delivery, or an active order?
                                     Send a note and our team will help you with the next clear step.
@@ -911,7 +912,7 @@
 
     <template id="lifestyle_shop_experience" inherit_id="website_sale.products" name="Revive Lifestyle Shop Experience">
         <!-- Target the first child inside #products_grid so the intro is prepended
-             inside the products column — not as a sibling, which would create a
+             inside the products column â€” not as a sibling, which would create a
              third flex column and squeeze the product grid into a tiny strip. -->
         <xpath expr="//div[@id='products_grid']/*[1]" position="before">
             <section class="rl-shop-intro">
@@ -944,11 +945,11 @@
 
     <template id="lifestyle_shop_product_card_extras" inherit_id="website_sale.products_item" name="Revive Lifestyle Product Card Extras">
         <xpath expr="//div[contains(concat(' ', normalize-space(@class), ' '), ' o_wsale_product_information ')]" position="inside">
-            <t t-if="product.type in ('consu', 'product') and product.sudo().virtual_available &lt;= 0">
+            <t t-if="product.type in ('consu', 'product') and product.sudo().rl_available_qty &lt;= 0">
                 <span class="rl-card-badge rl-card-badge-mto">Made to order</span>
             </t>
-            <t t-elif="product.type in ('consu', 'product') and product.sudo().virtual_available &lt;= 2">
-                <span class="rl-card-badge rl-card-badge-low">Only <t t-esc="int(product.sudo().virtual_available)"/> left</span>
+            <t t-elif="product.type in ('consu', 'product') and product.sudo().rl_available_qty &lt;= 2">
+                <span class="rl-card-badge rl-card-badge-low">Only <t t-esc="product.sudo().rl_available_qty"/> left</span>
             </t>
             <div t-if="product.lifestyle_room_ids" class="rl-card-rooms">
                 <t t-foreach="product.lifestyle_room_ids.sudo()[:3]" t-as="room">
@@ -958,3 +959,4 @@
         </xpath>
     </template>
 </odoo>
+

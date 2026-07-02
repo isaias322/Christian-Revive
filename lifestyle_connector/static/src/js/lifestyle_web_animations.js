@@ -306,68 +306,78 @@ function restoreShopSearchBar() {
     var searchForm = document.querySelector('.o_wsale_products_searchbar_form');
     if (!searchForm) return;
 
-    // Keep the search bar visible no matter what Odoo's JS tries to do to it.
-    function ensureVisible() {
-        searchForm.classList.remove('d-none', 'collapse');
-        if (window.getComputedStyle(searchForm).display === 'none') {
-            searchForm.style.display = 'inline-flex';
-        }
-    }
-
-    ensureVisible();
-
-    // Watch for Odoo dynamically hiding the bar after user interaction.
-    if (window.MutationObserver) {
-        new MutationObserver(ensureVisible).observe(searchForm, {
-            attributes: true,
-            attributeFilter: ['class', 'style']
-        });
-    }
-
     var input = searchForm.querySelector('input[name="search"], .search-query');
     if (!input) return;
 
-    // Dims the product grid immediately to show "something is happening".
     function dimGrid() {
         var grid = document.getElementById('products_grid');
         if (grid) { grid.style.transition = 'opacity 0.1s'; grid.style.opacity = '0.25'; }
     }
 
-    function clearSearchNav() {
-        if (!new URLSearchParams(window.location.search).has('search')) return;
-        dimGrid();
+    function navToShop() {
         var url = new URL(window.location.href);
         url.searchParams.delete('search');
         url.searchParams.delete('page');
+        dimGrid();
         window.location.href = url.toString();
     }
 
-    // Auto-navigate to all products when the search field is cleared.
-    // 300ms debounce: fast enough to feel instant, long enough not to fire
-    // mid-retype when the user is clearing to type a new term.
+    // Guard flag: prevents MutationObserver from re-entering ensureVisible
+    // while ensureVisible itself is modifying style/class. Without this the
+    // observer fires in a tight loop and freezes the browser tab.
+    var _restoring = false;
+    function ensureVisible() {
+        if (_restoring) return;
+        _restoring = true;
+        searchForm.classList.remove('d-none', 'collapse');
+        if (window.getComputedStyle(searchForm).display === 'none') {
+            searchForm.style.display = 'inline-flex';
+        }
+        _restoring = false;
+    }
+
+    ensureVisible();
+
+    if (window.MutationObserver) {
+        new MutationObserver(ensureVisible).observe(searchForm, {
+            attributes: true,
+            attributeFilter: ['class', 'style'],
+        });
+    }
+
+    // Intercept form submit when field is empty: go straight to /shop instead
+    // of submitting ?search= which triggers a heavy server query and can hang.
+    searchForm.addEventListener('submit', function (e) {
+        if (input.value.trim() !== '') return;
+        e.preventDefault();
+        e.stopPropagation();
+        if (new URLSearchParams(window.location.search).has('search')) {
+            navToShop();
+        }
+    }, true);
+
+    // Auto-navigate when user deletes all text in the search field.
     var debounceTimer;
     input.addEventListener('input', function () {
         clearTimeout(debounceTimer);
         if (input.value.trim() !== '') return;
         if (!new URLSearchParams(window.location.search).has('search')) return;
-        // Give instant visual feedback before the page reload starts.
         dimGrid();
         debounceTimer = setTimeout(function () {
-            if (input.value.trim() !== '') return;
-            clearSearchNav();
+            if (input.value.trim() === '') navToShop();
         }, 300);
     });
 
-    // Escape key: clear field and return to all products immediately.
+    // Escape: clear the field and go back to all products immediately.
     input.addEventListener('keydown', function (e) {
         if (e.key !== 'Escape') return;
         clearTimeout(debounceTimer);
         input.value = '';
         input.blur();
-        clearSearchNav();
+        if (new URLSearchParams(window.location.search).has('search')) navToShop();
     });
 
-    // Auto-focus when the user arrives on /shop after clearing a search URL.
+    // Auto-focus after arriving on /shop from a search page.
     var params = new URLSearchParams(window.location.search);
     var referrer = document.referrer || '';
     if (referrer.includes('/shop') && referrer.includes('search=') && !params.has('search')) {

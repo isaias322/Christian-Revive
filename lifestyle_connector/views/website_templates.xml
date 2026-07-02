@@ -114,20 +114,36 @@
                 </div>
             </div>
 
-            <!-- Notify me when back in stock -->
+            <!-- Notify me when back in stock → creates a CRM lead -->
             <div id="notify_stock" class="lifestyle-card mt-3"
                  t-if="product.type in ('consu', 'product') and product.sudo().rl_available_qty &lt;= 0">
-                <h6 class="mb-2">Notify me when back in stock</h6>
-                <p t-if="request.params.get('notify_success')" class="text-success mb-0">
-                    Thanks! We'll let you know when this is back in stock.
-                </p>
-                <form t-else="" t-attf-action="/shop/product/#{product.id}/notify-stock" method="post"
-                      class="d-flex gap-2 flex-wrap">
-                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
-                    <input type="email" name="email" class="form-control" style="max-width: 280px;"
-                           placeholder="Your email" required="required"/>
-                    <button type="submit" class="btn btn-primary">Notify Me</button>
-                </form>
+                <h6 class="mb-2"><i class="fa fa-bell-o me-1"/> Out of stock</h6>
+                <div id="rl_notify_success" style="display:none;">
+                    <p class="text-success mb-0">
+                        <i class="fa fa-check-circle"/> You're on the list — we'll contact you when it's back.
+                    </p>
+                </div>
+                <div id="rl_notify_form">
+                    <p class="text-muted small mb-3">Get notified the moment this comes back in stock.</p>
+                    <t t-if="not website.is_public_user()">
+                        <button type="button" class="btn btn-primary rl-notify-btn"
+                                t-att-data-product-id="product.id"
+                                t-att-data-product-name="product.name">
+                            <i class="fa fa-bell"/> Notify Me
+                        </button>
+                    </t>
+                    <t t-else="">
+                        <div class="d-flex gap-2 flex-wrap align-items-center">
+                            <input type="email" class="form-control rl-notify-email"
+                                   style="max-width:260px;" placeholder="Your email address"/>
+                            <button type="button" class="btn btn-primary rl-notify-btn"
+                                    t-att-data-product-id="product.id"
+                                    t-att-data-product-name="product.name">
+                                <i class="fa fa-bell"/> Notify Me
+                            </button>
+                        </div>
+                    </t>
+                </div>
             </div>
 
             <!-- Customer Reviews -->

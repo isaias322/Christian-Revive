@@ -93,6 +93,47 @@ class LifestyleWebsiteSale(WebsiteSale):
         request.session['rl_product_color'] = str(color).strip()[:64]
         return {'ok': True}
 
+    @http.route('/shop/notify_stock', type='json', auth='public', website=True, methods=['POST'])
+    def notify_stock(self, product_id=None, email='', **kw):
+        """Create a CRM lead so staff can follow up on back-in-stock requests."""
+        if not product_id:
+            return {'ok': False}
+        try:
+            product = request.env['product.template'].sudo().browse(int(product_id))
+            if not product.exists():
+                return {'ok': False}
+            partner = None
+            email_from = str(email or '').strip()
+            if not request.env.user._is_public():
+                partner = request.env.user.partner_id
+                email_from = partner.email or email_from
+            if not email_from:
+                return {'ok': False, 'need_email': True}
+            CrmTag = request.env['crm.tag'].sudo()
+            tag = CrmTag.search([('name', '=', 'Stock Notification')], limit=1)
+            if not tag:
+                tag = CrmTag.create({'name': 'Stock Notification'})
+            lead_vals = {
+                'name': 'Back in Stock: %s' % product.name,
+                'email_from': email_from,
+                'type': 'lead',
+                'description': (
+                    'Customer requested a stock notification.\n\n'
+                    'Product: %s\nProduct URL: %s%s'
+                ) % (
+                    product.name,
+                    request.httprequest.host_url.rstrip('/'),
+                    product.website_url or '',
+                ),
+                'tag_ids': [(4, tag.id)],
+            }
+            if partner:
+                lead_vals['partner_id'] = partner.id
+            request.env['crm.lead'].sudo().create(lead_vals)
+            return {'ok': True}
+        except Exception:
+            return {'ok': False}
+
     @http.route('/shop/apply_line_color', type='json', auth='public', website=True, methods=['POST'])
     def apply_line_color(self, line_id=None, color='', **kw):
         """Apply the chosen color to a specific order line after Odoo's cart update.

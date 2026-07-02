@@ -69,6 +69,35 @@ class SaleOrder(models.Model):
 
 
 
+    def _cart_update(self, product_id=None, line_id=None, add_qty=0, set_qty=0, **kwargs):
+        """Append the customer's chosen color to the order line description."""
+        result = super()._cart_update(
+            product_id=product_id, line_id=line_id,
+            add_qty=add_qty, set_qty=set_qty, **kwargs,
+        )
+        try:
+            from odoo.http import request as http_request
+            if not http_request:
+                return result
+            color = (http_request.session.pop('rl_product_color', '') or '').strip()
+            if not color:
+                return result
+            updated_line_id = result.get('line_id') if isinstance(result, dict) else None
+            if updated_line_id:
+                line = self.env['sale.order.line'].browse(updated_line_id)
+            else:
+                # Fallback: last line on this order matching the product
+                pid = int(product_id or 0)
+                matching = self.order_line.filtered(
+                    lambda l: l.product_id.id == pid or l.product_id.product_tmpl_id.id == pid
+                )
+                line = matching[-1] if matching else self.env['sale.order.line']
+            if line.exists() and 'Color:' not in (line.name or ''):
+                line.write({'name': (line.name or '') + '\nColor: ' + color})
+        except Exception:
+            pass
+        return result
+
     def _lifestyle_timeline(self):
         """Same stage timeline shown in the Revive Lifestyle app, reused by
         the customer website portal page so both surfaces stay in sync."""

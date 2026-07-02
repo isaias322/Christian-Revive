@@ -10,7 +10,7 @@
                     <group>
                         <group string="Store Settings">
                             <field name="lifestyle_app_visible" string="Show in Revive Lifestyle App"/>
-                            <field name="lifestyle_room" string="Room for Website Shop"/>
+                            <field name="lifestyle_room_ids" string="Room for Website Shop" widget="many2many_tags"/>
                         </group>
                     </group>
                     <separator string="Color Images"/>

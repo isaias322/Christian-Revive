@@ -1,3 +1,4 @@
+from . import room_category
 from . import fcm_sender
 from . import device_token
 from . import attachment_token

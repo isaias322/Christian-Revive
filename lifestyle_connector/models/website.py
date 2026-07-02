@@ -27,7 +27,7 @@ class Website(models.Model):
 
         room = request.params.get('lifestyle_room')
         if room:
-            domain = domain + [('lifestyle_room', '=', room)]
+            domain = domain + [('lifestyle_room_ids', 'in', [int(room)])]
 
         quick = request.params.get('lifestyle_quick')
         if quick == 'new':

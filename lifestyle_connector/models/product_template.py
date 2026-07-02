@@ -34,7 +34,15 @@ class ProductTemplate(models.Model):
         ('kids_room', 'Kids Room'),
         ('entryway', 'Entryway'),
         ('custom', 'Custom / Other'),
-    ], string='Room', help='Controls the Shop by Room filters on the Revive Lifestyle website.')
+    ], string='Room (legacy)', help='Replaced by lifestyle_room_ids. Kept to avoid data loss.')
+    lifestyle_room_ids = fields.Many2many(
+        'lifestyle.room.category',
+        'lifestyle_product_room_rel',
+        'product_id',
+        'room_id',
+        string='Rooms for Website Shop',
+        help='Which rooms this product appears in on the website Shop by Room filter.',
+    )
 
     @api.depends('review_ids.rating', 'review_ids.write_date')
     def _compute_store_rating(self):
@@ -158,19 +166,18 @@ class ProductTemplate(models.Model):
         return sorted(colors)
 
     @api.model
-    @api.model
     def _lifestyle_available_rooms(self):
         products = self.sudo().search(
             self._lifestyle_app_visibility_domain()
-            + [('sale_ok', '=', True), ('active', '=', True), ('lifestyle_room', '!=', False)]
+            + [('sale_ok', '=', True), ('active', '=', True), ('lifestyle_room_ids', '!=', False)]
         )
-        labels = dict(self._fields['lifestyle_room'].selection)
-        rooms = []
+        room_ids = products.mapped('lifestyle_room_ids').sorted('sequence')
         seen = set()
-        for key in products.mapped('lifestyle_room'):
-            if key and key not in seen:
-                seen.add(key)
-                rooms.append((key, labels.get(key, key.replace('_', ' ').title())))
+        rooms = []
+        for room in room_ids:
+            if room.id not in seen:
+                seen.add(room.id)
+                rooms.append((room.id, room.name))
         return rooms
     def _lifestyle_available_sizes(self):
         products = self.sudo().search(

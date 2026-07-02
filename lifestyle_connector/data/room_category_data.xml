@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="room_bedroom" model="lifestyle.room.category">
+        <field name="name">Bedroom</field>
+        <field name="sequence">10</field>
+    </record>
+    <record id="room_living_room" model="lifestyle.room.category">
+        <field name="name">Living Room</field>
+        <field name="sequence">20</field>
+    </record>
+    <record id="room_dining_room" model="lifestyle.room.category">
+        <field name="name">Dining Room</field>
+        <field name="sequence">30</field>
+    </record>
+    <record id="room_office" model="lifestyle.room.category">
+        <field name="name">Office</field>
+        <field name="sequence">40</field>
+    </record>
+    <record id="room_outdoor" model="lifestyle.room.category">
+        <field name="name">Outdoor</field>
+        <field name="sequence">50</field>
+    </record>
+    <record id="room_kids_room" model="lifestyle.room.category">
+        <field name="name">Kids Room</field>
+        <field name="sequence">60</field>
+    </record>
+    <record id="room_entryway" model="lifestyle.room.category">
+        <field name="name">Entryway</field>
+        <field name="sequence">70</field>
+    </record>
+    <record id="room_custom" model="lifestyle.room.category">
+        <field name="name">Custom / Other</field>
+        <field name="sequence">80</field>
+    </record>
+</odoo>

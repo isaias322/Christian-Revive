@@ -109,14 +109,22 @@ class LifestyleWebsiteSale(WebsiteSale):
                 email_from = partner.email or email_from
             if not email_from:
                 return {'ok': False, 'need_email': True}
+            lead_name = 'Back in Stock: %s' % product.name
+            existing = request.env['crm.lead'].sudo().search([
+                ('email_from', '=', email_from),
+                ('name', '=', lead_name),
+                ('active', '=', True),
+            ], limit=1)
+            if existing:
+                return {'ok': True}
             CrmTag = request.env['crm.tag'].sudo()
             tag = CrmTag.search([('name', '=', 'Stock Notification')], limit=1)
             if not tag:
                 tag = CrmTag.create({'name': 'Stock Notification'})
             lead_vals = {
-                'name': 'Back in Stock: %s' % product.name,
+                'name': lead_name,
                 'email_from': email_from,
-                'type': 'lead',
+                'type': 'opportunity',
                 'description': (
                     'Customer requested a stock notification.\n\n'
                     'Product: %s\nProduct URL: %s%s'

@@ -79,12 +79,15 @@ class ProductTemplate(models.Model):
             product.store_sold_count = int(sum(lines.mapped('product_uom_qty')))
 
     def _compute_rl_available_qty(self):
-        """On-hand stock minus qty in confirmed orders not yet delivered.
+        """On-hand stock minus quantities already committed to customers.
 
-        virtual_available only drops when delivery stock moves are reserved
-        (Check Availability). This field always reflects pending orders.
+        The public shop should reflect the Revive order flow, not only stock
+        moves. A website order can exist before delivery is validated, so we
+        subtract non-cancelled order lines until the order reaches the final
+        delivered/picked-up stage or the line itself is fully delivered.
         """
         SaleLine = self.env['sale.order.line'].sudo()
+        final_stages = ('delivered', 'picked_up', 'cancelled')
         for product in self:
             if product.type != 'product':
                 product.rl_available_qty = 0
@@ -95,10 +98,11 @@ class ProductTemplate(models.Model):
                 continue
             lines = SaleLine.search([
                 ('product_id', 'in', variant_ids),
-                ('state', 'in', ('sale', 'done')),
+                ('order_id.state', '!=', 'cancel'),
+                ('order_id.delivery_stage', 'not in', final_stages),
             ])
-            pending = sum(max(0.0, l.product_uom_qty - l.qty_delivered) for l in lines)
-            product.rl_available_qty = max(0, int(product.qty_available - pending))
+            committed = sum(max(0.0, line.product_uom_qty - line.qty_delivered) for line in lines)
+            product.rl_available_qty = max(0, int(product.qty_available - committed))
 
     def _get_lifestyle_color_selection(self):
         colors = set()
@@ -226,7 +230,7 @@ class ProductTemplate(models.Model):
         years = {product.create_date.year for product in products if product.create_date}
         return sorted(years, reverse=True)
     # Image (not Binary) so Odoo auto-resizes/compresses on upload instead of
-    # storing whatever full-camera-resolution file the admin picked — that
+    # storing whatever full-camera-resolution file the admin picked - that
     # was why switching colors in the app took forever to load.
     lifestyle_color_image_1_color = fields.Selection(selection='_get_lifestyle_color_selection', string='Color for Image 1')
     lifestyle_color_image_1 = fields.Image(string='Color Image 1', max_width=1024, max_height=1024)
@@ -269,7 +273,7 @@ class ProductTemplate(models.Model):
 
     def action_optimize_lifestyle_images(self):
         """Re-saves every image field on these products through itself,
-        which makes Odoo re-run the Image field's resize/compression step —
+        which makes Odoo re-run the Image field's resize/compression step -
         shrinks any oversized photo that was uploaded before these fields
         were switched from Binary to Image."""
         image_fields = (
@@ -284,7 +288,3 @@ class ProductTemplate(models.Model):
             for color_image in product.color_image_ids:
                 if color_image.image:
                     color_image.write({'image': color_image.image})
-
-
-
-

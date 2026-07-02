@@ -494,7 +494,7 @@ function setupProductCompare() {
         compareItems.slice(0, 3).forEach((item) => {
             const row = document.createElement('div');
             row.className = 'rl-compare-item';
-            row.innerHTML = `<div><strong>${item.name}</strong><span>${moneyLabel(item.price)}${item.room ? ' Â· ' + item.room : ''}</span></div><button type="button" class="btn btn-link btn-sm" data-rl-remove-compare="${item.id}">Remove</button>`;
+            row.innerHTML = `<div><strong>${item.name}</strong><span>${moneyLabel(item.price)}</span></div><button type="button" class="btn btn-link btn-sm" data-rl-remove-compare="${item.id}">Remove</button>`;
             list.appendChild(row);
         });
         tray.classList.toggle('is-visible', compareItems.length > 0);

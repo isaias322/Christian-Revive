@@ -988,6 +988,13 @@
                     <span class="rl-card-room-tag"><t t-esc="room.name"/></span>
                 </t>
             </div>
+            <button type="button" class="rl-card-compare-btn"
+                t-att-data-rl-compare-id="product.id"
+                t-att-data-rl-compare-name="product.name"
+                t-att-data-rl-compare-price="product.list_price"
+                t-att-data-rl-compare-url="product.website_url">
+                <i class="fa fa-balance-scale me-1"/>Compare
+            </button>
         </xpath>
     </template>
 </odoo>

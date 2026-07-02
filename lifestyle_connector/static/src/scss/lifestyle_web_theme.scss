@@ -5278,6 +5278,26 @@ footer .rounded-circle,
     gap: 0.5rem;
 }
 
+/* Compare button on product cards */
+.rl-card-compare-btn {
+    display: block;
+    width: 100%;
+    margin-top: 0.5rem;
+    padding: 0.3rem 0.75rem;
+    font-size: 0.78rem;
+    background: transparent;
+    border: 1px solid rgba(92, 112, 80, 0.25);
+    border-radius: 2rem;
+    color: #5c7050;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+
+    &:hover {
+        background: rgba(92, 112, 80, 0.08);
+        border-color: rgba(92, 112, 80, 0.5);
+    }
+}
+
 /* Recently viewed — inline section below the product grid */
 .rl-recently-viewed {
     margin-top: 2.5rem;

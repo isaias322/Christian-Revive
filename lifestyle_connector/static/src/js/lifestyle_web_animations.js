@@ -303,28 +303,65 @@ function setupHomepageHeroSlider() {
 function restoreShopSearchBar() {
     if (!window.location.pathname.startsWith('/shop')) return;
 
-    const searchForm = document.querySelector('.o_wsale_products_searchbar_form');
+    var searchForm = document.querySelector('.o_wsale_products_searchbar_form');
     if (!searchForm) return;
 
-    // If something has hidden or collapsed the form, undo it.
-    searchForm.classList.remove('d-none', 'collapse');
-    if (window.getComputedStyle(searchForm).display === 'none') {
-        searchForm.style.display = 'inline-flex';
+    // Keep the search bar visible no matter what Odoo's JS tries to do to it.
+    function ensureVisible() {
+        searchForm.classList.remove('d-none', 'collapse');
+        if (window.getComputedStyle(searchForm).display === 'none') {
+            searchForm.style.display = 'inline-flex';
+        }
     }
 
-    // When the user cleared a search and landed back on /shop, auto-focus
-    // the input so they can type a new search without an extra click.
-    const params = new URLSearchParams(window.location.search);
-    const referrer = document.referrer || '';
-    const arrivedFromSearch = referrer.includes('/shop') && referrer.includes('search=') && !params.has('search');
-    if (arrivedFromSearch) {
-        const input = searchForm.querySelector('input[name="search"], .search-query');
-        if (input) {
-            window.setTimeout(function () {
-                input.focus();
-                input.select();
-            }, 120);
+    ensureVisible();
+
+    // Watch for Odoo dynamically hiding the bar after user interaction.
+    if (window.MutationObserver) {
+        new MutationObserver(ensureVisible).observe(searchForm, {
+            attributes: true,
+            attributeFilter: ['class', 'style']
+        });
+    }
+
+    var input = searchForm.querySelector('input[name="search"], .search-query');
+    if (!input) return;
+
+    // Auto-navigate to all products when the search field is cleared.
+    var debounceTimer;
+    input.addEventListener('input', function () {
+        clearTimeout(debounceTimer);
+        if (input.value.trim() !== '') return;
+        // Only navigate if we are currently on a search-filtered page.
+        if (!new URLSearchParams(window.location.search).has('search')) return;
+        debounceTimer = setTimeout(function () {
+            if (input.value.trim() !== '') return;
+            var url = new URL(window.location.href);
+            url.searchParams.delete('search');
+            url.searchParams.delete('page');
+            window.location.href = url.toString();
+        }, 600);
+    });
+
+    // Escape key: clear field and return to all products immediately.
+    input.addEventListener('keydown', function (e) {
+        if (e.key !== 'Escape') return;
+        clearTimeout(debounceTimer);
+        input.value = '';
+        input.blur();
+        if (new URLSearchParams(window.location.search).has('search')) {
+            var url = new URL(window.location.href);
+            url.searchParams.delete('search');
+            url.searchParams.delete('page');
+            window.location.href = url.toString();
         }
+    });
+
+    // Auto-focus when the user arrives on /shop after clearing a search URL.
+    var params = new URLSearchParams(window.location.search);
+    var referrer = document.referrer || '';
+    if (referrer.includes('/shop') && referrer.includes('search=') && !params.has('search')) {
+        window.setTimeout(function () { input.focus(); input.select(); }, 120);
     }
 }
 

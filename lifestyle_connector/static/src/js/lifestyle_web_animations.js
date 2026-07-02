@@ -57,6 +57,7 @@ function hideShopCategoryTabs() {
     const categoryLabels = ['Furniture & Home', 'Fruits & Vegetables', 'Healthy Pantry'];
     const scope = document.querySelector('#wrap') || document.body;
     const matchingLinks = Array.from(scope.querySelectorAll('a')).filter((link) => {
+        if (link.closest('.rl-shop-filter-block')) return false;
         const label = link.textContent.replace(/\s+/g, ' ').trim();
         const href = link.getAttribute('href') || '';
         return categoryLabels.includes(label) || href.indexOf('/shop/category/') !== -1;

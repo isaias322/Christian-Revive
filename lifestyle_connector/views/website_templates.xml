@@ -957,7 +957,7 @@
                         <a t-att-href="keep('/shop', lifestyle_quick='popular')"><i class="fa fa-line-chart"></i> Popular</a>
                     </div>
                 </div>
-                <t t-set="shop_banners" t-value="request.env['lifestyle.app.banner'].sudo().search([('active', '=', True)], order='sequence, id', limit=3) if request.env.registry.get('lifestyle.app.banner') else []"/>
+                <t t-set="shop_banners" t-value="request.env['lifestyle.app.banner'].sudo().search([('active', '=', True)], order='sequence, id') if request.env.registry.get('lifestyle.app.banner') else []"/>
                 <div t-if="shop_banners" class="rl-shop-promo-strip">
                     <div t-foreach="shop_banners" t-as="banner" class="rl-shop-promo-pill">
                         <i class="fa fa-bullhorn"></i>

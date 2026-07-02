@@ -93,6 +93,28 @@ class LifestyleWebsiteSale(WebsiteSale):
         request.session['rl_product_color'] = str(color).strip()[:64]
         return {'ok': True}
 
+    @http.route('/shop/apply_line_color', type='json', auth='public', website=True, methods=['POST'])
+    def apply_line_color(self, line_id=None, color='', **kw):
+        """Apply the chosen color to a specific order line after Odoo's cart update.
+
+        The JS fetch intercept calls this with the exact line_id returned by
+        Odoo's own cart-update response, so we always find the right line.
+        """
+        if not line_id or not color:
+            return {'ok': False}
+        try:
+            order = request.website.sale_get_order()
+            if not order:
+                return {'ok': False}
+            lid = int(line_id)
+            line = order.order_line.filtered(lambda l: l.id == lid)
+            if line and 'Color:' not in (line.name or ''):
+                color_text = str(color).strip()[:64]
+                line.sudo().write({'name': (line.name or '') + '\nColor: ' + color_text})
+            return {'ok': True}
+        except Exception:
+            return {'ok': False}
+
     def _get_shop_sortings(self, *args, **kwargs):
         sortings = super()._get_shop_sortings(*args, **kwargs)
         sortings.update({

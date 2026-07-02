@@ -651,6 +651,35 @@ function setupColorSelection() {
             if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectSwatch(swatch); }
         });
     });
+
+    // Intercept Odoo's cart-update fetch so we can apply the color to the exact
+    // line_id that Odoo returns — belt-and-suspenders on top of the session approach.
+    // Guard prevents double-patching if the function is called more than once.
+    if (!window._rlCartFetchPatched) {
+        window._rlCartFetchPatched = true;
+        var _origFetch = window.fetch;
+        window.fetch = function (input, init) {
+            var url = typeof input === 'string' ? input : (input && input.url) || '';
+            var p = _origFetch.apply(window, arguments);
+            if (url.indexOf('cart/update') !== -1 || url.indexOf('_cart_update') !== -1) {
+                p.then(function (res) {
+                    res.clone().json().then(function (data) {
+                        var lineId = data && data.result && data.result.line_id;
+                        if (!lineId || !selectedColor) { return; }
+                        _origFetch('/shop/apply_line_color', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                jsonrpc: '2.0', method: 'call', id: 2,
+                                params: { line_id: lineId, color: selectedColor },
+                            }),
+                        }).catch(function () {});
+                    }).catch(function () {});
+                }).catch(function () {});
+            }
+            return p;
+        };
+    }
 }
 
 function hideProductPolicies() {

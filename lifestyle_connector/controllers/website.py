@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 from odoo import http
 from odoo.http import request
 from odoo.addons.website_sale.controllers.main import WebsiteSale
@@ -108,9 +108,8 @@ class LifestyleWebsiteSale(WebsiteSale):
                 return {'ok': False}
             lid = int(line_id)
             line = order.order_line.filtered(lambda l: l.id == lid)
-            if line and 'Color:' not in (line.name or ''):
-                color_text = str(color).strip()[:64]
-                line.sudo().write({'name': (line.name or '') + '\nColor: ' + color_text})
+            if line:
+                line._lifestyle_apply_color(color)
             return {'ok': True}
         except Exception:
             return {'ok': False}
@@ -158,3 +157,4 @@ class LifestyleWebsiteSale(WebsiteSale):
             invalid_fields.discard(field_name)
         elif field_name in invalid_fields:
             invalid_fields.remove(field_name)
+

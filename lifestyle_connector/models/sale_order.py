@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 from odoo import models, fields, api
 from odoo.exceptions import UserError
 from odoo.tools import html_escape
@@ -77,9 +77,11 @@ class SaleOrder(models.Model):
         )
         try:
             from odoo.http import request as http_req
-            # Accessing .session raises RuntimeError when there is no active HTTP
-            # request (e.g. cron jobs), which is caught below — no explicit check needed.
-            color = str(http_req.session.pop('rl_product_color', '') or '').strip()
+            color = str(kwargs.get('lifestyle_color') or '').strip()
+            if not color:
+                # Session is kept as a fallback for older pages/JS, but the
+                # selected color is now submitted with the cart form too.
+                color = str(http_req.session.pop('rl_product_color', '') or '').strip()
             if not color:
                 return result
             line_id_val = result.get('line_id') if isinstance(result, dict) else None
@@ -93,8 +95,8 @@ class SaleOrder(models.Model):
                     lambda l: l.product_id.id == pid or l.product_id.product_tmpl_id.id == pid
                 )
                 line = matching[-1:] if matching else self.env['sale.order.line']
-            if line.exists() and 'Color:' not in (line.name or ''):
-                line.sudo().write({'name': (line.name or '') + '\nColor: ' + color})
+            if line.exists():
+                line._lifestyle_apply_color(color)
         except Exception:
             pass
         return result
@@ -403,6 +405,24 @@ class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'
 
     lifestyle_color = fields.Char(string='Selected Color', copy=False)
+
+    def _lifestyle_apply_color(self, color):
+        color_text = str(color or '').strip()[:64]
+        if not color_text:
+            return
+        for line in self:
+            base_lines = [
+                value for value in (line.name or '').splitlines()
+                if not value.strip().lower().startswith('color:')
+            ]
+            base_name = '\n'.join(base_lines).strip()
+            line.sudo().write({
+                'lifestyle_color': color_text,
+                'name': (base_name + '\nColor: ' + color_text).strip(),
+            })
+
+
+
 
 
 

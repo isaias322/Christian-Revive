@@ -350,32 +350,26 @@ function restoreShopSearchBar() {
     searchForm.addEventListener('submit', function (e) {
         if (input.value.trim() !== '') return;
         e.preventDefault();
-        e.stopPropagation();
-        if (new URLSearchParams(window.location.search).has('search')) {
-            navToShop();
-        }
+        e.stopImmediatePropagation();
+        navToShop();
     }, true);
 
-    // Auto-navigate when user deletes all text in the search field.
-    var debounceTimer;
-    input.addEventListener('input', function () {
-        clearTimeout(debounceTimer);
+    // Navigate immediately when the field is cleared — capture phase so we
+    // run before Odoo's own input handler (which would fire an AJAX search).
+    input.addEventListener('input', function (e) {
         if (input.value.trim() !== '') return;
         if (!new URLSearchParams(window.location.search).has('search')) return;
-        dimGrid();
-        debounceTimer = setTimeout(function () {
-            if (input.value.trim() === '') navToShop();
-        }, 300);
-    });
+        e.stopImmediatePropagation();
+        navToShop();
+    }, true);
 
     // Escape: clear the field and go back to all products immediately.
     input.addEventListener('keydown', function (e) {
         if (e.key !== 'Escape') return;
-        clearTimeout(debounceTimer);
         input.value = '';
         input.blur();
-        if (new URLSearchParams(window.location.search).has('search')) navToShop();
-    });
+        navToShop();
+    }, true);
 
     // Auto-focus after arriving on /shop from a search page.
     var params = new URLSearchParams(window.location.search);

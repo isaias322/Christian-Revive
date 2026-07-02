@@ -86,13 +86,21 @@ function hideShopCategoryTabs() {
 
 function keepShopClean() {
     hideShopCategoryTabs();
-    window.setTimeout(hideShopCategoryTabs, 120);
-    window.setTimeout(hideShopCategoryTabs, 650);
+    window.setTimeout(hideShopCategoryTabs, 200);
 
     if (!window.location.pathname.startsWith('/shop') || !('MutationObserver' in window)) return;
-    const scope = document.querySelector('#wrap') || document.body;
-    const observer = new MutationObserver(() => hideShopCategoryTabs());
-    observer.observe(scope, { childList: true, subtree: true });
+    // Scope to the category nav area only — watching the whole page subtree
+    // fires on every DOM mutation and causes noticeable sluggishness.
+    const navScope = document.querySelector(
+        '.o_wsale_filmstip_container, .o_wsale_categories_top, .o_wsale_category_nav, nav'
+    ) || document.querySelector('#wrap');
+    let pending = false;
+    const observer = new MutationObserver(() => {
+        if (pending) return;
+        pending = true;
+        window.requestAnimationFrame(() => { hideShopCategoryTabs(); pending = false; });
+    });
+    observer.observe(navScope, { childList: true, subtree: true });
 }
 
 

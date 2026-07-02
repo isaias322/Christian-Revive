@@ -830,80 +830,70 @@
                 <h6 class="mb-2"><b>Quick Filters</b></h6>
                 <div class="d-flex flex-wrap gap-2">
                     <a t-att-href="keep('/shop', lifestyle_quick=None)"
-                       t-attf-class="lifestyle-badge text-decoration-none #{'' if not lifestyle_active_quick else 'opacity-50'}">All</a>
+                       t-attf-class="lifestyle-badge text-decoration-none #{'lifestyle-badge-active' if not lifestyle_active_quick else ''}">All</a>
                     <a t-att-href="keep('/shop', lifestyle_quick='new')"
-                       t-attf-class="lifestyle-badge text-decoration-none #{'' if lifestyle_active_quick == 'new' else 'opacity-50'}">New</a>
+                       t-attf-class="lifestyle-badge text-decoration-none #{'lifestyle-badge-active' if lifestyle_active_quick == 'new' else ''}">New</a>
                     <a t-att-href="keep('/shop', lifestyle_quick='popular')"
-                       t-attf-class="lifestyle-badge text-decoration-none #{'' if lifestyle_active_quick == 'popular' else 'opacity-50'}">Popular</a>
+                       t-attf-class="lifestyle-badge text-decoration-none #{'lifestyle-badge-active' if lifestyle_active_quick == 'popular' else ''}">Popular</a>
                 </div>
             </div>
             <div t-if="lifestyle_rooms" class="rl-shop-filter-block mb-3">
                 <h6 class="mb-2"><b>Shop by Room</b></h6>
                 <div class="d-flex flex-wrap gap-2">
                     <a t-att-href="keep('/shop', lifestyle_room=None)"
-                       t-attf-class="lifestyle-badge text-decoration-none #{'' if not lifestyle_active_room else 'opacity-50'}">All Rooms</a>
+                       t-attf-class="lifestyle-badge text-decoration-none #{'lifestyle-badge-active' if not lifestyle_active_room else ''}">All Rooms</a>
                     <a t-foreach="lifestyle_rooms" t-as="room_value"
                        t-att-href="keep('/shop', lifestyle_room=room_value[0])"
-                       t-attf-class="lifestyle-badge text-decoration-none #{'' if lifestyle_active_room == room_value[0] else 'opacity-50'}">
+                       t-attf-class="lifestyle-badge text-decoration-none #{'lifestyle-badge-active' if lifestyle_active_room == room_value[0] else ''}">
                         <t t-esc="room_value[1]"/>
                     </a>
                 </div>
             </div>
-            <div class="mb-3">
+            <div class="rl-shop-filter-block mb-3">
                 <h6 class="mb-2"><b>Availability</b></h6>
                 <div class="d-flex flex-wrap gap-2">
                     <a t-att-href="keep('/shop', lifestyle_availability=None)"
-                       t-attf-class="lifestyle-badge text-decoration-none #{'' if not lifestyle_active_availability else 'opacity-50'}">
-                        All
-                    </a>
+                       t-attf-class="lifestyle-badge text-decoration-none #{'lifestyle-badge-active' if not lifestyle_active_availability else ''}">All</a>
                     <a t-att-href="keep('/shop', lifestyle_availability='in_stock')"
-                       t-attf-class="lifestyle-badge text-decoration-none #{'' if lifestyle_active_availability == 'in_stock' else 'opacity-50'}">
-                        In Stock
-                    </a>
+                       t-attf-class="lifestyle-badge text-decoration-none #{'lifestyle-badge-active' if lifestyle_active_availability == 'in_stock' else ''}">In Stock</a>
                     <a t-att-href="keep('/shop', lifestyle_availability='out_of_stock')"
-                       t-attf-class="lifestyle-badge text-decoration-none #{'' if lifestyle_active_availability == 'out_of_stock' else 'opacity-50'}">
-                        Not Available
-                    </a>
+                       t-attf-class="lifestyle-badge text-decoration-none #{'lifestyle-badge-active' if lifestyle_active_availability == 'out_of_stock' else ''}">Not Available</a>
                 </div>
             </div>
-            <div t-if="lifestyle_years" class="mb-3">
+            <div t-if="lifestyle_years" class="rl-shop-filter-block mb-3">
                 <h6 class="mb-2"><b>Year</b></h6>
                 <div class="d-flex flex-wrap gap-2">
                     <a t-att-href="keep('/shop', lifestyle_year=None)"
-                       t-attf-class="lifestyle-badge text-decoration-none #{'' if not lifestyle_active_year else 'opacity-50'}">
-                        All
-                    </a>
+                       t-attf-class="lifestyle-badge text-decoration-none #{'lifestyle-badge-active' if not lifestyle_active_year else ''}">All</a>
                     <a t-foreach="lifestyle_years" t-as="year_value"
                        t-att-href="keep('/shop', lifestyle_year=year_value)"
-                       t-attf-class="lifestyle-badge text-decoration-none #{'' if lifestyle_active_year == str(year_value) else 'opacity-50'}">
+                       t-attf-class="lifestyle-badge text-decoration-none #{'lifestyle-badge-active' if lifestyle_active_year == str(year_value) else ''}">
                         <t t-esc="year_value"/>
                     </a>
                 </div>
             </div>
-            <div t-if="lifestyle_colors" class="mb-3">
+            <div t-if="lifestyle_colors" class="rl-shop-filter-block mb-3">
                 <h6 class="mb-2"><b>Color</b></h6>
                 <div class="d-flex flex-wrap gap-2">
                     <a t-att-href="keep('/shop', lifestyle_color=None)"
-                       t-attf-class="lifestyle-badge text-decoration-none #{'' if not lifestyle_active_color else 'opacity-50'}">
-                        All
-                    </a>
+                       t-attf-class="lifestyle-badge text-decoration-none #{'lifestyle-badge-active' if not lifestyle_active_color else ''}">All</a>
                     <a t-foreach="lifestyle_colors" t-as="color_value"
                        t-att-href="keep('/shop', lifestyle_color=color_value)"
-                       t-attf-class="lifestyle-badge text-decoration-none #{'' if lifestyle_active_color == color_value else 'opacity-50'}">
+                       t-attf-class="lifestyle-badge text-decoration-none #{'lifestyle-badge-active' if lifestyle_active_color == color_value else ''}">
+                        <span class="rl-filter-color-dot"
+                              t-att-style="'background-color:%s' % color_value.strip().lower()"/>
                         <t t-esc="color_value"/>
                     </a>
                 </div>
             </div>
-            <div t-if="lifestyle_sizes" class="mb-3">
+            <div t-if="lifestyle_sizes" class="rl-shop-filter-block mb-3">
                 <h6 class="mb-2"><b>Size</b></h6>
                 <div class="d-flex flex-wrap gap-2">
                     <a t-att-href="keep('/shop', lifestyle_size=None)"
-                       t-attf-class="lifestyle-badge text-decoration-none #{'' if not lifestyle_active_size else 'opacity-50'}">
-                        All
-                    </a>
+                       t-attf-class="lifestyle-badge text-decoration-none #{'lifestyle-badge-active' if not lifestyle_active_size else ''}">All</a>
                     <a t-foreach="lifestyle_sizes" t-as="size_value"
                        t-att-href="keep('/shop', lifestyle_size=size_value)"
-                       t-attf-class="lifestyle-badge text-decoration-none #{'' if lifestyle_active_size == size_value else 'opacity-50'}">
+                       t-attf-class="lifestyle-badge text-decoration-none #{'lifestyle-badge-active' if lifestyle_active_size == size_value else ''}">
                         <t t-esc="size_value"/>
                     </a>
                 </div>

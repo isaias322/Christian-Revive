@@ -76,24 +76,25 @@ class SaleOrder(models.Model):
             add_qty=add_qty, set_qty=set_qty, **kwargs,
         )
         try:
-            from odoo.http import request as http_request
-            if not http_request:
-                return result
-            color = (http_request.session.pop('rl_product_color', '') or '').strip()
+            from odoo.http import request as http_req
+            # Accessing .session raises RuntimeError when there is no active HTTP
+            # request (e.g. cron jobs), which is caught below — no explicit check needed.
+            color = str(http_req.session.pop('rl_product_color', '') or '').strip()
             if not color:
                 return result
-            updated_line_id = result.get('line_id') if isinstance(result, dict) else None
-            if updated_line_id:
-                line = self.env['sale.order.line'].browse(updated_line_id)
+            line_id_val = result.get('line_id') if isinstance(result, dict) else None
+            if line_id_val:
+                line = self.env['sale.order.line'].sudo().browse(line_id_val)
             else:
-                # Fallback: last line on this order matching the product
                 pid = int(product_id or 0)
+                # Invalidate cache so the just-created line is visible.
+                self.invalidate_recordset(['order_line'])
                 matching = self.order_line.filtered(
                     lambda l: l.product_id.id == pid or l.product_id.product_tmpl_id.id == pid
                 )
-                line = matching[-1] if matching else self.env['sale.order.line']
+                line = matching[-1:] if matching else self.env['sale.order.line']
             if line.exists() and 'Color:' not in (line.name or ''):
-                line.write({'name': (line.name or '') + '\nColor: ' + color})
+                line.sudo().write({'name': (line.name or '') + '\nColor: ' + color})
         except Exception:
             pass
         return result

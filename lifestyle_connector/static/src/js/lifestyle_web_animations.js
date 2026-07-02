@@ -630,6 +630,19 @@ function setupColorSelection() {
             labelName.textContent = selectedColor;
             label.style.display = '';
         }
+        // Store in session immediately on swatch click — the request completes
+        // well before the customer reaches "Add to Cart", so _cart_update will
+        // always find the color waiting in the session.
+        if (selectedColor) {
+            fetch('/shop/select_color', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    jsonrpc: '2.0', method: 'call', id: 1,
+                    params: { color: selectedColor },
+                }),
+            }).catch(function () {});
+        }
     }
 
     swatches.forEach(function (swatch) {
@@ -638,36 +651,6 @@ function setupColorSelection() {
             if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectSwatch(swatch); }
         });
     });
-
-    // Intercept the Add to Cart button: save the selected color to the server
-    // session BEFORE Odoo's handler fires, so the cart_update_json controller
-    // can read it and attach it to the order line.
-    var addToCartBtn = document.querySelector(
-        'a.js_add_cart, button.js_add_cart, #add_to_cart, .o_add_cart_btn, [name="add_to_cart"]'
-    );
-    if (!addToCartBtn) return;
-
-    var _savingColor = false;
-    addToCartBtn.addEventListener('click', function (e) {
-        if (!selectedColor || _savingColor) { _savingColor = false; return; }
-        e.preventDefault();
-        e.stopImmediatePropagation();
-        _savingColor = true;
-
-        fetch('/shop/select_color', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                jsonrpc: '2.0', method: 'call', id: 1,
-                params: { color: selectedColor },
-            }),
-        })
-        .catch(function () {})
-        .finally(function () {
-            // Re-fire the click so Odoo's handler runs normally.
-            addToCartBtn.click();
-        });
-    }, true);
 }
 
 function hideProductPolicies() {

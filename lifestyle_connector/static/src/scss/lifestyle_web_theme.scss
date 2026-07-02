@@ -5278,24 +5278,27 @@ footer .rounded-circle,
     gap: 0.5rem;
 }
 
-/* Compare button on product cards */
-.rl-card-compare-btn {
-    display: block;
-    width: 100%;
-    margin-top: 0.5rem;
-    padding: 0.3rem 0.75rem;
-    font-size: 0.78rem;
-    background: transparent;
-    border: 1px solid rgba(92, 112, 80, 0.25);
-    border-radius: 2rem;
-    color: #5c7050;
-    cursor: pointer;
-    transition: background 0.2s, border-color 0.2s;
+/* Compare-at-price row on product cards */
+.rl-card-deal-row {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 0.25rem;
+}
 
-    &:hover {
-        background: rgba(92, 112, 80, 0.08);
-        border-color: rgba(92, 112, 80, 0.5);
-    }
+.rl-card-was-price {
+    font-size: 0.8rem;
+    color: #999;
+    text-decoration: line-through;
+}
+
+.rl-card-discount-badge {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #c0392b;
+    background: rgba(192, 57, 43, 0.1);
+    border-radius: 0.4rem;
+    padding: 0.1rem 0.35rem;
 }
 
 /* Recently viewed — inline section below the product grid */

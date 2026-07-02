@@ -476,68 +476,6 @@ function moneyLabel(value) {
     return `Rs. ${formatMoneyValue(numeric)}`;
 }
 
-function setupProductCompare() {
-    if (!window.location.pathname.startsWith('/shop')) return;
-
-    const buttons = Array.from(document.querySelectorAll('[data-rl-compare-id]'));
-    if (!buttons.length) return;
-
-    let compareItems = getStoredJson('rl_compare_items', []);
-    const tray = document.createElement('div');
-    tray.className = 'rl-compare-tray';
-    tray.innerHTML = '<h4>Compare furniture</h4><div class="rl-compare-list"></div><div class="rl-compare-actions"><button type="button" class="btn btn-primary btn-sm" data-rl-compare-open>Open Selected</button><button type="button" class="btn btn-outline-secondary btn-sm" data-rl-compare-clear>Clear</button></div>';
-    document.body.appendChild(tray);
-
-    const render = () => {
-        const list = tray.querySelector('.rl-compare-list');
-        list.innerHTML = '';
-        compareItems.slice(0, 3).forEach((item) => {
-            const row = document.createElement('div');
-            row.className = 'rl-compare-item';
-            row.innerHTML = `<div><strong>${item.name}</strong><span>${moneyLabel(item.price)}</span></div><button type="button" class="btn btn-link btn-sm" data-rl-remove-compare="${item.id}">Remove</button>`;
-            list.appendChild(row);
-        });
-        tray.classList.toggle('is-visible', compareItems.length > 0);
-        setStoredJson('rl_compare_items', compareItems.slice(0, 3));
-    };
-
-    buttons.forEach((button) => {
-        button.addEventListener('click', (event) => {
-            event.preventDefault();
-            event.stopPropagation();
-            const item = {
-                id: button.dataset.rlCompareId,
-                name: button.dataset.rlCompareName || 'Product',
-                price: button.dataset.rlComparePrice || '0',
-                url: button.dataset.rlCompareUrl || '#',
-                room: button.dataset.rlCompareRoom || '',
-            };
-            compareItems = compareItems.filter((existing) => existing.id !== item.id);
-            compareItems.unshift(item);
-            compareItems = compareItems.slice(0, 3);
-            render();
-        });
-    });
-
-    tray.addEventListener('click', (event) => {
-        const removeId = event.target.closest('[data-rl-remove-compare]')?.dataset.rlRemoveCompare;
-        if (removeId) {
-            compareItems = compareItems.filter((item) => item.id !== removeId);
-            render();
-            return;
-        }
-        if (event.target.closest('[data-rl-compare-clear]')) {
-            compareItems = [];
-            render();
-            return;
-        }
-        if (event.target.closest('[data-rl-compare-open]') && compareItems[0]?.url) {
-            window.location.href = compareItems[0].url;
-        }
-    });
-
-    render();
-}
 
 function rememberCurrentProduct() {
     // Detect product page by presence of the add-to-cart form, not by URL.
@@ -841,7 +779,6 @@ function enhanceWebsite() {
     setupNotifyStock();
     rememberCurrentProduct();
     renderRecentlyViewed();
-    setupProductCompare();
     setupMobileShopFilters();
     const targets = prepareRevealTargets();
     setupRevealObserver(targets);

@@ -981,18 +981,21 @@
             <t t-if="product.type == 'product' and product.sudo().rl_available_qty &lt;= 0">
                 <span class="rl-card-badge rl-card-badge-mto">Made to order</span>
             </t>
+            <t t-if="product.compare_list_price and product.compare_list_price &gt; product.list_price">
+                <div class="rl-card-deal-row">
+                    <span class="rl-card-was-price">
+                        <t t-esc="'Rs. {:,.0f}'.format(product.compare_list_price)"/>
+                    </span>
+                    <span class="rl-card-discount-badge">
+                        <t t-esc="'{:.0f}% OFF'.format((product.compare_list_price - product.list_price) / product.compare_list_price * 100)"/>
+                    </span>
+                </div>
+            </t>
             <div t-if="product.lifestyle_room_ids" class="rl-card-rooms">
                 <t t-foreach="product.lifestyle_room_ids.sudo()[:3]" t-as="room">
                     <span class="rl-card-room-tag"><t t-esc="room.name"/></span>
                 </t>
             </div>
-            <button type="button" class="rl-card-compare-btn"
-                t-att-data-rl-compare-id="product.id"
-                t-att-data-rl-compare-name="product.name"
-                t-att-data-rl-compare-price="product.list_price"
-                t-att-data-rl-compare-url="product.website_url">
-                <i class="fa fa-balance-scale me-1"/>Compare
-            </button>
         </xpath>
     </template>
 </odoo>

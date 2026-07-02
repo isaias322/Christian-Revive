@@ -33,6 +33,24 @@ class ReviveHomepageSection(models.Model):
     button_label = fields.Char(string='Button Label')
     button_url = fields.Char(string='Button URL')
     button_icon = fields.Char(string='Button Icon', default='fa-arrow-right')
+    button_position = fields.Selection([
+        ('auto', 'Auto'),
+        ('left', 'Left'),
+        ('center', 'Center'),
+        ('right', 'Right'),
+        ('full', 'Full Width'),
+    ], string='Button Position', default='auto')
+    button_style = fields.Selection([
+        ('filled', 'Filled'),
+        ('outline', 'Outline'),
+        ('soft', 'Soft'),
+        ('ghost', 'Ghost'),
+    ], string='Button Style', default='filled')
+    button_color = fields.Char(string='Button Background Color')
+    button_text_color = fields.Char(string='Button Text Color')
+    button_border_color = fields.Char(string='Button Border Color')
+    button_hover_color = fields.Char(string='Button Hover Background')
+    button_hover_text_color = fields.Char(string='Button Hover Text Color')
 
     product_limit = fields.Integer(string='Featured Product Count', default=4)
     empty_title = fields.Char(string='Empty Products Message', default='Products will appear here when you publish them for Revive Lifestyle.')
@@ -58,6 +76,25 @@ class ReviveHomepageSection(models.Model):
         ('reverse', 'Items Left, Text Right'),
         ('center', 'Centered'),
     ], string='Layout', default='split')
+    text_alignment = fields.Selection([
+        ('left', 'Left'),
+        ('center', 'Center'),
+        ('right', 'Right'),
+    ], string='Text Alignment', default='left')
+    content_width = fields.Selection([
+        ('narrow', 'Narrow'),
+        ('normal', 'Normal'),
+        ('wide', 'Wide'),
+        ('full', 'Full Width'),
+    ], string='Content Width', default='normal')
+    vertical_spacing = fields.Selection([
+        ('compact', 'Compact'),
+        ('normal', 'Normal'),
+        ('large', 'Large'),
+    ], string='Section Spacing', default='normal')
+    kicker_color = fields.Char(string='Small Heading Color')
+    heading_color = fields.Char(string='Title Color')
+    subtitle_color = fields.Char(string='Description Color')
     show_button = fields.Boolean(string='Show Button', default=True)
     show_items = fields.Boolean(string='Show Cards/Chips', default=True)
     show_products = fields.Boolean(string='Show Products', default=True)

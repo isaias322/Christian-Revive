@@ -168,7 +168,7 @@
                     <t t-foreach="homepage_top_sections" t-as="section">
                         <t t-set="section_items" t-value="homepage_section_items_by_section.get(section.id)"/>
                         <t t-set="section_products" t-value="featured_products_by_section.get(section.id)"/>
-                        <section t-if="section.section_key in ('content', 'header', 'footer')" t-attf-class="rl-home-custom-section rl-home-custom-section-#{section.section_key} rl-home-section-style-#{section.background_style or 'light'} rl-home-layout-#{section.layout or 'split'}" t-att-style="'--rl-section-bg:%s; --rl-section-bg-2:%s; --rl-section-text:%s; --rl-section-accent:%s; --rl-section-card-bg:%s;' % (section.background_color or '', section.background_color_2 or '', section.text_color or '', section.accent_color or '', section.card_background_color or '')">
+                        <section t-if="section.section_key in ('content', 'header', 'footer')" t-attf-class="rl-home-custom-section rl-home-custom-section-#{section.section_key} rl-home-section-style-#{section.background_style or 'light'} rl-home-layout-#{section.layout or 'split'} rl-home-text-#{section.text_alignment or 'left'} rl-home-content-#{section.content_width or 'normal'} rl-home-spacing-#{section.vertical_spacing or 'normal'} rl-home-button-pos-#{section.button_position or 'auto'}" t-att-style="'--rl-section-bg:%s; --rl-section-bg-2:%s; --rl-section-text:%s; --rl-section-kicker:%s; --rl-section-heading:%s; --rl-section-subtitle:%s; --rl-section-accent:%s; --rl-section-card-bg:%s; --rl-button-bg:%s; --rl-button-text:%s; --rl-button-border:%s; --rl-button-hover-bg:%s; --rl-button-hover-text:%s;' % (section.background_color or '', section.background_color_2 or '', section.text_color or '', section.kicker_color or '', section.heading_color or '', section.subtitle_color or '', section.accent_color or '', section.card_background_color or '', section.button_color or '', section.button_text_color or '', section.button_border_color or '', section.button_hover_color or '', section.button_hover_text_color or '')">
                             <div class="rl-home-custom-glow" aria-hidden="true"></div>
                             <div class="container position-relative">
                                 <div t-attf-class="rl-home-custom-panel #{'rl-home-custom-panel-reverse' if section.layout == 'reverse' else ''} #{'rl-home-custom-panel-center' if section.layout == 'center' else ''}">
@@ -179,7 +179,7 @@
                                         <div t-if="section.show_items and section_items" class="rl-home-custom-chips">
                                             <span t-foreach="section_items" t-as="item" t-att-style="'--rl-item-color:%s; --rl-item-bg:%s;' % (item.color or '', item.background_color or '')"><t t-if="item.icon_type == 'upload' and item.icon_image"><img class="rl-home-item-icon-image rl-home-item-icon-inline" t-att-src="'/web/image/lifestyle.homepage.section.item/%s/icon_image' % item.id" t-att-alt="item.title" loading="lazy"/></t><t t-elif="item.icon_type == 'custom' and item.custom_icon_html"><span class="rl-home-item-icon-custom rl-home-item-icon-inline" t-field="item.custom_icon_html"/></t><i t-elif="item.icon" t-att-class="'fa ' + item.icon"></i> <t t-esc="item.title"/></span>
                                         </div>
-                                        <a t-if="section.show_button and section.button_label" t-att-href="section.button_url or '#'" class="btn btn-primary btn-lg rl-home-custom-button">
+                                        <a t-if="section.show_button and section.button_label" t-att-href="section.button_url or '#'" t-attf-class="btn btn-lg rl-home-section-button rl-home-custom-button rl-home-button-style-#{section.button_style or 'filled'}">
                                             <t t-esc="section.button_label"/>
                                             <i t-if="section.button_icon" t-att-class="'fa ' + section.button_icon"></i>
                                         </a>
@@ -257,7 +257,7 @@
                         <t t-set="section_items" t-value="homepage_section_items_by_section.get(section.id)"/>
                         <t t-set="section_products" t-value="featured_products_by_section.get(section.id)"/>
 
-                        <section t-if="section.section_key == 'featured'" t-attf-class="rl-home-featured rl-home-section-style-#{section.background_style or 'light'}" t-att-style="'--rl-section-bg:%s; --rl-section-bg-2:%s; --rl-section-text:%s; --rl-section-accent:%s; --rl-section-card-bg:%s;' % (section.background_color or '', section.background_color_2 or '', section.text_color or '', section.accent_color or '', section.card_background_color or '')">
+                        <section t-if="section.section_key == 'featured'" t-attf-class="rl-home-featured rl-home-section-style-#{section.background_style or 'light'} rl-home-text-#{section.text_alignment or 'left'} rl-home-content-#{section.content_width or 'normal'} rl-home-spacing-#{section.vertical_spacing or 'normal'} rl-home-button-pos-#{section.button_position or 'auto'}" t-att-style="'--rl-section-bg:%s; --rl-section-bg-2:%s; --rl-section-text:%s; --rl-section-kicker:%s; --rl-section-heading:%s; --rl-section-subtitle:%s; --rl-section-accent:%s; --rl-section-card-bg:%s; --rl-button-bg:%s; --rl-button-text:%s; --rl-button-border:%s; --rl-button-hover-bg:%s; --rl-button-hover-text:%s;' % (section.background_color or '', section.background_color_2 or '', section.text_color or '', section.kicker_color or '', section.heading_color or '', section.subtitle_color or '', section.accent_color or '', section.card_background_color or '', section.button_color or '', section.button_text_color or '', section.button_border_color or '', section.button_hover_color or '', section.button_hover_text_color or '')">
                             <div class="rl-home-featured-glow" aria-hidden="true"></div>
                             <div class="container position-relative">
                                 <div class="rl-home-section-head rl-home-featured-head">
@@ -266,7 +266,7 @@
                                         <h2 t-esc="section.title"/>
                                         <p t-if="section.subtitle" t-esc="section.subtitle"/>
                                     </div>
-                                    <a t-if="section.show_button and section.button_label" t-att-href="section.button_url or '/shop'" class="rl-home-link rl-home-featured-link">
+                                    <a t-if="section.show_button and section.button_label" t-att-href="section.button_url or '/shop'" t-attf-class="rl-home-link rl-home-featured-link rl-home-section-button rl-home-button-style-#{section.button_style or 'filled'}">
                                         <t t-esc="section.button_label"/>
                                         <i t-if="section.button_icon" t-att-class="'fa ' + section.button_icon"></i>
                                     </a>
@@ -302,7 +302,7 @@
                             </div>
                         </section>
 
-                        <section t-if="section.section_key == 'process'" t-attf-class="rl-home-process rl-home-section-style-#{section.background_style or 'sage'} rl-home-layout-#{section.layout or 'split'}" t-att-style="'--rl-section-bg:%s; --rl-section-bg-2:%s; --rl-section-text:%s; --rl-section-accent:%s; --rl-section-card-bg:%s;' % (section.background_color or '', section.background_color_2 or '', section.text_color or '', section.accent_color or '', section.card_background_color or '')">
+                        <section t-if="section.section_key == 'process'" t-attf-class="rl-home-process rl-home-section-style-#{section.background_style or 'sage'} rl-home-layout-#{section.layout or 'split'} rl-home-text-#{section.text_alignment or 'left'} rl-home-content-#{section.content_width or 'normal'} rl-home-spacing-#{section.vertical_spacing or 'normal'} rl-home-button-pos-#{section.button_position or 'auto'}" t-att-style="'--rl-section-bg:%s; --rl-section-bg-2:%s; --rl-section-text:%s; --rl-section-kicker:%s; --rl-section-heading:%s; --rl-section-subtitle:%s; --rl-section-accent:%s; --rl-section-card-bg:%s; --rl-button-bg:%s; --rl-button-text:%s; --rl-button-border:%s; --rl-button-hover-bg:%s; --rl-button-hover-text:%s;' % (section.background_color or '', section.background_color_2 or '', section.text_color or '', section.kicker_color or '', section.heading_color or '', section.subtitle_color or '', section.accent_color or '', section.card_background_color or '', section.button_color or '', section.button_text_color or '', section.button_border_color or '', section.button_hover_color or '', section.button_hover_text_color or '')">
                             <div class="container">
                                 <div t-attf-class="row g-4 align-items-center #{'flex-lg-row-reverse' if section.layout == 'reverse' else ''} #{'justify-content-center text-center' if section.layout == 'center' else ''}">
                                     <div class="col-12 col-lg-5">
@@ -310,6 +310,10 @@
                                         <h2 t-esc="section.title"/>
                                         <p t-if="section.subtitle" t-esc="section.subtitle"/>
                                         <img t-if="section.image" class="rl-home-section-image" t-att-src="'/web/image/lifestyle.homepage.section/%s/image' % section.id" t-att-alt="section.title" loading="lazy"/>
+                                                <a t-if="section.show_button and section.button_label" t-att-href="section.button_url or '/shop'" t-attf-class="btn btn-lg rl-home-section-button rl-home-button-style-#{section.button_style or 'filled'}">
+                                                    <t t-esc="section.button_label"/>
+                                                    <i t-if="section.button_icon" t-att-class="'fa ' + section.button_icon"></i>
+                                                </a>
                                     </div>
                                     <div t-if="section.show_items and section_items" class="col-12 col-lg-7">
                                         <div class="rl-home-process-grid">
@@ -325,7 +329,7 @@
                             </div>
                         </section>
 
-                        <section t-if="section.section_key == 'cta'" t-attf-class="rl-home-cta rl-home-section-style-#{section.background_style or 'charcoal'}" t-att-style="'--rl-section-bg:%s; --rl-section-bg-2:%s; --rl-section-text:%s; --rl-section-accent:%s; --rl-section-card-bg:%s;' % (section.background_color or '', section.background_color_2 or '', section.text_color or '', section.accent_color or '', section.card_background_color or '')">
+                        <section t-if="section.section_key == 'cta'" t-attf-class="rl-home-cta rl-home-section-style-#{section.background_style or 'charcoal'} rl-home-text-#{section.text_alignment or 'left'} rl-home-content-#{section.content_width or 'normal'} rl-home-spacing-#{section.vertical_spacing or 'normal'} rl-home-button-pos-#{section.button_position or 'auto'}" t-att-style="'--rl-section-bg:%s; --rl-section-bg-2:%s; --rl-section-text:%s; --rl-section-kicker:%s; --rl-section-heading:%s; --rl-section-subtitle:%s; --rl-section-accent:%s; --rl-section-card-bg:%s; --rl-button-bg:%s; --rl-button-text:%s; --rl-button-border:%s; --rl-button-hover-bg:%s; --rl-button-hover-text:%s;' % (section.background_color or '', section.background_color_2 or '', section.text_color or '', section.kicker_color or '', section.heading_color or '', section.subtitle_color or '', section.accent_color or '', section.card_background_color or '', section.button_color or '', section.button_text_color or '', section.button_border_color or '', section.button_hover_color or '', section.button_hover_text_color or '')">
                             <div class="container">
                                 <div class="rl-home-cta-panel">
                                     <div class="rl-home-cta-copy">
@@ -339,7 +343,7 @@
                                     <div class="rl-home-cta-action">
                                         <img t-if="section.image" class="rl-home-cta-image" t-att-src="'/web/image/lifestyle.homepage.section/%s/image' % section.id" t-att-alt="section.title" loading="lazy"/>
                                         <div class="rl-home-cta-icon"><i t-att-class="'fa ' + (section.button_icon or 'fa-comments')"></i></div>
-                                        <a t-if="section.show_button and section.button_label" t-att-href="section.button_url or '/contactus'" class="btn btn-primary btn-lg">
+                                        <a t-if="section.show_button and section.button_label" t-att-href="section.button_url or '/contactus'" t-attf-class="btn btn-lg rl-home-section-button rl-home-button-style-#{section.button_style or 'filled'}">
                                             <t t-esc="section.button_label"/>
                                             <i t-if="section.button_icon" t-att-class="'fa ' + section.button_icon"></i>
                                         </a>
@@ -348,7 +352,7 @@
                             </div>
                         </section>
 
-                        <section t-if="section.section_key in ('content', 'header', 'footer')" t-attf-class="rl-home-custom-section rl-home-custom-section-#{section.section_key} rl-home-section-style-#{section.background_style or 'light'} rl-home-layout-#{section.layout or 'split'}" t-att-style="'--rl-section-bg:%s; --rl-section-bg-2:%s; --rl-section-text:%s; --rl-section-accent:%s; --rl-section-card-bg:%s;' % (section.background_color or '', section.background_color_2 or '', section.text_color or '', section.accent_color or '', section.card_background_color or '')">
+                        <section t-if="section.section_key in ('content', 'header', 'footer')" t-attf-class="rl-home-custom-section rl-home-custom-section-#{section.section_key} rl-home-section-style-#{section.background_style or 'light'} rl-home-layout-#{section.layout or 'split'} rl-home-text-#{section.text_alignment or 'left'} rl-home-content-#{section.content_width or 'normal'} rl-home-spacing-#{section.vertical_spacing or 'normal'} rl-home-button-pos-#{section.button_position or 'auto'}" t-att-style="'--rl-section-bg:%s; --rl-section-bg-2:%s; --rl-section-text:%s; --rl-section-kicker:%s; --rl-section-heading:%s; --rl-section-subtitle:%s; --rl-section-accent:%s; --rl-section-card-bg:%s; --rl-button-bg:%s; --rl-button-text:%s; --rl-button-border:%s; --rl-button-hover-bg:%s; --rl-button-hover-text:%s;' % (section.background_color or '', section.background_color_2 or '', section.text_color or '', section.kicker_color or '', section.heading_color or '', section.subtitle_color or '', section.accent_color or '', section.card_background_color or '', section.button_color or '', section.button_text_color or '', section.button_border_color or '', section.button_hover_color or '', section.button_hover_text_color or '')">
                             <div class="rl-home-custom-glow" aria-hidden="true"></div>
                             <div class="container position-relative">
                                 <div t-attf-class="rl-home-custom-panel #{'rl-home-custom-panel-reverse' if section.layout == 'reverse' else ''} #{'rl-home-custom-panel-center' if section.layout == 'center' else ''}">
@@ -359,7 +363,7 @@
                                         <div t-if="section.show_items and section_items" class="rl-home-custom-chips">
                                             <span t-foreach="section_items" t-as="item" t-att-style="'--rl-item-color:%s; --rl-item-bg:%s;' % (item.color or '', item.background_color or '')"><t t-if="item.icon_type == 'upload' and item.icon_image"><img class="rl-home-item-icon-image rl-home-item-icon-inline" t-att-src="'/web/image/lifestyle.homepage.section.item/%s/icon_image' % item.id" t-att-alt="item.title" loading="lazy"/></t><t t-elif="item.icon_type == 'custom' and item.custom_icon_html"><span class="rl-home-item-icon-custom rl-home-item-icon-inline" t-field="item.custom_icon_html"/></t><i t-elif="item.icon" t-att-class="'fa ' + item.icon"></i> <t t-esc="item.title"/></span>
                                         </div>
-                                        <a t-if="section.show_button and section.button_label" t-att-href="section.button_url or '#'" class="btn btn-primary btn-lg rl-home-custom-button">
+                                        <a t-if="section.show_button and section.button_label" t-att-href="section.button_url or '#'" t-attf-class="btn btn-lg rl-home-section-button rl-home-custom-button rl-home-button-style-#{section.button_style or 'filled'}">
                                             <t t-esc="section.button_label"/>
                                             <i t-if="section.button_icon" t-att-class="'fa ' + section.button_icon"></i>
                                         </a>
@@ -383,7 +387,7 @@
                     <t t-foreach="homepage_bottom_sections" t-as="section">
                         <t t-set="section_items" t-value="homepage_section_items_by_section.get(section.id)"/>
                         <t t-set="section_products" t-value="featured_products_by_section.get(section.id)"/>
-                        <section t-if="section.section_key in ('content', 'header', 'footer')" t-attf-class="rl-home-custom-section rl-home-custom-section-#{section.section_key} rl-home-section-style-#{section.background_style or 'light'} rl-home-layout-#{section.layout or 'split'}" t-att-style="'--rl-section-bg:%s; --rl-section-bg-2:%s; --rl-section-text:%s; --rl-section-accent:%s; --rl-section-card-bg:%s;' % (section.background_color or '', section.background_color_2 or '', section.text_color or '', section.accent_color or '', section.card_background_color or '')">
+                        <section t-if="section.section_key in ('content', 'header', 'footer')" t-attf-class="rl-home-custom-section rl-home-custom-section-#{section.section_key} rl-home-section-style-#{section.background_style or 'light'} rl-home-layout-#{section.layout or 'split'} rl-home-text-#{section.text_alignment or 'left'} rl-home-content-#{section.content_width or 'normal'} rl-home-spacing-#{section.vertical_spacing or 'normal'} rl-home-button-pos-#{section.button_position or 'auto'}" t-att-style="'--rl-section-bg:%s; --rl-section-bg-2:%s; --rl-section-text:%s; --rl-section-kicker:%s; --rl-section-heading:%s; --rl-section-subtitle:%s; --rl-section-accent:%s; --rl-section-card-bg:%s; --rl-button-bg:%s; --rl-button-text:%s; --rl-button-border:%s; --rl-button-hover-bg:%s; --rl-button-hover-text:%s;' % (section.background_color or '', section.background_color_2 or '', section.text_color or '', section.kicker_color or '', section.heading_color or '', section.subtitle_color or '', section.accent_color or '', section.card_background_color or '', section.button_color or '', section.button_text_color or '', section.button_border_color or '', section.button_hover_color or '', section.button_hover_text_color or '')">
                             <div class="rl-home-custom-glow" aria-hidden="true"></div>
                             <div class="container position-relative">
                                 <div t-attf-class="rl-home-custom-panel #{'rl-home-custom-panel-reverse' if section.layout == 'reverse' else ''} #{'rl-home-custom-panel-center' if section.layout == 'center' else ''}">
@@ -394,7 +398,7 @@
                                         <div t-if="section.show_items and section_items" class="rl-home-custom-chips">
                                             <span t-foreach="section_items" t-as="item" t-att-style="'--rl-item-color:%s; --rl-item-bg:%s;' % (item.color or '', item.background_color or '')"><t t-if="item.icon_type == 'upload' and item.icon_image"><img class="rl-home-item-icon-image rl-home-item-icon-inline" t-att-src="'/web/image/lifestyle.homepage.section.item/%s/icon_image' % item.id" t-att-alt="item.title" loading="lazy"/></t><t t-elif="item.icon_type == 'custom' and item.custom_icon_html"><span class="rl-home-item-icon-custom rl-home-item-icon-inline" t-field="item.custom_icon_html"/></t><i t-elif="item.icon" t-att-class="'fa ' + item.icon"></i> <t t-esc="item.title"/></span>
                                         </div>
-                                        <a t-if="section.show_button and section.button_label" t-att-href="section.button_url or '#'" class="btn btn-primary btn-lg rl-home-custom-button">
+                                        <a t-if="section.show_button and section.button_label" t-att-href="section.button_url or '#'" t-attf-class="btn btn-lg rl-home-section-button rl-home-custom-button rl-home-button-style-#{section.button_style or 'filled'}">
                                             <t t-esc="section.button_label"/>
                                             <i t-if="section.button_icon" t-att-class="'fa ' + section.button_icon"></i>
                                         </a>

@@ -36,6 +36,9 @@
                         <group string="Media and Layout">
                             <field name="image" widget="image" class="oe_avatar"/>
                             <field name="layout"/>
+                            <field name="text_alignment"/>
+                            <field name="content_width"/>
+                            <field name="vertical_spacing"/>
                             <field name="show_items"/>
                             <field name="show_products" invisible="section_key != 'featured'"/>
                             <field name="show_status_badge" invisible="section_key != 'featured'"/>
@@ -50,14 +53,28 @@
                         </group>
                         <group>
                             <field name="text_color"/>
+                            <field name="kicker_color"/>
+                            <field name="heading_color"/>
+                            <field name="subtitle_color"/>
                             <field name="accent_color"/>
                         </group>
                     </group>
                     <group string="Button" col="2">
-                        <field name="show_button"/>
-                        <field name="button_label"/>
-                        <field name="button_url"/>
-                        <field name="button_icon"/>
+                        <group>
+                            <field name="show_button"/>
+                            <field name="button_label" invisible="not show_button"/>
+                            <field name="button_url" invisible="not show_button"/>
+                            <field name="button_icon" invisible="not show_button"/>
+                            <field name="button_position" invisible="not show_button"/>
+                            <field name="button_style" invisible="not show_button"/>
+                        </group>
+                        <group string="Button Colors" invisible="not show_button">
+                            <field name="button_color"/>
+                            <field name="button_text_color"/>
+                            <field name="button_border_color"/>
+                            <field name="button_hover_color"/>
+                            <field name="button_hover_text_color"/>
+                        </group>
                     </group>
                     <group string="Featured Product Settings" invisible="section_key != 'featured'" col="2">
                         <field name="product_limit"/>

@@ -877,15 +877,16 @@
                        t-attf-class="lifestyle-badge text-decoration-none #{'lifestyle-badge-active' if lifestyle_active_quick == 'popular' else ''}">Popular</a>
                 </div>
             </div>
-            <div t-if="lifestyle_rooms" class="rl-shop-filter-block mb-3">
-                <h6 class="mb-2"><b>Shop by Room</b></h6>
+            <t t-set="pub_cats" t-value="request.env['product.public.category'].sudo().search([], order='sequence, id')"/>
+            <div t-if="pub_cats" class="rl-shop-filter-block mb-3">
+                <h6 class="mb-2"><b>Shop by Category</b></h6>
                 <div class="d-flex flex-wrap gap-2">
-                    <a t-att-href="keep('/shop', lifestyle_room=None)"
-                       t-attf-class="lifestyle-badge text-decoration-none #{'lifestyle-badge-active' if not lifestyle_active_room else ''}">All Rooms</a>
-                    <a t-foreach="lifestyle_rooms" t-as="room_value"
-                       t-att-href="keep('/shop', lifestyle_room=room_value[0])"
-                       t-attf-class="lifestyle-badge text-decoration-none #{'lifestyle-badge-active' if lifestyle_active_room == room_value[0] else ''}">
-                        <t t-esc="room_value[1]"/>
+                    <a t-att-href="keep('/shop', categ_id=None)"
+                       t-attf-class="lifestyle-badge text-decoration-none #{'lifestyle-badge-active' if not request.params.get('categ_id') else ''}">All Products</a>
+                    <a t-foreach="pub_cats" t-as="cat"
+                       t-att-href="keep('/shop', categ_id=cat.id)"
+                       t-attf-class="lifestyle-badge text-decoration-none #{'lifestyle-badge-active' if request.params.get('categ_id') == str(cat.id) else ''}">
+                        <t t-esc="cat.name"/>
                     </a>
                 </div>
             </div>
@@ -967,8 +968,8 @@
             </section>
             <div t-if="not products" class="rl-shop-empty-state">
                 <i class="fa fa-search"></i>
-                <h3>No furniture matched your filters</h3>
-                <p>Clear the filters or try a different room, color, size, or price range.</p>
+                <h3>No products matched your filters</h3>
+                <p>Clear the filters or try a different category, color, size, or price range.</p>
                 <a href="/shop" class="btn btn-primary">Clear Filters</a>
             </div>
         </xpath>

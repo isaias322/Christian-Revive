@@ -620,20 +620,24 @@ function setupColorSelection() {
     const labelName = document.getElementById('rl_color_chosen_name');
 
     function ensureColorInput() {
-        let input = document.getElementById('rl_selected_color_input');
+        // Always inject into the cart form so the value is submitted with the POST.
+        // The #rl_selected_color_input in the template lives outside the form, so
+        // returning it directly meant the color was never included in the submission.
         const form = document.querySelector('#product_detail form[action*="/shop/cart/update"]') ||
             document.querySelector('#product_details form[action*="/shop/cart/update"]') ||
-            document.querySelector('form[action*="/shop/cart/update"]');
-        if (!input && form) {
-            input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = 'lifestyle_color';
-            input.id = 'rl_selected_color_input';
-            form.appendChild(input);
-        } else if (input && form && input.form !== form) {
-            form.appendChild(input);
+            document.querySelector('form[action*="/shop/cart/update"]') ||
+            document.querySelector('form#product_detail_form');
+        if (form) {
+            let inp = form.querySelector('[name="lifestyle_color"]');
+            if (!inp) {
+                inp = document.createElement('input');
+                inp.type = 'hidden';
+                inp.name = 'lifestyle_color';
+                form.appendChild(inp);
+            }
+            return inp;
         }
-        return input;
+        return document.getElementById('rl_selected_color_input');
     }
 
     // Try to find the main product image element (Odoo uses several selectors).
@@ -702,19 +706,25 @@ function setupColorSelection() {
         });
     });
 
-    // Intercept Odoo's cart-update fetch so we can apply the color to the exact
-    // line_id that Odoo returns - belt-and-suspenders on top of the session approach.
-    // Guard prevents double-patching if the function is called more than once.
+    // ── Approach 2: intercept the cart-update fetch to grab line_id from response ──
+    // Covers both /shop/cart/update_json and /web/dataset/call_kw/_cart_update
+    // (Odoo 19 uses call_kw; the body check catches that case).
     if (!window._rlCartFetchPatched) {
         window._rlCartFetchPatched = true;
         var _origFetch = window.fetch;
         window.fetch = function (input, init) {
             var url = typeof input === 'string' ? input : (input && input.url) || '';
+            var body = (init && typeof init.body === 'string') ? init.body : '';
             var p = _origFetch.apply(window, arguments);
-            if (url.indexOf('cart/update') !== -1 || url.indexOf('_cart_update') !== -1) {
+            var isCartUpdate = url.indexOf('cart/update') !== -1
+                || url.indexOf('_cart_update') !== -1
+                || (body && body.indexOf('_cart_update') !== -1);
+            if (isCartUpdate) {
                 p.then(function (res) {
                     res.clone().json().then(function (data) {
-                        var lineId = data && data.result && data.result.line_id;
+                        // JSON-RPC wraps result; plain endpoints return it directly.
+                        var result = (data && data.result) || data || {};
+                        var lineId = result.line_id;
                         if (!lineId || !selectedColor) { return; }
                         _origFetch('/shop/apply_line_color', {
                             method: 'POST',
@@ -729,6 +739,35 @@ function setupColorSelection() {
             }
             return p;
         };
+    }
+
+    // ── Approach 3: click-listener on Add to Cart — most reliable fallback ──
+    // Fires 1.2 s after the button click (enough for the cart update to finish)
+    // and asks the server to apply the color to the most recently added line for
+    // this product, regardless of which URL or format Odoo used for the cart call.
+    var colorPicker = document.getElementById('rl_color_picker');
+    var productTmplId = colorPicker && colorPicker.dataset.productTmplId;
+    if (productTmplId) {
+        document.addEventListener('click', function (e) {
+            var btn = e.target.closest(
+                '#add_to_cart, [name="add_to_cart"], ' +
+                'button.o_website_sale_main_product_cart_btn, ' +
+                'button.js_add_cart, ' +
+                'form#product_detail_form button[type="submit"]'
+            );
+            if (!btn || !selectedColor) { return; }
+            var colorAtClick = selectedColor;
+            setTimeout(function () {
+                fetch('/shop/apply_color_to_cart', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        jsonrpc: '2.0', method: 'call', id: 3,
+                        params: { product_id: parseInt(productTmplId, 10), color: colorAtClick },
+                    }),
+                }).catch(function () {});
+            }, 1200);
+        }, true);
     }
 }
 

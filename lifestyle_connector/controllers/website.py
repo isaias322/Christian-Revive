@@ -142,6 +142,27 @@ class LifestyleWebsiteSale(WebsiteSale):
         except Exception:
             return {'ok': False}
 
+    @http.route('/shop/apply_color_to_cart', type='json', auth='public', website=True, methods=['POST'])
+    def apply_color_to_cart(self, product_id=None, color='', **kw):
+        """Click-listener fallback: apply color to the most recently added line for
+        this product template in the current cart, called ~1.2 s after Add to Cart."""
+        if not product_id or not color:
+            return {'ok': False}
+        try:
+            order = request.website.sale_get_order()
+            if not order:
+                return {'ok': False}
+            pid = int(product_id)
+            lines = order.order_line.filtered(
+                lambda l: l.product_id.product_tmpl_id.id == pid
+            ).sorted('id', reverse=True)
+            if not lines:
+                return {'ok': False}
+            lines[0]._lifestyle_apply_color(str(color).strip())
+            return {'ok': True}
+        except Exception:
+            return {'ok': False}
+
     @http.route('/shop/apply_line_color', type='json', auth='public', website=True, methods=['POST'])
     def apply_line_color(self, line_id=None, color='', **kw):
         """Apply the chosen color to a specific order line after Odoo's cart update.

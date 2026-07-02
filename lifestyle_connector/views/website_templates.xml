@@ -55,7 +55,8 @@
                t-esc="product.store_description"/>
 
             <!-- Color swatches - clickable, selected color flows to sale order -->
-            <div t-if="product.color_options" class="rl-pd-section mt-3" id="rl_color_picker">
+            <div t-if="product.color_options" class="rl-pd-section mt-3" id="rl_color_picker"
+                 t-att-data-product-tmpl-id="product.id">
                 <input type="hidden" name="lifestyle_color" id="rl_selected_color_input"/>
                 <p class="rl-pd-label">Available Colors</p>
                 <div class="rl-pd-swatches" role="radiogroup" aria-label="Choose a color">

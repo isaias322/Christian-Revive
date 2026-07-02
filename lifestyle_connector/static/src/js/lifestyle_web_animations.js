@@ -327,20 +327,35 @@ function restoreShopSearchBar() {
     var input = searchForm.querySelector('input[name="search"], .search-query');
     if (!input) return;
 
+    // Dims the product grid immediately to show "something is happening".
+    function dimGrid() {
+        var grid = document.getElementById('products_grid');
+        if (grid) { grid.style.transition = 'opacity 0.1s'; grid.style.opacity = '0.25'; }
+    }
+
+    function clearSearchNav() {
+        if (!new URLSearchParams(window.location.search).has('search')) return;
+        dimGrid();
+        var url = new URL(window.location.href);
+        url.searchParams.delete('search');
+        url.searchParams.delete('page');
+        window.location.href = url.toString();
+    }
+
     // Auto-navigate to all products when the search field is cleared.
+    // 300ms debounce: fast enough to feel instant, long enough not to fire
+    // mid-retype when the user is clearing to type a new term.
     var debounceTimer;
     input.addEventListener('input', function () {
         clearTimeout(debounceTimer);
         if (input.value.trim() !== '') return;
-        // Only navigate if we are currently on a search-filtered page.
         if (!new URLSearchParams(window.location.search).has('search')) return;
+        // Give instant visual feedback before the page reload starts.
+        dimGrid();
         debounceTimer = setTimeout(function () {
             if (input.value.trim() !== '') return;
-            var url = new URL(window.location.href);
-            url.searchParams.delete('search');
-            url.searchParams.delete('page');
-            window.location.href = url.toString();
-        }, 600);
+            clearSearchNav();
+        }, 300);
     });
 
     // Escape key: clear field and return to all products immediately.
@@ -349,12 +364,7 @@ function restoreShopSearchBar() {
         clearTimeout(debounceTimer);
         input.value = '';
         input.blur();
-        if (new URLSearchParams(window.location.search).has('search')) {
-            var url = new URL(window.location.href);
-            url.searchParams.delete('search');
-            url.searchParams.delete('page');
-            window.location.href = url.toString();
-        }
+        clearSearchNav();
     });
 
     // Auto-focus when the user arrives on /shop after clearing a search URL.

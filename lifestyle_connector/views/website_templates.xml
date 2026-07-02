@@ -17,8 +17,8 @@
               name="Revive Lifestyle Product Details">
         <xpath expr="//div[@id='product_details']" position="inside">
 
-            <!-- Stock availability badge: on-hand minus undelivered confirmed orders -->
-            <div t-if="product.type in ('consu', 'product')" class="rl-pd-stock-row mt-3">
+            <!-- Stock availability badge: only for storable products with inventory tracking -->
+            <div t-if="product.type == 'product'" class="rl-pd-stock-row mt-3">
                 <span t-if="product.sudo().rl_available_qty &gt; 5" class="rl-pd-stock rl-pd-stock-ok">
                     <i class="fa fa-check-circle"/> In stock &#8212; <t t-esc="product.sudo().rl_available_qty"/> available
                 </span>
@@ -116,7 +116,7 @@
 
             <!-- Notify me when back in stock → creates a CRM lead -->
             <div id="notify_stock" class="lifestyle-card mt-3"
-                 t-if="product.type in ('consu', 'product') and product.sudo().rl_available_qty &lt;= 0">
+                 t-if="product.type == 'product' and product.sudo().rl_available_qty &lt;= 0">
                 <h6 class="mb-2"><i class="fa fa-bell-o me-1"/> Out of stock</h6>
                 <div id="rl_notify_success" style="display:none;">
                     <p class="text-success mb-0">
@@ -977,10 +977,10 @@
 
     <template id="lifestyle_shop_product_card_extras" inherit_id="website_sale.products_item" name="Revive Lifestyle Product Card Extras">
         <xpath expr="//div[contains(concat(' ', normalize-space(@class), ' '), ' o_wsale_product_information ')]" position="inside">
-            <t t-if="product.type in ('consu', 'product') and product.sudo().rl_available_qty &lt;= 0">
+            <t t-if="product.type == 'product' and product.sudo().rl_available_qty &lt;= 0">
                 <span class="rl-card-badge rl-card-badge-mto">Made to order</span>
             </t>
-            <t t-elif="product.type in ('consu', 'product') and product.sudo().rl_available_qty &lt;= 2">
+            <t t-elif="product.type == 'product' and product.sudo().rl_available_qty &lt;= 2">
                 <span class="rl-card-badge rl-card-badge-low">Only <t t-esc="product.sudo().rl_available_qty"/> left</span>
             </t>
             <div t-if="product.lifestyle_room_ids" class="rl-card-rooms">

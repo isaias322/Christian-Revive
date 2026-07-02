@@ -87,6 +87,37 @@ class LifestyleWebsite(http.Controller):
 class LifestyleWebsiteSale(WebsiteSale):
     """Website checkout customizations for Revive Lifestyle."""
 
+    @http.route('/shop/select_color', type='json', auth='public', website=True, methods=['POST'])
+    def select_product_color(self, color='', **kw):
+        """Store the customer's chosen color in session so cart_update_json can read it."""
+        request.session['rl_product_color'] = str(color).strip()[:64]
+        return {'ok': True}
+
+    @http.route('/shop/cart/update_json', type='json', auth='public', website=True, methods=['POST'])
+    def cart_update_json(self, product_id, **kw):
+        color = request.session.pop('rl_product_color', '').strip()
+        result = super().cart_update_json(product_id=product_id, **kw)
+        if color:
+            self._rl_apply_color_to_line(product_id, color)
+        return result
+
+    def _rl_apply_color_to_line(self, product_id, color):
+        """Append 'Color: X' to the most recently added order line for this product."""
+        try:
+            order = request.website.sale_get_order()
+            if not order:
+                return
+            pid = int(product_id)
+            for line in reversed(order.order_line):
+                if (line.product_id.product_tmpl_id.id == pid or
+                        line.product_id.id == pid):
+                    existing = line.name or ''
+                    if 'Color:' not in existing:
+                        line.sudo().write({'name': existing + '\nColor: ' + color})
+                    break
+        except Exception:
+            pass
+
     def _get_shop_sortings(self, *args, **kwargs):
         sortings = super()._get_shop_sortings(*args, **kwargs)
         sortings.update({

@@ -54,18 +54,26 @@
             <p t-if="product.store_description" class="rl-pd-description mt-3"
                t-esc="product.store_description"/>
 
-            <!-- Color swatches -->
-            <div t-if="product.color_options" class="rl-pd-section mt-3">
+            <!-- Color swatches — clickable, selected color flows to sale order -->
+            <div t-if="product.color_options" class="rl-pd-section mt-3" id="rl_color_picker">
                 <p class="rl-pd-label">Available Colors</p>
-                <div class="rl-pd-swatches">
+                <div class="rl-pd-swatches" role="radiogroup" aria-label="Choose a color">
                     <t t-foreach="product.color_options.split(',')[:8]" t-as="col">
                         <span class="rl-pd-swatch"
+                              role="radio"
+                              tabindex="0"
+                              aria-checked="false"
+                              t-att-data-color="col.strip()"
                               t-att-title="col.strip()"
                               t-att-style="'background-color:%s' % col.strip().lower()">
+                            <i class="fa fa-check rl-pd-swatch-check"/>
                             <span class="rl-pd-swatch-name"><t t-esc="col.strip()"/></span>
                         </span>
                     </t>
                 </div>
+                <p class="rl-pd-color-chosen mt-2" id="rl_color_chosen" style="display:none;">
+                    <i class="fa fa-check-circle"/> Color: <strong id="rl_color_chosen_name"></strong>
+                </p>
             </div>
 
             <!-- Available sizes -->

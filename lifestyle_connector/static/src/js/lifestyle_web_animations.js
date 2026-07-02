@@ -610,6 +610,66 @@ function setupMobileShopFilters() {
         button.classList.toggle('is-active');
     });
 }
+function setupColorSelection() {
+    const swatches = Array.from(document.querySelectorAll('#rl_color_picker .rl-pd-swatch[data-color]'));
+    if (!swatches.length) return;
+
+    let selectedColor = '';
+    const label = document.getElementById('rl_color_chosen');
+    const labelName = document.getElementById('rl_color_chosen_name');
+
+    function selectSwatch(swatch) {
+        swatches.forEach(function (s) {
+            s.classList.remove('rl-selected');
+            s.setAttribute('aria-checked', 'false');
+        });
+        swatch.classList.add('rl-selected');
+        swatch.setAttribute('aria-checked', 'true');
+        selectedColor = swatch.dataset.color || '';
+        if (label && labelName) {
+            labelName.textContent = selectedColor;
+            label.style.display = '';
+        }
+    }
+
+    swatches.forEach(function (swatch) {
+        swatch.addEventListener('click', function () { selectSwatch(swatch); });
+        swatch.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectSwatch(swatch); }
+        });
+    });
+
+    // Intercept the Add to Cart button: save the selected color to the server
+    // session BEFORE Odoo's handler fires, so the cart_update_json controller
+    // can read it and attach it to the order line.
+    var addToCartBtn = document.querySelector(
+        'a.js_add_cart, button.js_add_cart, #add_to_cart, .o_add_cart_btn, [name="add_to_cart"]'
+    );
+    if (!addToCartBtn) return;
+
+    var _savingColor = false;
+    addToCartBtn.addEventListener('click', function (e) {
+        if (!selectedColor || _savingColor) { _savingColor = false; return; }
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        _savingColor = true;
+
+        fetch('/shop/select_color', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                jsonrpc: '2.0', method: 'call', id: 1,
+                params: { color: selectedColor },
+            }),
+        })
+        .catch(function () {})
+        .finally(function () {
+            // Re-fire the click so Odoo's handler runs normally.
+            addToCartBtn.click();
+        });
+    }, true);
+}
+
 function hideProductPolicies() {
     if (!window.location.pathname.startsWith('/shop/')) return;
     // Try the standard Odoo ID first.
@@ -634,6 +694,7 @@ function enhanceWebsite() {
     hideProductPolicies();
     setupContactFormValidation();
     setupSaveForLaterRedirect();
+    setupColorSelection();
     rememberCurrentProduct();
     renderRecentlyViewed();
     setupProductCompare();

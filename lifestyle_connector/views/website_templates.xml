@@ -882,30 +882,17 @@
     </template>
 
     <template id="lifestyle_shop_product_card_extras" inherit_id="website_sale.products_item" name="Revive Lifestyle Product Card Extras">
-        <!-- oe_product_image was removed in Odoo 19; badges now live inside
-             o_wsale_product_information which is stable across versions. -->
         <xpath expr="//div[contains(concat(' ', normalize-space(@class), ' '), ' o_wsale_product_information ')]" position="inside">
-            <div class="rl-product-card-badges">
-                <span t-if="product.type in ('consu', 'product') and product.sudo().qty_available &gt; 0" class="rl-product-status"><i class="fa fa-check"></i> Ready</span>
-                <span t-if="product.type in ('consu', 'product') and product.sudo().qty_available &lt;= 2 and product.sudo().qty_available &gt; 0" class="rl-product-status rl-product-status-warn">Only <t t-esc="int(product.sudo().qty_available)"/> left</span>
-                <span t-if="product.type in ('consu', 'product') and product.sudo().qty_available &lt;= 0" class="rl-product-status rl-product-status-muted">Made to order</span>
-            </div>
-            <div class="rl-product-card-meta">
-                <span t-if="product.lifestyle_room_ids"><i class="fa fa-home"></i> <t t-esc="', '.join(product.lifestyle_room_ids.mapped('name'))"/></span>
-                <span t-if="product.store_sold_count"><i class="fa fa-shopping-bag"></i> <t t-esc="product.store_sold_count"/> sold</span>
-                <span t-if="product.type in ('consu', 'product')"><i class="fa fa-cubes"></i> <t t-esc="int(product.sudo().qty_available)"/> available</span>
-            </div>
-            <div t-if="product.color_options" class="rl-product-color-dots" aria-label="Available colors">
-                <span t-foreach="product.color_options.split(',')[:5]" t-as="color_value"
-                      t-att-title="color_value.strip()"
-                      t-att-style="'background-color:%s;' % color_value.strip().lower()">
-                </span>
-            </div>
-            <div class="rl-product-card-actions">
-                <a t-att-href="product.website_url" class="rl-product-view-link">View Details</a>
-                <button type="button" class="rl-product-compare" t-att-data-rl-compare-id="product.id" t-att-data-rl-compare-name="product.name" t-att-data-rl-compare-price="product.list_price" t-att-data-rl-compare-url="product.website_url" t-att-data-rl-compare-room="', '.join(product.lifestyle_room_ids.mapped('name'))">
-                    <i class="fa fa-columns"></i> Compare
-                </button>
+            <t t-if="product.type in ('consu', 'product') and product.sudo().qty_available &lt;= 0">
+                <span class="rl-card-badge rl-card-badge-mto">Made to order</span>
+            </t>
+            <t t-elif="product.type in ('consu', 'product') and product.sudo().qty_available &lt;= 2">
+                <span class="rl-card-badge rl-card-badge-low">Only <t t-esc="int(product.sudo().qty_available)"/> left</span>
+            </t>
+            <div t-if="product.lifestyle_room_ids" class="rl-card-rooms">
+                <t t-foreach="product.lifestyle_room_ids.sudo()[:3]" t-as="room">
+                    <span class="rl-card-room-tag"><t t-esc="room.name"/></span>
+                </t>
             </div>
         </xpath>
     </template>

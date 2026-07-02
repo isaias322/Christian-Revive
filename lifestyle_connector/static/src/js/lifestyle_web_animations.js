@@ -300,6 +300,34 @@ function setupHomepageHeroSlider() {
     startAutoplay();
 }
 
+function restoreShopSearchBar() {
+    if (!window.location.pathname.startsWith('/shop')) return;
+
+    const searchForm = document.querySelector('.o_wsale_products_searchbar_form');
+    if (!searchForm) return;
+
+    // If something has hidden or collapsed the form, undo it.
+    searchForm.classList.remove('d-none', 'collapse');
+    if (window.getComputedStyle(searchForm).display === 'none') {
+        searchForm.style.display = 'inline-flex';
+    }
+
+    // When the user cleared a search and landed back on /shop, auto-focus
+    // the input so they can type a new search without an extra click.
+    const params = new URLSearchParams(window.location.search);
+    const referrer = document.referrer || '';
+    const arrivedFromSearch = referrer.includes('/shop') && referrer.includes('search=') && !params.has('search');
+    if (arrivedFromSearch) {
+        const input = searchForm.querySelector('input[name="search"], .search-query');
+        if (input) {
+            window.setTimeout(function () {
+                input.focus();
+                input.select();
+            }, 120);
+        }
+    }
+}
+
 function setupContactFormValidation() {
     // Odoo submits s_website_form via AJAX, bypassing browser required-field popups.
     // Intercept in capture phase (before Odoo's handler) to show a friendly message instead.
@@ -506,6 +534,7 @@ function enhanceWebsite() {
     keepShopClean();
     setupProductQuantityPrice();
     setupHomepageHeroSlider();
+    restoreShopSearchBar();
     setupContactFormValidation();
     setupSaveForLaterRedirect();
     rememberCurrentProduct();

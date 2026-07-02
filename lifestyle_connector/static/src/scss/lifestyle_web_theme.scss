@@ -2273,7 +2273,9 @@ footer a:hover,
     display: none !important;
 }
 
+/* Keep the shop search bar always visible regardless of Odoo state classes. */
 .oe_website_sale .o_wsale_products_searchbar_form {
+    display: inline-flex !important;
     max-width: 420px;
     border-radius: 20px;
     background: #FFFDF9;

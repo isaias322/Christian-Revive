@@ -852,7 +852,10 @@
     </template>
 
     <template id="lifestyle_shop_experience" inherit_id="website_sale.products" name="Revive Lifestyle Shop Experience">
-        <xpath expr="//div[@id='products_grid']" position="before">
+        <!-- Target the first child inside #products_grid so the intro is prepended
+             inside the products column — not as a sibling, which would create a
+             third flex column and squeeze the product grid into a tiny strip. -->
+        <xpath expr="//div[@id='products_grid']/*[1]" position="before">
             <section class="rl-shop-intro">
                 <div class="rl-shop-intro-card">
                     <span class="rl-shop-kicker">Furniture showroom</span>

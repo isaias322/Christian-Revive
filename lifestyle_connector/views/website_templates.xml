@@ -60,15 +60,30 @@
                 <p class="rl-pd-label">Available Colors</p>
                 <div class="rl-pd-swatches" role="radiogroup" aria-label="Choose a color">
                     <t t-foreach="product.color_options.split(',')[:8]" t-as="col">
+                        <t t-set="col_name" t-value="col.strip()"/>
+                        <t t-set="col_img" t-value="''"/>
+                        <t t-if="product.sudo().lifestyle_color_image_1_color == col_name and product.sudo().lifestyle_color_image_1">
+                            <t t-set="col_img" t-value="'/web/image/product.template/%s/lifestyle_color_image_1' % product.id"/>
+                        </t>
+                        <t t-elif="product.sudo().lifestyle_color_image_2_color == col_name and product.sudo().lifestyle_color_image_2">
+                            <t t-set="col_img" t-value="'/web/image/product.template/%s/lifestyle_color_image_2' % product.id"/>
+                        </t>
+                        <t t-elif="product.sudo().lifestyle_color_image_3_color == col_name and product.sudo().lifestyle_color_image_3">
+                            <t t-set="col_img" t-value="'/web/image/product.template/%s/lifestyle_color_image_3' % product.id"/>
+                        </t>
+                        <t t-elif="product.sudo().lifestyle_color_image_4_color == col_name and product.sudo().lifestyle_color_image_4">
+                            <t t-set="col_img" t-value="'/web/image/product.template/%s/lifestyle_color_image_4' % product.id"/>
+                        </t>
                         <span class="rl-pd-swatch"
                               role="radio"
                               tabindex="0"
                               aria-checked="false"
-                              t-att-data-color="col.strip()"
-                              t-att-title="col.strip()"
-                              t-att-style="'background-color:%s' % col.strip().lower()">
+                              t-att-data-color="col_name"
+                              t-att-data-image-url="col_img"
+                              t-att-title="col_name"
+                              t-att-style="'background-color:%s' % col_name.lower()">
                             <i class="fa fa-check rl-pd-swatch-check"/>
-                            <span class="rl-pd-swatch-name"><t t-esc="col.strip()"/></span>
+                            <span class="rl-pd-swatch-name"><t t-esc="col_name"/></span>
                         </span>
                     </t>
                 </div>

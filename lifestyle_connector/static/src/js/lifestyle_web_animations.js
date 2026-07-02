@@ -1,4 +1,4 @@
-/** @odoo-module **/
+﻿/** @odoo-module **/
 
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -89,7 +89,7 @@ function keepShopClean() {
     window.setTimeout(hideShopCategoryTabs, 200);
 
     if (!window.location.pathname.startsWith('/shop') || !('MutationObserver' in window)) return;
-    // Scope to the category nav area only — watching the whole page subtree
+    // Scope to the category nav area only â€” watching the whole page subtree
     // fires on every DOM mutation and causes noticeable sluggishness.
     const navScope = document.querySelector(
         '.o_wsale_filmstip_container, .o_wsale_categories_top, .o_wsale_category_nav, nav'
@@ -362,7 +362,7 @@ function restoreShopSearchBar() {
         navToShop();
     }, true);
 
-    // Navigate immediately when the field is cleared — capture phase so we
+    // Navigate immediately when the field is cleared â€” capture phase so we
     // run before Odoo's own input handler (which would fire an AJAX search).
     input.addEventListener('input', function (e) {
         if (input.value.trim() !== '') return;
@@ -493,7 +493,7 @@ function setupProductCompare() {
         compareItems.slice(0, 3).forEach((item) => {
             const row = document.createElement('div');
             row.className = 'rl-compare-item';
-            row.innerHTML = `<div><strong>${item.name}</strong><span>${moneyLabel(item.price)}${item.room ? ' · ' + item.room : ''}</span></div><button type="button" class="btn btn-link btn-sm" data-rl-remove-compare="${item.id}">Remove</button>`;
+            row.innerHTML = `<div><strong>${item.name}</strong><span>${moneyLabel(item.price)}${item.room ? ' Â· ' + item.room : ''}</span></div><button type="button" class="btn btn-link btn-sm" data-rl-remove-compare="${item.id}">Remove</button>`;
             list.appendChild(row);
         });
         tray.classList.toggle('is-visible', compareItems.length > 0);
@@ -567,7 +567,7 @@ function rememberCurrentProduct() {
 }
 
 function renderRecentlyViewed() {
-    // Only show on the shop listing page — detect by absence of product detail.
+    // Only show on the shop listing page â€” detect by absence of product detail.
     const isProductPage = !!(
         document.getElementById('product_detail') ||
         document.getElementById('product_details') ||
@@ -618,6 +618,32 @@ function setupColorSelection() {
     const label = document.getElementById('rl_color_chosen');
     const labelName = document.getElementById('rl_color_chosen_name');
 
+    function ensureColorInput() {
+        let input = document.getElementById('rl_selected_color_input');
+        const form = document.querySelector('#product_detail form[action*="/shop/cart/update"]') ||
+            document.querySelector('#product_details form[action*="/shop/cart/update"]') ||
+            document.querySelector('form[action*="/shop/cart/update"]');
+        if (!input && form) {
+            input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'lifestyle_color';
+            input.id = 'rl_selected_color_input';
+            form.appendChild(input);
+        }
+        return input;
+    }
+
+    // Try to find the main product image element (Odoo uses several selectors).
+    function findMainProductImage() {
+        return document.querySelector(
+            '.o_carousel_product_img .img-fluid, ' +
+            '.o_carousel_product_img img, ' +
+            '.product_detail_img img, ' +
+            'img[itemprop=”image”], ' +
+            '.oe_product_image img'
+        );
+    }
+
     function selectSwatch(swatch) {
         swatches.forEach(function (s) {
             s.classList.remove('rl-selected');
@@ -630,9 +656,28 @@ function setupColorSelection() {
             labelName.textContent = selectedColor;
             label.style.display = '';
         }
-        // Store in session immediately on swatch click — the request completes
-        // well before the customer reaches "Add to Cart", so _cart_update will
-        // always find the color waiting in the session.
+        const colorInput = ensureColorInput();
+        if (colorInput) {
+            colorInput.value = selectedColor;
+        }
+        // Swap main product image if this color has one configured.
+        var imgUrl = swatch.dataset.imageUrl;
+        if (imgUrl) {
+            var mainImg = findMainProductImage();
+            if (mainImg) {
+                if (!mainImg.dataset.rlOrigSrc) {
+                    mainImg.dataset.rlOrigSrc = mainImg.src;
+                }
+                mainImg.src = imgUrl;
+            }
+        } else {
+            // No color image — restore the original product photo.
+            var mainImgRestore = findMainProductImage();
+            if (mainImgRestore && mainImgRestore.dataset.rlOrigSrc) {
+                mainImgRestore.src = mainImgRestore.dataset.rlOrigSrc;
+            }
+        }
+        // Store in session immediately on swatch click.
         if (selectedColor) {
             fetch('/shop/select_color', {
                 method: 'POST',
@@ -645,6 +690,8 @@ function setupColorSelection() {
         }
     }
 
+    ensureColorInput();
+
     swatches.forEach(function (swatch) {
         swatch.addEventListener('click', function () { selectSwatch(swatch); });
         swatch.addEventListener('keydown', function (e) {
@@ -653,7 +700,7 @@ function setupColorSelection() {
     });
 
     // Intercept Odoo's cart-update fetch so we can apply the color to the exact
-    // line_id that Odoo returns — belt-and-suspenders on top of the session approach.
+    // line_id that Odoo returns â€” belt-and-suspenders on top of the session approach.
     // Guard prevents double-patching if the function is called more than once.
     if (!window._rlCartFetchPatched) {
         window._rlCartFetchPatched = true;
@@ -720,3 +767,4 @@ if (document.readyState === 'loading') {
 } else {
     enhanceWebsite();
 }
+

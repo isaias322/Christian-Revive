@@ -795,9 +795,97 @@ a {
         display: block;
     }
 }
-/* Hide Odoo's default "30-day money-back / 2-3 Business Days" trust text on the product page. */
-#o_product_terms_and_share p.text-muted {
+/* Hide Odoo's default "30-day money-back / 2-3 Business Days" trust section */
+#o_product_terms_and_share {
     display: none !important;
+}
+
+/* ── Product detail page — stock, swatches, rating ─────────────────────── */
+.rl-pd-stock-row { margin-bottom: 0.25rem; }
+.rl-pd-stock {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 0.85rem;
+    border-radius: 999px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    i { font-size: 0.9rem; }
+}
+.rl-pd-stock-ok  { color: #2A6B2A; background: rgba(210, 240, 210, 0.85); }
+.rl-pd-stock-low { color: #7B5322; background: rgba(255, 239, 209, 0.9); }
+.rl-pd-stock-mto { color: #5A5A5A; background: rgba(220, 220, 220, 0.8); }
+
+.rl-pd-meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.7rem;
+}
+.rl-pd-meta-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.85rem;
+}
+.rl-pd-stars, .rl-pd-review-stars { color: #C89A2E; }
+.rl-pd-stars i   { font-size: 0.85rem; }
+.rl-pd-review-stars { font-size: 0.8rem; }
+
+.rl-pd-description {
+    font-size: 0.92rem;
+    color: #555;
+    line-height: 1.55;
+    margin-bottom: 0;
+}
+.rl-pd-section { margin-bottom: 0.25rem; }
+.rl-pd-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: #888;
+    margin-bottom: 0.45rem;
+}
+
+/* Color swatches */
+.rl-pd-swatches { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.rl-pd-swatch {
+    position: relative;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    border: 2px solid rgba(0, 0, 0, 0.12);
+    cursor: default;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+    &:hover .rl-pd-swatch-name { opacity: 1; transform: translateX(-50%) translateY(-4px); }
+}
+.rl-pd-swatch-name {
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%) translateY(0);
+    background: rgba(30, 30, 30, 0.85);
+    color: #fff;
+    font-size: 0.65rem;
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s, transform 0.15s;
+}
+
+/* Size pills */
+.rl-pd-size-pill {
+    display: inline-block;
+    padding: 0.25rem 0.65rem;
+    border: 1.5px solid #C5B8A2;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #5A4A30;
+    background: #FAF7F2;
 }
 
 /* Revive checkout polish */

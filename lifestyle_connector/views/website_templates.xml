@@ -16,27 +16,81 @@
     <template id="lifestyle_product_extra_details" inherit_id="website_sale.product"
               name="Revive Lifestyle Product Details">
         <xpath expr="//div[@id='product_details']" position="inside">
-            <div class="lifestyle-card mt-3"
-                 t-if="product.store_description or product.store_rating or product.color_options or product.size_options or product.store_sold_count">
-                <div class="d-flex flex-wrap gap-2 mb-2">
-                    <span t-if="product.store_rating" class="lifestyle-badge">
-                        <t t-esc="'%.1f' % product.store_rating"/> rating
+
+            <!-- Stock availability badge -->
+            <div t-if="product.type in ('consu', 'product')" class="rl-pd-stock-row mt-3">
+                <span t-if="product.sudo().qty_available &gt; 5" class="rl-pd-stock rl-pd-stock-ok">
+                    <i class="fa fa-check-circle"/> In stock — <t t-esc="int(product.sudo().qty_available)"/> available
+                </span>
+                <span t-elif="product.sudo().qty_available &gt; 0" class="rl-pd-stock rl-pd-stock-low">
+                    <i class="fa fa-exclamation-circle"/> Only <t t-esc="int(product.sudo().qty_available)"/> left — order soon
+                </span>
+                <span t-else="" class="rl-pd-stock rl-pd-stock-mto">
+                    <i class="fa fa-clock-o"/> Made to order
+                </span>
+            </div>
+
+            <!-- Star rating + sold count -->
+            <div t-if="product.store_rating or product.store_sold_count" class="rl-pd-meta-row mt-3">
+                <span t-if="product.store_rating" class="rl-pd-meta-badge">
+                    <t t-set="full_stars" t-value="int(product.store_rating)"/>
+                    <span class="rl-pd-stars">
+                        <t t-foreach="range(5)" t-as="s">
+                            <i t-att-class="'fa fa-star' if s &lt; full_stars else 'fa fa-star-o'"/>
+                        </t>
+                    </span>
+                    <b><t t-esc="'%.1f' % product.store_rating"/></b>
+                    <span class="text-muted">
                         (<t t-esc="product.store_review_count"/>
                         <t t-esc="'review' if product.store_review_count == 1 else 'reviews'"/>)
                     </span>
-                    <span t-if="product.store_sold_count" class="lifestyle-badge">
-                        <t t-esc="product.store_sold_count"/> sold
-                    </span>
-                </div>
-                <p t-if="product.store_description" t-esc="product.store_description"/>
-                <p t-if="product.color_options" class="mb-1">
-                    <strong>Colors:</strong> <t t-esc="product.color_options"/>
-                </p>
-                <p t-if="product.size_options" class="mb-0">
-                    <strong>Sizes:</strong> <t t-esc="product.size_options"/>
-                </p>
+                </span>
+                <span t-if="product.store_sold_count" class="rl-pd-meta-badge">
+                    <i class="fa fa-shopping-bag"/> <b><t t-esc="product.store_sold_count"/></b> sold
+                </span>
             </div>
 
+            <!-- Description -->
+            <p t-if="product.store_description" class="rl-pd-description mt-3"
+               t-esc="product.store_description"/>
+
+            <!-- Color swatches -->
+            <div t-if="product.color_options" class="rl-pd-section mt-3">
+                <p class="rl-pd-label">Available Colors</p>
+                <div class="rl-pd-swatches">
+                    <t t-foreach="product.color_options.split(',')[:8]" t-as="col">
+                        <span class="rl-pd-swatch"
+                              t-att-title="col.strip()"
+                              t-att-style="'background-color:%s' % col.strip().lower()">
+                            <span class="rl-pd-swatch-name"><t t-esc="col.strip()"/></span>
+                        </span>
+                    </t>
+                </div>
+            </div>
+
+            <!-- Available sizes -->
+            <div t-if="product.size_options" class="rl-pd-section mt-3">
+                <p class="rl-pd-label">Available Sizes</p>
+                <div class="d-flex flex-wrap gap-2">
+                    <t t-foreach="product.size_options.split(',')[:10]" t-as="sz">
+                        <span class="rl-pd-size-pill"><t t-esc="sz.strip()"/></span>
+                    </t>
+                </div>
+            </div>
+
+            <!-- Room categories -->
+            <div t-if="product.lifestyle_room_ids" class="rl-pd-section mt-3">
+                <p class="rl-pd-label">Best suited for</p>
+                <div class="d-flex flex-wrap gap-2">
+                    <t t-foreach="product.lifestyle_room_ids.sudo()" t-as="room">
+                        <span class="rl-card-room-tag" style="font-size:0.82rem;padding:0.3rem 0.75rem;">
+                            <i class="fa fa-home me-1"/><t t-esc="room.name"/>
+                        </span>
+                    </t>
+                </div>
+            </div>
+
+            <!-- Notify me when back in stock -->
             <div id="notify_stock" class="lifestyle-card mt-3"
                  t-if="product.type in ('consu', 'product') and product.sudo().qty_available &lt;= 0">
                 <h6 class="mb-2">Notify me when back in stock</h6>
@@ -52,29 +106,35 @@
                 </form>
             </div>
 
+            <!-- Customer Reviews -->
             <div id="reviews" class="lifestyle-card mt-3">
                 <h5 class="mb-3">Customer Reviews</h5>
                 <div t-if="not product.review_ids" class="text-muted mb-3">No reviews yet.</div>
                 <div t-foreach="product.review_ids" t-as="review" class="mb-3 pb-3 border-bottom">
                     <div class="d-flex justify-content-between align-items-start">
                         <strong t-esc="review.partner_id.sudo().name or 'Customer'"/>
-                        <span class="lifestyle-badge"><t t-esc="review.rating"/>/5</span>
+                        <span class="rl-pd-review-stars">
+                            <t t-foreach="range(5)" t-as="s">
+                                <i t-att-class="'fa fa-star' if s &lt; review.rating else 'fa fa-star-o'"/>
+                            </t>
+                        </span>
                     </div>
-                    <p t-if="review.comment" t-esc="review.comment" class="mb-0 mt-1"/>
+                    <p t-if="review.comment" t-esc="review.comment" class="mb-0 mt-1 text-muted"/>
                 </div>
 
                 <t t-set="current_partner"
                    t-value="(not request.env.user._is_public()) and request.env.user.partner_id"/>
                 <t t-if="current_partner">
-                    <t t-set="my_review" t-value="product.review_ids.filtered(lambda r: r.partner_id.id == current_partner.id)"/>
+                    <t t-set="my_review"
+                       t-value="product.review_ids.filtered(lambda r: r.partner_id.id == current_partner.id)"/>
                     <h6 class="mt-4 mb-2">
                         <t t-esc="'Update your review' if my_review else 'Write a review'"/>
                     </h6>
                     <form t-attf-action="/shop/product/#{product.id}/review/submit" method="post">
                         <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                         <div class="mb-2">
-                            <select name="rating" class="form-select" style="max-width: 160px;">
-                                <t t-foreach="[5, 4, 3, 2, 1]" t-as="star">
+                            <select name="rating" class="form-select" style="max-width:160px;">
+                                <t t-foreach="[5,4,3,2,1]" t-as="star">
                                     <option t-att-value="star"
                                             t-att-selected="'selected' if (my_review and my_review.rating == star) else None">
                                         <t t-esc="star"/> stars

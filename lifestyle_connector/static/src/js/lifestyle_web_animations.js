@@ -550,17 +550,20 @@ function renderRecentlyViewed() {
     const items = getStoredJson('rl_recent_products', []).slice(0, 3);
     if (!items.length) return;
 
-    const panel = document.createElement('aside');
-    panel.className = 'rl-recently-viewed';
-    panel.innerHTML = '<h4>Recently viewed</h4><div class="rl-recent-links"></div>';
-    const links = panel.querySelector('.rl-recent-links');
+    const grid = document.getElementById('products_grid');
+    if (!grid) return;
+
+    const section = document.createElement('section');
+    section.className = 'rl-recently-viewed';
+    section.innerHTML = '<h5 class="rl-recently-viewed-title">Recently Viewed</h5><div class="rl-recent-links"></div>';
+    const links = section.querySelector('.rl-recent-links');
     items.forEach((item) => {
         const link = document.createElement('a');
         link.href = item.url || '#';
         link.innerHTML = `<img src="${item.image || '/web/static/img/placeholder.png'}" alt=""><div><strong>${item.name}</strong><span>${item.price || ''}</span></div>`;
         links.appendChild(link);
     });
-    document.body.appendChild(panel);
+    grid.appendChild(section);
 }
 
 function setupMobileShopFilters() {

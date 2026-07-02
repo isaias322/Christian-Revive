@@ -5157,23 +5157,20 @@ footer .rounded-circle,
     background: rgba(227, 234, 219, 0.75);
 }
 
-.rl-compare-tray,
-.rl-recently-viewed {
+/* Compare tray — fixed overlay at bottom-right */
+.rl-compare-tray {
     position: fixed;
     z-index: 9000;
-    border: 1px solid rgba(92, 112, 80, 0.12);
-    border-radius: 1.2rem;
-    background: rgba(255, 253, 249, 0.96);
-    box-shadow: 0 28px 80px rgba(46, 46, 42, 0.18);
-    backdrop-filter: blur(14px);
-}
-
-.rl-compare-tray {
     right: 1.1rem;
     bottom: 1.1rem;
     width: calc(100vw - 2rem);
     max-width: 24rem;
     padding: 1rem;
+    border: 1px solid rgba(92, 112, 80, 0.12);
+    border-radius: 1.2rem;
+    background: rgba(255, 253, 249, 0.96);
+    box-shadow: 0 28px 80px rgba(46, 46, 42, 0.18);
+    backdrop-filter: blur(14px);
     transform: translateY(130%);
     transition: transform 0.28s ease;
 }
@@ -5182,8 +5179,7 @@ footer .rounded-circle,
     transform: translateY(0);
 }
 
-.rl-compare-tray h4,
-.rl-recently-viewed h4 {
+.rl-compare-tray h4 {
     margin: 0 0 0.65rem;
     font-family: 'Fraunces', serif;
     font-size: 1.25rem;
@@ -5221,34 +5217,46 @@ footer .rounded-circle,
     gap: 0.5rem;
 }
 
+/* Recently viewed — inline section below the product grid */
 .rl-recently-viewed {
-    left: 1.1rem;
-    bottom: 1.1rem;
-    width: calc(100vw - 2rem);
-    max-width: 22rem;
-    padding: 1rem;
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(92, 112, 80, 0.15);
+}
+
+.rl-recently-viewed-title {
+    font-family: 'Fraunces', serif;
+    font-size: 1.15rem;
+    color: #2E2E2A;
+    margin-bottom: 1rem;
 }
 
 .rl-recent-links {
     display: grid;
-    gap: 0.5rem;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
 }
 
 .rl-recent-links a {
-    display: grid;
-    grid-template-columns: 3.2rem 1fr;
-    gap: 0.65rem;
+    display: flex;
     align-items: center;
+    gap: 0.75rem;
+    padding: 0.65rem 0.75rem;
+    border-radius: 0.9rem;
+    background: #F7F5F0;
     color: #2E2E2A;
     text-decoration: none;
+    transition: background 0.15s;
+    &:hover { background: #EDE9E0; }
 }
 
 .rl-recent-links img {
-    width: 3.2rem;
-    height: 3.2rem;
-    border-radius: 0.8rem;
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 0.65rem;
     object-fit: cover;
-    background: #F7F5F0;
+    flex-shrink: 0;
+    background: #E8E4DC;
 }
 
 .rl-recent-links strong,
@@ -5256,10 +5264,16 @@ footer .rounded-circle,
     display: block;
 }
 
+.rl-recent-links strong {
+    font-size: 0.85rem;
+    line-height: 1.3;
+}
+
 .rl-recent-links span {
     color: #5C7050;
-    font-size: 0.85rem;
+    font-size: 0.82rem;
     font-weight: 800;
+    margin-top: 0.15rem;
 }
 
 @media (max-width: 991.98px) {
@@ -5273,9 +5287,6 @@ footer .rounded-circle,
         font-size: 1.75rem;
     }
 
-    .rl-recently-viewed {
-        display: none;
-    }
 }
 
 @media (max-width: 575.98px) {

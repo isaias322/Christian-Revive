@@ -89,7 +89,7 @@ function keepShopClean() {
     window.setTimeout(hideShopCategoryTabs, 200);
 
     if (!window.location.pathname.startsWith('/shop') || !('MutationObserver' in window)) return;
-    // Scope to the category nav area only â€” watching the whole page subtree
+    // Scope to the category nav area only - watching the whole page subtree
     // fires on every DOM mutation and causes noticeable sluggishness.
     const navScope = document.querySelector(
         '.o_wsale_filmstip_container, .o_wsale_categories_top, .o_wsale_category_nav, nav'
@@ -362,7 +362,7 @@ function restoreShopSearchBar() {
         navToShop();
     }, true);
 
-    // Navigate immediately when the field is cleared â€” capture phase so we
+    // Navigate immediately when the field is cleared - capture phase so we
     // run before Odoo's own input handler (which would fire an AJAX search).
     input.addEventListener('input', function (e) {
         if (input.value.trim() !== '') return;
@@ -567,7 +567,7 @@ function rememberCurrentProduct() {
 }
 
 function renderRecentlyViewed() {
-    // Only show on the shop listing page â€” detect by absence of product detail.
+    // Only show on the shop listing page - detect by absence of product detail.
     const isProductPage = !!(
         document.getElementById('product_detail') ||
         document.getElementById('product_details') ||
@@ -629,6 +629,8 @@ function setupColorSelection() {
             input.name = 'lifestyle_color';
             input.id = 'rl_selected_color_input';
             form.appendChild(input);
+        } else if (input && form && input.form !== form) {
+            form.appendChild(input);
         }
         return input;
     }
@@ -639,7 +641,7 @@ function setupColorSelection() {
             '.o_carousel_product_img .img-fluid, ' +
             '.o_carousel_product_img img, ' +
             '.product_detail_img img, ' +
-            'img[itemprop=”image”], ' +
+            'img[itemprop="image"], ' +
             '.oe_product_image img'
         );
     }
@@ -671,7 +673,7 @@ function setupColorSelection() {
                 mainImg.src = imgUrl;
             }
         } else {
-            // No color image — restore the original product photo.
+            // No color image - restore the original product photo.
             var mainImgRestore = findMainProductImage();
             if (mainImgRestore && mainImgRestore.dataset.rlOrigSrc) {
                 mainImgRestore.src = mainImgRestore.dataset.rlOrigSrc;
@@ -700,7 +702,7 @@ function setupColorSelection() {
     });
 
     // Intercept Odoo's cart-update fetch so we can apply the color to the exact
-    // line_id that Odoo returns â€” belt-and-suspenders on top of the session approach.
+    // line_id that Odoo returns - belt-and-suspenders on top of the session approach.
     // Guard prevents double-patching if the function is called more than once.
     if (!window._rlCartFetchPatched) {
         window._rlCartFetchPatched = true;

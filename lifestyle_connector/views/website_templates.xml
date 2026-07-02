@@ -18,15 +18,15 @@
         <xpath expr="//div[@id='product_details']" position="inside">
 
             <!-- Stock availability badge: on-hand minus undelivered confirmed orders -->
-            <div t-if=”product.type in ('consu', 'product')” class=”rl-pd-stock-row mt-3”>
-                <span t-if=”product.sudo().rl_available_qty &gt; 5” class=”rl-pd-stock rl-pd-stock-ok”>
-                    <i class=”fa fa-check-circle”/> In stock &#8212; <t t-esc=”product.sudo().rl_available_qty”/> available
+            <div t-if="product.type in ('consu', 'product')" class="rl-pd-stock-row mt-3">
+                <span t-if="product.sudo().rl_available_qty &gt; 5" class="rl-pd-stock rl-pd-stock-ok">
+                    <i class="fa fa-check-circle"/> In stock &#8212; <t t-esc="product.sudo().rl_available_qty"/> available
                 </span>
-                <span t-elif=”product.sudo().rl_available_qty &gt; 0” class=”rl-pd-stock rl-pd-stock-low”>
-                    <i class=”fa fa-exclamation-circle”/> Only <t t-esc=”product.sudo().rl_available_qty”/> left &#8212; order soon
+                <span t-elif="product.sudo().rl_available_qty &gt; 0" class="rl-pd-stock rl-pd-stock-low">
+                    <i class="fa fa-exclamation-circle"/> Only <t t-esc="product.sudo().rl_available_qty"/> left &#8212; order soon
                 </span>
-                <span t-else=”” class=”rl-pd-stock rl-pd-stock-mto”>
-                    <i class=”fa fa-clock-o”/> Made to order
+                <span t-else="" class="rl-pd-stock rl-pd-stock-mto">
+                    <i class="fa fa-clock-o"/> Made to order
                 </span>
             </div>
 
@@ -54,7 +54,7 @@
             <p t-if="product.store_description" class="rl-pd-description mt-3"
                t-esc="product.store_description"/>
 
-            <!-- Color swatches â€” clickable, selected color flows to sale order -->
+            <!-- Color swatches - clickable, selected color flows to sale order -->
             <div t-if="product.color_options" class="rl-pd-section mt-3" id="rl_color_picker">
                 <input type="hidden" name="lifestyle_color" id="rl_selected_color_input"/>
                 <p class="rl-pd-label">Available Colors</p>
@@ -927,7 +927,7 @@
 
     <template id="lifestyle_shop_experience" inherit_id="website_sale.products" name="Revive Lifestyle Shop Experience">
         <!-- Target the first child inside #products_grid so the intro is prepended
-             inside the products column â€” not as a sibling, which would create a
+             inside the products column - not as a sibling, which would create a
              third flex column and squeeze the product grid into a tiny strip. -->
         <xpath expr="//div[@id='products_grid']/*[1]" position="before">
             <section class="rl-shop-intro">

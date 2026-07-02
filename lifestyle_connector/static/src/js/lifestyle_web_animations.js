@@ -585,6 +585,20 @@ function setupMobileShopFilters() {
         button.classList.toggle('is-active');
     });
 }
+function hideProductPolicies() {
+    if (!window.location.pathname.startsWith('/shop/')) return;
+    // Try the standard Odoo ID first.
+    var section = document.getElementById('o_product_terms_and_share');
+    if (section) { section.style.display = 'none'; return; }
+    // Fallback: walk paragraphs and hide any that contain the policy text.
+    document.querySelectorAll('p, small').forEach(function (el) {
+        var t = el.textContent || '';
+        if (t.indexOf('money-back') !== -1 || t.indexOf('Business Day') !== -1) {
+            el.style.display = 'none';
+        }
+    });
+}
+
 function enhanceWebsite() {
     document.documentElement.classList.add('rl-site-ready');
     markShopPage();
@@ -592,6 +606,7 @@ function enhanceWebsite() {
     setupProductQuantityPrice();
     setupHomepageHeroSlider();
     restoreShopSearchBar();
+    hideProductPolicies();
     setupContactFormValidation();
     setupSaveForLaterRedirect();
     rememberCurrentProduct();

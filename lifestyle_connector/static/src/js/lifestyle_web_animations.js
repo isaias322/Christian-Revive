@@ -531,11 +531,25 @@ function setupProductCompare() {
 }
 
 function rememberCurrentProduct() {
-    if (!window.location.pathname.startsWith('/shop/product')) return;
-    const name = document.querySelector('#product_detail h1, #product_details h1, h1')?.textContent?.trim();
-    const price = findProductPriceValueElement()?.textContent?.trim();
-    const image = document.querySelector('#product_detail img, #product_details img')?.getAttribute('src');
+    // Detect product page by presence of the add-to-cart form, not by URL.
+    // Odoo 19 uses SEO slugs like /shop/bed-1, not /shop/product/..., so
+    // a URL-based check misses all products.
+    const isProductPage = !!(
+        document.getElementById('product_detail') ||
+        document.getElementById('product_details') ||
+        document.querySelector('form[action*="add_to_cart"], #add_to_cart')
+    );
+    if (!isProductPage) return;
+
+    const name = document.querySelector(
+        '#product_detail h1, #product_details h1, .product-name, h1'
+    )?.textContent?.trim();
     if (!name) return;
+
+    const price = findProductPriceValueElement()?.textContent?.trim();
+    const image = document.querySelector(
+        '#product_detail img, #product_details img, .product-image img, #o_product_main_image img'
+    )?.getAttribute('src');
 
     let items = getStoredJson('rl_recent_products', []);
     const current = { name, price: price || '', image: image || '', url: window.location.pathname };
@@ -545,13 +559,19 @@ function rememberCurrentProduct() {
 }
 
 function renderRecentlyViewed() {
-    if (!window.location.pathname.startsWith('/shop')) return;
-    if (window.location.pathname.startsWith('/shop/product')) return;
-    const items = getStoredJson('rl_recent_products', []).slice(0, 3);
-    if (!items.length) return;
+    // Only show on the shop listing page — detect by absence of product detail.
+    const isProductPage = !!(
+        document.getElementById('product_detail') ||
+        document.getElementById('product_details') ||
+        document.querySelector('form[action*="add_to_cart"], #add_to_cart')
+    );
+    if (isProductPage) return;
 
     const grid = document.getElementById('products_grid');
     if (!grid) return;
+
+    const items = getStoredJson('rl_recent_products', []).slice(0, 3);
+    if (!items.length) return;
 
     const section = document.createElement('section');
     section.className = 'rl-recently-viewed';

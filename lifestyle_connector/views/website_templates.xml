@@ -882,14 +882,14 @@
     </template>
 
     <template id="lifestyle_shop_product_card_extras" inherit_id="website_sale.products_item" name="Revive Lifestyle Product Card Extras">
-        <xpath expr="//div[contains(concat(' ', normalize-space(@class), ' '), ' oe_product_image ')]" position="inside">
+        <!-- oe_product_image was removed in Odoo 19; badges now live inside
+             o_wsale_product_information which is stable across versions. -->
+        <xpath expr="//div[contains(concat(' ', normalize-space(@class), ' '), ' o_wsale_product_information ')]" position="inside">
             <div class="rl-product-card-badges">
                 <span t-if="product.type in ('consu', 'product') and product.sudo().qty_available &gt; 0" class="rl-product-status"><i class="fa fa-check"></i> Ready</span>
                 <span t-if="product.type in ('consu', 'product') and product.sudo().qty_available &lt;= 2 and product.sudo().qty_available &gt; 0" class="rl-product-status rl-product-status-warn">Only <t t-esc="int(product.sudo().qty_available)"/> left</span>
                 <span t-if="product.type in ('consu', 'product') and product.sudo().qty_available &lt;= 0" class="rl-product-status rl-product-status-muted">Made to order</span>
             </div>
-        </xpath>
-        <xpath expr="//div[contains(concat(' ', normalize-space(@class), ' '), ' o_wsale_product_information ')]" position="inside">
             <div class="rl-product-card-meta">
                 <span t-if="product.lifestyle_room"><i class="fa fa-home"></i> <t t-esc="dict(product._fields['lifestyle_room'].selection).get(product.lifestyle_room)"/></span>
                 <span t-if="product.store_sold_count"><i class="fa fa-shopping-bag"></i> <t t-esc="product.store_sold_count"/> sold</span>

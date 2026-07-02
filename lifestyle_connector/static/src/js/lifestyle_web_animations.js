@@ -300,6 +300,60 @@ function setupHomepageHeroSlider() {
     startAutoplay();
 }
 
+function setupContactFormValidation() {
+    // Odoo submits s_website_form via AJAX, bypassing browser required-field popups.
+    // Intercept in capture phase (before Odoo's handler) to show a friendly message instead.
+    document.addEventListener('submit', function (e) {
+        const form = e.target;
+        if (!form || form.tagName !== 'FORM') return;
+        if (!form.classList.contains('s_website_form') && !form.closest('.s_website_form')) return;
+
+        const requiredInputs = Array.from(
+            form.querySelectorAll('input[required], textarea[required], select[required]')
+        );
+        requiredInputs.forEach(function (el) { el.classList.remove('is-invalid'); });
+
+        const emptyFields = requiredInputs.filter(function (el) {
+            return el.type === 'checkbox' ? !el.checked : !el.value.trim();
+        });
+
+        let msg = form.querySelector('.rl-form-val-msg');
+
+        if (emptyFields.length === 0) {
+            if (msg) msg.style.display = 'none';
+            return;
+        }
+
+        e.preventDefault();
+        e.stopImmediatePropagation();
+
+        emptyFields.forEach(function (el) { el.classList.add('is-invalid'); });
+
+        if (!msg) {
+            msg = document.createElement('p');
+            msg.className = 'rl-form-val-msg text-danger small mt-2 mb-0';
+            const btn = form.querySelector('[type="submit"], .s_website_form_send');
+            if (btn && btn.parentElement) {
+                btn.parentElement.insertBefore(msg, btn.nextSibling);
+            } else {
+                form.appendChild(msg);
+            }
+        }
+        msg.textContent = 'Please fill in all required fields before sending your message.';
+        msg.style.display = '';
+
+        emptyFields[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+        emptyFields[0].focus();
+    }, true);
+
+    // Clear the red border as soon as the user starts typing in a flagged field.
+    document.addEventListener('input', function (e) {
+        if (e.target.classList.contains('is-invalid') && e.target.value.trim()) {
+            e.target.classList.remove('is-invalid');
+        }
+    });
+}
+
 function setupSaveForLaterRedirect() {
     if (!window.location.pathname.startsWith('/shop/cart')) return;
     document.addEventListener('click', function (e) {
@@ -312,13 +366,134 @@ function setupSaveForLaterRedirect() {
     });
 }
 
+
+function getStoredJson(key, fallback) {
+    try {
+        return JSON.parse(window.localStorage.getItem(key) || JSON.stringify(fallback));
+    } catch (error) {
+        return fallback;
+    }
+}
+
+function setStoredJson(key, value) {
+    try {
+        window.localStorage.setItem(key, JSON.stringify(value));
+    } catch (error) {
+        // Browser storage may be disabled; the shop still works without it.
+    }
+}
+
+function moneyLabel(value) {
+    const numeric = parseFloat(value || '0') || 0;
+    return `Rs. ${formatMoneyValue(numeric)}`;
+}
+
+function setupProductCompare() {
+    if (!window.location.pathname.startsWith('/shop')) return;
+
+    const buttons = Array.from(document.querySelectorAll('[data-rl-compare-id]'));
+    if (!buttons.length) return;
+
+    let compareItems = getStoredJson('rl_compare_items', []);
+    const tray = document.createElement('div');
+    tray.className = 'rl-compare-tray';
+    tray.innerHTML = '<h4>Compare furniture</h4><div class="rl-compare-list"></div><div class="rl-compare-actions"><button type="button" class="btn btn-primary btn-sm" data-rl-compare-open>Open Selected</button><button type="button" class="btn btn-outline-secondary btn-sm" data-rl-compare-clear>Clear</button></div>';
+    document.body.appendChild(tray);
+
+    const render = () => {
+        const list = tray.querySelector('.rl-compare-list');
+        list.innerHTML = '';
+        compareItems.slice(0, 3).forEach((item) => {
+            const row = document.createElement('div');
+            row.className = 'rl-compare-item';
+            row.innerHTML = `<div><strong>${item.name}</strong><span>${moneyLabel(item.price)}${item.room ? ' · ' + item.room : ''}</span></div><button type="button" class="btn btn-link btn-sm" data-rl-remove-compare="${item.id}">Remove</button>`;
+            list.appendChild(row);
+        });
+        tray.classList.toggle('is-visible', compareItems.length > 0);
+        setStoredJson('rl_compare_items', compareItems.slice(0, 3));
+    };
+
+    buttons.forEach((button) => {
+        button.addEventListener('click', (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            const item = {
+                id: button.dataset.rlCompareId,
+                name: button.dataset.rlCompareName || 'Product',
+                price: button.dataset.rlComparePrice || '0',
+                url: button.dataset.rlCompareUrl || '#',
+                room: button.dataset.rlCompareRoom || '',
+            };
+            compareItems = compareItems.filter((existing) => existing.id !== item.id);
+            compareItems.unshift(item);
+            compareItems = compareItems.slice(0, 3);
+            render();
+        });
+    });
+
+    tray.addEventListener('click', (event) => {
+        const removeId = event.target.closest('[data-rl-remove-compare]')?.dataset.rlRemoveCompare;
+        if (removeId) {
+            compareItems = compareItems.filter((item) => item.id !== removeId);
+            render();
+            return;
+        }
+        if (event.target.closest('[data-rl-compare-clear]')) {
+            compareItems = [];
+            render();
+            return;
+        }
+        if (event.target.closest('[data-rl-compare-open]') && compareItems[0]?.url) {
+            window.location.href = compareItems[0].url;
+        }
+    });
+
+    render();
+}
+
+function rememberCurrentProduct() {
+    if (!window.location.pathname.startsWith('/shop/product')) return;
+    const name = document.querySelector('#product_detail h1, #product_details h1, h1')?.textContent?.trim();
+    const price = findProductPriceValueElement()?.textContent?.trim();
+    const image = document.querySelector('#product_detail img, #product_details img')?.getAttribute('src');
+    if (!name) return;
+
+    let items = getStoredJson('rl_recent_products', []);
+    const current = { name, price: price || '', image: image || '', url: window.location.pathname };
+    items = items.filter((item) => item.url !== current.url);
+    items.unshift(current);
+    setStoredJson('rl_recent_products', items.slice(0, 4));
+}
+
+function renderRecentlyViewed() {
+    if (!window.location.pathname.startsWith('/shop')) return;
+    if (window.location.pathname.startsWith('/shop/product')) return;
+    const items = getStoredJson('rl_recent_products', []).slice(0, 3);
+    if (!items.length) return;
+
+    const panel = document.createElement('aside');
+    panel.className = 'rl-recently-viewed';
+    panel.innerHTML = '<h4>Recently viewed</h4><div class="rl-recent-links"></div>';
+    const links = panel.querySelector('.rl-recent-links');
+    items.forEach((item) => {
+        const link = document.createElement('a');
+        link.href = item.url || '#';
+        link.innerHTML = `<img src="${item.image || '/web/static/img/placeholder.png'}" alt=""><div><strong>${item.name}</strong><span>${item.price || ''}</span></div>`;
+        links.appendChild(link);
+    });
+    document.body.appendChild(panel);
+}
 function enhanceWebsite() {
     document.documentElement.classList.add('rl-site-ready');
     markShopPage();
     keepShopClean();
     setupProductQuantityPrice();
     setupHomepageHeroSlider();
+    setupContactFormValidation();
     setupSaveForLaterRedirect();
+    rememberCurrentProduct();
+    renderRecentlyViewed();
+    setupProductCompare();
     const targets = prepareRevealTargets();
     setupRevealObserver(targets);
 }

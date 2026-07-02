@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from odoo import models
+from odoo import fields, models
 from odoo.http import request
 
 
@@ -25,6 +25,20 @@ class Website(models.Model):
         if size:
             domain = domain + [('size_options', 'ilike', size)]
 
+        room = request.params.get('lifestyle_room')
+        if room:
+            domain = domain + [('lifestyle_room', '=', room)]
+
+        quick = request.params.get('lifestyle_quick')
+        if quick == 'new':
+            domain = domain + [('create_date', '>=', fields.Datetime.subtract(fields.Datetime.now(), days=45))]
+        elif quick == 'popular':
+            sold_lines = self.env['sale.order.line'].sudo().search([
+                ('order_id.state', 'in', ('sale', 'done')),
+                ('product_id.product_tmpl_id', '!=', False),
+            ])
+            sold_template_ids = sold_lines.mapped('product_id.product_tmpl_id').ids
+            domain = domain + [('id', 'in', sold_template_ids or [0])]
         availability = request.params.get('lifestyle_availability')
         if availability == 'in_stock':
             domain = domain + ['|', ('type', 'not in', ('consu', 'product')), ('qty_available', '>', 0)]

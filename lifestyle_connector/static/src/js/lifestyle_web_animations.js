@@ -483,6 +483,23 @@ function renderRecentlyViewed() {
     });
     document.body.appendChild(panel);
 }
+
+function setupMobileShopFilters() {
+    if (!window.location.pathname.startsWith('/shop')) return;
+    const rail = document.querySelector('.o_wsale_products_grid_before_rail');
+    if (!rail || document.querySelector('.rl-mobile-filter-toggle')) return;
+
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'rl-mobile-filter-toggle';
+    button.innerHTML = '<i class="fa fa-sliders"></i><span>Filters</span>';
+    document.body.appendChild(button);
+
+    button.addEventListener('click', () => {
+        rail.classList.toggle('rl-mobile-filters-open');
+        button.classList.toggle('is-active');
+    });
+}
 function enhanceWebsite() {
     document.documentElement.classList.add('rl-site-ready');
     markShopPage();
@@ -494,6 +511,7 @@ function enhanceWebsite() {
     rememberCurrentProduct();
     renderRecentlyViewed();
     setupProductCompare();
+    setupMobileShopFilters();
     const targets = prepareRevealTargets();
     setupRevealObserver(targets);
 }

@@ -760,9 +760,35 @@
             <t t-set="lifestyle_active_size" t-value="request.params.get('lifestyle_size')"/>
             <t t-set="lifestyle_active_availability" t-value="request.params.get('lifestyle_availability')"/>
             <t t-set="lifestyle_active_year" t-value="request.params.get('lifestyle_year')"/>
+            <t t-set="lifestyle_active_room" t-value="request.params.get('lifestyle_room')"/>
+            <t t-set="lifestyle_active_quick" t-value="request.params.get('lifestyle_quick')"/>
             <t t-set="lifestyle_colors" t-value="request.env['product.template'].sudo()._lifestyle_available_colors()"/>
             <t t-set="lifestyle_sizes" t-value="request.env['product.template'].sudo()._lifestyle_available_sizes()"/>
             <t t-set="lifestyle_years" t-value="request.env['product.template'].sudo()._lifestyle_available_years()"/>
+            <t t-set="lifestyle_rooms" t-value="request.env['product.template'].sudo()._lifestyle_available_rooms()"/>
+            <div class="rl-shop-filter-block mb-3">
+                <h6 class="mb-2"><b>Quick Filters</b></h6>
+                <div class="d-flex flex-wrap gap-2">
+                    <a t-att-href="keep('/shop', lifestyle_quick=None)"
+                       t-attf-class="lifestyle-badge text-decoration-none #{'' if not lifestyle_active_quick else 'opacity-50'}">All</a>
+                    <a t-att-href="keep('/shop', lifestyle_quick='new')"
+                       t-attf-class="lifestyle-badge text-decoration-none #{'' if lifestyle_active_quick == 'new' else 'opacity-50'}">New</a>
+                    <a t-att-href="keep('/shop', lifestyle_quick='popular')"
+                       t-attf-class="lifestyle-badge text-decoration-none #{'' if lifestyle_active_quick == 'popular' else 'opacity-50'}">Popular</a>
+                </div>
+            </div>
+            <div t-if="lifestyle_rooms" class="rl-shop-filter-block mb-3">
+                <h6 class="mb-2"><b>Shop by Room</b></h6>
+                <div class="d-flex flex-wrap gap-2">
+                    <a t-att-href="keep('/shop', lifestyle_room=None)"
+                       t-attf-class="lifestyle-badge text-decoration-none #{'' if not lifestyle_active_room else 'opacity-50'}">All Rooms</a>
+                    <a t-foreach="lifestyle_rooms" t-as="room_value"
+                       t-att-href="keep('/shop', lifestyle_room=room_value[0])"
+                       t-attf-class="lifestyle-badge text-decoration-none #{'' if lifestyle_active_room == room_value[0] else 'opacity-50'}">
+                        <t t-esc="room_value[1]"/>
+                    </a>
+                </div>
+            </div>
             <div class="mb-3">
                 <h6 class="mb-2"><b>Availability</b></h6>
                 <div class="d-flex flex-wrap gap-2">
@@ -821,6 +847,65 @@
                         <t t-esc="size_value"/>
                     </a>
                 </div>
+            </div>
+        </xpath>
+    </template>
+
+    <template id="lifestyle_shop_experience" inherit_id="website_sale.products" name="Revive Lifestyle Shop Experience">
+        <xpath expr="//div[@id='products_grid']" position="before">
+            <section class="rl-shop-intro">
+                <div class="rl-shop-intro-card">
+                    <span class="rl-shop-kicker">Furniture showroom</span>
+                    <h2>Choose by room, finish, and availability</h2>
+                    <p>Browse ready pieces, compare favorites, and keep your furniture order easy from first look to delivery.</p>
+                    <div class="rl-shop-quick-row">
+                        <a t-att-href="keep('/shop', lifestyle_availability='in_stock')"><i class="fa fa-check"></i> Ready stock</a>
+                        <a t-att-href="keep('/shop', lifestyle_quick='new')"><i class="fa fa-star"></i> New pieces</a>
+                        <a t-att-href="keep('/shop', lifestyle_quick='popular')"><i class="fa fa-line-chart"></i> Popular</a>
+                    </div>
+                </div>
+                <t t-set="shop_banners" t-value="request.env['lifestyle.app.banner'].sudo().search([('active', '=', True)], order='sequence, id', limit=3) if request.env.registry.get('lifestyle.app.banner') else []"/>
+                <div t-if="shop_banners" class="rl-shop-promo-strip">
+                    <div t-foreach="shop_banners" t-as="banner" class="rl-shop-promo-pill">
+                        <i class="fa fa-bullhorn"></i>
+                        <span t-esc="banner.title"/>
+                    </div>
+                </div>
+            </section>
+            <div t-if="not products" class="rl-shop-empty-state">
+                <i class="fa fa-search"></i>
+                <h3>No furniture matched your filters</h3>
+                <p>Clear the filters or try a different room, color, size, or price range.</p>
+                <a href="/shop" class="btn btn-primary">Clear Filters</a>
+            </div>
+        </xpath>
+    </template>
+
+    <template id="lifestyle_shop_product_card_extras" inherit_id="website_sale.products_item" name="Revive Lifestyle Product Card Extras">
+        <xpath expr="//div[contains(concat(' ', normalize-space(@class), ' '), ' oe_product_image ')]" position="inside">
+            <div class="rl-product-card-badges">
+                <span t-if="product.type in ('consu', 'product') and product.sudo().qty_available &gt; 0" class="rl-product-status"><i class="fa fa-check"></i> Ready</span>
+                <span t-if="product.type in ('consu', 'product') and product.sudo().qty_available &lt;= 2 and product.sudo().qty_available &gt; 0" class="rl-product-status rl-product-status-warn">Only <t t-esc="int(product.sudo().qty_available)"/> left</span>
+                <span t-if="product.type in ('consu', 'product') and product.sudo().qty_available &lt;= 0" class="rl-product-status rl-product-status-muted">Made to order</span>
+            </div>
+        </xpath>
+        <xpath expr="//div[contains(concat(' ', normalize-space(@class), ' '), ' o_wsale_product_information ')]" position="inside">
+            <div class="rl-product-card-meta">
+                <span t-if="product.lifestyle_room"><i class="fa fa-home"></i> <t t-esc="dict(product._fields['lifestyle_room'].selection).get(product.lifestyle_room)"/></span>
+                <span t-if="product.store_sold_count"><i class="fa fa-shopping-bag"></i> <t t-esc="product.store_sold_count"/> sold</span>
+                <span t-if="product.type in ('consu', 'product')"><i class="fa fa-cubes"></i> <t t-esc="int(product.sudo().qty_available)"/> available</span>
+            </div>
+            <div t-if="product.color_options" class="rl-product-color-dots" aria-label="Available colors">
+                <span t-foreach="product.color_options.split(',')[:5]" t-as="color_value"
+                      t-att-title="color_value.strip()"
+                      t-att-style="'background-color:%s;' % color_value.strip().lower()">
+                </span>
+            </div>
+            <div class="rl-product-card-actions">
+                <a t-att-href="product.website_url" class="rl-product-view-link">View Details</a>
+                <button type="button" class="rl-product-compare" t-att-data-rl-compare-id="product.id" t-att-data-rl-compare-name="product.name" t-att-data-rl-compare-price="product.list_price" t-att-data-rl-compare-url="product.website_url" t-att-data-rl-compare-room="dict(product._fields['lifestyle_room'].selection).get(product.lifestyle_room, '') if product.lifestyle_room else ''">
+                    <i class="fa fa-columns"></i> Compare
+                </button>
             </div>
         </xpath>
     </template>

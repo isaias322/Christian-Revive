@@ -87,6 +87,15 @@ class LifestyleWebsite(http.Controller):
 class LifestyleWebsiteSale(WebsiteSale):
     """Website checkout customizations for Revive Lifestyle."""
 
+    def _get_shop_sortings(self, *args, **kwargs):
+        sortings = super()._get_shop_sortings(*args, **kwargs)
+        sortings.update({
+            'newest': {'label': 'Newest pieces', 'order': 'create_date desc, id desc'},
+            'price_asc': {'label': 'Price: low to high', 'order': 'list_price asc, id desc'},
+            'price_desc': {'label': 'Price: high to low', 'order': 'list_price desc, id desc'},
+            'name_asc': {'label': 'Name A-Z', 'order': 'name asc, id desc'},
+        })
+        return sortings
     def _validate_address_values(self, *args, **kwargs):
         invalid_fields, missing_fields, error_messages = super()._validate_address_values(*args, **kwargs)
 

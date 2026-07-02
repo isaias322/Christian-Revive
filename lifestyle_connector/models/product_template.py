@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 from odoo import api, models, fields
 
 
@@ -25,6 +25,16 @@ class ProductTemplate(models.Model):
     store_rating = fields.Float(string='Rating', compute='_compute_store_rating', compute_sudo=True, store=True)
     store_review_count = fields.Integer(string='Review Count', compute='_compute_store_rating', compute_sudo=True, store=True)
     store_sold_count = fields.Integer(string='Sold Count', compute='_compute_store_sold_count')
+    lifestyle_room = fields.Selection([
+        ('bedroom', 'Bedroom'),
+        ('living_room', 'Living Room'),
+        ('dining_room', 'Dining Room'),
+        ('office', 'Office'),
+        ('outdoor', 'Outdoor'),
+        ('kids_room', 'Kids Room'),
+        ('entryway', 'Entryway'),
+        ('custom', 'Custom / Other'),
+    ], string='Room', help='Controls the Shop by Room filters on the Revive Lifestyle website.')
 
     @api.depends('review_ids.rating', 'review_ids.write_date')
     def _compute_store_rating(self):
@@ -148,6 +158,20 @@ class ProductTemplate(models.Model):
         return sorted(colors)
 
     @api.model
+    @api.model
+    def _lifestyle_available_rooms(self):
+        products = self.sudo().search(
+            self._lifestyle_app_visibility_domain()
+            + [('sale_ok', '=', True), ('active', '=', True), ('lifestyle_room', '!=', False)]
+        )
+        labels = dict(self._fields['lifestyle_room'].selection)
+        rooms = []
+        seen = set()
+        for key in products.mapped('lifestyle_room'):
+            if key and key not in seen:
+                seen.add(key)
+                rooms.append((key, labels.get(key, key.replace('_', ' ').title())))
+        return rooms
     def _lifestyle_available_sizes(self):
         products = self.sudo().search(
             self._lifestyle_app_visibility_domain()

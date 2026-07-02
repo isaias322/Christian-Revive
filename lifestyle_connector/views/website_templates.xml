@@ -981,13 +981,13 @@
             <t t-if="product.type == 'product' and product.sudo().rl_available_qty &lt;= 0">
                 <span class="rl-card-badge rl-card-badge-mto">Made to order</span>
             </t>
-            <t t-if="product.compare_list_price and product.compare_list_price &gt; product.list_price">
+            <t t-if="product.sudo().compare_price and product.sudo().compare_price &gt; product.list_price">
                 <div class="rl-card-deal-row">
                     <span class="rl-card-was-price">
-                        <t t-esc="'Rs. {:,.0f}'.format(product.compare_list_price)"/>
+                        <t t-esc="'Rs. {:,.0f}'.format(product.sudo().compare_price)"/>
                     </span>
                     <span class="rl-card-discount-badge">
-                        <t t-esc="'{:.0f}% OFF'.format((product.compare_list_price - product.list_price) / product.compare_list_price * 100)"/>
+                        <t t-esc="'{:.0f}% OFF'.format((product.sudo().compare_price - product.list_price) / product.sudo().compare_price * 100)"/>
                     </span>
                 </div>
             </t>

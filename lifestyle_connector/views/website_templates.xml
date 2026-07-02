@@ -981,9 +981,6 @@
             <t t-if="product.type == 'product' and product.sudo().rl_available_qty &lt;= 0">
                 <span class="rl-card-badge rl-card-badge-mto">Made to order</span>
             </t>
-            <t t-elif="product.type == 'product' and product.sudo().rl_available_qty &lt;= 2">
-                <span class="rl-card-badge rl-card-badge-low">Only <t t-esc="product.sudo().rl_available_qty"/> left</span>
-            </t>
             <div t-if="product.lifestyle_room_ids" class="rl-card-rooms">
                 <t t-foreach="product.lifestyle_room_ids.sudo()[:3]" t-as="room">
                     <span class="rl-card-room-tag"><t t-esc="room.name"/></span>

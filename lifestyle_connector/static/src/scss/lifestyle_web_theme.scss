@@ -2358,9 +2358,25 @@ footer a:hover,
     padding-left: 0 !important;
 }
 
+/* Make the shop layout full-width so the sidebar can reach the left edge */
 @media (min-width: 992px) {
+    .rl-shop-page .oe_website_sale .container,
+    .rl-shop-page .oe_website_sale [class*="container-"] {
+        max-width: 100% !important;
+        padding-left: 0 !important;
+    }
+    .rl-shop-page .oe_website_sale .o_wsale_products_main_row {
+        margin-left: 0 !important;
+    }
     .oe_website_sale .o_wsale_products_grid_before_rail {
         padding-left: 0 !important;
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+        border-left: none;
+    }
+    .oe_website_sale .o_wsale_products_main_row > #products_grid,
+    .oe_website_sale .o_wsale_products_main_row > .col-lg-9 {
+        padding-right: 2rem;
     }
 }
 

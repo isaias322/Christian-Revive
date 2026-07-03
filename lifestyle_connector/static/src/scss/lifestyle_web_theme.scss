@@ -2364,6 +2364,16 @@ footer a:hover,
     background: rgba(255, 253, 249, 0.86);
     box-shadow: 0 24px 64px rgba(46, 46, 42, 0.10);
     backdrop-filter: blur(16px);
+    flex: 0 0 300px !important;
+    max-width: 300px !important;
+    width: 300px !important;
+}
+
+.oe_website_sale .o_wsale_products_main_row > #products_grid,
+.oe_website_sale .o_wsale_products_main_row > .col-lg-9 {
+    flex: 1 1 0 !important;
+    max-width: none !important;
+    min-width: 0;
 }
 
 .oe_website_sale #o_wsale_price_range_option .accordion-button,

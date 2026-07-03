@@ -2354,6 +2354,14 @@ footer a:hover,
 .oe_website_sale .o_wsale_products_main_row {
     gap: 1.35rem;
     align-items: flex-start;
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+}
+
+@media (min-width: 992px) {
+    .oe_website_sale .o_wsale_products_grid_before_rail {
+        padding-left: 0 !important;
+    }
 }
 
 .oe_website_sale .o_wsale_products_grid_before_rail {

@@ -629,7 +629,7 @@ function setupColorSelection() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     jsonrpc: '2.0', method: 'call', id: 1,
-                    params: { color: selectedColor },
+                    params: { color: selectedColor, product_id: productTmplId ? parseInt(productTmplId, 10) : null },
                 }),
             }).catch(function () {});
         }
@@ -646,7 +646,7 @@ function setupColorSelection() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 jsonrpc: '2.0', method: 'call', id: 11,
-                params: { color: selectedColor },
+                params: { color: selectedColor, product_id: productTmplId ? parseInt(productTmplId, 10) : null },
             }),
             keepalive: true,
         }).catch(function () {});

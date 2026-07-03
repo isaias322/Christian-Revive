@@ -88,10 +88,68 @@ class LifestyleWebsiteSale(WebsiteSale):
     """Website checkout customizations for Revive Lifestyle."""
 
     @http.route('/shop/select_color', type='json', auth='public', website=True, methods=['POST'])
-    def select_product_color(self, color='', **kw):
-        """Store the customer's chosen color in session; SaleOrder._cart_update reads it."""
-        request.session['rl_product_color'] = str(color).strip()[:64]
+    def select_product_color(self, color='', product_id=None, **kw):
+        """Store the customer's chosen color in session; cart update reads it."""
+        color_text = str(color or '').strip()[:64]
+        request.session['rl_product_color'] = color_text
+        if product_id:
+            color_map = dict(request.session.get('rl_product_colors') or {})
+            color_map[str(product_id)] = color_text
+            request.session['rl_product_colors'] = color_map
         return {'ok': True}
+
+    def _lifestyle_selected_color(self, product_id=None, **kw):
+        color = str(kw.get('lifestyle_color') or request.params.get('lifestyle_color') or '').strip()
+        if color:
+            return color[:64]
+        color_map = request.session.get('rl_product_colors') or {}
+        if product_id and isinstance(color_map, dict):
+            color = str(color_map.get(str(product_id)) or '').strip()
+            if color:
+                return color[:64]
+        return str(request.session.get('rl_product_color') or '').strip()[:64]
+
+    def _lifestyle_apply_selected_color(self, product_id=None, line_id=None, color=''):
+        color_text = str(color or '').strip()[:64]
+        if not color_text:
+            return {'ok': False}
+        order = request.website.sale_get_order()
+        if not order:
+            return {'ok': False}
+        line = request.env['sale.order.line'].sudo().browse()
+        if line_id:
+            line = order.order_line.filtered(lambda value: value.id == int(line_id))[:1]
+        if not line and product_id:
+            pid = int(product_id)
+            lines = order.order_line.filtered(
+                lambda value: value.product_id.id == pid or value.product_id.product_tmpl_id.id == pid
+            ).sorted('id', reverse=True)
+            line = lines[:1]
+        if not line:
+            return {'ok': False}
+        line._lifestyle_apply_color(color_text)
+        return {'ok': True, 'line_id': line.id, 'color': line.lifestyle_color}
+
+    @http.route(['/shop/cart/update'], type='http', auth='public', methods=['POST'], website=True, sitemap=False)
+    def cart_update(self, product_id, add_qty=1, set_qty=0, **kw):
+        response = super().cart_update(product_id=product_id, add_qty=add_qty, set_qty=set_qty, **kw)
+        color = self._lifestyle_selected_color(product_id=product_id, **kw)
+        self._lifestyle_apply_selected_color(product_id=product_id, line_id=kw.get('line_id'), color=color)
+        return response
+
+    @http.route(['/shop/cart/update_json'], type='json', auth='public', methods=['POST'], website=True)
+    def cart_update_json(self, product_id, line_id=None, add_qty=None, set_qty=None, display=True, **kw):
+        result = super().cart_update_json(
+            product_id=product_id, line_id=line_id, add_qty=add_qty,
+            set_qty=set_qty, display=display, **kw
+        )
+        color = self._lifestyle_selected_color(product_id=product_id, **kw)
+        line_id_value = result.get('line_id') if isinstance(result, dict) else line_id
+        applied = self._lifestyle_apply_selected_color(product_id=product_id, line_id=line_id_value, color=color)
+        if isinstance(result, dict) and applied.get('ok'):
+            result['line_id'] = applied.get('line_id')
+            result['lifestyle_color'] = applied.get('color')
+        return result
 
     @http.route('/shop/notify_stock', type='json', auth='public', website=True, methods=['POST'])
     def notify_stock(self, product_id=None, email='', **kw):

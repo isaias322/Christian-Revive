@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 from odoo import models, fields, api
 from odoo.exceptions import UserError
 from odoo.tools import html_escape
@@ -81,7 +81,12 @@ class SaleOrder(models.Model):
             if not color:
                 # Session is kept as a fallback for older pages/JS, but the
                 # selected color is now submitted with the cart form too.
-                color = str(http_req.session.pop('rl_product_color', '') or '').strip()
+                color_map = http_req.session.get('rl_product_colors') or {}
+                color = ''
+                if product_id and isinstance(color_map, dict):
+                    color = str(color_map.get(str(product_id)) or '').strip()
+                if not color:
+                    color = str(http_req.session.get('rl_product_color', '') or '').strip()
             if not color:
                 return result
             line_id_val = result.get('line_id') if isinstance(result, dict) else None
@@ -420,10 +425,3 @@ class SaleOrderLine(models.Model):
                 'lifestyle_color': color_text,
                 'name': (base_name + '\nColor: ' + color_text).strip(),
             })
-
-
-
-
-
-
-

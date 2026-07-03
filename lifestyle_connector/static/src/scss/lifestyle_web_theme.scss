@@ -30,7 +30,7 @@ a {
     border: none;
 }
 
-/* Active filter badge — filled dark-green to make selection obvious */
+/* Active filter badge - filled dark-green to make selection obvious */
 .lifestyle-badge-active {
     background: #3A5C2C !important;
     color: #F8F6F0 !important;
@@ -807,7 +807,7 @@ a {
     display: none !important;
 }
 
-/* ── Product detail page — stock, swatches, rating ─────────────────────── */
+/* Product detail page - stock, swatches, rating */
 .rl-pd-stock-row { margin-bottom: 0.25rem; }
 .rl-pd-stock {
     display: inline-flex;
@@ -5180,7 +5180,7 @@ footer .rounded-circle,
     vertical-align: middle;
 }
 
-/* Product card — stock status badge and room tags */
+/* Product card - stock status badge and room tags */
 .rl-card-badge {
     display: inline-block;
     margin-top: 0.45rem;
@@ -5218,7 +5218,7 @@ footer .rounded-circle,
     background: rgba(227, 234, 219, 0.75);
 }
 
-/* Compare tray — fixed overlay at bottom-right */
+/* Compare tray - fixed overlay at bottom-right */
 .rl-compare-tray {
     position: fixed;
     z-index: 9000;
@@ -5324,7 +5324,7 @@ footer .rounded-circle,
     padding: 0.1rem 0.35rem;
 }
 
-/* Recently viewed — inline section below the product grid */
+/* Recently viewed - inline section below the product grid */
 .rl-recently-viewed {
     margin-top: 2.5rem;
     padding-top: 1.5rem;
@@ -5449,4 +5449,21 @@ footer .rounded-circle,
         max-height: 58vh;
         overflow: auto;
     }
+}
+
+.rl-cart-line-color {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-top: 0.35rem;
+    padding: 0.22rem 0.7rem;
+    border-radius: 999px;
+    background: rgba(126, 148, 111, 0.14);
+    color: #5f7653;
+    font-size: 0.86rem;
+    font-weight: 700;
+}
+
+.rl-cart-line-color i {
+    font-size: 0.82rem;
 }

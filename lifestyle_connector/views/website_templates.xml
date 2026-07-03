@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <!-- Every page goes through website.layout, so its <head> is a safe,
          universal place to load the brand fonts (kept out of the SCSS
@@ -10,10 +10,12 @@
         </xpath>
     </template>
 
-    <!-- Compare-at-price displayed right after the product name heading -->
-    <template id="lifestyle_product_compare_price_pdp" inherit_id="website_sale.product"
-              name="Revive Lifestyle Compare Price on PDP">
-        <xpath expr="//h1[@itemprop='name']" position="after">
+    <!-- All PDP additions share the one stable anchor: div#product_details -->
+    <template id="lifestyle_product_extra_details" inherit_id="website_sale.product"
+              name="Revive Lifestyle Product Details">
+        <xpath expr="//div[@id='product_details']" position="inside">
+
+            <!-- Compare-at-price: original price crossed out + discount % -->
             <t t-if="product.sudo().compare_price and product.sudo().compare_price &gt; product.list_price">
                 <div class="rl-pd-compare-price-row">
                     <span class="rl-pd-was-price">
@@ -24,15 +26,6 @@
                     </span>
                 </div>
             </t>
-        </xpath>
-    </template>
-
-<!-- Anchored on div#product_details, a stable top-level wrapper in
-         website_sale.product - verified against the Odoo 18 source before
-         writing this, same as the order-portal anchor below. -->
-    <template id="lifestyle_product_extra_details" inherit_id="website_sale.product"
-              name="Revive Lifestyle Product Details">
-        <xpath expr="//div[@id='product_details']" position="inside">
 
             <!-- Stock availability badge: only for storable products with inventory tracking -->
             <div t-if="product.type == 'product'" class="rl-pd-stock-row mt-3">
@@ -626,7 +619,7 @@
                                     <span class="rl-contact-kicker text-sage">Contact Form</span>
                                     <h2>Tell us what you need</h2>
                                     <p class="text-muted mb-4">
-                                        Share the product, room, order number, or delivery question. The more detail you add,
+                                        Share the product, finish, order number, or delivery question. The more detail you add,
                                         the faster we can guide you.
                                     </p>
                                     <form action="/website/form/" method="post" enctype="multipart/form-data"
@@ -746,7 +739,7 @@
                                             <span class="rl-contact-kicker text-sage">Contact Form</span>
                                             <h2>Tell us what you need</h2>
                                             <p class="text-muted mb-0">
-                                                Include the product name, room size, finish, order number, or delivery question.
+                                                Include the product name, finish, order number, or delivery question.
                                             </p>
                                         </div>
                                         <div class="rl-contact-form-icon"><i class="fa fa-pencil"></i></div>
@@ -897,7 +890,7 @@
             </div>
             <t t-set="pub_cats" t-value="request.env['product.public.category'].sudo().search([], order='sequence, id')"/>
             <div t-if="pub_cats" class="rl-shop-filter-block mb-3">
-                <h6 class="mb-2"><b>Shop by Category</b></h6>
+                <h6 class="mb-2"><b>Shop by Product</b></h6>
                 <div class="d-flex flex-wrap gap-2">
                     <a t-att-href="keep('/shop', categ_id=None)"
                        t-attf-class="lifestyle-badge text-decoration-none #{'lifestyle-badge-active' if not request.params.get('categ_id') else ''}">All Products</a>
@@ -968,7 +961,7 @@
             <section class="rl-shop-intro">
                 <div class="rl-shop-intro-card">
                     <span class="rl-shop-kicker">Furniture showroom</span>
-                    <h2>Choose by room, finish, and availability</h2>
+                    <h2>Choose by product, finish, and availability</h2>
                     <p>Browse ready pieces, compare favorites, and keep your furniture order easy from first look to delivery.</p>
                     <div class="rl-shop-quick-row">
                         <a t-att-href="keep('/shop', lifestyle_availability='in_stock')"><i class="fa fa-check"></i> Ready stock</a>
@@ -1016,4 +1009,3 @@
         </xpath>
     </template>
 </odoo>
-

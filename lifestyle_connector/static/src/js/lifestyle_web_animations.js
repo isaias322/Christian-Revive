@@ -1,4 +1,4 @@
-﻿/** @odoo-module **/
+/** @odoo-module **/
 
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -637,12 +637,58 @@ function setupColorSelection() {
 
     ensureColorInput();
 
+    function persistSelectedColor() {
+        if (!selectedColor) { return Promise.resolve(); }
+        const colorInput = ensureColorInput();
+        if (colorInput) { colorInput.value = selectedColor; }
+        return fetch('/shop/select_color', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                jsonrpc: '2.0', method: 'call', id: 11,
+                params: { color: selectedColor },
+            }),
+            keepalive: true,
+        }).catch(function () {});
+    }
+
     swatches.forEach(function (swatch) {
         swatch.addEventListener('click', function () { selectSwatch(swatch); });
         swatch.addEventListener('keydown', function (e) {
             if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectSwatch(swatch); }
         });
     });
+
+    document.addEventListener('click', function (e) {
+        var btn = e.target.closest(
+            '#add_to_cart, [name="add_to_cart"], ' +
+            'button.o_website_sale_main_product_cart_btn, ' +
+            'button.js_add_cart, ' +
+            'form#product_detail_form button[type="submit"]'
+        );
+        if (!btn || !selectedColor || btn.dataset.rlColorPrepared === '1') { return; }
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        btn.dataset.rlColorPrepared = '1';
+        persistSelectedColor().then(function () {
+            btn.click();
+            window.setTimeout(function () { delete btn.dataset.rlColorPrepared; }, 800);
+        });
+    }, true);
+
+    document.addEventListener('submit', function (e) {
+        var form = e.target;
+        if (!selectedColor || !form || form.dataset.rlColorPrepared === '1') { return; }
+        if (!form.matches('form[action*="/shop/cart/update"], form#product_detail_form')) { return; }
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        form.dataset.rlColorPrepared = '1';
+        persistSelectedColor().then(function () {
+            if (form.requestSubmit) { form.requestSubmit(); }
+            else { form.submit(); }
+            window.setTimeout(function () { delete form.dataset.rlColorPrepared; }, 800);
+        });
+    }, true);
 
     // ── Approach 2: intercept the cart-update fetch to grab line_id from response ──
     // Covers both /shop/cart/update_json and /web/dataset/call_kw/_cart_update
@@ -709,6 +755,48 @@ function setupColorSelection() {
     }
 }
 
+function setupCartLineColors() {
+    if (!window.location.pathname.startsWith('/shop/cart')) return;
+    fetch('/shop/cart_line_colors', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ jsonrpc: '2.0', method: 'call', id: 21, params: {} }),
+    }).then(function (res) { return res.json(); }).then(function (data) {
+        var result = (data && data.result) || data || {};
+        var lines = result.lines || [];
+        if (!lines.length) return;
+        lines.forEach(function (line) {
+            if (!line.color) return;
+            var lineSelectors = [
+                '[data-line-id="' + line.line_id + '"]',
+                '[data-line_id="' + line.line_id + '"]',
+                '[data-id="' + line.line_id + '"]',
+            ];
+            var host = null;
+            lineSelectors.some(function (selector) {
+                host = document.querySelector(selector);
+                return !!host;
+            });
+            if (!host) {
+                var names = [line.product, line.template].filter(Boolean);
+                var targets = Array.from(document.querySelectorAll('a, strong, h6, .h6, .td-product_name, [class*="product_name"]'));
+                var match = targets.find(function (el) {
+                    var text = (el.textContent || '').trim();
+                    return names.some(function (name) { return text === name || text.indexOf(name) !== -1; });
+                });
+                if (!match) return;
+                host = match.closest('.td-product_name, td, .row, li, tr, div') || match.parentElement;
+            }
+            if (!host || host.querySelector('.rl-cart-line-color')) return;
+            var anchor = host.querySelector('a, strong, h6, .h6, .td-product_name, [class*="product_name"]') || host;
+            var detail = document.createElement('div');
+            detail.className = 'rl-cart-line-color';
+            detail.innerHTML = '<i class="fa fa-palette"></i><span>Color: <strong></strong></span>';
+            detail.querySelector('strong').textContent = line.color;
+            anchor.insertAdjacentElement('afterend', detail);
+        });
+    }).catch(function () {});
+}
 function hideProductPolicies() {
     if (!window.location.pathname.startsWith('/shop/')) return;
     // Try the standard Odoo ID first.
@@ -776,6 +864,7 @@ function enhanceWebsite() {
     setupContactFormValidation();
     setupSaveForLaterRedirect();
     setupColorSelection();
+    setupCartLineColors();
     setupNotifyStock();
     rememberCurrentProduct();
     renderRecentlyViewed();
@@ -789,4 +878,3 @@ if (document.readyState === 'loading') {
 } else {
     enhanceWebsite();
 }
-

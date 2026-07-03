@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 from odoo import http
 from odoo.http import request
 from odoo.addons.website_sale.controllers.main import WebsiteSale
@@ -142,6 +142,23 @@ class LifestyleWebsiteSale(WebsiteSale):
         except Exception:
             return {'ok': False}
 
+    @http.route('/shop/cart_line_colors', type='json', auth='public', website=True, methods=['POST'])
+    def cart_line_colors(self, **kw):
+        """Return selected colors for the current website cart."""
+        order = request.website.sale_get_order()
+        if not order:
+            return {'lines': []}
+        lines = []
+        for line in order.order_line.filtered(lambda value: value.lifestyle_color):
+            lines.append({
+                'line_id': line.id,
+                'product': line.product_id.display_name,
+                'template': line.product_id.product_tmpl_id.display_name,
+                'color': line.lifestyle_color,
+                'quantity': line.product_uom_qty,
+            })
+        return {'lines': lines}
+
     @http.route('/shop/apply_color_to_cart', type='json', auth='public', website=True, methods=['POST'])
     def apply_color_to_cart(self, product_id=None, color='', **kw):
         """Click-listener fallback: apply color to the most recently added line for
@@ -159,7 +176,7 @@ class LifestyleWebsiteSale(WebsiteSale):
             if not lines:
                 return {'ok': False}
             lines[0]._lifestyle_apply_color(str(color).strip())
-            return {'ok': True}
+            return {'ok': True, 'line_id': lines[0].id, 'color': lines[0].lifestyle_color}
         except Exception:
             return {'ok': False}
 
@@ -180,7 +197,8 @@ class LifestyleWebsiteSale(WebsiteSale):
             line = order.order_line.filtered(lambda l: l.id == lid)
             if line:
                 line._lifestyle_apply_color(color)
-            return {'ok': True}
+                return {'ok': True, 'line_id': line.id, 'color': line.lifestyle_color}
+            return {'ok': False}
         except Exception:
             return {'ok': False}
 
@@ -227,4 +245,3 @@ class LifestyleWebsiteSale(WebsiteSale):
             invalid_fields.discard(field_name)
         elif field_name in invalid_fields:
             invalid_fields.remove(field_name)
-

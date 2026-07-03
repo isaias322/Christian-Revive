@@ -2358,10 +2358,13 @@ footer a:hover,
     padding-left: 0 !important;
 }
 
-/* Make the shop layout full-width so the sidebar can reach the left edge */
+/* Make the shop layout full-width so the sidebar can reach the left edge.
+   The shop container element carries the oe_website_sale class itself
+   (<div class="container oe_website_sale">), so the selector has to match
+   the combined class - a descendant selector never fires. */
 @media (min-width: 992px) {
-    .rl-shop-page .oe_website_sale .container,
-    .rl-shop-page .oe_website_sale [class*="container-"] {
+    .rl-shop-page .oe_website_sale.container,
+    .rl-shop-page [class*="container-"].oe_website_sale {
         max-width: 100% !important;
         padding-left: 0 !important;
     }
@@ -2369,7 +2372,6 @@ footer a:hover,
         margin-left: 0 !important;
     }
     .oe_website_sale .o_wsale_products_grid_before_rail {
-        padding-left: 0 !important;
         border-top-left-radius: 0;
         border-bottom-left-radius: 0;
         border-left: none;
@@ -2378,19 +2380,47 @@ footer a:hover,
     .oe_website_sale .o_wsale_products_main_row > .col-lg-9 {
         padding-right: 2rem;
     }
+    /* The fixed sidebar width belongs on the flex column itself, not on
+       the rail inside it - otherwise the column keeps Bootstrap's 25%
+       width, the filter card floats in dead space, and the price slider
+       (sized to the wider column) overflows and gets clipped. */
+    .oe_website_sale #products_grid_before {
+        flex: 0 0 320px !important;
+        width: 320px !important;
+        max-width: 320px !important;
+        padding: 0 !important;
+    }
 }
 
 .oe_website_sale .o_wsale_products_grid_before_rail {
     position: sticky;
     top: 94px;
-    border: 1px solid rgba(92, 112, 80, 0.12);
+    margin: 0 !important;
+    border: 1px solid rgba(92, 112, 80, 0.16);
     border-radius: 24px;
-    background: rgba(255, 253, 249, 0.86);
+    background: #FFFDF9;
     box-shadow: 0 24px 64px rgba(46, 46, 42, 0.10);
-    backdrop-filter: blur(16px);
-    flex: 0 0 300px !important;
-    max-width: 300px !important;
-    width: 300px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    max-height: calc(100vh - 110px);
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+/* Keep the price-range widget (and any wide filter content) inside the rail. */
+.oe_website_sale .o_wsale_products_grid_before_rail form,
+.oe_website_sale .o_wsale_products_grid_before_rail .accordion,
+.oe_website_sale .o_wsale_products_grid_before_rail .accordion-item,
+.oe_website_sale .o_wsale_products_grid_before_rail #o_wsale_price_range_option {
+    min-width: 0;
+    max-width: 100%;
+}
+
+.oe_website_sale .o_wsale_products_grid_before_rail input[type="range"],
+.oe_website_sale #o_wsale_price_range_option input[type="range"] {
+    width: 100%;
+    max-width: 100%;
 }
 
 .oe_website_sale .o_wsale_products_main_row > #products_grid,
@@ -2567,6 +2597,18 @@ footer a:hover,
 }
 
 @media (max-width: 991.98px) {
+    /* Core hides the aside below lg (d-none d-lg-block), which left the
+       mobile Filters toggle with nothing to reveal. Show the column and
+       reset col-3's hard-coded 25% width. */
+    .oe_website_sale #products_grid_before {
+        display: block !important;
+        position: static !important;
+        flex: none !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 0 !important;
+    }
+
     .oe_website_sale .o_wsale_products_grid_before_rail {
         position: static;
         border-radius: 20px;

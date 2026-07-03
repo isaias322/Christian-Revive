@@ -98,22 +98,23 @@ class LifestyleWebsiteSale(WebsiteSale):
             request.session['rl_product_colors'] = color_map
         return {'ok': True}
 
-    def _lifestyle_selected_color(self, product_id=None, **kw):
-        color = str(kw.get('lifestyle_color') or request.params.get('lifestyle_color') or '').strip()
-        if color:
-            return color[:64]
-        color_map = request.session.get('rl_product_colors') or {}
-        if product_id and isinstance(color_map, dict):
-            color = str(color_map.get(str(product_id)) or '').strip()
-            if color:
-                return color[:64]
-        return str(request.session.get('rl_product_color') or '').strip()[:64]
+    @staticmethod
+    def _lifestyle_cart_order():
+        """Current website cart across Odoo versions.
+
+        Odoo 19 dropped website.sale_get_order() in favour of the
+        request.cart property; every color endpoint died on the old call.
+        """
+        order = getattr(request, 'cart', None)
+        if order is None and hasattr(request.website, 'sale_get_order'):
+            order = request.website.sale_get_order()
+        return order
 
     def _lifestyle_apply_selected_color(self, product_id=None, line_id=None, color=''):
         color_text = str(color or '').strip()[:64]
         if not color_text:
             return {'ok': False}
-        order = request.website.sale_get_order()
+        order = self._lifestyle_cart_order()
         if not order:
             return {'ok': False}
         line = request.env['sale.order.line'].sudo().browse()
@@ -130,26 +131,11 @@ class LifestyleWebsiteSale(WebsiteSale):
         line._lifestyle_apply_color(color_text)
         return {'ok': True, 'line_id': line.id, 'color': line.lifestyle_color}
 
-    @http.route(['/shop/cart/update'], type='http', auth='public', methods=['POST'], website=True, sitemap=False)
-    def cart_update(self, product_id, add_qty=1, set_qty=0, **kw):
-        response = super().cart_update(product_id=product_id, add_qty=add_qty, set_qty=set_qty, **kw)
-        color = self._lifestyle_selected_color(product_id=product_id, **kw)
-        self._lifestyle_apply_selected_color(product_id=product_id, line_id=kw.get('line_id'), color=color)
-        return response
-
-    @http.route(['/shop/cart/update_json'], type='json', auth='public', methods=['POST'], website=True)
-    def cart_update_json(self, product_id, line_id=None, add_qty=None, set_qty=None, display=True, **kw):
-        result = super().cart_update_json(
-            product_id=product_id, line_id=line_id, add_qty=add_qty,
-            set_qty=set_qty, display=display, **kw
-        )
-        color = self._lifestyle_selected_color(product_id=product_id, **kw)
-        line_id_value = result.get('line_id') if isinstance(result, dict) else line_id
-        applied = self._lifestyle_apply_selected_color(product_id=product_id, line_id=line_id_value, color=color)
-        if isinstance(result, dict) and applied.get('ok'):
-            result['line_id'] = applied.get('line_id')
-            result['lifestyle_color'] = applied.get('color')
-        return result
+    # NOTE: the pre-19 cart_update/cart_update_json route overrides were
+    # removed: Odoo 19 registers its own POST /shop/cart/update (jsonrpc)
+    # route, so redefining that path here shadowed core cart updates, and
+    # the parent methods they super()'d into no longer exist. The color is
+    # now stamped in sale.order._cart_add (models/sale_order.py).
 
     @http.route('/shop/notify_stock', type='json', auth='public', website=True, methods=['POST'])
     def notify_stock(self, product_id=None, email='', **kw):
@@ -203,7 +189,7 @@ class LifestyleWebsiteSale(WebsiteSale):
     @http.route('/shop/cart_line_colors', type='json', auth='public', website=True, methods=['POST'])
     def cart_line_colors(self, **kw):
         """Return selected colors for the current website cart."""
-        order = request.website.sale_get_order()
+        order = self._lifestyle_cart_order()
         if not order:
             return {'lines': []}
         lines = []
@@ -224,7 +210,7 @@ class LifestyleWebsiteSale(WebsiteSale):
         if not product_id or not color:
             return {'ok': False}
         try:
-            order = request.website.sale_get_order()
+            order = self._lifestyle_cart_order()
             if not order:
                 return {'ok': False}
             pid = int(product_id)
@@ -248,7 +234,7 @@ class LifestyleWebsiteSale(WebsiteSale):
         if not line_id or not color:
             return {'ok': False}
         try:
-            order = request.website.sale_get_order()
+            order = self._lifestyle_cart_order()
             if not order:
                 return {'ok': False}
             lid = int(line_id)

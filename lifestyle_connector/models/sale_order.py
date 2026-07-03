@@ -69,42 +69,39 @@ class SaleOrder(models.Model):
 
 
 
-    def _cart_update(self, product_id=None, line_id=None, add_qty=0, set_qty=0, **kwargs):
-        """Append the customer's chosen color to the order line description."""
-        result = super()._cart_update(
-            product_id=product_id, line_id=line_id,
-            add_qty=add_qty, set_qty=set_qty, **kwargs,
-        )
+    def _cart_add(self, product_id, quantity=1.0, **kwargs):
+        """Stamp the customer's chosen color on the cart line (Odoo 19 hook).
+
+        Odoo 19 replaced _cart_update with _cart_add for adding products.
+        The color comes either from an extra lifestyle_color kwarg or from
+        the session, where the product-page swatch JS stored it via
+        /shop/select_color keyed by product template id.
+        """
+        values = super()._cart_add(product_id, quantity=quantity, **kwargs)
         try:
-            from odoo.http import request as http_req
             color = str(kwargs.get('lifestyle_color') or '').strip()
             if not color:
-                # Session is kept as a fallback for older pages/JS, but the
-                # selected color is now submitted with the cart form too.
-                color_map = http_req.session.get('rl_product_colors') or {}
-                color = ''
-                if product_id and isinstance(color_map, dict):
-                    color = str(color_map.get(str(product_id)) or '').strip()
-                if not color:
-                    color = str(http_req.session.get('rl_product_color', '') or '').strip()
-            if not color:
-                return result
-            line_id_val = result.get('line_id') if isinstance(result, dict) else None
-            if line_id_val:
-                line = self.env['sale.order.line'].sudo().browse(line_id_val)
-            else:
-                pid = int(product_id or 0)
-                # Invalidate cache so the just-created line is visible.
-                self.invalidate_recordset(['order_line'])
-                matching = self.order_line.filtered(
-                    lambda l: l.product_id.id == pid or l.product_id.product_tmpl_id.id == pid
-                )
-                line = matching[-1:] if matching else self.env['sale.order.line']
-            if line.exists():
-                line._lifestyle_apply_color(color)
+                from odoo.http import request as http_req
+                if http_req:
+                    color_map = http_req.session.get('rl_product_colors') or {}
+                    if isinstance(color_map, dict):
+                        # _cart_add receives the variant id; the swatch JS
+                        # stores colors under the template id, so try both.
+                        product = self.env['product.product'].sudo().browse(int(product_id or 0))
+                        for key in (product_id, product.product_tmpl_id.id):
+                            color = str(color_map.get(str(key)) or '').strip()
+                            if color:
+                                break
+                    if not color:
+                        color = str(http_req.session.get('rl_product_color', '') or '').strip()
+            line_id = (values or {}).get('line_id') if isinstance(values, dict) else None
+            if color and line_id:
+                line = self.env['sale.order.line'].sudo().browse(line_id)
+                if line.exists():
+                    line._lifestyle_apply_color(color)
         except Exception:
             pass
-        return result
+        return values
 
     def _lifestyle_timeline(self):
         """Same stage timeline shown in the Revive Lifestyle app, reused by

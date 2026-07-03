@@ -756,7 +756,9 @@ function setupColorSelection() {
 }
 
 function setupCartLineColors() {
-    if (!window.location.pathname.startsWith('/shop/cart')) return;
+    var path = window.location.pathname;
+    if (!path.startsWith('/shop/cart') && !path.startsWith('/shop/checkout')
+        && !path.startsWith('/shop/address') && !path.startsWith('/shop/payment')) return;
     fetch('/shop/cart_line_colors', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

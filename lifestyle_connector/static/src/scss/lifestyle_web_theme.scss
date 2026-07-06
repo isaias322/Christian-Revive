@@ -5626,6 +5626,79 @@ footer .rounded-circle,
     }
 }
 
+/* ── Homepage polish ──────────────────────────────────────────────────── */
+/* Hero content rises in a stagger on load and on every slide change
+   (the slider toggles .is-active, which re-triggers the animations). */
+@keyframes rlHeroRise {
+    from {
+        opacity: 0;
+        transform: translateY(18px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.rl-home-hero-content-slide.is-active .rl-home-kicker {
+    animation: rlHeroRise 0.5s ease both;
+}
+
+.rl-home-hero-content-slide.is-active h1 {
+    animation: rlHeroRise 0.55s ease 0.08s both;
+}
+
+.rl-home-hero-content-slide.is-active h1 + p {
+    animation: rlHeroRise 0.55s ease 0.14s both;
+}
+
+.rl-home-hero-content-slide.is-active .rl-home-actions {
+    animation: rlHeroRise 0.55s ease 0.18s both;
+}
+
+.rl-home-hero-content-slide.is-active .rl-home-trust-row {
+    animation: rlHeroRise 0.55s ease 0.28s both;
+}
+
+.rl-home-hero-content-slide.is-active .rl-home-showcase {
+    animation: rlHeroRise 0.6s ease 0.2s both;
+}
+
+/* Showcase glass card: slightly stronger presence, and bottom padding so
+   its copy no longer collides with the floating stat badge. */
+.rl-home-showcase-card,
+.rl-home-slider-window {
+    padding-bottom: 3.1rem;
+    border-color: rgba(255, 253, 249, 0.26);
+    backdrop-filter: blur(16px);
+}
+
+/* The "Build progress" badge used to sit on top of the card's text -
+   tuck it into the lower-left corner, half outside the card. */
+.rl-home-floating-one {
+    left: -1.25rem;
+    bottom: 0.75rem;
+}
+
+/* Set the decorative section glows in slow motion like the hero shapes */
+.rl-home-featured-glow,
+.rl-home-custom-glow {
+    animation: rlHomeFloatSoft 16s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .rl-home-hero-content-slide.is-active .rl-home-kicker,
+    .rl-home-hero-content-slide.is-active h1,
+    .rl-home-hero-content-slide.is-active h1 + p,
+    .rl-home-hero-content-slide.is-active .rl-home-actions,
+    .rl-home-hero-content-slide.is-active .rl-home-trust-row,
+    .rl-home-hero-content-slide.is-active .rl-home-showcase,
+    .rl-home-featured-glow,
+    .rl-home-custom-glow {
+        animation: none;
+    }
+}
+
 /* ── Cart / checkout pages (Odoo 19 checkout_layout) ─────────────────── */
 .o_website_sale_checkout_container {
     background:

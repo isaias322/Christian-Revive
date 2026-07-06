@@ -5532,9 +5532,15 @@ footer .rounded-circle,
 }
 
 .rl-cart-line-color {
-    display: inline-flex;
+    /* The restyled element is whatever node Odoo rendered the description
+       into - often a block-level div stretched by the cart's flex layout,
+       so pin the pill to its content size. */
+    display: inline-flex !important;
     align-items: center;
     gap: 0.4rem;
+    width: fit-content;
+    flex: 0 0 auto;
+    align-self: flex-start;
     margin-top: 0.35rem;
     padding: 0.22rem 0.7rem;
     border-radius: 999px;

@@ -776,6 +776,36 @@ function rlBeautifyCartColorText() {
         el.appendChild(dot);
         el.appendChild(name);
     });
+    rlDedupeCartColorPills();
+}
+
+// Odoo renders the line description in more than one spot (e.g. under the
+// product name and again inside the quantity control). Keep one pill per
+// cart line - preferring the one outside the quantity widget - and hide
+// the rest.
+function rlDedupeCartColorPills() {
+    var kept = new Map();
+    Array.from(document.querySelectorAll('.rl-cart-line-color')).forEach(function (el) {
+        var root = el.closest('[data-line-id], tr, li, .o_cart_product') || el.closest('.row') || document.body;
+        var inQty = !!el.closest('.input-group, .css_quantity, [class*="quantity" i], [name*="quantity" i]');
+        // The pill CSS uses display:inline-flex !important, so hiding must
+        // be !important as well or it loses the cascade.
+        function hide(node) { node.style.setProperty('display', 'none', 'important'); }
+        function show(node) { node.style.removeProperty('display'); }
+        var current = kept.get(root);
+        if (!current) {
+            kept.set(root, { el: el, inQty: inQty });
+            show(el);
+            return;
+        }
+        if (current.inQty && !inQty) {
+            hide(current.el);
+            kept.set(root, { el: el, inQty: inQty });
+            show(el);
+        } else {
+            hide(el);
+        }
+    });
 }
 
 function setupCartLineColors() {

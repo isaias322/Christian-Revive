@@ -185,7 +185,7 @@ class SaleOrder(models.Model):
         }
         self.lifestyle_progress_percent = max(self.lifestyle_progress_percent or 0, stage_progress.get(new_stage, 0))
         label = STAGE_LABELS.get(new_stage, new_stage)
-        self.message_post(body=f'Order status updated: <b>{label}</b>')
+        self.message_post(body=Markup('Order status updated: <b>%s</b>') % label)
         if push:
             self._lifestyle_send_stage_notification()
 
@@ -276,6 +276,7 @@ class SaleOrder(models.Model):
             partner_ids=self.partner_id.ids,
             subject=f'{self.name}: {label}',
             body=email_body,
+            force_send=True,
         )
         self.with_context(mail_create_nosubscribe=True, mail_notify_force_send=False).message_post(
             body=f'Customer has no app device &#8212; stage update emailed to {html_escape(self.partner_id.display_name)}.',
@@ -430,11 +431,11 @@ class SaleOrder(models.Model):
         if not sent:
             raise UserError('Media attached, but the customer has no registered device to notify yet.')
 
+        note = Markup('Furniture progress update sent only to customer: %s.') % customer.display_name
+        if comment:
+            note += Markup('<br/><b>Comment:</b> %s') % comment
         self.with_context(mail_create_nosubscribe=True, mail_notify_force_send=False).message_post(
-            body=(
-                f'Furniture progress update sent only to customer: {customer.display_name}.'
-                + (f'<br/><b>Comment:</b> {html_escape(comment)}' if comment else '')
-            ),
+            body=note,
             subtype_xmlid='mail.mt_note',
         )
 

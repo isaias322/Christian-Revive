@@ -5531,6 +5531,113 @@ footer .rounded-circle,
     }
 }
 
+/* ── Login / Signup / Reset password pages ───────────────────────────── */
+.oe_website_login_container {
+    padding: 3.5rem 1rem 5rem;
+    background:
+        radial-gradient(circle at 15% 20%, rgba(124, 144, 112, 0.10), transparent 22rem),
+        radial-gradient(circle at 88% 70%, rgba(217, 183, 119, 0.08), transparent 20rem);
+}
+
+.oe_website_login_container .oe_login_form,
+.oe_website_login_container .oe_signup_form,
+.oe_website_login_container .oe_reset_password_form {
+    max-width: 440px;
+    margin: 0 auto;
+    padding: 2.4rem 2.4rem 2rem;
+    border: 1px solid rgba(92, 112, 80, 0.14);
+    border-radius: 1.75rem;
+    background: #FFFDF9;
+    box-shadow: 0 28px 70px rgba(46, 46, 42, 0.12);
+}
+
+/* Card headings (CSS-generated so no template override is needed). */
+.oe_website_login_container .oe_login_form::before,
+.oe_website_login_container .oe_signup_form::before,
+.oe_website_login_container .oe_reset_password_form::before {
+    display: block;
+    margin-bottom: 1.4rem;
+    color: #2E2E2A;
+    font-family: 'Fraunces', serif;
+    font-size: 1.85rem;
+    line-height: 1.15;
+    text-align: center;
+}
+
+.oe_website_login_container .oe_login_form::before {
+    content: 'Welcome back';
+}
+
+.oe_website_login_container .oe_signup_form::before {
+    content: 'Create your account';
+}
+
+.oe_website_login_container .oe_reset_password_form::before {
+    content: 'Reset your password';
+}
+
+.oe_website_login_container label,
+.oe_website_login_container .form-label {
+    color: #2E2E2A;
+    font-weight: 700;
+}
+
+.oe_website_login_container .form-control {
+    padding: 0.7rem 1rem;
+    border: 1px solid rgba(92, 112, 80, 0.22);
+    border-radius: 14px;
+    background: #FFFFFF;
+}
+
+.oe_website_login_container .form-control:focus {
+    border-color: #7C9070;
+    box-shadow: 0 0 0 0.2rem rgba(124, 144, 112, 0.18);
+}
+
+.oe_website_login_container .btn-primary {
+    width: 100%;
+    padding: 0.7rem 1rem;
+    border-radius: 999px;
+    font-weight: 800;
+}
+
+.oe_website_login_container .btn-secondary,
+.oe_website_login_container .btn-light {
+    border-radius: 999px;
+    border: 1px solid rgba(92, 112, 80, 0.22);
+    background: #FFFDF9;
+    color: #2E2E2A;
+    font-weight: 700;
+}
+
+.oe_website_login_container .btn-secondary:hover,
+.oe_website_login_container .btn-light:hover {
+    background: #E3EADB;
+    color: #2E2E2A;
+}
+
+.oe_website_login_container a {
+    color: #5C7050;
+    font-weight: 600;
+}
+
+.oe_website_login_container a:hover {
+    color: #2E2E2A;
+}
+
+.oe_website_login_container .alert {
+    border-radius: 1rem;
+}
+
+@media (max-width: 575.98px) {
+    .oe_website_login_container .oe_login_form,
+    .oe_website_login_container .oe_signup_form,
+    .oe_website_login_container .oe_reset_password_form {
+        padding: 1.8rem 1.4rem 1.5rem;
+        border-radius: 1.4rem;
+    }
+}
+
 /* ── Order confirmation page ─────────────────────────────────────────── */
 /* One self-contained block banner injected above Odoo's confirmation
    layout; guarded so a flex parent can never squeeze it. */

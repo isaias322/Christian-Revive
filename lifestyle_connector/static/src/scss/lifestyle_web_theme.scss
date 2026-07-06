@@ -5609,6 +5609,64 @@ footer .rounded-circle,
     color: #2E2E2A;
 }
 
+/* Checkout main button (Checkout / Confirm / Pay Now): the label must stay
+   white, including the muted "disabled" state Odoo applies while the step
+   isn't ready - by default it blended into the green. */
+.o_website_sale_checkout_container [name="website_sale_main_button"],
+.o_website_sale_checkout_container .o_total_card button[name="o_payment_submit_button"],
+.o_website_sale_checkout_container .o_total_card .btn-primary {
+    color: #FFFDF9 !important;
+    border-radius: 999px;
+    font-weight: 800;
+}
+
+.o_website_sale_checkout_container [name="website_sale_main_button"].disabled,
+.o_website_sale_checkout_container .o_total_card .btn-primary:disabled {
+    color: rgba(255, 253, 249, 0.8) !important;
+    background-color: #8FA084;
+    border-color: #8FA084;
+    opacity: 1;
+}
+
+/* Address / delivery-method step */
+.o_website_sale_checkout_container .oe_cart .card,
+.o_website_sale_checkout_container .oe_cart .list-group-item {
+    border: 1px solid rgba(92, 112, 80, 0.14);
+    border-radius: 1.15rem;
+    background: #FFFDF9;
+}
+
+.o_website_sale_checkout_container .o_address_card_add_new {
+    border-radius: 999px;
+    border-color: rgba(92, 112, 80, 0.35);
+    color: #5C7050;
+    font-weight: 700;
+}
+
+.o_website_sale_checkout_container .o_address_card_add_new:hover {
+    background: #5C7050;
+    border-color: #5C7050;
+    color: #FFFDF9;
+}
+
+/* "Main Address" tag and friends: sage instead of bootstrap cyan */
+.o_website_sale_checkout_container .oe_cart .badge {
+    border: 1px solid rgba(92, 112, 80, 0.3) !important;
+    color: #5C7050 !important;
+    background: #EFF4EA !important;
+}
+
+/* Radios, checkboxes and the billing toggle in brand green */
+.o_website_sale_checkout_container .form-check-input:checked {
+    background-color: #5C7050;
+    border-color: #5C7050;
+}
+
+.o_website_sale_checkout_container .form-check-input:focus {
+    border-color: #7C9070;
+    box-shadow: 0 0 0 0.2rem rgba(124, 144, 112, 0.2);
+}
+
 /* ── Login / Signup / Reset password pages ───────────────────────────── */
 .oe_website_login_container {
     padding: 3.5rem 1rem 5rem;

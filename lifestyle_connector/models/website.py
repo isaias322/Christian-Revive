@@ -40,10 +40,17 @@ class Website(models.Model):
             sold_template_ids = sold_lines.mapped('product_id.product_tmpl_id').ids
             domain = domain + [('id', 'in', sold_template_ids or [0])]
         availability = request.params.get('lifestyle_availability')
-        if availability == 'in_stock':
-            domain = domain + ['|', ('type', 'not in', ('consu', 'product')), ('qty_available', '>', 0)]
-        elif availability == 'out_of_stock':
-            domain = domain + [('type', 'in', ('consu', 'product')), ('qty_available', '<=', 0)]
+        if availability in ('in_stock', 'out_of_stock'):
+            # qty_available in a public-user domain triggers an AccessError
+            # (computing it reads stock.warehouse, which visitors can't).
+            # Precompute the in-stock ids with sudo and filter by id.
+            stockable = self.env['product.template'].sudo().search(
+                [('type', 'in', ('consu', 'product')), ('sale_ok', '=', True)])
+            in_stock_ids = stockable.filtered(lambda p: p.qty_available > 0).ids
+            if availability == 'in_stock':
+                domain = domain + ['|', ('type', 'not in', ('consu', 'product')), ('id', 'in', in_stock_ids or [0])]
+            else:
+                domain = domain + [('type', 'in', ('consu', 'product')), ('id', 'not in', in_stock_ids or [0])]
 
         year = request.params.get('lifestyle_year')
         if year:

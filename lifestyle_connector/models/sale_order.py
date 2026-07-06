@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import re
+
 from markupsafe import Markup
 
 from odoo import models, fields, api
@@ -266,12 +268,22 @@ class SaleOrder(models.Model):
             )
             return
         # No app device (typical for website orders): email instead.
-        order_url = self.get_base_url() + self.get_portal_url()
         email_body = Markup(
             '<p>Hello %s,</p>'
             '<p>Good news &#8212; your order <b>%s</b> is now: <b>%s</b>.</p>'
-            '<p><a href="%s">Track your order progress here</a>.</p>'
-        ) % (self.partner_id.name or '', self.name, label, order_url)
+        ) % (self.partner_id.name or '', self.name, label)
+        base_url = self.get_base_url()
+        if re.search(r'//(\d{1,3}\.){3}\d{1,3}|//localhost', base_url):
+            # Linking to a raw IP is a strong spam signal - leave the link
+            # out until the site runs on a real domain.
+            email_body += Markup(
+                '<p>You can follow your order&#8217;s progress anytime from '
+                '<b>My Account &#8594; Your Orders</b> on our website.</p>'
+            )
+        else:
+            email_body += Markup(
+                '<p><a href="%s">Track your order progress here</a>.</p>'
+            ) % (base_url + self.get_portal_url())
         self.message_notify(
             partner_ids=self.partner_id.ids,
             subject=f'{self.name}: {label}',

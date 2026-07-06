@@ -877,6 +877,16 @@
             <t t-set="lifestyle_sizes" t-value="request.env['product.template'].sudo()._lifestyle_available_sizes()"/>
             <t t-set="lifestyle_years" t-value="request.env['product.template'].sudo()._lifestyle_available_years()"/>
             <t t-set="lifestyle_rooms" t-value="request.env['product.template'].sudo()._lifestyle_available_rooms()"/>
+            <t t-set="rl_active_filter_count"
+               t-value="len([v for v in [lifestyle_active_quick, lifestyle_active_availability, lifestyle_active_year, lifestyle_active_color, lifestyle_active_size, lifestyle_active_room, request.params.get('categ_id')] if v])"/>
+            <div t-if="rl_active_filter_count" class="rl-shop-filter-clear mb-3">
+                <span>
+                    <b t-esc="rl_active_filter_count"/>
+                    <t t-if="rl_active_filter_count == 1"> filter active</t>
+                    <t t-else=""> filters active</t>
+                </span>
+                <a href="/shop" class="rl-shop-clear-link"><i class="fa fa-times"/> Clear all</a>
+            </div>
             <div class="rl-shop-filter-block mb-3">
                 <h6 class="mb-2"><b>Quick Filters</b></h6>
                 <div class="d-flex flex-wrap gap-2">

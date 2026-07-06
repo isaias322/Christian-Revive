@@ -533,6 +533,26 @@ function renderRecentlyViewed() {
     grid.appendChild(section);
 }
 
+// Floating back-to-top button for long product lists.
+function setupBackToTop() {
+    if (!window.location.pathname.startsWith('/shop')) return;
+    if (document.querySelector('.rl-back-to-top')) return;
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'rl-back-to-top';
+    btn.setAttribute('aria-label', 'Back to top');
+    btn.innerHTML = '<i class="fa fa-arrow-up"></i>';
+    document.body.appendChild(btn);
+    btn.addEventListener('click', function () {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+    var onScroll = function () {
+        btn.classList.toggle('is-visible', window.scrollY > 600);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+}
+
 function setupMobileShopFilters() {
     if (!window.location.pathname.startsWith('/shop')) return;
     const rail = document.querySelector('.o_wsale_products_grid_before_rail');
@@ -1062,6 +1082,7 @@ function enhanceWebsite() {
     rememberCurrentProduct();
     renderRecentlyViewed();
     setupMobileShopFilters();
+    setupBackToTop();
     const targets = prepareRevealTargets();
     setupRevealObserver(targets);
 }

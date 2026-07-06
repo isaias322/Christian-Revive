@@ -5237,6 +5237,101 @@ footer .rounded-circle,
     background: #E3EADB;
 }
 
+/* Active-filters summary with one-click reset at the top of the rail */
+.rl-shop-filter-clear {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.6rem;
+    padding: 0.6rem 0.85rem;
+    border: 1px solid rgba(92, 112, 80, 0.22);
+    border-radius: 0.9rem;
+    background: #EFF4EA;
+    color: #2E2E2A;
+    font-size: 0.88rem;
+}
+
+.rl-shop-clear-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    color: #5C7050;
+    font-weight: 800;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.rl-shop-clear-link:hover {
+    color: #2E2E2A;
+    text-decoration: underline;
+}
+
+/* Dashed separators between filter groups make the rail easier to scan */
+.rl-shop-filter-block + .rl-shop-filter-block {
+    padding-top: 0.9rem;
+    border-top: 1px dashed rgba(92, 112, 80, 0.18);
+}
+
+/* The promo pills are announcements, not filters: label them and remove
+   the button-like hover so they stop inviting clicks. */
+.rl-shop-promo-strip::before {
+    content: 'Announcements';
+    flex-basis: 100%;
+    color: #8B8678;
+    font-size: 0.72rem;
+    font-weight: 900;
+    letter-spacing: 0.08rem;
+    text-transform: uppercase;
+}
+
+.rl-shop-promo-pill,
+.rl-shop-promo-pill:hover {
+    color: #5C7050;
+    background: rgba(255, 253, 249, 0.84);
+    transform: none;
+    cursor: default;
+}
+
+/* Floating back-to-top for long product lists */
+.rl-back-to-top {
+    position: fixed;
+    right: 1.15rem;
+    bottom: 1.15rem;
+    z-index: 9100;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.9rem;
+    height: 2.9rem;
+    border: 1px solid rgba(92, 112, 80, 0.25);
+    border-radius: 50%;
+    color: #FFFDF9;
+    background: #5C7050;
+    box-shadow: 0 16px 40px rgba(46, 46, 42, 0.25);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(0.5rem);
+    transition: opacity 0.2s, transform 0.2s;
+}
+
+.rl-back-to-top.is-visible {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+}
+
+.rl-back-to-top:hover {
+    background: #2E2E2A;
+}
+
+/* Subtle borders give product cards definition on the pale background */
+.rl-shop-page .oe_website_sale #products_grid .oe_product_cart,
+.rl-shop-page .oe_website_sale #products_grid .oe_product,
+.rl-shop-page .oe_website_sale #products_grid .o_wsale_product_grid_wrapper .card {
+    border: 1px solid rgba(92, 112, 80, 0.10);
+    overflow: hidden;
+}
+
 .rl-shop-filter-block .lifestyle-badge {
     min-height: 2rem;
     border: 1px solid rgba(92, 112, 80, 0.18);

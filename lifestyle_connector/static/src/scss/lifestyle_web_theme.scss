@@ -5531,6 +5531,84 @@ footer .rounded-circle,
     }
 }
 
+/* ── Cart / checkout pages (Odoo 19 checkout_layout) ─────────────────── */
+.o_website_sale_checkout_container {
+    background:
+        radial-gradient(circle at 10% 12%, rgba(124, 144, 112, 0.08), transparent 20rem),
+        radial-gradient(circle at 90% 60%, rgba(217, 183, 119, 0.06), transparent 18rem);
+}
+
+/* Serif page title to match the rest of the site */
+.o_website_sale_checkout_container #shop_cart h4 {
+    color: #2E2E2A;
+    font-family: 'Fraunces', serif;
+    font-size: 2.1rem;
+}
+
+/* Each cart line becomes a soft card instead of floating in whitespace */
+.o_website_sale_checkout_container #cart_products {
+    gap: 1rem;
+}
+
+.o_website_sale_checkout_container .o_cart_product {
+    padding: 1.15rem 1.3rem;
+    border: 1px solid rgba(92, 112, 80, 0.13);
+    border-radius: 1.35rem;
+    background: #FFFDF9;
+    box-shadow: 0 16px 40px rgba(46, 46, 42, 0.06);
+}
+
+.o_website_sale_checkout_container .o_cart_product_image img,
+.o_website_sale_checkout_container .o_cart_product_image .border {
+    border: 1px solid rgba(92, 112, 80, 0.16) !important;
+    border-radius: 1rem !important;
+    background: #FFFFFF;
+}
+
+.o_website_sale_checkout_container .o_cart_product h6 {
+    color: #2E2E2A;
+    font-weight: 800;
+}
+
+.o_website_sale_checkout_container .js_delete_product {
+    color: #A05A46;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.o_website_sale_checkout_container .js_delete_product:hover {
+    color: #7c4030;
+    text-decoration: underline;
+}
+
+/* Order total card */
+.o_website_sale_checkout_container .o_total_card {
+    border: 1px solid rgba(92, 112, 80, 0.14);
+    border-radius: 1.5rem;
+    background: #FFFDF9;
+    box-shadow: 0 24px 60px rgba(46, 46, 42, 0.10);
+}
+
+.o_website_sale_checkout_container .o_total_card .form-control {
+    border: 1px solid rgba(92, 112, 80, 0.22);
+    border-radius: 12px 0 0 12px;
+    background: #FFFFFF;
+}
+
+.o_website_sale_checkout_container .o_total_card .btn-primary {
+    border-radius: 999px;
+    font-weight: 800;
+}
+
+.o_website_sale_checkout_container .o_total_card a {
+    color: #5C7050;
+    font-weight: 600;
+}
+
+.o_website_sale_checkout_container .o_total_card a:hover {
+    color: #2E2E2A;
+}
+
 /* ── Login / Signup / Reset password pages ───────────────────────────── */
 .oe_website_login_container {
     padding: 3.5rem 1rem 5rem;

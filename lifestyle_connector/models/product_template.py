@@ -89,7 +89,10 @@ class ProductTemplate(models.Model):
         SaleLine = self.env['sale.order.line'].sudo()
         final_stages = ('delivered', 'picked_up', 'cancelled')
         for product in self:
-            if product.type != 'product':
+            # Odoo 19 dropped type='product'; storable goods are
+            # type='consu' with is_storable=True. The old type check made
+            # this compute return 0 for every product.
+            if not product.is_storable:
                 product.rl_available_qty = 0
                 continue
             variant_ids = product.product_variant_ids.ids

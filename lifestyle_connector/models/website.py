@@ -45,12 +45,12 @@ class Website(models.Model):
             # (computing it reads stock.warehouse, which visitors can't).
             # Precompute the in-stock ids with sudo and filter by id.
             stockable = self.env['product.template'].sudo().search(
-                [('type', 'in', ('consu', 'product')), ('sale_ok', '=', True)])
+                [('is_storable', '=', True), ('sale_ok', '=', True)])
             in_stock_ids = stockable.filtered(lambda p: p.qty_available > 0).ids
             if availability == 'in_stock':
-                domain = domain + ['|', ('type', 'not in', ('consu', 'product')), ('id', 'in', in_stock_ids or [0])]
+                domain = domain + ['|', ('is_storable', '=', False), ('id', 'in', in_stock_ids or [0])]
             else:
-                domain = domain + [('type', 'in', ('consu', 'product')), ('id', 'not in', in_stock_ids or [0])]
+                domain = domain + [('is_storable', '=', True), ('id', 'not in', in_stock_ids or [0])]
 
         year = request.params.get('lifestyle_year')
         if year:

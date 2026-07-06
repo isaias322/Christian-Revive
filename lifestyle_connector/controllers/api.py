@@ -349,8 +349,8 @@ def _serialize_product(product, wishlist_ids=None):
         'store_review_count': _store_value(product, 'store_review_count', 0) or 0,
         'store_sold_count': _store_value(product, 'store_sold_count', 0) or 0,
         'store_sequence': _store_value(product, 'store_sequence', 10) or 10,
-        'available_qty': max(0, int(product.qty_available)) if product.type in ('consu', 'product') else 999999,
-        'in_stock': product.qty_available > 0 if product.type in ('consu', 'product') else True,
+        'available_qty': max(0, int(product.qty_available)) if product.is_storable else 999999,
+        'in_stock': product.qty_available > 0 if product.is_storable else True,
         'in_wishlist': product.id in (wishlist_ids or set()),
         'deal_ends_at': (
             str(product.lifestyle_deal_ends_at)
@@ -443,11 +443,12 @@ class LifestyleAPI(http.Controller):
         if search:
             domain.append(('name', 'ilike', search))
         if in_stock_only:
-            # Mirrors _serialize_product's in_stock rule: non stock-tracked
-            # types (services) always count as in stock.
-            domain += ['|', ('type', 'not in', ('consu', 'product')), ('qty_available', '>', 0)]
+            # Mirrors _serialize_product's in_stock rule: products that do
+            # not track inventory (services, untracked goods) always count
+            # as in stock. Odoo 19: storable = is_storable, not type.
+            domain += ['|', ('is_storable', '=', False), ('qty_available', '>', 0)]
         if out_of_stock_only:
-            domain += [('type', 'in', ('consu', 'product')), ('qty_available', '<=', 0)]
+            domain += [('is_storable', '=', True), ('qty_available', '<=', 0)]
         if min_price is not None:
             domain.append(('list_price', '>=', float(min_price)))
         if max_price is not None:
@@ -864,7 +865,7 @@ class LifestyleAPI(http.Controller):
             product = template.product_variant_id
             if not product:
                 return {'status': 'error', 'message': f'No sellable variant found for: {template.name}'}
-            if template.type in ('consu', 'product'):
+            if template.is_storable:
                 requested_qty = sum(
                     float(existing.get('qty', 1))
                     for existing in lines

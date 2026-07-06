@@ -6164,10 +6164,13 @@ footer .rounded-circle,
     pointer-events: none;
 }
 
-/* Big soft circle drifting along the left, below the filter rail */
+/* Big soft circle drifting along the left, below the filter rail.
+   left stays >= 0: a negative offset would poke past the viewport and
+   create a horizontal scrollbar (overflow is not clipped here). The
+   percentage tops scale with the page instead of fixed rem offsets. */
 #o_wsale_container::before {
-    left: -4rem;
-    top: 46rem;
+    left: 0;
+    top: 42%;
     width: 16rem;
     height: 16rem;
     border-radius: 50%;
@@ -6175,10 +6178,10 @@ footer .rounded-circle,
     animation: rlShopCircleFloat 15s ease-in-out infinite;
 }
 
-/* Tilted outline card floating mid-page on the right */
+/* Tilted outline card floating further down on the right */
 #o_wsale_container::after {
     right: 2.5rem;
-    top: 72rem;
+    top: 74%;
     width: 11rem;
     height: 5.2rem;
     border: 1px solid rgba(92, 112, 80, 0.14);

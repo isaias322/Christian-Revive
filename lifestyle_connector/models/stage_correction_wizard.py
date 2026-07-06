@@ -17,6 +17,13 @@ class LifestyleStageCorrectionWizard(models.TransientModel):
     _description = 'Correct Delivery Stage'
 
     order_id = fields.Many2one('sale.order', string='Order', required=True, readonly=True)
+
+    @api.model
+    def default_get(self, fields_list):
+        values = super().default_get(fields_list)
+        if not values.get('order_id') and self.env.context.get('active_model') == 'sale.order':
+            values['order_id'] = self.env.context.get('active_id')
+        return values
     current_stage = fields.Selection(
         list(STAGE_LABELS.items()), string='Current Stage',
         related='order_id.delivery_stage',

@@ -30,6 +30,10 @@
                 <button name="action_notify_assigned_vendor" type="object"
                         string="Notify Assigned Vendor" class="btn-secondary" icon="fa-bell"
                         invisible="not lifestyle_vendor_id"/>
+                <button name="action_step_back_stage" type="object"
+                        string="Move Stage Back" class="btn-warning" icon="fa-undo"
+                        confirm="Move this order back one stage? The customer will be notified of the corrected status."
+                        invisible="not lifestyle_stage_unlocked or delivery_stage in ('order_placed', 'cancelled')"/>
                 <button name="action_unlock_stage_correction" type="object"
                         string="Allow Stage Correction" class="btn-secondary" icon="fa-unlock"
                         invisible="lifestyle_stage_unlocked"/>

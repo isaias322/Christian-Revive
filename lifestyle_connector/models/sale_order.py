@@ -163,6 +163,7 @@ class SaleOrder(models.Model):
         self.ensure_one()
         if self.delivery_stage == new_stage:
             return
+        going_back = False
         sequence = PICKUP_STAGE_SEQUENCE if self.fulfillment_type == 'pickup' else DELIVERY_STAGE_SEQUENCE
         if self.delivery_stage in sequence and new_stage in sequence:
             current_index = sequence.index(self.delivery_stage)
@@ -170,10 +171,11 @@ class SaleOrder(models.Model):
             if new_index < current_index:
                 if not self.lifestyle_stage_unlocked:
                     raise UserError(
-                        'This order is already past that stage, so the vendor app can\'t move it back.\n\n'
-                        'If this was set by mistake, click "Allow Stage Correction" on this order in Odoo, '
-                        'then try again from the app.'
+                        'This order is already past that stage, so it can\'t be moved back.\n\n'
+                        'If this was set by mistake, click "Allow Stage Correction" on this order first, '
+                        'then move it back (from Odoo or the vendor app).'
                     )
+                going_back = True
                 self.lifestyle_stage_unlocked = False
         self.delivery_stage = new_stage
         stage_progress = {
@@ -185,11 +187,31 @@ class SaleOrder(models.Model):
             'picked_up': 100,
             'delivered': 100,
         }
-        self.lifestyle_progress_percent = max(self.lifestyle_progress_percent or 0, stage_progress.get(new_stage, 0))
+        if going_back:
+            # A correction must also pull the customer-facing progress bar
+            # back, otherwise it stays stuck at the wrongly-reached value.
+            self.lifestyle_progress_percent = stage_progress.get(new_stage, 0)
+        else:
+            self.lifestyle_progress_percent = max(self.lifestyle_progress_percent or 0, stage_progress.get(new_stage, 0))
         label = STAGE_LABELS.get(new_stage, new_stage)
         self.message_post(body=Markup('Order status updated: <b>%s</b>') % label)
         if push:
             self._lifestyle_send_stage_notification()
+
+    def action_step_back_stage(self):
+        """Backend counterpart of the vendor app's stage correction: move
+        the order back one stage. Requires 'Allow Stage Correction' first,
+        and consumes that unlock, exactly like the app."""
+        for order in self:
+            sequence = PICKUP_STAGE_SEQUENCE if order.fulfillment_type == 'pickup' else DELIVERY_STAGE_SEQUENCE
+            if order._lifestyle_skip_processing():
+                sequence = [stage for stage in sequence if stage != 'processing']
+            if order.delivery_stage not in sequence:
+                raise UserError('This order\'s current stage cannot be stepped back from.')
+            index = sequence.index(order.delivery_stage)
+            if index == 0:
+                raise UserError('This order is already at the first stage.')
+            order._lifestyle_advance_stage(sequence[index - 1])
 
 
     def _lifestyle_notify_assigned_vendor(self, raise_if_no_device=True):

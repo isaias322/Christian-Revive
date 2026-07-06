@@ -603,7 +603,13 @@ function setupLoginPagePolish() {
 
 function setupRequireLoginForCart() {
     if (!window.location.pathname.startsWith('/shop')) return;
+    // Cache the status so the guard is armed instantly on later pages -
+    // otherwise a fast first click can slip through before the check returns.
     var loggedIn = null; // unknown until the status call returns
+    try {
+        var cached = window.sessionStorage.getItem('rlLoggedIn');
+        if (cached !== null) { loggedIn = cached === '1'; }
+    } catch (e) { /* storage unavailable */ }
     fetch('/shop/rl_login_status', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -611,7 +617,8 @@ function setupRequireLoginForCart() {
     }).then(function (res) { return res.json(); }).then(function (data) {
         var result = (data && data.result) || {};
         loggedIn = !!result.logged_in;
-    }).catch(function () { loggedIn = null; });
+        try { window.sessionStorage.setItem('rlLoggedIn', loggedIn ? '1' : '0'); } catch (e) {}
+    }).catch(function () {});
 
     document.addEventListener('click', function (e) {
         if (loggedIn !== false) return; // logged in, or status unknown: let it through
@@ -832,6 +839,23 @@ function setupColorSelection() {
                 }).catch(function () {});
             }, 1200);
         }, true);
+
+        // Pre-select the color remembered in the session (e.g. picked
+        // before a login round-trip): the cart would apply it anyway, so
+        // the swatch UI should show it too.
+        fetch('/shop/rl_selected_color', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                jsonrpc: '2.0', method: 'call', id: 32,
+                params: { product_id: parseInt(productTmplId, 10) },
+            }),
+        }).then(function (res) { return res.json(); }).then(function (data) {
+            var remembered = ((data && data.result) || {}).color;
+            if (!remembered || selectedColor) return;
+            var match = swatches.find(function (s) { return (s.dataset.color || '') === remembered; });
+            if (match) { selectSwatch(match); }
+        }).catch(function () {});
     }
 }
 

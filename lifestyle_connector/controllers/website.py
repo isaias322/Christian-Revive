@@ -110,6 +110,17 @@ class LifestyleWebsiteSale(WebsiteSale):
         """Lets the storefront JS know whether to send guests to login."""
         return {'logged_in': not request.env.user._is_public()}
 
+    @http.route('/shop/rl_selected_color', type='json', auth='public', website=True, methods=['POST'])
+    def rl_selected_color(self, product_id=None, **kw):
+        """Color the visitor previously picked for this product (session),
+        so the product page can pre-select the swatch after e.g. a login
+        round-trip - the cart applies it either way, the UI should agree."""
+        color = ''
+        color_map = request.session.get('rl_product_colors') or {}
+        if product_id and isinstance(color_map, dict):
+            color = str(color_map.get(str(product_id)) or '')
+        return {'color': color}
+
     @http.route('/shop/select_color', type='json', auth='public', website=True, methods=['POST'])
     def select_product_color(self, color='', product_id=None, **kw):
         """Store the customer's chosen color in session; cart update reads it."""

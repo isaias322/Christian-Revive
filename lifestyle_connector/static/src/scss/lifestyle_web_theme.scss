@@ -5532,6 +5532,17 @@ footer .rounded-circle,
 }
 
 /* ── Order confirmation page ─────────────────────────────────────────── */
+/* The container these blocks are injected into is a flex row (heading +
+   Print button), so without a full-row basis they get squeezed into
+   side-by-side columns. Force each block onto its own full-width row. */
+.rl-confirm-hero,
+.rl-confirm-steps,
+.rl-confirm-actions {
+    flex: 0 0 100% !important;
+    width: 100% !important;
+    min-width: 100%;
+}
+
 .rl-confirm-hero {
     display: flex;
     align-items: center;

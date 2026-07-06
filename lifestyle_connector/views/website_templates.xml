@@ -954,6 +954,13 @@
     </template>
 
     <template id="lifestyle_shop_experience" inherit_id="website_sale.products" name="Revive Lifestyle Shop Experience">
+        <!-- Server-rendered marker class for the wide shop layout. The CSS
+             used to key off .rl-shop-page, which JS adds after load, so the
+             page first painted boxed and then visibly jumped to full width.
+             With the class in the markup the CSS applies on the first paint. -->
+        <xpath expr="//div[hasclass('oe_website_sale')]" position="attributes">
+            <attribute name="class" add="rl-shop-main" separator=" "/>
+        </xpath>
         <!-- Target the first child inside #products_grid so the intro is prepended
              inside the products column - not as a sibling, which would create a
              third flex column and squeeze the product grid into a tiny strip. -->

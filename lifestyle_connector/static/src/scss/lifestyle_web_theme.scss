@@ -2363,6 +2363,10 @@ footer a:hover,
    (<div class="container oe_website_sale">), so the selector has to match
    the combined class - a descendant selector never fires. */
 @media (min-width: 992px) {
+    /* .rl-shop-main is rendered server-side in the shop template so the
+       wide layout applies on first paint; .rl-shop-page (added by JS) is
+       kept as a fallback. */
+    .oe_website_sale.rl-shop-main,
     .rl-shop-page .oe_website_sale.container,
     .rl-shop-page [class*="container-"].oe_website_sale {
         max-width: 100% !important;
@@ -2370,6 +2374,7 @@ footer a:hover,
            against the viewport edge. */
         padding-left: 2.25rem !important;
     }
+    .oe_website_sale.rl-shop-main .o_wsale_products_main_row,
     .rl-shop-page .oe_website_sale .o_wsale_products_main_row {
         margin-left: 0 !important;
     }
@@ -5109,6 +5114,7 @@ footer .rounded-circle,
     }
 }
 /* Revive advanced shop experience */
+.oe_website_sale.rl-shop-main #products_grid,
 .rl-shop-page .oe_website_sale #products_grid {
     padding-top: 0.4rem;
 }

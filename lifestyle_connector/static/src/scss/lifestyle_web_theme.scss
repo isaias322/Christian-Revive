@@ -5712,6 +5712,23 @@ footer .rounded-circle,
     content: 'Reset your password';
 }
 
+/* Customers must never see the technical database selector. (The JS in
+   lifestyle_web_animations.js also hides the whole field block; this CSS
+   removes it on first paint. The real server-side fix is list_db=False +
+   dbfilter in odoo.conf.) */
+.oe_website_login_container label[for="db"],
+.oe_website_login_container div:has(> input[name="db"]),
+.oe_website_login_container a[href*="/web/database"] {
+    display: none !important;
+}
+
+.rl-login-subtitle {
+    margin: -0.9rem 0 1.5rem;
+    color: #6D6A62;
+    text-align: center;
+    line-height: 1.5;
+}
+
 .oe_website_login_container label,
 .oe_website_login_container .form-label {
     color: #2E2E2A;

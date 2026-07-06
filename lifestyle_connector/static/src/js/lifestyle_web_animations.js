@@ -553,6 +553,34 @@ function setupMobileShopFilters() {
 // stage updates can reach the customer (app push or email) and the portal
 // shows their order. Must be registered BEFORE setupColorSelection so its
 // stopImmediatePropagation wins over the color add-to-cart interceptor.
+// Login/signup polish: customers must never see the technical database
+// selector, and the card gets a friendly subtitle under the heading.
+function setupLoginPagePolish() {
+    var path = window.location.pathname;
+    if (!path.startsWith('/web/login') && !path.startsWith('/web/signup')
+        && !path.startsWith('/web/reset_password')) return;
+    var dbInput = document.querySelector('input[name="db"]');
+    if (dbInput) {
+        // Climb to the field wrapper (the div holding both the label and
+        // the input group) and hide the whole block.
+        var node = dbInput.parentElement;
+        for (var i = 0; i < 4 && node; i++) {
+            if (node.querySelector('label')) break;
+            node = node.parentElement;
+        }
+        (node || dbInput).style.setProperty('display', 'none', 'important');
+    }
+    var form = document.querySelector('.oe_login_form, .oe_signup_form, .oe_reset_password_form');
+    if (form && !form.querySelector('.rl-login-subtitle')) {
+        var sub = document.createElement('p');
+        sub.className = 'rl-login-subtitle';
+        sub.textContent = path.startsWith('/web/signup')
+            ? 'Create an account to order, save favorites, and track every delivery.'
+            : 'Sign in to shop, track your orders, and check out faster.';
+        form.insertBefore(sub, form.firstChild);
+    }
+}
+
 function setupRequireLoginForCart() {
     if (!window.location.pathname.startsWith('/shop')) return;
     var loggedIn = null; // unknown until the status call returns
@@ -1025,6 +1053,7 @@ function enhanceWebsite() {
     hideProductPolicies();
     setupContactFormValidation();
     setupSaveForLaterRedirect();
+    setupLoginPagePolish();
     setupRequireLoginForCart();
     setupColorSelection();
     setupCartLineColors();

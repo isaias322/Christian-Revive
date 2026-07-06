@@ -549,6 +549,38 @@ function setupMobileShopFilters() {
         button.classList.toggle('is-active');
     });
 }
+// Guests must sign in before adding to cart: orders need a real account so
+// stage updates can reach the customer (app push or email) and the portal
+// shows their order. Must be registered BEFORE setupColorSelection so its
+// stopImmediatePropagation wins over the color add-to-cart interceptor.
+function setupRequireLoginForCart() {
+    if (!window.location.pathname.startsWith('/shop')) return;
+    var loggedIn = null; // unknown until the status call returns
+    fetch('/shop/rl_login_status', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ jsonrpc: '2.0', method: 'call', id: 31, params: {} }),
+    }).then(function (res) { return res.json(); }).then(function (data) {
+        var result = (data && data.result) || {};
+        loggedIn = !!result.logged_in;
+    }).catch(function () { loggedIn = null; });
+
+    document.addEventListener('click', function (e) {
+        if (loggedIn !== false) return; // logged in, or status unknown: let it through
+        var btn = e.target.closest(
+            '#add_to_cart, [name="add_to_cart"], ' +
+            '.js_add_cart, .o_website_sale_main_product_cart_btn, ' +
+            '.o_wsale_product_btn a, .o_wsale_product_btn button, ' +
+            'form#product_detail_form button[type="submit"]'
+        );
+        if (!btn) return;
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        window.location.href = '/web/login?redirect='
+            + encodeURIComponent(window.location.pathname + window.location.search);
+    }, true);
+}
+
 function setupColorSelection() {
     const swatches = Array.from(document.querySelectorAll('#rl_color_picker .rl-pd-swatch[data-color]'));
     if (!swatches.length) return;
@@ -993,6 +1025,7 @@ function enhanceWebsite() {
     hideProductPolicies();
     setupContactFormValidation();
     setupSaveForLaterRedirect();
+    setupRequireLoginForCart();
     setupColorSelection();
     setupCartLineColors();
     setupOrderConfirmation();

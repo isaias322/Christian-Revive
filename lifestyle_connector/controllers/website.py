@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 from odoo import http
+from odoo.exceptions import UserError
 from odoo.http import request
 from odoo.addons.website_sale.controllers.main import WebsiteSale
+from odoo.addons.website_sale.controllers.cart import Cart
 
 
 class LifestyleWebsite(http.Controller):
@@ -84,8 +86,29 @@ class LifestyleWebsite(http.Controller):
     def contactus_thank_you(self, **kwargs):
         return request.render('lifestyle_connector.lifestyle_contactus_thank_you_page', {})
 
+class LifestyleCart(Cart):
+    """Require a signed-in customer before anything enters the cart.
+
+    Orders must belong to a real account so stage updates always have an
+    email (or app push) channel and the customer can track progress in
+    the portal. The storefront JS redirects guests to the login page
+    before this ever fires; this server check is the safety net.
+    """
+
+    @http.route()
+    def add_to_cart(self, *args, **kwargs):
+        if request.env.user._is_public():
+            raise UserError('Please sign in to add products to your cart.')
+        return super().add_to_cart(*args, **kwargs)
+
+
 class LifestyleWebsiteSale(WebsiteSale):
     """Website checkout customizations for Revive Lifestyle."""
+
+    @http.route('/shop/rl_login_status', type='json', auth='public', website=True, methods=['POST'])
+    def rl_login_status(self, **kw):
+        """Lets the storefront JS know whether to send guests to login."""
+        return {'logged_in': not request.env.user._is_public()}
 
     @http.route('/shop/select_color', type='json', auth='public', website=True, methods=['POST'])
     def select_product_color(self, color='', product_id=None, **kw):

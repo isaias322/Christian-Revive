@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from markupsafe import Markup
+
 from odoo import models, fields, api
 from odoo.exceptions import UserError
 from odoo.tools import html_escape
@@ -231,22 +233,52 @@ class SaleOrder(models.Model):
             order._lifestyle_notify_assigned_vendor(raise_if_no_device=True)
 
     def _lifestyle_send_stage_notification(self):
+        """Tell the customer about the new stage, whatever channel they have.
+
+        App customers get the FCM push. Website customers have no app
+        device, so they get an email linking to the portal order page
+        (which shows the same Furniture Progress timeline). Notification
+        problems must never block the stage change itself.
+        """
         self.ensure_one()
         if not self.partner_id:
-            raise UserError('This order has no customer to notify.')
+            return
         label = STAGE_LABELS.get(self.delivery_stage, self.delivery_stage)
         products = self._lifestyle_product_summary()
         body = f'Your furniture order ({products}) is now: {label}' if products else f'Your furniture order is now: {label}'
-        sent = self._lifestyle_send_push_to_partner(
-            self.partner_id,
-            title=f'Order {self.name}',
-            body=body,
-            data={'type': 'order_status', 'order_id': self.id, 'stage': self.delivery_stage},
+        sent = 0
+        try:
+            sent = self._lifestyle_send_push_to_partner(
+                self.partner_id,
+                title=f'Order {self.name}',
+                body=body,
+                data={'type': 'order_status', 'order_id': self.id, 'stage': self.delivery_stage},
+            )
+        except Exception as exc:
+            self.with_context(mail_create_nosubscribe=True, mail_notify_force_send=False).message_post(
+                body=f'Stage push notification failed: {html_escape(str(exc))}',
+                subtype_xmlid='mail.mt_note',
+            )
+        if sent:
+            self.with_context(mail_create_nosubscribe=True, mail_notify_force_send=False).message_post(
+                body=f'Stage notification sent only to customer: {self.partner_id.display_name}.',
+                subtype_xmlid='mail.mt_note',
+            )
+            return
+        # No app device (typical for website orders): email instead.
+        order_url = self.get_base_url() + self.get_portal_url()
+        email_body = Markup(
+            '<p>Hello %s,</p>'
+            '<p>Good news &#8212; your order <b>%s</b> is now: <b>%s</b>.</p>'
+            '<p><a href="%s">Track your order progress here</a>.</p>'
+        ) % (self.partner_id.name or '', self.name, label, order_url)
+        self.message_notify(
+            partner_ids=self.partner_id.ids,
+            subject=f'{self.name}: {label}',
+            body=email_body,
         )
-        if not sent:
-            raise UserError('Stage updated, but the customer has no registered device to notify yet.')
         self.with_context(mail_create_nosubscribe=True, mail_notify_force_send=False).message_post(
-            body=f'Stage notification sent only to customer: {self.partner_id.display_name}.',
+            body=f'Customer has no app device &#8212; stage update emailed to {html_escape(self.partner_id.display_name)}.',
             subtype_xmlid='mail.mt_note',
         )
 

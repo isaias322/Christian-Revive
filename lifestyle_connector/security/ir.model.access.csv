@@ -11,3 +11,4 @@ access_lifestyle_wishlist_item_user,lifestyle.wishlist.item.user,model_lifestyle
 access_lifestyle_stock_notification_user,lifestyle.stock.notification.user,model_lifestyle_stock_notification,base.group_user,1,1,1,1
 access_lifestyle_room_category_user,lifestyle.room.category.user,model_lifestyle_room_category,base.group_user,1,1,1,1
 access_lifestyle_room_category_read_all,lifestyle.room.category.read.all,model_lifestyle_room_category,,1,0,0,0
+access_lifestyle_stage_correction_wizard_user,lifestyle.stage.correction.wizard.user,model_lifestyle_stage_correction_wizard,base.group_user,1,1,1,1

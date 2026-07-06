@@ -1,5 +1,38 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <record id="view_lifestyle_stage_correction_wizard_form" model="ir.ui.view">
+        <field name="name">lifestyle.stage.correction.wizard.form</field>
+        <field name="model">lifestyle.stage.correction.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <p class="text-muted">
+                    Pick the stage this order should be in. The customer is
+                    <b>not</b> notified unless you tick "Notify Customer" -
+                    you can also send the status later with the order's
+                    "Send Status Email" button.
+                </p>
+                <group>
+                    <field name="order_id" readonly="1"/>
+                    <field name="current_stage"/>
+                    <field name="new_stage"/>
+                    <field name="notify_customer"/>
+                </group>
+                <footer>
+                    <button name="action_apply" type="object" string="Set Stage" class="btn-primary"/>
+                    <button name="action_unlock_app" type="object" string="Unlock for Vendor App" class="btn-secondary"/>
+                    <button string="Cancel" special="cancel" class="btn-link"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_lifestyle_stage_correction_wizard" model="ir.actions.act_window">
+        <field name="name">Correct Delivery Stage</field>
+        <field name="res_model">lifestyle.stage.correction.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
     <record id="view_order_form_lifestyle" model="ir.ui.view">
         <field name="name">sale.order.form.lifestyle</field>
         <field name="model">sale.order</field>
@@ -30,12 +63,13 @@
                 <button name="action_notify_assigned_vendor" type="object"
                         string="Notify Assigned Vendor" class="btn-secondary" icon="fa-bell"
                         invisible="not lifestyle_vendor_id"/>
-                <button name="action_step_back_stage" type="object"
-                        string="Move Stage Back" class="btn-warning" icon="fa-undo"
-                        confirm="Move this order back one stage? The customer will be notified of the corrected status."
-                        invisible="not lifestyle_stage_unlocked or delivery_stage in ('order_placed', 'cancelled')"/>
-                <button name="action_unlock_stage_correction" type="object"
+                <button name="action_notify_customer_stage" type="object"
+                        string="Send Status Email" class="btn-secondary" icon="fa-envelope-o"
+                        confirm="Send the current order status to the customer now (app push if they have the app, email otherwise)?"
+                        invisible="state not in ('sale', 'done')"/>
+                <button name="%(lifestyle_connector.action_lifestyle_stage_correction_wizard)d" type="action"
                         string="Allow Stage Correction" class="btn-secondary" icon="fa-unlock"
+                        context="{'default_order_id': id}"
                         invisible="lifestyle_stage_unlocked"/>
                 <button name="action_lock_stage_correction" type="object"
                         string="Lock Stage Correction" class="btn-secondary" icon="fa-lock"

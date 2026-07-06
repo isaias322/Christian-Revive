@@ -198,6 +198,13 @@ class SaleOrder(models.Model):
         if push:
             self._lifestyle_send_stage_notification()
 
+    def action_notify_customer_stage(self):
+        """Manually (re)send the current stage to the customer - push when
+        they have the app, email otherwise. Works at any time, independent
+        of stage changes."""
+        for order in self:
+            order._lifestyle_send_stage_notification()
+
     def action_step_back_stage(self):
         """Backend counterpart of the vendor app's stage correction: move
         the order back one stage. Requires 'Allow Stage Correction' first,
@@ -308,7 +315,7 @@ class SaleOrder(models.Model):
             ) % (base_url + self.get_portal_url())
         self.message_notify(
             partner_ids=self.partner_id.ids,
-            subject=f'{self.name}: {label}',
+            subject=f'Your Revive Lifestyle order {self.name} is now: {label}',
             body=email_body,
             force_send=True,
             # Customer-facing layout - the default note layout stamps

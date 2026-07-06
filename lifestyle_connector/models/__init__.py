@@ -4,6 +4,7 @@ from . import device_token
 from . import attachment_token
 from . import vendor_session
 from . import sale_order
+from . import stage_correction_wizard
 from . import stock_picking
 from . import product_review
 from . import product_color_image

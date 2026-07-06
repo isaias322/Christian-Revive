@@ -814,10 +814,20 @@ function rlDedupeCartColorPills() {
 function setupOrderConfirmation() {
     if (!window.location.pathname.startsWith('/shop/confirmation')) return;
     document.documentElement.classList.add('rl-confirm-page');
-    if (document.querySelector('.rl-confirm-hero')) return;
+    if (document.querySelector('.rl-confirm-wrap')) return;
+
+    // Never inject into Odoo's own confirmation markup (its flex rows do
+    // not wrap and squeeze anything we add). Render one self-contained
+    // banner ABOVE the whole layout instead.
     var heading = Array.from(document.querySelectorAll('h1, h2, h3, .h1, .h2, .h3'))
         .find(function (el) { return /thank you/i.test(el.textContent || ''); });
-    if (!heading) return;
+    var host = (heading && heading.closest('.container, .container-fluid'))
+        || document.querySelector('#wrap .container, #wrap .container-fluid')
+        || document.getElementById('wrap');
+    if (!host) return;
+
+    var wrap = document.createElement('div');
+    wrap.className = 'rl-confirm-wrap';
 
     var hero = document.createElement('div');
     hero.className = 'rl-confirm-hero';
@@ -827,9 +837,7 @@ function setupOrderConfirmation() {
         '<span>Order confirmed</span>' +
         '<p>We’ve received your order. Follow every step — build, packing and delivery — from your account.</p>' +
         '</div>';
-    heading.parentElement.insertBefore(hero, heading);
-
-    var column = heading.parentElement;
+    wrap.appendChild(hero);
 
     var steps = document.createElement('div');
     steps.className = 'rl-confirm-steps';
@@ -845,14 +853,16 @@ function setupOrderConfirmation() {
         item.querySelector('span').textContent = step[2];
         steps.appendChild(item);
     });
-    column.appendChild(steps);
+    wrap.appendChild(steps);
 
     var actions = document.createElement('div');
     actions.className = 'rl-confirm-actions';
     actions.innerHTML =
         '<a class="btn btn-primary" href="/my/orders"><i class="fa fa-map-marker"></i> Track your order</a>' +
         '<a class="btn btn-outline-secondary" href="/shop"><i class="fa fa-arrow-left"></i> Continue shopping</a>';
-    column.appendChild(actions);
+    wrap.appendChild(actions);
+
+    host.insertBefore(wrap, host.firstChild);
 }
 
 function setupCartLineColors() {

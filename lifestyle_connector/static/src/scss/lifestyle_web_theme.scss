@@ -5532,15 +5532,14 @@ footer .rounded-circle,
 }
 
 /* ── Order confirmation page ─────────────────────────────────────────── */
-/* The container these blocks are injected into is a flex row (heading +
-   Print button), so without a full-row basis they get squeezed into
-   side-by-side columns. Force each block onto its own full-width row. */
-.rl-confirm-hero,
-.rl-confirm-steps,
-.rl-confirm-actions {
+/* One self-contained block banner injected above Odoo's confirmation
+   layout; guarded so a flex parent can never squeeze it. */
+.rl-confirm-wrap {
+    display: block;
     flex: 0 0 100% !important;
     width: 100% !important;
     min-width: 100%;
+    margin: 0.75rem 0 1.75rem;
 }
 
 .rl-confirm-hero {

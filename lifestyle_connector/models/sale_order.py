@@ -277,6 +277,10 @@ class SaleOrder(models.Model):
             subject=f'{self.name}: {label}',
             body=email_body,
             force_send=True,
+            # Customer-facing layout - the default note layout stamps
+            # "Internal communication:" on the mail, which both confuses
+            # customers and trips spam filters.
+            email_layout_xmlid='mail.mail_notification_light',
         )
         self.with_context(mail_create_nosubscribe=True, mail_notify_force_send=False).message_post(
             body=f'Customer has no app device &#8212; stage update emailed to {html_escape(self.partner_id.display_name)}.',

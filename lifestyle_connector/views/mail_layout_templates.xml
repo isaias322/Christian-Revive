@@ -19,11 +19,16 @@
 
     <template id="rl_mail_layout_light_debrand" inherit_id="mail.mail_notification_light"
               name="Revive: Debrand Light Email Layout">
-        <!-- Cache-busted logo URL: Gmail's image proxy caches images per
-             URL, so after the company logo changes, recipients would keep
-             seeing the old (Odoo) logo forever on the bare /logo.png URL. -->
-        <xpath expr="//img[contains(@t-att-src, 'logo.png')]" position="attributes">
-            <attribute name="t-att-src">'/logo.png?company=%s&amp;unique=%s' % (company.id, company.write_date and company.write_date.strftime('%Y%m%d%H%M%S') or '')</attribute>
+        <!-- Use the module's own brand wordmark instead of /logo.png:
+             /logo.png serves the Odoo default while the company record has
+             no logo, and Gmail's image proxy has already cached that URL
+             with the Odoo logo. A module-static file is deterministic and
+             gets a fresh, uncached URL. -->
+        <xpath expr="//td[img[contains(@t-att-src, 'logo.png')]]" position="replace">
+            <td valign="middle" align="right">
+                <img src="/lifestyle_connector/static/src/img/logo_wordmark.png"
+                     style="padding: 0px; margin: 0px; height: 48px;" alt="Revive Lifestyle"/>
+            </td>
         </xpath>
         <xpath expr="//tr[td[a[contains(@href, 'utm_source=db')]]]" position="replace">
             <tr t-if="show_unfollow">

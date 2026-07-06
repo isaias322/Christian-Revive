@@ -259,6 +259,12 @@ class SaleOrder(models.Model):
         for order in self:
             order.lifestyle_stage_unlocked = False
 
+    def action_mark_build_started(self):
+        """Backend counterpart of the vendor app's 'start build' action, so
+        staff can advance Order Placed -> Build Started without the app."""
+        for order in self:
+            order._lifestyle_advance_stage('processing')
+
     def action_mark_packing(self):
         for order in self:
             order._lifestyle_advance_stage('packing')

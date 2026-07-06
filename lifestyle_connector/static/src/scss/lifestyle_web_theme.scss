@@ -6068,3 +6068,163 @@ footer .rounded-circle,
 .rl-cart-line-color i {
     font-size: 0.82rem;
 }
+
+/* ── Shop: keep the first product row above the fold ─────────────────── */
+/* The intro card, announcements, title and search stacked up to a full
+   screen of height before any product appeared. Tighten all of it. */
+.rl-shop-intro {
+    margin-bottom: 0.85rem;
+}
+
+.rl-shop-intro-card {
+    padding: 1.1rem 1.4rem;
+}
+
+.rl-shop-intro h2 {
+    font-size: 1.65rem;
+    margin-bottom: 0.3rem;
+}
+
+.rl-shop-intro p {
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.rl-shop-quick-row,
+.rl-shop-promo-strip {
+    margin-top: 0.65rem;
+    gap: 0.5rem;
+}
+
+.rl-shop-promo-strip {
+    margin-top: 0;
+    margin-bottom: 0.4rem;
+}
+
+.rl-shop-quick-row a,
+.rl-shop-promo-pill {
+    min-height: 2.05rem;
+    padding: 0.35rem 0.7rem;
+    font-size: 0.9rem;
+}
+
+.oe_website_sale #products_grid h1,
+.oe_website_sale #products_grid .h1,
+.oe_website_sale .o_wsale_products_main_row h1 {
+    font-size: 2.15rem;
+    margin-bottom: 0.7rem;
+}
+
+.oe_website_sale .o_wsale_products_searchbar_form .search-query,
+.oe_website_sale .o_wsale_products_searchbar_form input[type="search"],
+.oe_website_sale .o_wsale_products_searchbar_form input[type="text"] {
+    height: 46px;
+}
+
+.oe_website_sale .o_wsale_products_searchbar_form .oe_search_button,
+.oe_website_sale .o_wsale_products_searchbar_form button[type="submit"] {
+    height: 46px;
+    min-width: 48px;
+}
+
+/* Products fade up in a stagger as the page opens */
+@keyframes rlProductIn {
+    from {
+        opacity: 0;
+        transform: translateY(16px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.rl-shop-page .oe_website_sale #products_grid .oe_product,
+.rl-shop-page .oe_website_sale #products_grid .o_wsale_product_grid_wrapper {
+    animation: rlProductIn 0.5s ease both;
+}
+
+@for $i from 1 through 8 {
+    .rl-shop-page .oe_website_sale #products_grid .oe_product:nth-child(#{$i}),
+    .rl-shop-page .oe_website_sale #products_grid .o_wsale_product_grid_wrapper:nth-child(#{$i}) {
+        animation-delay: #{0.05 * $i}s;
+    }
+}
+
+/* ── Shop: more floating decorative shapes across the page ───────────── */
+#o_wsale_container {
+    position: relative;
+}
+
+#o_wsale_container::before,
+#o_wsale_container::after {
+    content: "";
+    position: absolute;
+    z-index: 0;
+    pointer-events: none;
+}
+
+/* Big soft circle drifting along the left, below the filter rail */
+#o_wsale_container::before {
+    left: -4rem;
+    top: 46rem;
+    width: 16rem;
+    height: 16rem;
+    border-radius: 50%;
+    background: rgba(124, 144, 112, 0.10);
+    animation: rlShopCircleFloat 15s ease-in-out infinite;
+}
+
+/* Tilted outline card floating mid-page on the right */
+#o_wsale_container::after {
+    right: 2.5rem;
+    top: 72rem;
+    width: 11rem;
+    height: 5.2rem;
+    border: 1px solid rgba(92, 112, 80, 0.14);
+    border-radius: 1.6rem;
+    transform: rotate(6deg);
+    opacity: 0.6;
+    animation: rlShopOutlineFloat 13s ease-in-out infinite;
+}
+
+/* Second blob + gold accent line inside the intro card (its ::after is
+   already the bottom-right circle) */
+.rl-shop-intro-card::before {
+    content: "";
+    position: absolute;
+    left: -3.5rem;
+    top: -4.5rem;
+    width: 9rem;
+    height: 9rem;
+    border-radius: 50%;
+    background: rgba(217, 183, 119, 0.12);
+    pointer-events: none;
+    animation: rlShopCircleFloat 11s ease-in-out infinite;
+}
+
+/* Soft leaf-corner blob under the filter sidebar (on the column, not the
+   rail - the rail clips its overflow, which would cut the shape off) */
+.oe_website_sale #products_grid_before::after {
+    content: "";
+    position: absolute;
+    left: 0.6rem;
+    top: calc(100% + 1.2rem);
+    width: 7.5rem;
+    height: 7.5rem;
+    border-radius: 50%;
+    background: rgba(124, 144, 112, 0.10);
+    pointer-events: none;
+    animation: rlShopCircleFloat 14s ease-in-out infinite reverse;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .rl-shop-page .oe_website_sale #products_grid .oe_product,
+    .rl-shop-page .oe_website_sale #products_grid .o_wsale_product_grid_wrapper,
+    #o_wsale_container::before,
+    #o_wsale_container::after,
+    .rl-shop-intro-card::before,
+    .oe_website_sale #products_grid_before::after {
+        animation: none;
+    }
+}

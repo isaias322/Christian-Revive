@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Remove Odoo branding from customer-facing emails. Every outgoing
+         notification is wrapped in one of these two layouts; the header
+         and footer already use the company logo/name/contact details, so
+         stripping the "Powered by Odoo" line leaves pure company branding.
+         The document-follow "Unfollow" link is preserved where shown. -->
+
+    <template id="rl_mail_layout_debrand" inherit_id="mail.mail_notification_layout"
+              name="Revive: Debrand Email Layout">
+        <xpath expr="//div[a[contains(@href, 'utm_source=db')]]" position="replace">
+            <div t-if="show_footer and show_unfollow" style="color: #555555; font-size:11px;">
+                <span id="mail_unfollow">
+                    <a href="/mail/unfollow" style="text-decoration:none; color:#555555;">Unfollow</a>
+                </span>
+            </div>
+        </xpath>
+    </template>
+
+    <template id="rl_mail_layout_light_debrand" inherit_id="mail.mail_notification_light"
+              name="Revive: Debrand Light Email Layout">
+        <xpath expr="//tr[td[a[contains(@href, 'utm_source=db')]]]" position="replace">
+            <tr t-if="show_unfollow">
+                <td align="center" style="min-width: 590px;">
+                    <span id="mail_unfollow">
+                        <a href="/mail/unfollow" style="text-decoration:none; color:#555555;">Unfollow</a>
+                    </span>
+                </td>
+            </tr>
+        </xpath>
+    </template>
+</odoo>

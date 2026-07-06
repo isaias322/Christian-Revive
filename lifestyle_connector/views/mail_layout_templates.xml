@@ -19,6 +19,12 @@
 
     <template id="rl_mail_layout_light_debrand" inherit_id="mail.mail_notification_light"
               name="Revive: Debrand Light Email Layout">
+        <!-- Cache-busted logo URL: Gmail's image proxy caches images per
+             URL, so after the company logo changes, recipients would keep
+             seeing the old (Odoo) logo forever on the bare /logo.png URL. -->
+        <xpath expr="//img[contains(@t-att-src, 'logo.png')]" position="attributes">
+            <attribute name="t-att-src">'/logo.png?company=%s&amp;unique=%s' % (company.id, company.write_date and company.write_date.strftime('%Y%m%d%H%M%S') or '')</attribute>
+        </xpath>
         <xpath expr="//tr[td[a[contains(@href, 'utm_source=db')]]]" position="replace">
             <tr t-if="show_unfollow">
                 <td align="center" style="min-width: 590px;">

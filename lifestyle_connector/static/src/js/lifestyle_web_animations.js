@@ -808,6 +808,53 @@ function rlDedupeCartColorPills() {
     });
 }
 
+// Dress up the plain "Thank you for your order." confirmation page: a
+// confirmed-hero with check mark, the build/delivery journey the brand
+// promises, and clear next actions.
+function setupOrderConfirmation() {
+    if (!window.location.pathname.startsWith('/shop/confirmation')) return;
+    document.documentElement.classList.add('rl-confirm-page');
+    if (document.querySelector('.rl-confirm-hero')) return;
+    var heading = Array.from(document.querySelectorAll('h1, h2, h3, .h1, .h2, .h3'))
+        .find(function (el) { return /thank you/i.test(el.textContent || ''); });
+    if (!heading) return;
+
+    var hero = document.createElement('div');
+    hero.className = 'rl-confirm-hero';
+    hero.innerHTML =
+        '<div class="rl-confirm-check"><i class="fa fa-check"></i></div>' +
+        '<div class="rl-confirm-hero-text">' +
+        '<span>Order confirmed</span>' +
+        '<p>We’ve received your order. Follow every step — build, packing and delivery — from your account.</p>' +
+        '</div>';
+    heading.parentElement.insertBefore(hero, heading);
+
+    var column = heading.parentElement;
+
+    var steps = document.createElement('div');
+    steps.className = 'rl-confirm-steps';
+    [
+        ['fa-clipboard', 'Order placed', 'We prepare your pieces', true],
+        ['fa-wrench', 'Build & packing', 'Workshop photos as we go', false],
+        ['fa-truck', 'Delivery', 'Straight to your door', false],
+    ].forEach(function (step) {
+        var item = document.createElement('div');
+        item.className = 'rl-confirm-step' + (step[3] ? ' is-active' : '');
+        item.innerHTML = '<i class="fa ' + step[0] + '"></i><strong></strong><span></span>';
+        item.querySelector('strong').textContent = step[1];
+        item.querySelector('span').textContent = step[2];
+        steps.appendChild(item);
+    });
+    column.appendChild(steps);
+
+    var actions = document.createElement('div');
+    actions.className = 'rl-confirm-actions';
+    actions.innerHTML =
+        '<a class="btn btn-primary" href="/my/orders"><i class="fa fa-map-marker"></i> Track your order</a>' +
+        '<a class="btn btn-outline-secondary" href="/shop"><i class="fa fa-arrow-left"></i> Continue shopping</a>';
+    column.appendChild(actions);
+}
+
 function setupCartLineColors() {
     var path = window.location.pathname;
     if (!path.startsWith('/shop/cart') && !path.startsWith('/shop/checkout')
@@ -938,6 +985,7 @@ function enhanceWebsite() {
     setupSaveForLaterRedirect();
     setupColorSelection();
     setupCartLineColors();
+    setupOrderConfirmation();
     setupNotifyStock();
     rememberCurrentProduct();
     renderRecentlyViewed();

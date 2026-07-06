@@ -5531,6 +5531,141 @@ footer .rounded-circle,
     }
 }
 
+/* ── Order confirmation page ─────────────────────────────────────────── */
+.rl-confirm-hero {
+    display: flex;
+    align-items: center;
+    gap: 1.1rem;
+    margin-bottom: 1.4rem;
+    padding: 1.3rem 1.5rem;
+    border: 1px solid rgba(92, 112, 80, 0.16);
+    border-radius: 1.5rem;
+    background:
+        radial-gradient(circle at 92% 0%, rgba(124, 144, 112, 0.16), transparent 12rem),
+        linear-gradient(135deg, #FFFDF9, #F1F5EB);
+    box-shadow: 0 22px 58px rgba(46, 46, 42, 0.09);
+}
+
+.rl-confirm-check {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 3.4rem;
+    width: 3.4rem;
+    height: 3.4rem;
+    border-radius: 50%;
+    color: #FFFDF9;
+    background: #5C7050;
+    box-shadow: 0 14px 30px rgba(92, 112, 80, 0.35);
+    font-size: 1.35rem;
+}
+
+.rl-confirm-hero-text span {
+    display: block;
+    margin-bottom: 0.2rem;
+    color: #5C7050;
+    font-size: 0.76rem;
+    font-weight: 900;
+    letter-spacing: 0.08rem;
+    text-transform: uppercase;
+}
+
+.rl-confirm-hero-text p {
+    margin: 0;
+    color: #6D6A62;
+    line-height: 1.55;
+}
+
+.rl-confirm-steps {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.85rem;
+    margin-top: 1.4rem;
+}
+
+.rl-confirm-step {
+    flex: 1 1 0;
+    min-width: 150px;
+    padding: 1.05rem 0.9rem;
+    border: 1px solid rgba(92, 112, 80, 0.13);
+    border-radius: 1.25rem;
+    background: #FFFDF9;
+    box-shadow: 0 14px 36px rgba(46, 46, 42, 0.06);
+    text-align: center;
+}
+
+.rl-confirm-step i {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    margin-bottom: 0.5rem;
+    border-radius: 50%;
+    color: #5C7050;
+    background: #E3EADB;
+}
+
+.rl-confirm-step strong {
+    display: block;
+    color: #2E2E2A;
+    font-size: 0.95rem;
+}
+
+.rl-confirm-step span {
+    display: block;
+    margin-top: 0.15rem;
+    color: #6D6A62;
+    font-size: 0.83rem;
+}
+
+.rl-confirm-step.is-active {
+    border-color: rgba(92, 112, 80, 0.45);
+    box-shadow: 0 18px 44px rgba(92, 112, 80, 0.16);
+}
+
+.rl-confirm-step.is-active i {
+    color: #FFFDF9;
+    background: #5C7050;
+}
+
+.rl-confirm-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1.4rem;
+}
+
+.rl-confirm-actions .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-radius: 999px;
+    padding: 0.65rem 1.35rem;
+    font-weight: 700;
+}
+
+/* Soften the payment-notice alert (cash on delivery, wire transfer, ...)
+   so it stops shouting in bootstrap yellow. */
+.rl-confirm-page .oe_website_sale .alert {
+    border: 1px solid rgba(217, 183, 119, 0.55);
+    border-radius: 1.25rem;
+    background: rgba(217, 183, 119, 0.14);
+    color: #2E2E2A;
+    box-shadow: 0 14px 36px rgba(46, 46, 42, 0.05);
+}
+
+@media (max-width: 575.98px) {
+    .rl-confirm-hero {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .rl-confirm-step {
+        flex: 1 1 100%;
+    }
+}
+
 .rl-cart-line-color {
     /* The restyled element is whatever node Odoo rendered the description
        into - often a block-level div stretched by the cart's flex layout,

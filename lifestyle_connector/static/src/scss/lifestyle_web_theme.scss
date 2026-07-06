@@ -2363,10 +2363,11 @@ footer a:hover,
    (<div class="container oe_website_sale">), so the selector has to match
    the combined class - a descendant selector never fires. */
 @media (min-width: 992px) {
-    /* .rl-shop-main is rendered server-side in the shop template so the
-       wide layout applies on first paint; .rl-shop-page (added by JS) is
-       kept as a fallback. */
-    .oe_website_sale.rl-shop-main,
+    /* #o_wsale_container is Odoo 19's static id on the shop container, so
+       the wide layout applies on the very first paint - no waiting for the
+       JS-added .rl-shop-page class (kept below as a fallback), which caused
+       a visible boxed-to-wide jump on page load. */
+    #o_wsale_container,
     .rl-shop-page .oe_website_sale.container,
     .rl-shop-page [class*="container-"].oe_website_sale {
         max-width: 100% !important;
@@ -2374,7 +2375,7 @@ footer a:hover,
            against the viewport edge. */
         padding-left: 2.25rem !important;
     }
-    .oe_website_sale.rl-shop-main .o_wsale_products_main_row,
+    #o_wsale_container .o_wsale_products_main_row,
     .rl-shop-page .oe_website_sale .o_wsale_products_main_row {
         margin-left: 0 !important;
     }
@@ -5114,7 +5115,7 @@ footer .rounded-circle,
     }
 }
 /* Revive advanced shop experience */
-.oe_website_sale.rl-shop-main #products_grid,
+#o_wsale_container #products_grid,
 .rl-shop-page .oe_website_sale #products_grid {
     padding-top: 0.4rem;
 }
@@ -5533,7 +5534,7 @@ footer .rounded-circle,
 .rl-cart-line-color {
     display: inline-flex;
     align-items: center;
-    gap: 0.35rem;
+    gap: 0.4rem;
     margin-top: 0.35rem;
     padding: 0.22rem 0.7rem;
     border-radius: 999px;
@@ -5541,6 +5542,21 @@ footer .rounded-circle,
     color: #5f7653;
     font-size: 0.86rem;
     font-weight: 700;
+    white-space: nowrap;
+    max-width: 100%;
+}
+
+.rl-cart-line-color strong {
+    font-weight: 800;
+}
+
+.rl-cart-color-dot {
+    display: inline-block;
+    width: 0.72rem;
+    height: 0.72rem;
+    border-radius: 50%;
+    border: 1.5px solid rgba(0, 0, 0, 0.18);
+    flex-shrink: 0;
 }
 
 .rl-cart-line-color i {

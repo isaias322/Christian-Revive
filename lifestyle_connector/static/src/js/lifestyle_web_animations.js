@@ -755,10 +755,42 @@ function setupColorSelection() {
     }
 }
 
+// The order line description contains a raw "Color: X" text line (that is
+// what makes the color show up in the backend, emails and invoices), but in
+// the cart it renders as cramped plain text. Restyle it in place into the
+// rl-cart-line-color pill with a swatch dot.
+function rlBeautifyCartColorText() {
+    var scope = document.querySelector('.oe_website_sale') || document.body;
+    Array.from(scope.querySelectorAll('div, span, p, small, dd')).forEach(function (el) {
+        if (el.childElementCount || el.classList.contains('rl-cart-line-color')) return;
+        var match = (el.textContent || '').trim().match(/^Color:\s*(.{1,40})$/);
+        if (!match) return;
+        var color = match[1].trim();
+        el.classList.add('rl-cart-line-color');
+        el.textContent = '';
+        var dot = document.createElement('span');
+        dot.className = 'rl-cart-color-dot';
+        dot.style.backgroundColor = color.toLowerCase();
+        var name = document.createElement('strong');
+        name.textContent = color;
+        el.appendChild(dot);
+        el.appendChild(name);
+    });
+}
+
 function setupCartLineColors() {
     var path = window.location.pathname;
     if (!path.startsWith('/shop/cart') && !path.startsWith('/shop/checkout')
         && !path.startsWith('/shop/address') && !path.startsWith('/shop/payment')) return;
+    rlBeautifyCartColorText();
+    // The cart re-renders lines after quantity changes; keep the pill styled.
+    if (!window._rlCartColorObserver) {
+        window._rlCartColorObserver = new MutationObserver(function () {
+            window.clearTimeout(window._rlCartColorTimer);
+            window._rlCartColorTimer = window.setTimeout(rlBeautifyCartColorText, 120);
+        });
+        window._rlCartColorObserver.observe(document.body, { childList: true, subtree: true });
+    }
     fetch('/shop/cart_line_colors', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -789,12 +821,21 @@ function setupCartLineColors() {
                 if (!match) return;
                 host = match.closest('.td-product_name, td, .row, li, tr, div') || match.parentElement;
             }
-            if (!host || host.querySelector('.rl-cart-line-color')) return;
+            if (!host) return;
+            // Skip if this cart line already shows the color (either injected
+            // before, or restyled from the raw description text).
+            var lineRoot = host.closest('tr, li, .row, [data-line-id]') || host;
+            if (lineRoot.querySelector('.rl-cart-line-color') || host.querySelector('.rl-cart-line-color')) return;
             var anchor = host.querySelector('a, strong, h6, .h6, .td-product_name, [class*="product_name"]') || host;
             var detail = document.createElement('div');
             detail.className = 'rl-cart-line-color';
-            detail.innerHTML = '<i class="fa fa-palette"></i><span>Color: <strong></strong></span>';
-            detail.querySelector('strong').textContent = line.color;
+            var dot = document.createElement('span');
+            dot.className = 'rl-cart-color-dot';
+            dot.style.backgroundColor = String(line.color).toLowerCase();
+            var name = document.createElement('strong');
+            name.textContent = line.color;
+            detail.appendChild(dot);
+            detail.appendChild(name);
             anchor.insertAdjacentElement('afterend', detail);
         });
     }).catch(function () {});

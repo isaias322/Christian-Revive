@@ -83,26 +83,33 @@ class SaleOrder(models.Model):
         """
         values = super()._cart_add(product_id, quantity=quantity, **kwargs)
         try:
+            product = self.env['product.product'].sudo().browse(int(product_id or 0))
+            product_tmpl = product.product_tmpl_id if product.exists() else self.env['product.template']
             color = str(kwargs.get('lifestyle_color') or '').strip()
-            if not color:
-                from odoo.http import request as http_req
-                if http_req:
+            made_to_order = bool(product_tmpl and product_tmpl.rl_available_qty <= 0)
+            from odoo.http import request as http_req
+            if http_req and product_tmpl:
+                requested_products = set(http_req.session.get('rl_mto_requested_products') or [])
+                made_to_order = made_to_order or int(product_tmpl.id) in requested_products
+                if not color:
                     color_map = http_req.session.get('rl_product_colors') or {}
                     if isinstance(color_map, dict):
                         # _cart_add receives the variant id; the swatch JS
                         # stores colors under the template id, so try both.
-                        product = self.env['product.product'].sudo().browse(int(product_id or 0))
-                        for key in (product_id, product.product_tmpl_id.id):
+                        for key in (product_id, product_tmpl.id):
                             color = str(color_map.get(str(key)) or '').strip()
                             if color:
                                 break
                     if not color:
                         color = str(http_req.session.get('rl_product_color', '') or '').strip()
             line_id = (values or {}).get('line_id') if isinstance(values, dict) else None
-            if color and line_id:
+            if line_id:
                 line = self.env['sale.order.line'].sudo().browse(line_id)
                 if line.exists():
-                    line._lifestyle_apply_color(color)
+                    if color:
+                        line._lifestyle_apply_color(color)
+                    if made_to_order:
+                        line._lifestyle_mark_made_to_order()
         except Exception:
             pass
         return values
@@ -487,22 +494,35 @@ class SaleOrder(models.Model):
     def action_send_photo_to_customer(self):
         self.ensure_one()
         self.action_send_media_update(new_count=1)
+
+
 class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'
 
     lifestyle_color = fields.Char(string='Selected Color', copy=False)
+    lifestyle_made_to_order = fields.Boolean(string='Made to Order', copy=False)
+
+    def _lifestyle_line_base_name(self, prefixes):
+        return '\n'.join(
+            value for value in (self.name or '').splitlines()
+            if not any(value.strip().lower().startswith(prefix) for prefix in prefixes)
+        ).strip()
 
     def _lifestyle_apply_color(self, color):
         color_text = str(color or '').strip()[:64]
         if not color_text:
             return
         for line in self:
-            base_lines = [
-                value for value in (line.name or '').splitlines()
-                if not value.strip().lower().startswith('color:')
-            ]
-            base_name = '\n'.join(base_lines).strip()
+            base_name = line._lifestyle_line_base_name(['color:'])
             line.sudo().write({
                 'lifestyle_color': color_text,
                 'name': (base_name + '\nColor: ' + color_text).strip(),
+            })
+
+    def _lifestyle_mark_made_to_order(self):
+        for line in self:
+            base_name = line._lifestyle_line_base_name(['made to order:'])
+            line.sudo().write({
+                'lifestyle_made_to_order': True,
+                'name': (base_name + '\nMade to Order: Yes').strip(),
             })

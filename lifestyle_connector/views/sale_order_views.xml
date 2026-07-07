@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <record id="view_lifestyle_stage_correction_wizard_form" model="ir.ui.view">
         <field name="name">lifestyle.stage.correction.wizard.form</field>
@@ -81,6 +81,7 @@
                  color never appeared as a list column. -->
             <xpath expr="//field[@name='order_line']/list//field[@name='product_template_id']" position="after">
                 <field name="lifestyle_color" optional="show" readonly="1"/>
+                <field name="lifestyle_made_to_order" optional="show" readonly="1"/>
             </xpath>
             <xpath expr="//field[@name='partner_id']" position="after">
                 <field name="fulfillment_type"/>

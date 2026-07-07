@@ -35,9 +35,14 @@
                 <span t-elif="product.sudo().rl_available_qty &gt; 0" class="rl-pd-stock rl-pd-stock-low">
                     <i class="fa fa-exclamation-circle"/> Only <t t-esc="product.sudo().rl_available_qty"/> left &#8212; order soon
                 </span>
-                <span t-else="" class="rl-pd-stock rl-pd-stock-mto">
+                <button t-else="" type="button" class="rl-pd-stock rl-pd-stock-mto rl-made-to-order-btn"
+                        t-att-data-product-id="product.id"
+                        t-att-data-product-name="product.name">
                     <i class="fa fa-clock-o"/> Made to order
-                </span>
+                </button>
+                <p id="rl_mto_success" class="rl-mto-success mt-2" style="display:none;">
+                    <i class="fa fa-check-circle"/> Thank you for placing your order we'll contact you back.
+                </p>
             </div>
 
             <!-- Star rating + sold count -->
@@ -121,38 +126,6 @@
                         <span class="rl-card-room-tag" style="font-size:0.82rem;padding:0.3rem 0.75rem;">
                             <i class="fa fa-home me-1"/><t t-esc="room.name"/>
                         </span>
-                    </t>
-                </div>
-            </div>
-
-            <!-- Notify me when back in stock → creates a CRM lead -->
-            <div id="notify_stock" class="lifestyle-card mt-3"
-                 t-if="product.sudo().is_storable and product.sudo().rl_available_qty &lt;= 0">
-                <h6 class="mb-2"><i class="fa fa-bell-o me-1"/> Out of stock</h6>
-                <div id="rl_notify_success" style="display:none;">
-                    <p class="text-success mb-0">
-                        <i class="fa fa-check-circle"/> You're on the list — we'll contact you when it's back.
-                    </p>
-                </div>
-                <div id="rl_notify_form">
-                    <p class="text-muted small mb-3">Get notified the moment this comes back in stock.</p>
-                    <t t-if="not website.is_public_user()">
-                        <button type="button" class="btn btn-primary rl-notify-btn"
-                                t-att-data-product-id="product.id"
-                                t-att-data-product-name="product.name">
-                            <i class="fa fa-bell"/> Notify Me
-                        </button>
-                    </t>
-                    <t t-else="">
-                        <div class="d-flex gap-2 flex-wrap align-items-center">
-                            <input type="email" class="form-control rl-notify-email"
-                                   style="max-width:260px;" placeholder="Your email address"/>
-                            <button type="button" class="btn btn-primary rl-notify-btn"
-                                    t-att-data-product-id="product.id"
-                                    t-att-data-product-name="product.name">
-                                <i class="fa fa-bell"/> Notify Me
-                            </button>
-                        </div>
                     </t>
                 </div>
             </div>

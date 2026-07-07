@@ -173,7 +173,7 @@ class LifestyleWebsiteSale(WebsiteSale):
 
     @http.route('/shop/notify_stock', type='json', auth='public', website=True, methods=['POST'])
     def notify_stock(self, product_id=None, email='', **kw):
-        """Create a CRM lead so staff can follow up on back-in-stock requests."""
+        """Create a CRM lead so staff can follow up on made-to-order requests."""
         if not product_id:
             return {'ok': False}
         try:
@@ -185,9 +185,7 @@ class LifestyleWebsiteSale(WebsiteSale):
             if not request.env.user._is_public():
                 partner = request.env.user.partner_id
                 email_from = partner.email or email_from
-            if not email_from:
-                return {'ok': False, 'need_email': True}
-            lead_name = 'Back in Stock: %s' % product.name
+            lead_name = 'Made to Order: %s' % product.name
             existing = request.env['crm.lead'].sudo().search([
                 ('email_from', '=', email_from),
                 ('name', '=', lead_name),
@@ -196,15 +194,14 @@ class LifestyleWebsiteSale(WebsiteSale):
             if existing:
                 return {'ok': True}
             CrmTag = request.env['crm.tag'].sudo()
-            tag = CrmTag.search([('name', '=', 'Stock Notification')], limit=1)
+            tag = CrmTag.search([('name', '=', 'Made to Order')], limit=1)
             if not tag:
-                tag = CrmTag.create({'name': 'Stock Notification'})
+                tag = CrmTag.create({'name': 'Made to Order'})
             lead_vals = {
                 'name': lead_name,
-                'email_from': email_from,
                 'type': 'opportunity',
                 'description': (
-                    'Customer requested a stock notification.\n\n'
+                    'Customer clicked Made to order on the website.\n\n'
                     'Product: %s\nProduct URL: %s%s'
                 ) % (
                     product.name,
@@ -213,6 +210,8 @@ class LifestyleWebsiteSale(WebsiteSale):
                 ),
                 'tag_ids': [(4, tag.id)],
             }
+            if email_from:
+                lead_vals['email_from'] = email_from
             if partner:
                 lead_vals['partner_id'] = partner.id
             request.env['crm.lead'].sudo().create(lead_vals)

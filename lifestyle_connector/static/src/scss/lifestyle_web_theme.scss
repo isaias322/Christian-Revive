@@ -6304,3 +6304,29 @@ footer .rounded-circle,
         animation: none;
     }
 }
+
+
+.rl-made-to-order-btn {
+    border: 0;
+    cursor: pointer;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease;
+}
+
+.rl-made-to-order-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 22px rgba(49, 56, 44, 0.14);
+}
+
+.rl-made-to-order-btn:disabled {
+    cursor: wait;
+    opacity: 0.78;
+}
+
+.rl-mto-success {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin-bottom: 0;
+    color: #4f6f43;
+    font-weight: 700;
+}

@@ -1046,20 +1046,14 @@ function hideProductPolicies() {
 }
 
 function setupNotifyStock() {
-    var btn = document.querySelector('.rl-notify-btn');
+    var btn = document.querySelector('.rl-made-to-order-btn, .rl-notify-btn');
     if (!btn) return;
     btn.addEventListener('click', function () {
         var productId = btn.dataset.productId;
         var emailInput = document.querySelector('.rl-notify-email');
         var email = emailInput ? emailInput.value.trim() : '';
-        if (emailInput && !email) {
-            emailInput.classList.add('is-invalid');
-            emailInput.focus();
-            return;
-        }
-        if (emailInput) { emailInput.classList.remove('is-invalid'); }
         btn.disabled = true;
-        btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Saving…';
+        btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Sending...';
         fetch('/shop/notify_stock', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -1071,22 +1065,20 @@ function setupNotifyStock() {
         .then(function (r) { return r.json(); })
         .then(function (data) {
             if (data.result && data.result.ok) {
-                var form = document.getElementById('rl_notify_form');
-                var success = document.getElementById('rl_notify_success');
-                if (form) { form.style.display = 'none'; }
+                var success = document.getElementById('rl_mto_success') || document.getElementById('rl_notify_success');
+                btn.style.display = 'none';
                 if (success) { success.style.display = ''; }
             } else {
                 btn.disabled = false;
-                btn.innerHTML = '<i class="fa fa-bell"></i> Notify Me';
+                btn.innerHTML = '<i class="fa fa-clock-o"></i> Made to order';
             }
         })
         .catch(function () {
             btn.disabled = false;
-            btn.innerHTML = '<i class="fa fa-bell"></i> Notify Me';
+            btn.innerHTML = '<i class="fa fa-clock-o"></i> Made to order';
         });
     });
 }
-
 function enhanceWebsite() {
     document.documentElement.classList.add('rl-site-ready');
     markShopPage();

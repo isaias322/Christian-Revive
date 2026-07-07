@@ -35,14 +35,24 @@
                 <span t-elif="product.sudo().rl_available_qty &gt; 0" class="rl-pd-stock rl-pd-stock-low">
                     <i class="fa fa-exclamation-circle"/> Only <t t-esc="product.sudo().rl_available_qty"/> left &#8212; order soon
                 </span>
-                <button t-else="" type="button" class="rl-pd-stock rl-pd-stock-mto rl-made-to-order-btn"
-                        t-att-data-product-id="product.id"
-                        t-att-data-product-name="product.name">
-                    <i class="fa fa-clock-o"/> Made to order
-                </button>
-                <p id="rl_mto_success" class="rl-mto-success mt-2" style="display:none;">
-                    <i class="fa fa-check-circle"/> Thank you for placing your order we'll contact you back.
-                </p>
+                <t t-else="">
+                    <t t-set="mto_lead_name" t-value="'Made to Order: %s' % product.name"/>
+                    <t t-set="mto_requested" t-value="False"/>
+                    <t t-if="website.is_public_user()"
+                       t-set="mto_requested"
+                       t-value="int(product.id) in (request.session.get('rl_mto_requested_products') or [])"/>
+                    <t t-if="not website.is_public_user()"
+                       t-set="mto_requested"
+                       t-value="bool(request.env['crm.lead'].sudo().search_count([('name', '=', mto_lead_name), ('active', '=', True), ('partner_id', '=', request.env.user.partner_id.id)]))"/>
+                    <button t-if="not mto_requested" type="button" class="rl-pd-stock rl-pd-stock-mto rl-made-to-order-btn"
+                            t-att-data-product-id="product.id"
+                            t-att-data-product-name="product.name">
+                        <i class="fa fa-clock-o"/> Made to order
+                    </button>
+                    <p id="rl_mto_success" class="rl-mto-success mt-2" t-att-style="'' if mto_requested else 'display:none;'">
+                        <i class="fa fa-check-circle"/> Thank you for placing your order we'll contact you back.
+                    </p>
+                </t>
             </div>
 
             <!-- Star rating + sold count -->
@@ -558,7 +568,7 @@
                         <div class="row align-items-end g-4">
                             <div class="col-12 col-lg-7">
                                 <span class="rl-contact-kicker">Revive Lifestyle Support</span>
-                                <h1>LetÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢s shape your home together</h1>
+                                <h1>LetÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢s shape your home together</h1>
                                 <p>
                                     Questions about a furniture piece, custom finish, delivery, or an active order?
                                     Send a note and our team will help you with the next clear step.

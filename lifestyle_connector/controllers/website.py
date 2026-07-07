@@ -186,13 +186,22 @@ class LifestyleWebsiteSale(WebsiteSale):
                 partner = request.env.user.partner_id
                 email_from = partner.email or email_from
             lead_name = 'Made to Order: %s' % product.name
-            existing = request.env['crm.lead'].sudo().search([
-                ('email_from', '=', email_from),
+            duplicate_domain = [
                 ('name', '=', lead_name),
                 ('active', '=', True),
-            ], limit=1)
-            if existing:
-                return {'ok': True}
+            ]
+            if partner:
+                duplicate_domain.append(('partner_id', '=', partner.id))
+            elif email_from:
+                duplicate_domain.append(('email_from', '=', email_from))
+            else:
+                requested_products = set(request.session.get('rl_mto_requested_products') or [])
+                if int(product.id) in requested_products:
+                    return {'ok': True, 'already': True}
+            if partner or email_from:
+                existing = request.env['crm.lead'].sudo().search(duplicate_domain, limit=1)
+                if existing:
+                    return {'ok': True, 'already': True}
             CrmTag = request.env['crm.tag'].sudo()
             tag = CrmTag.search([('name', '=', 'Made to Order')], limit=1)
             if not tag:
@@ -215,6 +224,10 @@ class LifestyleWebsiteSale(WebsiteSale):
             if partner:
                 lead_vals['partner_id'] = partner.id
             request.env['crm.lead'].sudo().create(lead_vals)
+            if not partner and not email_from:
+                requested_products = set(request.session.get('rl_mto_requested_products') or [])
+                requested_products.add(int(product.id))
+                request.session['rl_mto_requested_products'] = list(requested_products)
             return {'ok': True}
         except Exception:
             return {'ok': False}

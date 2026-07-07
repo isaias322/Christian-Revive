@@ -821,7 +821,7 @@ a {
 }
 .rl-pd-stock-ok  { color: #2A6B2A; background: rgba(210, 240, 210, 0.85); }
 .rl-pd-stock-low { color: #7B5322; background: rgba(255, 239, 209, 0.9); }
-.rl-pd-stock-mto { color: #5A5A5A; background: rgba(220, 220, 220, 0.8); }
+.rl-pd-stock-mto { color: #ffffff; background: #78946f; box-shadow: 0 8px 18px rgba(74, 104, 61, 0.18); }
 
 .rl-pd-meta-row {
     display: flex;
@@ -6314,7 +6314,8 @@ footer .rounded-circle,
 
 .rl-made-to-order-btn:hover {
     transform: translateY(-1px);
-    box-shadow: 0 10px 22px rgba(49, 56, 44, 0.14);
+    background: #5f7653;
+    box-shadow: 0 10px 22px rgba(49, 56, 44, 0.18);
 }
 
 .rl-made-to-order-btn:disabled {

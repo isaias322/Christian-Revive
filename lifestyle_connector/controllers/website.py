@@ -86,6 +86,37 @@ class LifestyleWebsite(http.Controller):
     def contactus_thank_you(self, **kwargs):
         return request.render('lifestyle_connector.lifestyle_contactus_thank_you_page', {})
 
+    @http.route(['/christianrevive', '/christianrevive/shop'], type='http', auth='public',
+                website=True, sitemap=True)
+    def christian_revive_store(self, search='', categ=None, **kwargs):
+        """Christian Revive storefront: the web counterpart of the OneVoice27
+        app's Store tab. Shows products flagged 'Show in Christian Revive
+        App' (is_store_product); buying flows through the standard product
+        page, cart and checkout shared with the Lifestyle shop."""
+        Product = request.env['product.template'].sudo()
+        domain = Product._cr_app_visibility_domain() + [
+            ('sale_ok', '=', True), ('active', '=', True),
+        ]
+        search_text = str(search or '').strip()[:80]
+        if search_text:
+            domain.append(('name', 'ilike', search_text))
+        all_products = Product.search(domain, order='store_sequence asc, id desc')
+        categories = all_products.mapped('categ_id').sorted('name')
+        categ_id = int(categ) if categ and str(categ).isdigit() else None
+        products = (
+            all_products.filtered(lambda p: p.categ_id.id == categ_id)
+            if categ_id else all_products
+        )
+        deal_products = products.filtered(
+            lambda p: p.compare_price and p.compare_price > p.list_price)
+        return request.render('lifestyle_connector.christian_revive_storefront', {
+            'products': products,
+            'categories': categories,
+            'active_categ_id': categ_id,
+            'search_query': search_text,
+            'deal_count': len(deal_products),
+        })
+
 class LifestyleCart(Cart):
     """Require a signed-in customer before anything enters the cart.
 
@@ -99,6 +130,18 @@ class LifestyleCart(Cart):
     def add_to_cart(self, *args, **kwargs):
         if request.env.user._is_public():
             raise UserError('Please sign in to add products to your cart.')
+        product_id = kwargs.get('product_id') or kwargs.get('product_template_id')
+        if not product_id and args:
+            product_id = args[0]
+        try:
+            product = request.env['product.product'].sudo().browse(int(product_id or 0))
+            product_tmpl = product.product_tmpl_id if product.exists() else request.env['product.template'].sudo().browse(int(product_id or 0))
+            if product_tmpl.exists() and product_tmpl.is_storable and product_tmpl.rl_available_qty <= 0:
+                raise UserError('This product is made to order. Please use the Made to order button.')
+        except UserError:
+            raise
+        except Exception:
+            pass
         return super().add_to_cart(*args, **kwargs)
 
 

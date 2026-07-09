@@ -979,6 +979,91 @@
         </xpath>
     </template>
 
+    <!-- Christian Revive storefront: web counterpart of the OneVoice27
+         app's Store tab. Products come from the same database, flagged
+         "Show in Christian Revive App"; product pages, cart and checkout
+         are the shared website_sale flow. -->
+    <template id="christian_revive_storefront" name="Christian Revive Store">
+        <t t-call="website.layout">
+            <div id="wrap" class="oe_structure cr-page">
+                <section class="cr-hero">
+                    <div class="container position-relative">
+                        <span class="cr-kicker">Christian Revive Store</span>
+                        <h1>Products that support our ministry</h1>
+                        <p>
+                            Browse pieces from the Christian Revive store — every purchase
+                            helps our community and outreach projects.
+                        </p>
+                        <form class="cr-search" action="/christianrevive" method="get">
+                            <input type="hidden" name="categ" t-att-value="active_categ_id or ''"/>
+                            <input type="text" name="search" placeholder="Search the store..."
+                                   t-att-value="search_query"/>
+                            <button type="submit" aria-label="Search"><i class="fa fa-search"/></button>
+                        </form>
+                        <div t-if="deal_count" class="cr-deal-note">
+                            <i class="fa fa-bolt"/>
+                            <t t-esc="deal_count"/> item<t t-if="deal_count != 1">s</t> on special price right now
+                        </div>
+                    </div>
+                </section>
+
+                <section class="cr-body">
+                    <div class="container">
+                        <div t-if="categories" class="cr-categ-row">
+                            <a t-attf-href="/christianrevive?search=#{search_query}"
+                               t-attf-class="cr-categ-pill #{'is-active' if not active_categ_id else ''}">All</a>
+                            <a t-foreach="categories" t-as="category"
+                               t-attf-href="/christianrevive?categ=#{category.id}&amp;search=#{search_query}"
+                               t-attf-class="cr-categ-pill #{'is-active' if active_categ_id == category.id else ''}">
+                                <t t-esc="category.name"/>
+                            </a>
+                        </div>
+
+                        <div t-if="not products" class="cr-empty">
+                            <i class="fa fa-search"/>
+                            <h3>Nothing matched</h3>
+                            <p>Try a different search, or browse all products.</p>
+                            <a href="/christianrevive" class="cr-btn">Show everything</a>
+                        </div>
+
+                        <div class="cr-grid">
+                            <a t-foreach="products" t-as="product"
+                               t-att-href="product.website_url or ('/shop/product/%s' % product.id)"
+                               class="cr-card">
+                                <div class="cr-card-img">
+                                    <img t-att-src="'/web/image/product.template/%s/image_512' % product.id"
+                                         t-att-alt="product.name" loading="lazy"/>
+                                    <span t-if="product.compare_price and product.compare_price &gt; product.list_price"
+                                          class="cr-badge-off">
+                                        <t t-esc="'{:.0f}% OFF'.format((product.compare_price - product.list_price) / product.compare_price * 100)"/>
+                                    </span>
+                                </div>
+                                <div class="cr-card-body">
+                                    <span class="cr-card-cat" t-esc="product.categ_id.name"/>
+                                    <h3 t-esc="product.name"/>
+                                    <div class="cr-card-meta">
+                                        <span t-if="product.store_rating" class="cr-stars">
+                                            <i class="fa fa-star"/> <t t-esc="'%.1f' % product.store_rating"/>
+                                        </span>
+                                        <span t-if="product.store_sold_count" class="cr-sold">
+                                            <t t-esc="product.store_sold_count"/> sold
+                                        </span>
+                                    </div>
+                                    <div class="cr-card-price">
+                                        <strong>Rs. <t t-esc="'{:,.0f}'.format(product.list_price)"/></strong>
+                                        <s t-if="product.compare_price and product.compare_price &gt; product.list_price">
+                                            Rs. <t t-esc="'{:,.0f}'.format(product.compare_price)"/>
+                                        </s>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </t>
+    </template>
+
     <template id="lifestyle_shop_product_card_extras" inherit_id="website_sale.products_item" name="Revive Lifestyle Product Card Extras">
         <xpath expr="//div[contains(concat(' ', normalize-space(@class), ' '), ' o_wsale_product_information ')]" position="inside">
             <t t-if="product.sudo().is_storable and product.sudo().rl_available_qty &lt;= 0">

@@ -81,7 +81,6 @@
                  color never appeared as a list column. -->
             <xpath expr="//field[@name='order_line']/list//field[@name='product_template_id']" position="after">
                 <field name="lifestyle_color" optional="show" readonly="1"/>
-                <field name="lifestyle_made_to_order" optional="show" readonly="1"/>
             </xpath>
             <xpath expr="//field[@name='partner_id']" position="after">
                 <field name="fulfillment_type"/>

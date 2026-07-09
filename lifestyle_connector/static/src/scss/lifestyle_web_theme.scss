@@ -5626,6 +5626,307 @@ footer .rounded-circle,
     }
 }
 
+/* ── Christian Revive storefront (/christianrevive) ───────────────────── */
+/* Palette from the OneVoice27 app (lib/app_color.dart):
+   deep brown #4A3728 · cream #FAF6F1 · tan #D4C5B2 · bronze #8B6B4A
+   ink #3B2D1F · muted taupe #9B8C7D */
+.cr-page {
+    background: #FAF6F1;
+    color: #3B2D1F;
+}
+
+.cr-hero {
+    position: relative;
+    overflow: hidden;
+    padding: 4rem 0 4.5rem;
+    color: #FAF6F1;
+    background:
+        radial-gradient(circle at 85% 10%, rgba(212, 197, 178, 0.20), transparent 22rem),
+        linear-gradient(140deg, #4A3728 0%, #3B2D1F 100%);
+}
+
+.cr-hero::after {
+    content: "";
+    position: absolute;
+    right: -5rem;
+    bottom: -7rem;
+    width: 18rem;
+    height: 18rem;
+    border-radius: 50%;
+    background: rgba(212, 197, 178, 0.12);
+    pointer-events: none;
+    animation: rlShopCircleFloat 14s ease-in-out infinite;
+}
+
+.cr-kicker {
+    display: inline-block;
+    margin-bottom: 0.6rem;
+    color: #D4C5B2;
+    font-size: 0.78rem;
+    font-weight: 900;
+    letter-spacing: 0.1rem;
+    text-transform: uppercase;
+}
+
+.cr-hero h1 {
+    max-width: 700px;
+    margin-bottom: 0.6rem;
+    color: #FAF6F1;
+    font-family: 'Fraunces', serif;
+    font-size: 2.6rem;
+    line-height: 1.1;
+}
+
+.cr-hero p {
+    max-width: 620px;
+    margin-bottom: 1.4rem;
+    color: rgba(250, 246, 241, 0.78);
+    line-height: 1.6;
+}
+
+.cr-search {
+    display: flex;
+    max-width: 460px;
+    border-radius: 999px;
+    overflow: hidden;
+    background: #FAF6F1;
+    box-shadow: 0 18px 46px rgba(0, 0, 0, 0.22);
+}
+
+.cr-search input {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: 0.85rem 1.25rem;
+    border: none;
+    background: transparent;
+    color: #3B2D1F;
+    font-weight: 600;
+}
+
+.cr-search input:focus {
+    outline: none;
+}
+
+.cr-search button {
+    padding: 0 1.4rem;
+    border: none;
+    color: #FAF6F1;
+    background: #8B6B4A;
+    transition: background 0.15s;
+}
+
+.cr-search button:hover {
+    background: #3B2D1F;
+}
+
+.cr-deal-note {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1.1rem;
+    padding: 0.45rem 0.95rem;
+    border: 1px solid rgba(212, 197, 178, 0.4);
+    border-radius: 999px;
+    color: #D4C5B2;
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+.cr-body {
+    padding: 2.2rem 0 4rem;
+}
+
+.cr-categ-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+    margin-bottom: 1.6rem;
+}
+
+.cr-categ-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.45rem 1rem;
+    border: 1px solid rgba(74, 55, 40, 0.22);
+    border-radius: 999px;
+    color: #3B2D1F;
+    background: #FFFFFF;
+    font-weight: 700;
+    font-size: 0.92rem;
+    text-decoration: none;
+    transition: background 0.15s, color 0.15s;
+}
+
+.cr-categ-pill:hover {
+    background: #D4C5B2;
+    color: #3B2D1F;
+}
+
+.cr-categ-pill.is-active {
+    border-color: #4A3728;
+    background: #4A3728;
+    color: #FAF6F1;
+}
+
+.cr-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1.3rem;
+}
+
+.cr-card {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid rgba(74, 55, 40, 0.12);
+    border-radius: 1.3rem;
+    overflow: hidden;
+    background: #FFFFFF;
+    box-shadow: 0 16px 40px rgba(59, 45, 31, 0.08);
+    text-decoration: none;
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.cr-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 26px 60px rgba(59, 45, 31, 0.16);
+}
+
+.cr-card-img {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    background: #FFFFFF;
+}
+
+.cr-card-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: transform 0.25s ease;
+}
+
+.cr-card:hover .cr-card-img img {
+    transform: scale(1.04);
+}
+
+.cr-badge-off {
+    position: absolute;
+    left: 0.8rem;
+    top: 0.8rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: 999px;
+    color: #FAF6F1;
+    background: #8B6B4A;
+    font-size: 0.75rem;
+    font-weight: 900;
+}
+
+.cr-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    padding: 1rem 1.15rem 1.2rem;
+}
+
+.cr-card-cat {
+    color: #9B8C7D;
+    font-size: 0.76rem;
+    font-weight: 800;
+    letter-spacing: 0.05rem;
+    text-transform: uppercase;
+}
+
+.cr-card-body h3 {
+    margin: 0;
+    color: #3B2D1F;
+    font-size: 1.08rem;
+    font-weight: 800;
+    line-height: 1.3;
+}
+
+.cr-card-meta {
+    display: flex;
+    gap: 0.9rem;
+    color: #9B8C7D;
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.cr-stars i {
+    color: #C89B5F;
+}
+
+.cr-card-price {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+    margin-top: 0.35rem;
+}
+
+.cr-card-price strong {
+    color: #4A3728;
+    font-size: 1.12rem;
+    font-weight: 900;
+}
+
+.cr-card-price s {
+    color: #9B8C7D;
+    font-size: 0.9rem;
+}
+
+.cr-empty {
+    margin: 2rem auto;
+    max-width: 460px;
+    padding: 2.4rem 2rem;
+    border: 1px solid rgba(74, 55, 40, 0.14);
+    border-radius: 1.5rem;
+    background: #FFFFFF;
+    text-align: center;
+    box-shadow: 0 18px 46px rgba(59, 45, 31, 0.08);
+}
+
+.cr-empty i {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    margin-bottom: 0.8rem;
+    border-radius: 1rem;
+    color: #8B6B4A;
+    background: #D4C5B2;
+}
+
+.cr-btn {
+    display: inline-flex;
+    margin-top: 0.6rem;
+    padding: 0.6rem 1.4rem;
+    border-radius: 999px;
+    color: #FAF6F1;
+    background: #4A3728;
+    font-weight: 800;
+    text-decoration: none;
+}
+
+.cr-btn:hover {
+    background: #8B6B4A;
+    color: #FAF6F1;
+}
+
+@media (max-width: 575.98px) {
+    .cr-hero {
+        padding: 2.8rem 0 3.2rem;
+    }
+
+    .cr-hero h1 {
+        font-size: 1.9rem;
+    }
+
+    .cr-grid {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 0.9rem;
+    }
+}
+
 /* ── Homepage polish ──────────────────────────────────────────────────── */
 /* Hero content rises in a stagger on load and on every slide change
    (the slider toggles .is-active, which re-triggers the animations). */

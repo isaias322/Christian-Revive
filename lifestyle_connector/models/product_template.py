@@ -161,27 +161,29 @@ class ProductTemplate(models.Model):
 
     def _lifestyle_is_app_visible(self):
         self.ensure_one()
-        if 'is_store_product' in self._fields:
-            return bool(self.is_store_product)
         return bool(self.lifestyle_app_visible)
 
     @api.model
     def _lifestyle_app_visibility_domain(self):
         """Single source of truth for "is this product part of the Revive
         Lifestyle catalog" - shared by the app's API and the website's shop
-        domain so the two surfaces can never drift apart."""
-        if 'is_store_product' in self._fields:
-            return [('is_store_product', '=', True)]
+        domain so the two surfaces can never drift apart.
+
+        Deliberately independent from is_store_product: that flag is the
+        Christian Revive app/website catalog, and each brand is curated by
+        its own checkbox on the product form."""
         return [('lifestyle_app_visible', '=', True)]
 
     def _lifestyle_sync_website_published(self):
-        """Keeps the public website in lockstep with whichever flag already
-        controls the Revive Lifestyle app catalog, so admins manage product
-        visibility in one place instead of two separate toggles."""
+        """Keeps the public website in lockstep with the app catalog flags.
+
+        A product page must be publicly reachable when EITHER brand lists
+        the product: the Lifestyle shop and the Christian Revive storefront
+        both link to the same website product page."""
         if 'website_published' not in self._fields:
             return
         for product in self:
-            visible = product._lifestyle_is_app_visible()
+            visible = bool(product.lifestyle_app_visible or product.is_store_product)
             if product.website_published != visible:
                 product.website_published = visible
 
@@ -273,6 +275,41 @@ class ProductTemplate(models.Model):
             'carousel with a countdown until this time.'
         ),
     )
+
+    # ── Christian Revive app (OneVoice27) store settings ──────────────────
+    # The Christian Revive app's Store tab already reads products flagged
+    # with is_store_product (defined in volunteer_and_donation_management),
+    # so that same field - relabeled "Show in Christian Revive App" on the
+    # product form - drives both the app and the /christianrevive website.
+    # Physical product data (color images, reviews, rooms) is shared
+    # between both brands; only behavior is per-app.
+    cr_deal_ends_at = fields.Datetime(
+        string='Christian Revive Deal Ends At',
+        help=(
+            'Optional. Requires Compare at Price to be higher than Price. '
+            'While set in the future, this product appears in the Christian Revive '
+            'app\'s Flash Deals carousel with a countdown until this time.'
+        ),
+    )
+    cr_store_image_2_product_id = fields.Many2one(
+        'product.template', string='CR Image 2 Links To Product',
+        help='Optional. If set, tapping this photo in the Christian Revive app opens that product page instead of zooming in.',
+    )
+    cr_store_image_3_product_id = fields.Many2one(
+        'product.template', string='CR Image 3 Links To Product',
+        help='Optional. If set, tapping this photo in the Christian Revive app opens that product page instead of zooming in.',
+    )
+    cr_store_image_4_product_id = fields.Many2one(
+        'product.template', string='CR Image 4 Links To Product',
+        help='Optional. If set, tapping this photo in the Christian Revive app opens that product page instead of zooming in.',
+    )
+
+    @api.model
+    def _cr_app_visibility_domain(self):
+        """Catalog domain for the Christian Revive app / website.
+
+        Matches what the OneVoice27 app's Store tab already queries."""
+        return [('is_store_product', '=', True)]
 
     def action_optimize_lifestyle_images(self):
         """Re-saves every image field on these products through itself,

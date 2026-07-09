@@ -5641,16 +5641,22 @@ footer .rounded-circle,
 }
 
 .cr-nav .container {
-    display: flex;
+    display: flex !important;
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
-    padding-top: 0.75rem;
-    padding-bottom: 0.75rem;
+    /* Full-width bar so the brand sits near the viewport's left edge
+       instead of the centered container's. */
+    max-width: 100% !important;
+    padding: 0.75rem 1.75rem;
+}
+
+.cr-nav-brand {
+    margin-right: auto;
 }
 
 .cr-nav-brand img {
-    height: 44px;
+    height: 44px !important;
     width: auto;
     display: block;
 }

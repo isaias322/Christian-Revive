@@ -992,8 +992,10 @@
             <t t-set="no_footer" t-value="True"/>
             <t t-set="title">Christian Revive Store</t>
             <t t-set="head">
-                <link rel="icon" type="image/png" href="/lifestyle_connector/static/src/img/cr_icon.png"/>
-                <link rel="shortcut icon" type="image/png" href="/lifestyle_connector/static/src/img/cr_icon.png"/>
+                <!-- ?v= busts the browser's (very sticky) favicon cache -->
+                <link rel="icon" type="image/png" sizes="any" href="/lifestyle_connector/static/src/img/cr_icon.png?v=2"/>
+                <link rel="shortcut icon" type="image/png" href="/lifestyle_connector/static/src/img/cr_icon.png?v=2"/>
+                <link rel="apple-touch-icon" href="/lifestyle_connector/static/src/img/cr_icon.png?v=2"/>
             </t>
             <div id="wrap" class="oe_structure cr-page">
                 <nav class="cr-nav">

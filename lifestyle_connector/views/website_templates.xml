@@ -979,6 +979,52 @@
         </xpath>
     </template>
 
+    <!-- Portal pages (/my/orders, order details...) are shared between the
+         two storefronts. When the visitor's session came from the Christian
+         Revive store, dress them in CR branding: CR favicon and nav instead
+         of the Revive Lifestyle header/footer, and a CR tab title. -->
+    <template id="cr_portal_branding" inherit_id="website.layout" name="Christian Revive Portal Branding">
+        <xpath expr="//head" position="inside">
+            <t t-set="rl_cr_portal"
+               t-value="request and request.session.get('rl_web_brand') == 'cr' and request.httprequest.path.startswith('/my')"/>
+            <t t-if="rl_cr_portal">
+                <link rel="icon" type="image/png" href="/lifestyle_connector/static/src/img/cr_icon.png?v=2"/>
+                <link rel="shortcut icon" type="image/png" href="/lifestyle_connector/static/src/img/cr_icon.png?v=2"/>
+                <style>
+                    #wrapwrap > header { display: none !important; }
+                    #wrapwrap > footer { display: none !important; }
+                </style>
+                <script type="text/javascript">
+                    document.addEventListener('DOMContentLoaded', function () {
+                        document.title = document.title.replace(/\s*\|[^|]*$/, ' | Christian Revive');
+                    });
+                </script>
+            </t>
+        </xpath>
+        <xpath expr="//div[@id='wrapwrap']/header" position="before">
+            <nav t-if="rl_cr_portal" class="cr-nav">
+                <div class="container">
+                    <a href="/christianrevive" class="cr-nav-brand">
+                        <img src="/lifestyle_connector/static/src/img/cr_logo.png" alt="Christian Revive"/>
+                    </a>
+                    <div class="cr-nav-links">
+                        <a href="/christianrevive">Store</a>
+                        <a href="/my/orders" class="is-active">My Orders</a>
+                        <a href="/shop/cart" class="cr-nav-cart" aria-label="Cart"><i class="fa fa-shopping-cart"/></a>
+                    </div>
+                </div>
+            </nav>
+        </xpath>
+        <xpath expr="//div[@id='wrapwrap']/main/t[@t-out='0']" position="after">
+            <footer t-if="rl_cr_portal" class="cr-footer">
+                <div class="container">
+                    <img src="/lifestyle_connector/static/src/img/cr_logo.png" alt="Christian Revive"/>
+                    <p>© Christian Revive — every purchase supports our community and outreach projects.</p>
+                </div>
+            </footer>
+        </xpath>
+    </template>
+
     <!-- Christian Revive storefront: web counterpart of the OneVoice27
          app's Store tab. Products come from the same database, flagged
          "Show in Christian Revive App"; product pages, cart and checkout

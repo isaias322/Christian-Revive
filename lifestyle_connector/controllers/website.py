@@ -10,6 +10,7 @@ class LifestyleWebsite(http.Controller):
 
     @http.route('/', type='http', auth='public', website=True, sitemap=True)
     def homepage(self, **kwargs):
+        request.session['rl_web_brand'] = 'lifestyle'
         homepage_slides = request.env['ir.ui.view'].browse()
         homepage_sections = request.env['ir.ui.view'].browse()
         homepage_top_sections = request.env['ir.ui.view'].browse()
@@ -93,6 +94,9 @@ class LifestyleWebsite(http.Controller):
         app's Store tab. Shows products flagged 'Show in Christian Revive
         App' (is_store_product); buying flows through the standard product
         page, cart and checkout shared with the Lifestyle shop."""
+        # Remember the brand so shared pages (portal, /my/orders) can wear
+        # Christian Revive branding for visitors who came from this store.
+        request.session['rl_web_brand'] = 'cr'
         Product = request.env['product.template'].sudo()
         domain = Product._cr_app_visibility_domain() + [
             ('sale_ok', '=', True), ('active', '=', True),
@@ -147,6 +151,11 @@ class LifestyleCart(Cart):
 
 class LifestyleWebsiteSale(WebsiteSale):
     """Website checkout customizations for Revive Lifestyle."""
+
+    @http.route()
+    def shop(self, *args, **kwargs):
+        request.session['rl_web_brand'] = 'lifestyle'
+        return super().shop(*args, **kwargs)
 
     @http.route('/shop/rl_login_status', type='json', auth='public', website=True, methods=['POST'])
     def rl_login_status(self, **kw):

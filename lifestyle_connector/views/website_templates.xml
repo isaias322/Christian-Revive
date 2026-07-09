@@ -985,7 +985,29 @@
          are the shared website_sale flow. -->
     <template id="christian_revive_storefront" name="Christian Revive Store">
         <t t-call="website.layout">
+            <!-- Own branding: hide the Revive Lifestyle header/footer and
+                 override the tab title + favicon for this page. The extra
+                 icon links render after the website favicon, so they win. -->
+            <t t-set="no_header" t-value="True"/>
+            <t t-set="no_footer" t-value="True"/>
+            <t t-set="title">Christian Revive Store</t>
+            <t t-set="head">
+                <link rel="icon" type="image/png" href="/lifestyle_connector/static/src/img/cr_icon.png"/>
+                <link rel="shortcut icon" type="image/png" href="/lifestyle_connector/static/src/img/cr_icon.png"/>
+            </t>
             <div id="wrap" class="oe_structure cr-page">
+                <nav class="cr-nav">
+                    <div class="container">
+                        <a href="/christianrevive" class="cr-nav-brand">
+                            <img src="/lifestyle_connector/static/src/img/cr_logo.png" alt="Christian Revive"/>
+                        </a>
+                        <div class="cr-nav-links">
+                            <a href="/christianrevive" class="is-active">Store</a>
+                            <a href="/my/orders">My Orders</a>
+                            <a href="/shop/cart" class="cr-nav-cart" aria-label="Cart"><i class="fa fa-shopping-cart"/></a>
+                        </div>
+                    </div>
+                </nav>
                 <section class="cr-hero">
                     <div class="container position-relative">
                         <span class="cr-kicker">Christian Revive Store</span>
@@ -1060,6 +1082,12 @@
                         </div>
                     </div>
                 </section>
+                <footer class="cr-footer">
+                    <div class="container">
+                        <img src="/lifestyle_connector/static/src/img/cr_logo.png" alt="Christian Revive"/>
+                        <p>© Christian Revive — every purchase supports our community and outreach projects.</p>
+                    </div>
+                </footer>
             </div>
         </t>
     </template>

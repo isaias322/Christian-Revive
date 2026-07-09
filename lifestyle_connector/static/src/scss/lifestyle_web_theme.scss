@@ -5635,6 +5635,74 @@ footer .rounded-circle,
     color: #3B2D1F;
 }
 
+.cr-nav {
+    background: #FAF6F1;
+    border-bottom: 1px solid rgba(74, 55, 40, 0.14);
+}
+
+.cr-nav .container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+}
+
+.cr-nav-brand img {
+    height: 44px;
+    width: auto;
+    display: block;
+}
+
+.cr-nav-links {
+    display: flex;
+    align-items: center;
+    gap: 1.4rem;
+}
+
+.cr-nav-links a {
+    color: #3B2D1F;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.cr-nav-links a:hover,
+.cr-nav-links a.is-active {
+    color: #8B6B4A;
+}
+
+.cr-nav-cart {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border: 1px solid rgba(74, 55, 40, 0.2);
+    border-radius: 50%;
+    background: #FFFFFF;
+}
+
+.cr-footer {
+    padding: 2.2rem 0;
+    border-top: 1px solid rgba(250, 246, 241, 0.12);
+    color: rgba(250, 246, 241, 0.75);
+    background: #3B2D1F;
+    text-align: center;
+}
+
+.cr-footer img {
+    height: 40px;
+    margin-bottom: 0.7rem;
+    filter: brightness(0) invert(1);
+    opacity: 0.9;
+}
+
+.cr-footer p {
+    margin: 0;
+    font-size: 0.92rem;
+}
+
 .cr-hero {
     position: relative;
     overflow: hidden;

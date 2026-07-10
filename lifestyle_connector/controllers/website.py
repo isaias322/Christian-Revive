@@ -162,7 +162,14 @@ class LifestyleCart(Cart):
             product = request.env['product.product'].sudo().browse(int(product_id or 0))
             product_tmpl = product.product_tmpl_id if product.exists() else request.env['product.template'].sudo().browse(int(product_id or 0))
             if product_tmpl.exists() and product_tmpl.is_storable and product_tmpl.rl_available_qty <= 0:
-                raise UserError('This product is made to order. Please use the Made to order button.')
+                raise UserError(
+                    '"%s" is made to order — it is not kept in stock, so it '
+                    'cannot be added to the cart. Use the "Made to order" '
+                    'button on the product page instead: our workshop will '
+                    'craft it specially for you, and our team will contact '
+                    'you to confirm the build time, final price and delivery.'
+                    % (product_tmpl.name or 'This product')
+                )
         except UserError:
             raise
         except Exception:

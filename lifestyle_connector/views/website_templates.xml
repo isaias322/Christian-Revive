@@ -1004,7 +1004,7 @@
                    (rl_order_obj and rl_order_obj.sudo()._rl_portal_brand() == 'cr')
                    or (not rl_order_obj and request.session.get('rl_web_brand') == 'cr' and any(
                        request.httprequest.path.startswith(prefix)
-                       for prefix in ('/my', '/shop/cart', '/shop/checkout', '/shop/address', '/shop/payment', '/shop/confirmation', '/web/login', '/web/signup', '/web/reset_password')
+                       for prefix in ('/my', '/shop', '/web/login', '/web/signup', '/web/reset_password')
                    ))
                )"/>
             <t t-if="rl_cr_portal">
@@ -1085,6 +1085,20 @@
                     .rl-cart-line-color {
                         background: rgba(139, 107, 74, 0.16) !important;
                         color: #6B4F34 !important;
+                    }
+                    /* Product page extras in brown */
+                    .rl-card-badge-mto,
+                    .rl-pd-stock-mto {
+                        background: #EFE6DB !important;
+                        color: #6B4F34 !important;
+                    }
+                    .rl-pd-stock-ok { color: #6B4F34 !important; }
+                    .rl-pd-swatch.rl-selected { outline-color: #8B6B4A !important; }
+                    .rl-pd-size-pill,
+                    .rl-card-room-tag {
+                        background: #EFE6DB !important;
+                        color: #4A3728 !important;
+                        border-color: rgba(74, 55, 40, 0.25) !important;
                     }
                     /* Order-confirmation extras in brown */
                     .rl-confirm-check { background: #4A3728 !important; box-shadow: 0 14px 30px rgba(74, 55, 40, 0.35) !important; }

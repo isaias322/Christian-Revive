@@ -5666,20 +5666,28 @@ footer .rounded-circle,
 
 .cr-nav-brand {
     margin-right: auto;
-    /* The CR wordmark is light-colored (made for dark backgrounds) - give
-       it a deep-brown chip so it reads clearly on the cream nav. */
+    /* The CR wordmark is light-colored (made for dark backgrounds): a dark
+       chip, but translucent and softly ringed so it melts into the cream
+       bar instead of floating on it. */
     display: inline-flex;
     align-items: center;
     padding: 0.45rem 0.95rem;
-    border-radius: 0.9rem;
-    background: linear-gradient(135deg, #4A3728, #3B2D1F);
-    box-shadow: 0 10px 24px rgba(59, 45, 31, 0.28);
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    border-radius: 1rem;
+    border: 1px solid rgba(74, 55, 40, 0.28);
+    background: linear-gradient(135deg, rgba(59, 45, 31, 0.92), rgba(74, 55, 40, 0.86));
+    backdrop-filter: blur(6px);
+    box-shadow:
+        inset 0 1px 0 rgba(250, 246, 241, 0.12),
+        0 4px 14px rgba(59, 45, 31, 0.16);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
 }
 
 .cr-nav-brand:hover {
     transform: translateY(-1px);
-    box-shadow: 0 14px 30px rgba(59, 45, 31, 0.34);
+    background: linear-gradient(135deg, #3B2D1F, #4A3728);
+    box-shadow:
+        inset 0 1px 0 rgba(250, 246, 241, 0.14),
+        0 8px 20px rgba(59, 45, 31, 0.24);
 }
 
 .cr-nav-brand img {

@@ -5666,28 +5666,48 @@ footer .rounded-circle,
 
 .cr-nav-brand {
     margin-right: auto;
-    /* The CR wordmark is light-colored (made for dark backgrounds): a dark
-       chip, but translucent and softly ringed so it melts into the cream
-       bar instead of floating on it. */
+    /* The CR wordmark is light-colored (made for dark backgrounds): a rich
+       leather-like pill - warm depth inside, a fine tan ring outside, and
+       a soft sheen that sweeps across on hover. */
+    position: relative;
+    overflow: hidden;
     display: inline-flex;
     align-items: center;
-    padding: 0.45rem 0.95rem;
-    border-radius: 1rem;
-    border: 1px solid rgba(74, 55, 40, 0.28);
-    background: linear-gradient(135deg, rgba(59, 45, 31, 0.92), rgba(74, 55, 40, 0.86));
-    backdrop-filter: blur(6px);
+    padding: 0.5rem 1.1rem;
+    border-radius: 999px;
+    border: 1px solid rgba(212, 197, 178, 0.5);
+    background: linear-gradient(150deg, #55422E 0%, #3B2D1F 55%, #2C2114 100%);
     box-shadow:
-        inset 0 1px 0 rgba(250, 246, 241, 0.12),
-        0 4px 14px rgba(59, 45, 31, 0.16);
-    transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+        inset 0 1px 0 rgba(250, 246, 241, 0.16),
+        inset 0 -8px 16px rgba(0, 0, 0, 0.28),
+        0 6px 18px rgba(59, 45, 31, 0.22);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+/* Sheen that sweeps across the pill on hover */
+.cr-nav-brand::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -60%;
+    width: 40%;
+    transform: skewX(-20deg);
+    background: linear-gradient(90deg, transparent, rgba(250, 246, 241, 0.20), transparent);
+    transition: left 0.45s ease;
+    pointer-events: none;
 }
 
 .cr-nav-brand:hover {
     transform: translateY(-1px);
-    background: linear-gradient(135deg, #3B2D1F, #4A3728);
     box-shadow:
-        inset 0 1px 0 rgba(250, 246, 241, 0.14),
-        0 8px 20px rgba(59, 45, 31, 0.24);
+        inset 0 1px 0 rgba(250, 246, 241, 0.2),
+        inset 0 -8px 16px rgba(0, 0, 0, 0.24),
+        0 10px 26px rgba(59, 45, 31, 0.3);
+}
+
+.cr-nav-brand:hover::after {
+    left: 120%;
 }
 
 .cr-nav-brand img {

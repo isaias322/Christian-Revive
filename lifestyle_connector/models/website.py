@@ -13,7 +13,27 @@ class Website(models.Model):
 
     def _product_domain(self):
         domain = super()._product_domain()
-        domain = domain + self.env['product.template']._lifestyle_app_visibility_domain()
+        Product = self.env['product.template']
+        # The Lifestyle /shop grid lists only the Lifestyle catalog - but
+        # everything else that consults this domain (the product page's
+        # add-to-cart possibility check, cart validation) must accept
+        # products of EITHER storefront: the Christian Revive store sells
+        # through the same product pages and cart. Restricting those to
+        # Lifestyle-only made CR-only products show "no valid combination".
+        path = request.httprequest.path if request else ''
+        is_shop_listing = (
+            path == '/shop'
+            or path.startswith('/shop/page')
+            or path.startswith('/shop/category')
+        )
+        if is_shop_listing:
+            domain = domain + Product._lifestyle_app_visibility_domain()
+        else:
+            domain = (
+                domain + ['|']
+                + Product._lifestyle_app_visibility_domain()
+                + Product._cr_app_visibility_domain()
+            )
 
         # color_options/size_options are plain comma-separated Char fields,
         # not real Odoo attributes, so the native attribute filters can't

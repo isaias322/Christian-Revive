@@ -5639,9 +5639,18 @@ footer .rounded-circle,
     position: sticky;
     top: 0;
     z-index: 1000;
-    background: #FAF6F1;
-    border-bottom: 1px solid rgba(74, 55, 40, 0.14);
-    box-shadow: 0 6px 22px rgba(59, 45, 31, 0.06);
+    background: rgba(250, 246, 241, 0.94);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(74, 55, 40, 0.12);
+    box-shadow: 0 8px 26px rgba(59, 45, 31, 0.07);
+}
+
+/* Thin brand accent line along the bar's bottom edge */
+.cr-nav::after {
+    content: "";
+    display: block;
+    height: 3px;
+    background: linear-gradient(90deg, #4A3728, #8B6B4A 45%, #D4C5B2);
 }
 
 .cr-nav .container {
@@ -5652,7 +5661,7 @@ footer .rounded-circle,
     /* Full-width bar so the brand sits near the viewport's left edge
        instead of the centered container's. */
     max-width: 100% !important;
-    padding: 0.75rem 1.75rem;
+    padding: 0.7rem 1.75rem;
 }
 
 .cr-nav-brand {
@@ -5661,9 +5670,16 @@ footer .rounded-circle,
        it a deep-brown chip so it reads clearly on the cream nav. */
     display: inline-flex;
     align-items: center;
-    padding: 0.4rem 0.8rem;
-    border-radius: 0.8rem;
-    background: #4A3728;
+    padding: 0.45rem 0.95rem;
+    border-radius: 0.9rem;
+    background: linear-gradient(135deg, #4A3728, #3B2D1F);
+    box-shadow: 0 10px 24px rgba(59, 45, 31, 0.28);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.cr-nav-brand:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 14px 30px rgba(59, 45, 31, 0.34);
 }
 
 .cr-nav-brand img {
@@ -5675,13 +5691,37 @@ footer .rounded-circle,
 .cr-nav-links {
     display: flex;
     align-items: center;
-    gap: 1.4rem;
+    gap: 1.6rem;
 }
 
 .cr-nav-links a {
     color: #3B2D1F;
     font-weight: 700;
     text-decoration: none;
+    transition: color 0.15s ease;
+}
+
+/* Animated bronze underline on the text links */
+.cr-nav-links > a:not(.cr-nav-cart):not(.cr-nav-signin) {
+    position: relative;
+    padding: 0.35rem 0;
+}
+
+.cr-nav-links > a:not(.cr-nav-cart):not(.cr-nav-signin)::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 100%;
+    bottom: -1px;
+    height: 2px;
+    border-radius: 999px;
+    background: #8B6B4A;
+    transition: right 0.2s ease;
+}
+
+.cr-nav-links > a:not(.cr-nav-cart):not(.cr-nav-signin):hover::after,
+.cr-nav-links > a.is-active:not(.cr-nav-cart)::after {
+    right: 0;
 }
 
 .cr-nav-links a:hover,
@@ -5694,35 +5734,45 @@ footer .rounded-circle,
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 2.5rem;
-    height: 2.5rem;
-    border: 1px solid rgba(74, 55, 40, 0.2);
+    width: 2.7rem;
+    height: 2.7rem;
+    border: none;
     border-radius: 50%;
-    background: #FFFFFF;
+    color: #FAF6F1 !important;
+    background: #4A3728;
+    box-shadow: 0 10px 24px rgba(59, 45, 31, 0.26);
+    transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.cr-nav-cart:hover {
+    background: #8B6B4A;
+    transform: translateY(-1px);
 }
 
 .cr-cart-badge {
     position: absolute;
-    top: -0.35rem;
-    right: -0.45rem;
+    top: -0.3rem;
+    right: -0.35rem;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     min-width: 1.15rem;
     height: 1.15rem;
     padding: 0 0.28rem;
+    border: 2px solid #FAF6F1;
     border-radius: 999px;
-    color: #FAF6F1;
-    background: #8B6B4A;
-    font-size: 0.7rem;
+    color: #3B2D1F;
+    background: #D4C5B2;
+    font-size: 0.68rem;
     font-weight: 900;
 }
 
 .cr-nav-signin {
-    padding: 0.4rem 1rem;
-    border: 1px solid rgba(74, 55, 40, 0.3);
+    padding: 0.45rem 1.1rem;
+    border: 1px solid rgba(74, 55, 40, 0.35);
     border-radius: 999px;
     background: #FFFFFF;
+    transition: background 0.15s ease, color 0.15s ease;
 }
 
 .cr-nav-signin:hover {
@@ -5730,8 +5780,31 @@ footer .rounded-circle,
     color: #FAF6F1 !important;
 }
 
+.cr-nav-user {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.4rem 1rem;
+    border-radius: 999px;
+    background: #EFE6DB;
+}
+
 .cr-nav-user i {
     color: #8B6B4A;
+}
+
+@media (max-width: 575.98px) {
+    .cr-nav .container {
+        padding: 0.55rem 0.9rem;
+    }
+
+    .cr-nav-links {
+        gap: 0.9rem;
+    }
+
+    .cr-nav-user {
+        display: none;
+    }
 }
 
 /* Cards rise in with a small stagger as the store opens */

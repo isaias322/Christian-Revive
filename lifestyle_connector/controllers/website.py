@@ -87,6 +87,18 @@ class LifestyleWebsite(http.Controller):
     def contactus_thank_you(self, **kwargs):
         return request.render('lifestyle_connector.lifestyle_contactus_thank_you_page', {})
 
+    @http.route('/christianrevive/p/<int:tmpl_id>', type='http', auth='public', website=True, sitemap=False)
+    def christian_revive_product(self, tmpl_id, **kwargs):
+        """Product opener for the CR storefront: re-stamps the session as
+        Christian Revive right before the shared product page renders, so
+        the page branding and the order's brand stamp are deterministic
+        regardless of where the visitor browsed earlier."""
+        request.session['rl_web_brand'] = 'cr'
+        product = request.env['product.template'].sudo().browse(tmpl_id).exists()
+        if not product:
+            return request.redirect('/christianrevive')
+        return request.redirect(product.website_url or '/christianrevive')
+
     @http.route('/christianrevive/login', type='http', auth='public', website=True, sitemap=False)
     def christian_revive_login(self, redirect=None, **kwargs):
         """Christian Revive's own login entry: stamps the session so the

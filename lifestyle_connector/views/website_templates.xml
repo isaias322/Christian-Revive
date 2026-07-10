@@ -991,7 +991,7 @@
              Christian Revive pages - injecting extra icon links is not
              enough because browsers may prefer the first/primary link. -->
         <xpath expr="//t[@t-set='x_icon']" position="attributes">
-            <attribute name="t-value">'/lifestyle_connector/static/src/img/cr_icon.png?v=3' if (request and (request.httprequest.path.startswith('/christianrevive') or (request.session.get('rl_web_brand') == 'cr' and any(request.httprequest.path.startswith(p) for p in ('/my', '/shop', '/web/login', '/web/signup', '/web/reset_password'))))) else website.image_url(website, 'favicon')</attribute>
+            <attribute name="t-value">'/lifestyle_connector/static/src/img/cr_icon.png?v=3' if (request and (request.httprequest.path.startswith('/christianrevive') or (request.session.get('rl_web_brand') == 'cr' and any(request.httprequest.path.startswith(p) for p in ('/my', '/shop', '/payment', '/web/login', '/web/signup', '/web/reset_password'))))) else website.image_url(website, 'favicon')</attribute>
         </xpath>
         <xpath expr="//head" position="inside">
             <!-- Order pages are branded by the ORDER (the storefront it was
@@ -1004,7 +1004,7 @@
                    (rl_order_obj and rl_order_obj.sudo()._rl_portal_brand() == 'cr')
                    or (not rl_order_obj and request.session.get('rl_web_brand') == 'cr' and any(
                        request.httprequest.path.startswith(prefix)
-                       for prefix in ('/my', '/shop', '/web/login', '/web/signup', '/web/reset_password')
+                       for prefix in ('/my', '/shop', '/payment', '/web/login', '/web/signup', '/web/reset_password')
                    ))
                )"/>
             <t t-if="rl_cr_portal">
@@ -1260,7 +1260,7 @@
 
                         <div class="cr-grid">
                             <a t-foreach="products" t-as="product"
-                               t-att-href="product.website_url or ('/shop/product/%s' % product.id)"
+                               t-att-href="'/christianrevive/p/%s' % product.id"
                                class="cr-card">
                                 <div class="cr-card-img">
                                     <img t-att-src="'/web/image/product.template/%s/image_512' % product.id"

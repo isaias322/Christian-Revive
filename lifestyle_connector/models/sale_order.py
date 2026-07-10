@@ -189,6 +189,10 @@ class SaleOrder(models.Model):
             pass
         return 'lifestyle'
 
+    def _rl_doc_brand(self):
+        """Brand for printed/portal documents of this order."""
+        return self._rl_portal_brand()
+
     def _lifestyle_advance_stage(self, new_stage, push=True):
         self.ensure_one()
         if self.delivery_stage == new_stage:
@@ -540,3 +544,17 @@ class SaleOrderLine(models.Model):
                 'lifestyle_color': color_text,
                 'name': (base_name + '\nColor: ' + color_text).strip(),
             })
+
+
+class AccountMove(models.Model):
+    _inherit = 'account.move'
+
+    def _rl_doc_brand(self):
+        """Brand for this invoice's documents: taken from the sale order(s)
+        it invoices. Mixed/unknown origins default to Revive Lifestyle."""
+        self.ensure_one()
+        orders = self.invoice_line_ids.sale_line_ids.order_id
+        brands = set(orders.mapped('rl_brand')) - {False}
+        if brands == {'cr'}:
+            return 'cr'
+        return 'lifestyle'

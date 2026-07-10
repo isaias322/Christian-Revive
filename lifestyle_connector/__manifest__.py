@@ -31,6 +31,7 @@
         'views/hr_employee_views.xml',
         'views/website_templates.xml',
         'views/mail_layout_templates.xml',
+        'views/report_brand_templates.xml',
         'views/vendor_portal_templates.xml',
         'data/website_branding_data.xml',
         'data/website_categories_data.xml',

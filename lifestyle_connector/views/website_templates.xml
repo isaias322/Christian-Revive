@@ -998,10 +998,10 @@
                  bought from); every other page falls back to the visitor's
                  session brand. -->
             <t t-set="rl_order_obj"
-               t-value="main_object if main_object is not None and main_object._name == 'sale.order' else None"/>
+               t-value="main_object if main_object is not None and main_object._name in ('sale.order', 'account.move') else None"/>
             <t t-set="rl_cr_portal"
                t-value="request and (
-                   (rl_order_obj and rl_order_obj.sudo()._rl_portal_brand() == 'cr')
+                   (rl_order_obj and (rl_order_obj.sudo()._rl_portal_brand() if rl_order_obj._name == 'sale.order' else rl_order_obj.sudo()._rl_doc_brand()) == 'cr')
                    or (not rl_order_obj and request.session.get('rl_web_brand') == 'cr' and any(
                        request.httprequest.path.startswith(prefix)
                        for prefix in ('/my', '/shop', '/payment', '/web/login', '/web/signup', '/web/reset_password')

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Brand-aware document logo: invoices and sale orders stemming from
+         the Christian Revive storefront print the CR wordmark instead of
+         the company (Revive Lifestyle) logo. Covers every core document
+         layout so it keeps working if the layout style is changed in
+         Settings. The brand comes from _rl_doc_brand() on the record. -->
+
+    <template id="rl_layout_standard_brand" inherit_id="web.external_layout_standard">
+        <xpath expr='//img[@t-att-src="image_data_uri(company.logo)"]' position="before">
+            <t t-set="rl_doc_cr" t-value="o and o._name in ('account.move', 'sale.order') and o.sudo()._rl_doc_brand() == 'cr'"/>
+            <img t-if="rl_doc_cr" class="o_company_logo_small" src="/lifestyle_connector/static/src/img/cr_logo.png" alt="Christian Revive"/>
+        </xpath>
+        <xpath expr='//img[@t-att-src="image_data_uri(company.logo)"]' position="attributes">
+            <attribute name="t-if">company.logo and not rl_doc_cr</attribute>
+        </xpath>
+    </template>
+
+    <template id="rl_layout_striped_brand" inherit_id="web.external_layout_striped">
+        <xpath expr='//img[@t-att-src="image_data_uri(company.logo)"]' position="before">
+            <t t-set="rl_doc_cr" t-value="o and o._name in ('account.move', 'sale.order') and o.sudo()._rl_doc_brand() == 'cr'"/>
+            <img t-if="rl_doc_cr" class="o_company_logo_big" src="/lifestyle_connector/static/src/img/cr_logo.png" alt="Christian Revive"/>
+        </xpath>
+        <xpath expr='//img[@t-att-src="image_data_uri(company.logo)"]' position="attributes">
+            <attribute name="t-if">company.logo and not rl_doc_cr</attribute>
+        </xpath>
+    </template>
+
+    <template id="rl_layout_boxed_brand" inherit_id="web.external_layout_boxed">
+        <xpath expr='//img[@t-att-src="image_data_uri(company.logo)"]' position="before">
+            <t t-set="rl_doc_cr" t-value="o and o._name in ('account.move', 'sale.order') and o.sudo()._rl_doc_brand() == 'cr'"/>
+            <img t-if="rl_doc_cr" class="o_company_logo_big" src="/lifestyle_connector/static/src/img/cr_logo.png" alt="Christian Revive"/>
+        </xpath>
+        <xpath expr='//img[@t-att-src="image_data_uri(company.logo)"]' position="attributes">
+            <attribute name="t-if">company.logo and not rl_doc_cr</attribute>
+        </xpath>
+    </template>
+
+    <template id="rl_layout_bold_brand" inherit_id="web.external_layout_bold">
+        <xpath expr='//img[@t-att-src="image_data_uri(company.logo)"]' position="before">
+            <t t-set="rl_doc_cr" t-value="o and o._name in ('account.move', 'sale.order') and o.sudo()._rl_doc_brand() == 'cr'"/>
+            <img t-if="rl_doc_cr" class="o_company_logo_big" src="/lifestyle_connector/static/src/img/cr_logo.png" alt="Christian Revive"/>
+        </xpath>
+        <xpath expr='//img[@t-att-src="image_data_uri(company.logo)"]' position="attributes">
+            <attribute name="t-if">company.logo and not rl_doc_cr</attribute>
+        </xpath>
+    </template>
+
+    <template id="rl_layout_folder_brand" inherit_id="web.external_layout_folder">
+        <xpath expr='//img[@t-att-src="image_data_uri(company.logo)"]' position="before">
+            <t t-set="rl_doc_cr" t-value="o and o._name in ('account.move', 'sale.order') and o.sudo()._rl_doc_brand() == 'cr'"/>
+            <img t-if="rl_doc_cr" class="o_company_logo_big mb-2" src="/lifestyle_connector/static/src/img/cr_logo.png" alt="Christian Revive"/>
+        </xpath>
+        <xpath expr='//img[@t-att-src="image_data_uri(company.logo)"]' position="attributes">
+            <attribute name="t-if">company.logo and not rl_doc_cr</attribute>
+        </xpath>
+    </template>
+
+    <template id="rl_layout_wave_brand" inherit_id="web.external_layout_wave">
+        <xpath expr='//img[@t-att-src="image_data_uri(company.logo)"]' position="before">
+            <t t-set="rl_doc_cr" t-value="o and o._name in ('account.move', 'sale.order') and o.sudo()._rl_doc_brand() == 'cr'"/>
+            <img t-if="rl_doc_cr" class="o_company_logo mb-2" src="/lifestyle_connector/static/src/img/cr_logo.png" alt="Christian Revive"/>
+        </xpath>
+        <xpath expr='//img[@t-att-src="image_data_uri(company.logo)"]' position="attributes">
+            <attribute name="t-if">company.logo and not rl_doc_cr</attribute>
+        </xpath>
+    </template>
+
+    <template id="rl_layout_bubble_brand" inherit_id="web.external_layout_bubble">
+        <xpath expr='//img[@t-att-src="image_data_uri(company.logo)"]' position="before">
+            <t t-set="rl_doc_cr" t-value="o and o._name in ('account.move', 'sale.order') and o.sudo()._rl_doc_brand() == 'cr'"/>
+            <img t-if="rl_doc_cr" class="o_company_logo mb-2" src="/lifestyle_connector/static/src/img/cr_logo.png" alt="Christian Revive"/>
+        </xpath>
+        <xpath expr='//img[@t-att-src="image_data_uri(company.logo)"]' position="attributes">
+            <attribute name="t-if">company.logo and not rl_doc_cr</attribute>
+        </xpath>
+    </template>
+</odoo>

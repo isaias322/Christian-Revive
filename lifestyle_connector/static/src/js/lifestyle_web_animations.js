@@ -616,6 +616,41 @@ function setupCrWishlist() {
         var btn = e.target.closest('.cr-card .o_add_wishlist');
         if (!btn) return;
         e.preventDefault(); // heart click must not open the product link
+
+        // Core's fly animation only knows the product page / cart markup,
+        // so card hearts get their own: clone the photo and send it into
+        // the heart tab.
+        var card = btn.closest('.cr-card');
+        var img = card && card.querySelector('.cr-card-img img');
+        var target = document.querySelector('.cr-nav-wish');
+        var alreadySaved = btn.classList.contains('is-saved') || btn.disabled;
+        if (img && target && !alreadySaved && !reduceMotion && img.animate) {
+            var from = img.getBoundingClientRect();
+            var to = target.getBoundingClientRect();
+            var clone = img.cloneNode();
+            clone.style.cssText = 'position:fixed;left:' + from.left + 'px;top:' + from.top
+                + 'px;width:' + from.width + 'px;height:' + from.height
+                + 'px;object-fit:contain;border-radius:1rem;z-index:10000;pointer-events:none;margin:0;'
+                + 'background:#fff;box-shadow:0 18px 44px rgba(59,45,31,.3);';
+            document.body.appendChild(clone);
+            var dx = (to.left + to.width / 2) - (from.left + from.width / 2);
+            var dy = (to.top + to.height / 2) - (from.top + from.height / 2);
+            var anim = clone.animate([
+                { transform: 'translate(0,0) scale(1)', opacity: 1 },
+                { transform: 'translate(' + dx + 'px,' + dy + 'px) scale(0.08)', opacity: 0.3 },
+            ], { duration: 650, easing: 'cubic-bezier(0.5,-0.1,0.65,1)' });
+            anim.onfinish = function () {
+                clone.remove();
+                if (target.animate) {
+                    target.animate([
+                        { transform: 'scale(1)' },
+                        { transform: 'scale(1.3)' },
+                        { transform: 'scale(1)' },
+                    ], { duration: 260, easing: 'ease-out' });
+                }
+            };
+        }
+
         window.setTimeout(function () {
             var badge = document.querySelector('.cr-nav-wish .my_wish_quantity');
             if (badge) badge.classList.remove('d-none');

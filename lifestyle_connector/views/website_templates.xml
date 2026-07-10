@@ -991,7 +991,7 @@
              Christian Revive pages - injecting extra icon links is not
              enough because browsers may prefer the first/primary link. -->
         <xpath expr="//t[@t-set='x_icon']" position="attributes">
-            <attribute name="t-value">'/lifestyle_connector/static/src/img/cr_icon.png?v=3' if (request and (request.httprequest.path.startswith('/christianrevive') or (request.session.get('rl_web_brand') == 'cr' and any(request.httprequest.path.startswith(p) for p in ('/my', '/shop', '/payment', '/web/login', '/web/signup', '/web/reset_password'))))) else website.image_url(website, 'favicon')</attribute>
+            <attribute name="t-value">'/lifestyle_connector/static/src/img/cr_icon.png?v=3' if (request and (request.httprequest.path.startswith('/christianrevive') or (request.session.get('rl_web_brand') == 'cr' and any(request.httprequest.path.startswith(p) for p in ('/my', '/shop', '/payment', '/web/login', '/web/signup', '/web/reset_password'))))) else '/lifestyle_connector/static/src/img/rl_favicon.png?v=1'</attribute>
         </xpath>
         <xpath expr="//head" position="inside">
             <!-- Order pages are branded by the ORDER (the storefront it was
@@ -1183,6 +1183,11 @@
                         <a t-else="" href="/my" class="cr-nav-user">
                             <i class="fa fa-user-circle-o"/> <t t-esc="request.env.user.name"/>
                         </a>
+                        <a t-if="not request.env.user._is_public()"
+                           href="/web/session/logout?redirect=/christianrevive"
+                           class="cr-nav-logout" title="Log out" aria-label="Log out">
+                            <i class="fa fa-sign-out"/>
+                        </a>
                         <a href="/shop/cart" class="cr-nav-cart" aria-label="Cart">
                             <i class="fa fa-shopping-cart"/>
                             <t t-set="rl_cart_qty" t-value="request.cart and request.cart.cart_quantity or 0"/>
@@ -1233,6 +1238,11 @@
                                href="/christianrevive/login" class="cr-nav-signin">Sign in</a>
                             <a t-else="" href="/my" class="cr-nav-user">
                                 <i class="fa fa-user-circle-o"/> <t t-esc="request.env.user.name"/>
+                            </a>
+                            <a t-if="not request.env.user._is_public()"
+                               href="/web/session/logout?redirect=/christianrevive"
+                               class="cr-nav-logout" title="Log out" aria-label="Log out">
+                                <i class="fa fa-sign-out"/>
                             </a>
                             <a href="/shop/cart" class="cr-nav-cart" aria-label="Cart">
                                 <i class="fa fa-shopping-cart"/>

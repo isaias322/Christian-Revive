@@ -5992,6 +5992,26 @@ footer .rounded-circle,
     font-size: 1.7rem;
 }
 
+.cr-clear-search {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.3rem 0.85rem;
+    border: 1px solid rgba(139, 107, 74, 0.4);
+    border-radius: 999px;
+    color: #6B4F34;
+    background: #EFE6DB;
+    font-size: 0.85rem;
+    font-weight: 800;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.cr-clear-search:hover {
+    background: #8B6B4A;
+    color: #FAF6F1;
+}
+
 .cr-grid-count {
     padding: 0.3rem 0.85rem;
     border: 1px solid rgba(74, 55, 40, 0.18);

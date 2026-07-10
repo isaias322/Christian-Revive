@@ -602,6 +602,27 @@ function setupLoginPagePolish() {
     }
 }
 
+// CR store: emptying the search box immediately shows all products again -
+// no resubmit needed, and stale category filters are dropped too.
+function setupCrSearchClear() {
+    if (!window.location.pathname.startsWith('/christianrevive')) return;
+    var input = document.querySelector('.cr-search input[name="search"]');
+    if (!input) return;
+    var hadSearch = new URLSearchParams(window.location.search).has('search')
+        && (new URLSearchParams(window.location.search).get('search') || '').trim() !== '';
+    var reset = function () {
+        if (hadSearch && input.value.trim() === '') {
+            window.location.href = '/christianrevive';
+        }
+    };
+    // 'search' fires on the native ✕ clear button and on Enter;
+    // 'input' catches manual deletion of the text.
+    input.addEventListener('search', reset);
+    input.addEventListener('input', function () {
+        if (input.value.trim() === '') reset();
+    });
+}
+
 // Odoo titles the made-to-order refusal toast "Invalid Operation", which
 // reads like a system failure. Rewrite that one notification to a friendly
 // bold "Please note:" the moment it renders. Other notifications untouched.
@@ -1139,6 +1160,7 @@ function enhanceWebsite() {
     setupContactFormValidation();
     setupSaveForLaterRedirect();
     setupLoginPagePolish();
+    setupCrSearchClear();
     setupFriendlyMtoNotice();
     setupRequireLoginForCart();
     setupColorSelection();

@@ -1252,7 +1252,7 @@
                         </p>
                         <form class="cr-search" action="/christianrevive" method="get">
                             <input type="hidden" name="categ" t-att-value="active_categ_id or ''"/>
-                            <input type="text" name="search" placeholder="Search the store..."
+                            <input type="search" name="search" placeholder="Search the store..."
                                    t-att-value="search_query"/>
                             <button type="submit" aria-label="Search"><i class="fa fa-search"/></button>
                         </form>
@@ -1311,6 +1311,9 @@
                             <span class="cr-grid-count">
                                 <t t-esc="len(products)"/> item<t t-if="len(products) != 1">s</t>
                             </span>
+                            <a t-if="search_query" href="/christianrevive" class="cr-clear-search">
+                                <i class="fa fa-times"/> Clear search "<t t-esc="search_query"/>"
+                            </a>
                         </div>
                         <div class="cr-grid">
                             <a t-foreach="products" t-as="product"

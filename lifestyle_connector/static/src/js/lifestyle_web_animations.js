@@ -615,16 +615,24 @@ function setupFriendlyMtoNotice() {
         Array.prototype.forEach.call(notices, function (notice) {
             var text = notice.textContent || '';
             if (text.indexOf('made to order') === -1) return;
+            if (notice.dataset.rlSoftened === '1') return;
             var parts = notice.querySelectorAll('.o_notification_title, .o_notification_content, .o_notification_body, .toast-body, .toast-header');
             Array.prototype.forEach.call(parts.length ? parts : [notice], function (el) {
                 var t = el.textContent || '';
                 if (t.indexOf('Invalid Operation') === -1) return;
                 var message = t.replace(/\s*Invalid Operation\.?\s*/i, ' ').trim();
-                el.textContent = '';
+                // Single wrapper child: the toast body is a flex container,
+                // and separate <b> + text children get squeezed into a
+                // one-character column.
+                var wrapper = document.createElement('span');
+                wrapper.style.display = 'inline';
                 var bold = document.createElement('b');
                 bold.textContent = 'Please note: ';
-                el.appendChild(bold);
-                el.appendChild(document.createTextNode(message));
+                wrapper.appendChild(bold);
+                wrapper.appendChild(document.createTextNode(message));
+                el.textContent = '';
+                el.appendChild(wrapper);
+                notice.dataset.rlSoftened = '1';
             });
         });
     }

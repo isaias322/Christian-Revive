@@ -1,6 +1,48 @@
 # -*- coding: utf-8 -*-
+from urllib.parse import urlparse
+
 from odoo import fields, models
 from odoo.http import request
+
+
+def _rl_is_lifestyle_path(path):
+    return (
+        path == '/'
+        or path == '/shop'
+        or path.startswith('/shop/page')
+        or path.startswith('/shop/category')
+        or path.startswith('/contactus')
+        or path.startswith('/contact-us')
+    )
+
+
+class IrHttp(models.AbstractModel):
+    _inherit = 'ir.http'
+
+    @classmethod
+    def _pre_dispatch(cls, rule, args):
+        """Keep the storefront-brand session flag fresh on every request.
+
+        Controller-level stamping alone misses navigations served from the
+        browser cache. Storefront pages stamp by path; entering the shared
+        account/cart area stamps by referrer, so 'My Account' clicked on
+        the Lifestyle site opens in Lifestyle and clicked on the Christian
+        Revive site opens in CR."""
+        super()._pre_dispatch(rule, args)
+        try:
+            path = request.httprequest.path
+            if path.startswith('/christianrevive'):
+                request.session['rl_web_brand'] = 'cr'
+            elif _rl_is_lifestyle_path(path):
+                request.session['rl_web_brand'] = 'lifestyle'
+            elif path.startswith('/my') or path.startswith('/shop/cart'):
+                referrer = request.httprequest.referrer or ''
+                if '/christianrevive' in referrer:
+                    request.session['rl_web_brand'] = 'cr'
+                elif referrer and _rl_is_lifestyle_path(urlparse(referrer).path):
+                    request.session['rl_web_brand'] = 'lifestyle'
+        except Exception:
+            pass
 
 
 class Website(models.Model):

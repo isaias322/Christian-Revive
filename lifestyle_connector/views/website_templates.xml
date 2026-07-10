@@ -1244,6 +1244,11 @@
                                    t-att-value="search_query"/>
                             <button type="submit" aria-label="Search"><i class="fa fa-search"/></button>
                         </form>
+                        <div class="cr-trust-row">
+                            <span><i class="fa fa-truck"/> Home delivery</span>
+                            <span><i class="fa fa-map-marker"/> Live order tracking</span>
+                            <span><i class="fa fa-lock"/> Secure checkout</span>
+                        </div>
                         <div t-if="deal_count" class="cr-deal-note">
                             <i class="fa fa-bolt"/>
                             <t t-esc="deal_count"/> item<t t-if="deal_count != 1">s</t> on special price right now
@@ -1270,6 +1275,12 @@
                             <a href="/christianrevive" class="cr-btn">Show everything</a>
                         </div>
 
+                        <div t-if="products" class="cr-grid-head">
+                            <h2>Our products</h2>
+                            <span class="cr-grid-count">
+                                <t t-esc="len(products)"/> item<t t-if="len(products) != 1">s</t>
+                            </span>
+                        </div>
                         <div class="cr-grid">
                             <a t-foreach="products" t-as="product"
                                t-att-href="'/christianrevive/p/%s' % product.id"

@@ -5940,6 +5940,92 @@ footer .rounded-circle,
     background: #3B2D1F;
 }
 
+/* Second ambient blob on the hero's left, balancing the right one */
+.cr-hero::before {
+    content: "";
+    position: absolute;
+    left: -4rem;
+    top: -5rem;
+    width: 13rem;
+    height: 13rem;
+    border-radius: 50%;
+    background: rgba(139, 107, 74, 0.18);
+    pointer-events: none;
+    animation: rlShopCircleFloat 12s ease-in-out infinite reverse;
+}
+
+.cr-trust-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-top: 1.1rem;
+}
+
+.cr-trust-row span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.4rem 0.85rem;
+    border: 1px solid rgba(212, 197, 178, 0.35);
+    border-radius: 999px;
+    color: rgba(250, 246, 241, 0.85);
+    font-size: 0.86rem;
+    font-weight: 700;
+}
+
+.cr-trust-row i {
+    color: #D4C5B2;
+}
+
+.cr-grid-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.1rem;
+}
+
+.cr-grid-head h2 {
+    margin: 0;
+    color: #3B2D1F;
+    font-family: 'Fraunces', serif;
+    font-size: 1.7rem;
+}
+
+.cr-grid-count {
+    padding: 0.3rem 0.85rem;
+    border: 1px solid rgba(74, 55, 40, 0.18);
+    border-radius: 999px;
+    color: #6B4F34;
+    background: #FFFFFF;
+    font-size: 0.85rem;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+/* "View" affordance sliding up on card hover */
+.cr-card-img::after {
+    content: "View \2192";
+    position: absolute;
+    right: 0.8rem;
+    bottom: 0.8rem;
+    padding: 0.32rem 0.8rem;
+    border-radius: 999px;
+    color: #FAF6F1;
+    background: rgba(59, 45, 31, 0.88);
+    font-size: 0.8rem;
+    font-weight: 800;
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity 0.18s ease, transform 0.18s ease;
+    pointer-events: none;
+}
+
+.cr-card:hover .cr-card-img::after {
+    opacity: 1;
+    transform: translateY(0);
+}
+
 .cr-deal-note {
     display: inline-flex;
     align-items: center;

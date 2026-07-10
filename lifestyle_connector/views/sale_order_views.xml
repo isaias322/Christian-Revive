@@ -33,6 +33,31 @@
         <field name="target">new</field>
     </record>
 
+    <!-- Storefront Brand column in the order lists: the core "Website"
+         column always says Revive Lifestyle (there is only one website
+         record); the brand stamp is what tells the two storefronts apart. -->
+    <record id="view_order_tree_lifestyle_brand" model="ir.ui.view">
+        <field name="name">sale.order.tree.lifestyle.brand</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='partner_id']" position="after">
+                <field name="rl_brand" optional="show"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_quotation_tree_lifestyle_brand" model="ir.ui.view">
+        <field name="name">sale.order.quotation.tree.lifestyle.brand</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_quotation_tree_with_onboarding"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='partner_id']" position="after">
+                <field name="rl_brand" optional="show"/>
+            </xpath>
+        </field>
+    </record>
+
     <record id="view_order_form_lifestyle" model="ir.ui.view">
         <field name="name">sale.order.form.lifestyle</field>
         <field name="model">sale.order</field>

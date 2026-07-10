@@ -5657,10 +5657,17 @@ footer .rounded-circle,
 
 .cr-nav-brand {
     margin-right: auto;
+    /* The CR wordmark is light-colored (made for dark backgrounds) - give
+       it a deep-brown chip so it reads clearly on the cream nav. */
+    display: inline-flex;
+    align-items: center;
+    padding: 0.4rem 0.8rem;
+    border-radius: 0.8rem;
+    background: #4A3728;
 }
 
 .cr-nav-brand img {
-    height: 44px !important;
+    height: 34px !important;
     width: auto;
     display: block;
 }

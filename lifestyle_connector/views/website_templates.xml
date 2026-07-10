@@ -1046,6 +1046,52 @@
                         border-color: #8B6B4A !important;
                         box-shadow: 0 0 0 0.2rem rgba(139, 107, 74, 0.2) !important;
                     }
+                    /* Full re-skin: every Lifestyle-sage element renders in
+                       Christian Revive brown on CR pages. This block only
+                       exists on CR-branded pages, so Lifestyle is untouched. */
+                    .btn-primary,
+                    a.btn-primary,
+                    button.btn-primary {
+                        background-color: #4A3728 !important;
+                        border-color: #4A3728 !important;
+                        color: #FAF6F1 !important;
+                    }
+                    .btn-primary:hover,
+                    .btn-primary:focus,
+                    a.btn-primary:hover,
+                    button.btn-primary:hover {
+                        background-color: #8B6B4A !important;
+                        border-color: #8B6B4A !important;
+                        color: #FAF6F1 !important;
+                    }
+                    .btn-primary.disabled,
+                    .btn-primary:disabled {
+                        background-color: #A98F76 !important;
+                        border-color: #A98F76 !important;
+                    }
+                    #wrapwrap main a:not(.btn):not(.cr-nav-brand):not(.dropdown-item) {
+                        color: #8B6B4A;
+                    }
+                    #wrapwrap main a:not(.btn):hover { color: #3B2D1F; }
+                    .text-primary { color: #8B6B4A !important; }
+                    .form-check-input:checked {
+                        background-color: #4A3728 !important;
+                        border-color: #4A3728 !important;
+                    }
+                    .form-control:focus {
+                        border-color: #8B6B4A !important;
+                        box-shadow: 0 0 0 0.2rem rgba(139, 107, 74, 0.18) !important;
+                    }
+                    .rl-cart-line-color {
+                        background: rgba(139, 107, 74, 0.16) !important;
+                        color: #6B4F34 !important;
+                    }
+                    /* Order-confirmation extras in brown */
+                    .rl-confirm-check { background: #4A3728 !important; box-shadow: 0 14px 30px rgba(74, 55, 40, 0.35) !important; }
+                    .rl-confirm-hero-text span { color: #8B6B4A !important; }
+                    .rl-confirm-step i { color: #8B6B4A !important; background: #EFE6DB !important; }
+                    .rl-confirm-step.is-active { border-color: rgba(139, 107, 74, 0.5) !important; }
+                    .rl-confirm-step.is-active i { color: #FAF6F1 !important; background: #4A3728 !important; }
                 </style>
                 <script type="text/javascript">
                     document.addEventListener('DOMContentLoaded', function () {

@@ -31,6 +31,13 @@ class IrHttp(models.AbstractModel):
         super()._pre_dispatch(rule, args)
         try:
             path = request.httprequest.path
+            # Explicit brand marker in the URL wins - it survives the
+            # session reset Odoo performs on login (the redirect target
+            # carries it through the auth flow).
+            brand_param = request.httprequest.args.get('rl_brand')
+            if brand_param in ('cr', 'lifestyle'):
+                request.session['rl_web_brand'] = brand_param
+                return
             if path.startswith('/christianrevive'):
                 request.session['rl_web_brand'] = 'cr'
             elif _rl_is_lifestyle_path(path):

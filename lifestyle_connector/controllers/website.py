@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from urllib.parse import quote as url_quote
+
 from odoo import http
 from odoo.exceptions import UserError
 from odoo.http import request
@@ -106,7 +108,11 @@ class LifestyleWebsite(http.Controller):
         hands over to Odoo's standard, battle-tested auth flow."""
         request.session['rl_web_brand'] = 'cr'
         target = redirect or '/christianrevive'
-        return request.redirect('/web/login?redirect=%s' % target)
+        # Carry the brand in the redirect target: Odoo resets the session
+        # on login, so the flag set above would be lost without it.
+        if 'rl_brand=' not in target:
+            target += ('&' if '?' in target else '?') + 'rl_brand=cr'
+        return request.redirect('/web/login?redirect=%s' % url_quote(target, safe=''))
 
     @http.route(['/christianrevive', '/christianrevive/shop'], type='http', auth='public',
                 website=True, sitemap=True)

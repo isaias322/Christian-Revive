@@ -698,8 +698,13 @@ function setupRequireLoginForCart() {
         if (!btn) return;
         e.preventDefault();
         e.stopImmediatePropagation();
-        window.location.href = '/web/login?redirect='
-            + encodeURIComponent(window.location.pathname + window.location.search);
+        // Carry the brand through the login round-trip: Odoo resets the
+        // session on login, so the CR flag must ride in the redirect URL.
+        var target = window.location.pathname + window.location.search;
+        if (document.querySelector('.cr-nav') && target.indexOf('rl_brand=') === -1) {
+            target += (target.indexOf('?') !== -1 ? '&' : '?') + 'rl_brand=cr';
+        }
+        window.location.href = '/web/login?redirect=' + encodeURIComponent(target);
     }, true);
 }
 

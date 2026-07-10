@@ -1265,6 +1265,25 @@
                             <i class="fa fa-bolt"/>
                             <t t-esc="deal_count"/> item<t t-if="deal_count != 1">s</t> on special price right now
                         </div>
+                        <a t-if="featured_product" t-att-href="'/christianrevive/p/%s' % featured_product.id"
+                           class="cr-hero-feature d-none d-xl-flex">
+                            <img t-att-src="'/web/image/product.template/%s/image_512' % featured_product.id"
+                                 t-att-alt="featured_product.name" loading="lazy"/>
+                            <div class="cr-hero-feature-body">
+                                <span class="cr-hero-feature-kicker">
+                                    <t t-if="featured_product.compare_price and featured_product.compare_price &gt; featured_product.list_price">Deal of the moment</t>
+                                    <t t-else="">Featured piece</t>
+                                </span>
+                                <strong t-esc="featured_product.name"/>
+                                <div class="cr-hero-feature-price">
+                                    Rs. <t t-esc="'{:,.0f}'.format(featured_product.list_price)"/>
+                                    <s t-if="featured_product.compare_price and featured_product.compare_price &gt; featured_product.list_price">
+                                        Rs. <t t-esc="'{:,.0f}'.format(featured_product.compare_price)"/>
+                                    </s>
+                                </div>
+                                <span class="cr-btn-tan">Shop now</span>
+                            </div>
+                        </a>
                     </div>
                 </section>
 
@@ -1324,6 +1343,13 @@
                                     </div>
                                 </div>
                             </a>
+                        </div>
+                        <div class="cr-cta-band">
+                            <div>
+                                <h3>Follow every order, every step</h3>
+                                <p>From order placed to delivered — track your Christian Revive orders anytime from your account.</p>
+                            </div>
+                            <a href="/my/orders" class="cr-btn-tan">View My Orders</a>
                         </div>
                     </div>
                 </section>

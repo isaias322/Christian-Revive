@@ -140,6 +140,8 @@ class LifestyleWebsite(http.Controller):
             'active_categ_id': categ_id,
             'search_query': search_text,
             'deal_count': len(deal_products),
+            # Hero showcase: prefer a live deal, else the first product.
+            'featured_product': deal_products[:1] or products[:1],
         })
 
 class LifestyleCart(Cart):

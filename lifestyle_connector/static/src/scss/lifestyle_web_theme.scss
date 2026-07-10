@@ -6450,6 +6450,43 @@ footer .rounded-circle,
     box-shadow: 0 0 0 0.2rem rgba(124, 144, 112, 0.2);
 }
 
+/* ── Portal "My account" home ────────────────────────────────────────── */
+.o_portal_my_home {
+    padding-bottom: 2.5rem;
+}
+
+.o_portal_index_card > a {
+    border: 1px solid rgba(92, 112, 80, 0.14);
+    border-radius: 1.15rem;
+    background: #FFFDF9 !important;
+    box-shadow: 0 12px 30px rgba(46, 46, 42, 0.06);
+    transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
+}
+
+.o_portal_index_card > a:hover {
+    transform: translateY(-3px);
+    border-color: rgba(92, 112, 80, 0.35);
+    box-shadow: 0 20px 44px rgba(46, 46, 42, 0.12);
+}
+
+.o_portal_index_card .fs-5 {
+    color: #2E2E2A;
+    font-weight: 700 !important;
+}
+
+.o_portal_index_card .opacity-75 {
+    color: #6D6A62;
+}
+
+.o_portal_icon img {
+    width: 54px;
+}
+
+/* No Odoo branding in the portal sidebar ("Powered by odoo" + logo) */
+#wrapwrap div:has(> a[href*="utm_medium=portal"]) {
+    display: none !important;
+}
+
 /* ── Login / Signup / Reset password pages ───────────────────────────── */
 .oe_website_login_container {
     padding: 3.5rem 1rem 5rem;

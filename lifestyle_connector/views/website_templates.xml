@@ -1124,6 +1124,18 @@
                         background: rgba(139, 107, 74, 0.16) !important;
                         color: #6B4F34 !important;
                     }
+                    /* Portal "My account" home cards in brown */
+                    .o_portal_index_card > a {
+                        border-color: rgba(74, 55, 40, 0.16) !important;
+                        background: #FFFFFF !important;
+                        box-shadow: 0 12px 30px rgba(59, 45, 31, 0.07) !important;
+                    }
+                    .o_portal_index_card > a:hover {
+                        border-color: rgba(139, 107, 74, 0.5) !important;
+                        box-shadow: 0 20px 44px rgba(59, 45, 31, 0.14) !important;
+                    }
+                    .o_portal_index_card .fs-5 { color: #3B2D1F !important; }
+                    .o_portal_index_card .opacity-75 { color: #8B7A66 !important; }
                     /* Product page extras in brown */
                     .rl-card-badge-mto,
                     .rl-pd-stock-mto {

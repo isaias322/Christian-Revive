@@ -83,6 +83,15 @@ class SaleOrder(models.Model):
         """
         values = super()._cart_add(product_id, quantity=quantity, **kwargs)
         try:
+            # Remember which storefront started this order (first add wins):
+            # the order's portal page is branded by this, not by whatever
+            # site the customer happens to visit later.
+            from odoo.http import request as _req
+            if _req and not self.rl_brand:
+                self.rl_brand = 'cr' if _req.session.get('rl_web_brand') == 'cr' else 'lifestyle'
+        except Exception:
+            pass
+        try:
             product = self.env['product.product'].sudo().browse(int(product_id or 0))
             product_tmpl = product.product_tmpl_id if product.exists() else self.env['product.template']
             color = str(kwargs.get('lifestyle_color') or '').strip()
@@ -158,6 +167,27 @@ class SaleOrder(models.Model):
         if len(names) <= 2:
             return ', '.join(names)
         return f'{names[0]}, {names[1]} and {len(names) - 2} more'
+
+    rl_brand = fields.Selection(
+        [('lifestyle', 'Revive Lifestyle'), ('cr', 'Christian Revive')],
+        string='Storefront Brand', copy=False,
+        help='Which storefront/app this order was placed from. Drives the '
+             'branding (logo, colors, wording) of the order\'s portal page.',
+    )
+
+    def _rl_portal_brand(self):
+        """Brand to use for this order's customer-facing pages: the order's
+        own stamp when known, otherwise the visitor's current storefront."""
+        self.ensure_one()
+        if self.rl_brand:
+            return self.rl_brand
+        try:
+            from odoo.http import request as _req
+            if _req and _req.session.get('rl_web_brand') == 'cr':
+                return 'cr'
+        except Exception:
+            pass
+        return 'lifestyle'
 
     def _lifestyle_advance_stage(self, new_stage, push=True):
         self.ensure_one()

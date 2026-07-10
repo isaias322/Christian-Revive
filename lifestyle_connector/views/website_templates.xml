@@ -525,7 +525,7 @@
             <div t-if="sale_order.delivery_stage" class="lifestyle-card mb-4">
                 <div class="d-flex justify-content-between align-items-center mb-2">
                     <h5 class="mb-0">
-                        <t t-if="request and request.session.get('rl_web_brand') == 'cr'">Order Progress</t>
+                        <t t-if="sale_order.sudo()._rl_portal_brand() == 'cr'">Order Progress</t>
                         <t t-else="">Furniture Progress</t>
                     </h5>
                     <span class="lifestyle-badge">
@@ -994,10 +994,18 @@
             <attribute name="t-value">'/lifestyle_connector/static/src/img/cr_icon.png?v=2' if (request and (request.httprequest.path.startswith('/christianrevive') or (request.session.get('rl_web_brand') == 'cr' and any(request.httprequest.path.startswith(p) for p in ('/my', '/shop/cart', '/shop/checkout', '/shop/address', '/shop/payment', '/shop/confirmation'))))) else website.image_url(website, 'favicon')</attribute>
         </xpath>
         <xpath expr="//head" position="inside">
+            <!-- Order pages are branded by the ORDER (the storefront it was
+                 bought from); every other page falls back to the visitor's
+                 session brand. -->
+            <t t-set="rl_order_obj"
+               t-value="main_object if main_object is not None and main_object._name == 'sale.order' else None"/>
             <t t-set="rl_cr_portal"
-               t-value="request and request.session.get('rl_web_brand') == 'cr' and any(
-                   request.httprequest.path.startswith(prefix)
-                   for prefix in ('/my', '/shop/cart', '/shop/checkout', '/shop/address', '/shop/payment', '/shop/confirmation', '/web/login', '/web/signup', '/web/reset_password')
+               t-value="request and (
+                   (rl_order_obj and rl_order_obj.sudo()._rl_portal_brand() == 'cr')
+                   or (not rl_order_obj and request.session.get('rl_web_brand') == 'cr' and any(
+                       request.httprequest.path.startswith(prefix)
+                       for prefix in ('/my', '/shop/cart', '/shop/checkout', '/shop/address', '/shop/payment', '/shop/confirmation', '/web/login', '/web/signup', '/web/reset_password')
+                   ))
                )"/>
             <t t-if="rl_cr_portal">
                 <link rel="icon" type="image/png" href="/lifestyle_connector/static/src/img/cr_icon.png?v=2"/>
@@ -1061,7 +1069,7 @@
                         <a href="/christianrevive">Store</a>
                         <a href="/my/orders" class="is-active">My Orders</a>
                         <a t-if="request.env.user._is_public()"
-                           href="/web/login?redirect=/christianrevive" class="cr-nav-signin">Sign in</a>
+                           href="/christianrevive/login" class="cr-nav-signin">Sign in</a>
                         <a t-else="" href="/my" class="cr-nav-user">
                             <i class="fa fa-user-circle-o"/> <t t-esc="request.env.user.name"/>
                         </a>
@@ -1078,7 +1086,7 @@
             <footer t-if="rl_cr_portal" class="cr-footer">
                 <div class="container">
                     <img src="/lifestyle_connector/static/src/img/cr_logo.png" alt="Christian Revive"/>
-                    <p>© Christian Revive — every purchase supports our community and outreach projects.</p>
+                    <p>© Christian Revive Store — quality products, delivered with care.</p>
                 </div>
             </footer>
         </xpath>
@@ -1112,7 +1120,7 @@
                             <a href="/christianrevive" class="is-active">Store</a>
                             <a href="/my/orders">My Orders</a>
                             <a t-if="request.env.user._is_public()"
-                               href="/web/login?redirect=/christianrevive" class="cr-nav-signin">Sign in</a>
+                               href="/christianrevive/login" class="cr-nav-signin">Sign in</a>
                             <a t-else="" href="/my" class="cr-nav-user">
                                 <i class="fa fa-user-circle-o"/> <t t-esc="request.env.user.name"/>
                             </a>
@@ -1127,10 +1135,10 @@
                 <section class="cr-hero">
                     <div class="container position-relative">
                         <span class="cr-kicker">Christian Revive Store</span>
-                        <h1>Products that support our ministry</h1>
+                        <h1>Welcome to the Christian Revive Store</h1>
                         <p>
-                            Browse pieces from the Christian Revive store — every purchase
-                            helps our community and outreach projects.
+                            Browse our collection, order in a few clicks, and track every
+                            order from your account — delivery straight to your door.
                         </p>
                         <form class="cr-search" action="/christianrevive" method="get">
                             <input type="hidden" name="categ" t-att-value="active_categ_id or ''"/>
@@ -1201,7 +1209,7 @@
                 <footer class="cr-footer">
                     <div class="container">
                         <img src="/lifestyle_connector/static/src/img/cr_logo.png" alt="Christian Revive"/>
-                        <p>© Christian Revive — every purchase supports our community and outreach projects.</p>
+                        <p>© Christian Revive Store — quality products, delivered with care.</p>
                     </div>
                 </footer>
             </div>

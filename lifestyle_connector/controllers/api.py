@@ -905,6 +905,7 @@ class LifestyleAPI(http.Controller):
             'note': note or False,
             'order_line': order_lines,
             'lifestyle_coupon_code': coupon_card.code if coupon_card else False,
+            'rl_brand': 'lifestyle',
         })
         order.action_confirm()
         if coupon_card:

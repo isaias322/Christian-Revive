@@ -991,7 +991,7 @@
              Christian Revive pages - injecting extra icon links is not
              enough because browsers may prefer the first/primary link. -->
         <xpath expr="//t[@t-set='x_icon']" position="attributes">
-            <attribute name="t-value">'/lifestyle_connector/static/src/img/cr_icon.png?v=3' if (request and (request.httprequest.path.startswith('/christianrevive') or (request.session.get('rl_web_brand') == 'cr' and any(request.httprequest.path.startswith(p) for p in ('/my', '/shop/cart', '/shop/checkout', '/shop/address', '/shop/payment', '/shop/confirmation'))))) else website.image_url(website, 'favicon')</attribute>
+            <attribute name="t-value">'/lifestyle_connector/static/src/img/cr_icon.png?v=3' if (request and (request.httprequest.path.startswith('/christianrevive') or (request.session.get('rl_web_brand') == 'cr' and any(request.httprequest.path.startswith(p) for p in ('/my', '/shop', '/web/login', '/web/signup', '/web/reset_password'))))) else website.image_url(website, 'favicon')</attribute>
         </xpath>
         <xpath expr="//head" position="inside">
             <!-- Order pages are branded by the ORDER (the storefront it was

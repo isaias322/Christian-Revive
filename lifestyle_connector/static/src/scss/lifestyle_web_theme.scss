@@ -6086,6 +6086,38 @@ footer .rounded-circle,
     white-space: nowrap;
 }
 
+/* Wishlist heart on store cards */
+.cr-card-wish {
+    position: absolute;
+    right: 0.7rem;
+    top: 0.7rem;
+    z-index: 3;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.35rem;
+    height: 2.35rem;
+    border: 1px solid rgba(74, 55, 40, 0.2);
+    border-radius: 50%;
+    color: #8B6B4A;
+    background: rgba(255, 255, 255, 0.92);
+    box-shadow: 0 8px 20px rgba(59, 45, 31, 0.14);
+    transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
+}
+
+.cr-card-wish:hover {
+    background: #8B6B4A;
+    color: #FAF6F1;
+    transform: scale(1.06);
+}
+
+.cr-card-wish.is-saved,
+.cr-card-wish[disabled] {
+    color: #FAF6F1;
+    background: #A05A46;
+    border-color: #A05A46;
+}
+
 /* "View" affordance sliding up on card hover */
 .cr-card-img::after {
     content: "View \2192";

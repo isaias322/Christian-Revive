@@ -1188,10 +1188,10 @@
                            class="cr-nav-logout" title="Log out" aria-label="Log out">
                             <i class="fa fa-sign-out"/>
                         </a>
-                        <a href="/shop/wishlist" class="cr-nav-wish" aria-label="Wishlist" title="Wishlist">
+                        <a href="/shop/wishlist" class="cr-nav-wish o_wsale_my_wish" aria-label="Wishlist" title="Wishlist">
                             <i class="fa fa-heart-o"/>
                             <t t-set="rl_wish_count" t-value="request.env.registry.get('product.wishlist') and not request.env.user._is_public() and request.env['product.wishlist'].sudo().search_count([('partner_id', '=', request.env.user.partner_id.id)]) or 0"/>
-                            <span t-if="rl_wish_count" class="cr-cart-badge" t-esc="rl_wish_count"/>
+                            <span t-attf-class="cr-cart-badge my_wish_quantity #{'' if rl_wish_count else 'd-none'}" t-esc="rl_wish_count or 0"/>
                         </a>
                         <a href="/shop/cart" class="cr-nav-cart" aria-label="Cart">
                             <i class="fa fa-shopping-cart"/>
@@ -1249,10 +1249,10 @@
                                class="cr-nav-logout" title="Log out" aria-label="Log out">
                                 <i class="fa fa-sign-out"/>
                             </a>
-                            <a href="/shop/wishlist" class="cr-nav-wish" aria-label="Wishlist" title="Wishlist">
+                            <a href="/shop/wishlist" class="cr-nav-wish o_wsale_my_wish" aria-label="Wishlist" title="Wishlist">
                             <i class="fa fa-heart-o"/>
                             <t t-set="rl_wish_count" t-value="request.env.registry.get('product.wishlist') and not request.env.user._is_public() and request.env['product.wishlist'].sudo().search_count([('partner_id', '=', request.env.user.partner_id.id)]) or 0"/>
-                            <span t-if="rl_wish_count" class="cr-cart-badge" t-esc="rl_wish_count"/>
+                            <span t-attf-class="cr-cart-badge my_wish_quantity #{'' if rl_wish_count else 'd-none'}" t-esc="rl_wish_count or 0"/>
                         </a>
                         <a href="/shop/cart" class="cr-nav-cart" aria-label="Cart">
                                 <i class="fa fa-shopping-cart"/>
@@ -1340,6 +1340,13 @@
                                t-att-href="'/christianrevive/p/%s' % product.id"
                                class="cr-card">
                                 <div class="cr-card-img">
+                                    <button t-if="not request.env.user._is_public()" type="button"
+                                            class="cr-card-wish o_add_wishlist"
+                                            t-att-data-product-template-id="product.id"
+                                            t-att-data-product-product-id="product.product_variant_id.id"
+                                            aria-label="Add to wishlist" title="Add to wishlist">
+                                        <i class="fa fa-heart-o"/>
+                                    </button>
                                     <img t-att-src="'/web/image/product.template/%s/image_512' % product.id"
                                          t-att-alt="product.name" loading="lazy"/>
                                     <span t-if="product.compare_price and product.compare_price &gt; product.list_price"

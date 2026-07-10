@@ -602,6 +602,33 @@ function setupLoginPagePolish() {
     }
 }
 
+// Christian Revive wishlist: Odoo's add-to-wishlist flies a product clone
+// to the FIRST .o_wsale_my_wish element - which sits in the hidden
+// Lifestyle header on CR pages, so the clone flew to the top-left. Strip
+// the class off the hidden header so OUR heart tab becomes the target,
+// and keep card hearts from navigating to the product page.
+function setupCrWishlist() {
+    if (!document.querySelector('.cr-nav')) return;
+    document.querySelectorAll('#wrapwrap > header .o_wsale_my_wish').forEach(function (el) {
+        el.classList.remove('o_wsale_my_wish');
+    });
+    document.addEventListener('click', function (e) {
+        var btn = e.target.closest('.cr-card .o_add_wishlist');
+        if (!btn) return;
+        e.preventDefault(); // heart click must not open the product link
+        window.setTimeout(function () {
+            var badge = document.querySelector('.cr-nav-wish .my_wish_quantity');
+            if (badge) badge.classList.remove('d-none');
+            btn.classList.add('is-saved');
+            var icon = btn.querySelector('i');
+            if (icon) {
+                icon.classList.remove('fa-heart-o');
+                icon.classList.add('fa-heart');
+            }
+        }, 500);
+    }, true);
+}
+
 // CR store: emptying the search box immediately shows all products again -
 // no resubmit needed, and stale category filters are dropped too.
 function setupCrSearchClear() {
@@ -1165,6 +1192,7 @@ function enhanceWebsite() {
     setupContactFormValidation();
     setupSaveForLaterRedirect();
     setupLoginPagePolish();
+    setupCrWishlist();
     setupCrSearchClear();
     setupFriendlyMtoNotice();
     setupRequireLoginForCart();

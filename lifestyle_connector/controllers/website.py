@@ -87,6 +87,15 @@ class LifestyleWebsite(http.Controller):
     def contactus_thank_you(self, **kwargs):
         return request.render('lifestyle_connector.lifestyle_contactus_thank_you_page', {})
 
+    @http.route('/christianrevive/login', type='http', auth='public', website=True, sitemap=False)
+    def christian_revive_login(self, redirect=None, **kwargs):
+        """Christian Revive's own login entry: stamps the session so the
+        shared /web/login (and signup/reset) render in CR branding, then
+        hands over to Odoo's standard, battle-tested auth flow."""
+        request.session['rl_web_brand'] = 'cr'
+        target = redirect or '/christianrevive'
+        return request.redirect('/web/login?redirect=%s' % target)
+
     @http.route(['/christianrevive', '/christianrevive/shop'], type='http', auth='public',
                 website=True, sitemap=True)
     def christian_revive_store(self, search='', categ=None, **kwargs):

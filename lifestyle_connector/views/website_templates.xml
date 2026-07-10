@@ -524,7 +524,10 @@
         <xpath expr="//div[@id='introduction']" position="after">
             <div t-if="sale_order.delivery_stage" class="lifestyle-card mb-4">
                 <div class="d-flex justify-content-between align-items-center mb-2">
-                    <h5 class="mb-0">Furniture Progress</h5>
+                    <h5 class="mb-0">
+                        <t t-if="request and request.session.get('rl_web_brand') == 'cr'">Order Progress</t>
+                        <t t-else="">Furniture Progress</t>
+                    </h5>
                     <span class="lifestyle-badge">
                         <t t-esc="sale_order.lifestyle_progress_percent"/>%
                     </span>
@@ -994,7 +997,7 @@
             <t t-set="rl_cr_portal"
                t-value="request and request.session.get('rl_web_brand') == 'cr' and any(
                    request.httprequest.path.startswith(prefix)
-                   for prefix in ('/my', '/shop/cart', '/shop/checkout', '/shop/address', '/shop/payment', '/shop/confirmation')
+                   for prefix in ('/my', '/shop/cart', '/shop/checkout', '/shop/address', '/shop/payment', '/shop/confirmation', '/web/login', '/web/signup', '/web/reset_password')
                )"/>
             <t t-if="rl_cr_portal">
                 <link rel="icon" type="image/png" href="/lifestyle_connector/static/src/img/cr_icon.png?v=2"/>
@@ -1002,6 +1005,39 @@
                 <style>
                     #wrapwrap > header { display: none !important; }
                     #wrapwrap > footer { display: none !important; }
+                    /* Recolor the order progress widgets to the Christian
+                       Revive brown palette (this style block only renders
+                       on CR-branded pages, so Lifestyle keeps its sage). */
+                    .lifestyle-progress { background: rgba(139, 107, 74, 0.18) !important; }
+                    .lifestyle-progress > div { background: #8B6B4A !important; }
+                    .lifestyle-badge {
+                        background: #EFE6DB !important;
+                        color: #4A3728 !important;
+                        border-color: rgba(74, 55, 40, 0.28) !important;
+                    }
+                    /* Christian Revive login / signup / reset password */
+                    .oe_website_login_container .oe_login_form::before { content: 'Welcome to Christian Revive'; }
+                    .oe_website_login_container .oe_signup_form::before { content: 'Join Christian Revive'; }
+                    .oe_website_login_container .oe_login_form,
+                    .oe_website_login_container .oe_signup_form,
+                    .oe_website_login_container .oe_reset_password_form {
+                        border-color: rgba(74, 55, 40, 0.18);
+                    }
+                    .oe_website_login_container .btn-primary {
+                        background: #4A3728 !important;
+                        border-color: #4A3728 !important;
+                        color: #FAF6F1 !important;
+                    }
+                    .oe_website_login_container .btn-primary:hover {
+                        background: #8B6B4A !important;
+                        border-color: #8B6B4A !important;
+                    }
+                    .oe_website_login_container a { color: #8B6B4A !important; }
+                    .oe_website_login_container a:hover { color: #3B2D1F !important; }
+                    .oe_website_login_container .form-control:focus {
+                        border-color: #8B6B4A !important;
+                        box-shadow: 0 0 0 0.2rem rgba(139, 107, 74, 0.2) !important;
+                    }
                 </style>
                 <script type="text/javascript">
                     document.addEventListener('DOMContentLoaded', function () {

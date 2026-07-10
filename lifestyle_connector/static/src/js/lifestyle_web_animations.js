@@ -535,7 +535,8 @@ function renderRecentlyViewed() {
 
 // Floating back-to-top button for long product lists.
 function setupBackToTop() {
-    if (!window.location.pathname.startsWith('/shop')) return;
+    var path = window.location.pathname;
+    if (!path.startsWith('/shop') && !path.startsWith('/christianrevive')) return;
     if (document.querySelector('.rl-back-to-top')) return;
     var btn = document.createElement('button');
     btn.type = 'button';

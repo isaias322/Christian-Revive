@@ -5636,8 +5636,12 @@ footer .rounded-circle,
 }
 
 .cr-nav {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
     background: #FAF6F1;
     border-bottom: 1px solid rgba(74, 55, 40, 0.14);
+    box-shadow: 0 6px 22px rgba(59, 45, 31, 0.06);
 }
 
 .cr-nav .container {
@@ -5679,6 +5683,7 @@ footer .rounded-circle,
 }
 
 .cr-nav-cart {
+    position: relative;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -5689,11 +5694,63 @@ footer .rounded-circle,
     background: #FFFFFF;
 }
 
+.cr-cart-badge {
+    position: absolute;
+    top: -0.35rem;
+    right: -0.45rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.15rem;
+    height: 1.15rem;
+    padding: 0 0.28rem;
+    border-radius: 999px;
+    color: #FAF6F1;
+    background: #8B6B4A;
+    font-size: 0.7rem;
+    font-weight: 900;
+}
+
+.cr-nav-signin {
+    padding: 0.4rem 1rem;
+    border: 1px solid rgba(74, 55, 40, 0.3);
+    border-radius: 999px;
+    background: #FFFFFF;
+}
+
+.cr-nav-signin:hover {
+    background: #4A3728;
+    color: #FAF6F1 !important;
+}
+
+.cr-nav-user i {
+    color: #8B6B4A;
+}
+
+/* Cards rise in with a small stagger as the store opens */
+.cr-grid .cr-card {
+    animation: rlProductIn 0.45s ease both;
+}
+
+@for $i from 1 through 10 {
+    .cr-grid .cr-card:nth-child(#{$i}) {
+        animation-delay: #{0.04 * $i}s;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .cr-grid .cr-card {
+        animation: none;
+    }
+}
+
 .cr-footer {
+    /* !important: on portal/checkout pages this footer is injected inside
+       pages that repaint backgrounds, which washed it out to cream-on-cream. */
     padding: 2.2rem 0;
     border-top: 1px solid rgba(250, 246, 241, 0.12);
-    color: rgba(250, 246, 241, 0.75);
-    background: #3B2D1F;
+    color: #FAF6F1 !important;
+    background: #3B2D1F !important;
     text-align: center;
 }
 
@@ -5701,12 +5758,14 @@ footer .rounded-circle,
     height: 40px;
     margin-bottom: 0.7rem;
     filter: brightness(0) invert(1);
-    opacity: 0.9;
+    opacity: 1;
 }
 
 .cr-footer p {
     margin: 0;
-    font-size: 0.92rem;
+    color: rgba(250, 246, 241, 0.88) !important;
+    font-size: 0.95rem;
+    font-weight: 600;
 }
 
 .cr-hero {

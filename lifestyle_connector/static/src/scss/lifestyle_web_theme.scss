@@ -5821,6 +5821,30 @@ footer .rounded-circle,
     color: #8B6B4A;
 }
 
+.cr-nav-wish {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border: 1px solid rgba(74, 55, 40, 0.25);
+    border-radius: 50%;
+    color: #8B6B4A !important;
+    background: #FFFFFF;
+    transition: background 0.15s ease, color 0.15s ease, transform 0.15s ease;
+}
+
+.cr-nav-wish:hover {
+    background: #8B6B4A;
+    color: #FAF6F1 !important;
+    transform: translateY(-1px);
+}
+
+.cr-nav-wish .cr-cart-badge {
+    border-color: #FAF6F1;
+}
+
 .cr-nav-logout {
     display: inline-flex;
     align-items: center;

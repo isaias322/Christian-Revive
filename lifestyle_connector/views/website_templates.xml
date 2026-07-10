@@ -1188,6 +1188,11 @@
                            class="cr-nav-logout" title="Log out" aria-label="Log out">
                             <i class="fa fa-sign-out"/>
                         </a>
+                        <a href="/shop/wishlist" class="cr-nav-wish" aria-label="Wishlist" title="Wishlist">
+                            <i class="fa fa-heart-o"/>
+                            <t t-set="rl_wish_count" t-value="request.env.registry.get('product.wishlist') and not request.env.user._is_public() and request.env['product.wishlist'].sudo().search_count([('partner_id', '=', request.env.user.partner_id.id)]) or 0"/>
+                            <span t-if="rl_wish_count" class="cr-cart-badge" t-esc="rl_wish_count"/>
+                        </a>
                         <a href="/shop/cart" class="cr-nav-cart" aria-label="Cart">
                             <i class="fa fa-shopping-cart"/>
                             <t t-set="rl_cart_qty" t-value="request.cart and request.cart.cart_quantity or 0"/>
@@ -1244,7 +1249,12 @@
                                class="cr-nav-logout" title="Log out" aria-label="Log out">
                                 <i class="fa fa-sign-out"/>
                             </a>
-                            <a href="/shop/cart" class="cr-nav-cart" aria-label="Cart">
+                            <a href="/shop/wishlist" class="cr-nav-wish" aria-label="Wishlist" title="Wishlist">
+                            <i class="fa fa-heart-o"/>
+                            <t t-set="rl_wish_count" t-value="request.env.registry.get('product.wishlist') and not request.env.user._is_public() and request.env['product.wishlist'].sudo().search_count([('partner_id', '=', request.env.user.partner_id.id)]) or 0"/>
+                            <span t-if="rl_wish_count" class="cr-cart-badge" t-esc="rl_wish_count"/>
+                        </a>
+                        <a href="/shop/cart" class="cr-nav-cart" aria-label="Cart">
                                 <i class="fa fa-shopping-cart"/>
                                 <t t-set="rl_cart_qty" t-value="request.cart and request.cart.cart_quantity or 0"/>
                                 <span t-if="rl_cart_qty" class="cr-cart-badge" t-esc="rl_cart_qty"/>

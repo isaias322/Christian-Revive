@@ -991,7 +991,7 @@
              Christian Revive pages - injecting extra icon links is not
              enough because browsers may prefer the first/primary link. -->
         <xpath expr="//t[@t-set='x_icon']" position="attributes">
-            <attribute name="t-value">'/lifestyle_connector/static/src/img/cr_icon.png?v=2' if (request and (request.httprequest.path.startswith('/christianrevive') or (request.session.get('rl_web_brand') == 'cr' and any(request.httprequest.path.startswith(p) for p in ('/my', '/shop/cart', '/shop/checkout', '/shop/address', '/shop/payment', '/shop/confirmation'))))) else website.image_url(website, 'favicon')</attribute>
+            <attribute name="t-value">'/lifestyle_connector/static/src/img/cr_icon.png?v=3' if (request and (request.httprequest.path.startswith('/christianrevive') or (request.session.get('rl_web_brand') == 'cr' and any(request.httprequest.path.startswith(p) for p in ('/my', '/shop/cart', '/shop/checkout', '/shop/address', '/shop/payment', '/shop/confirmation'))))) else website.image_url(website, 'favicon')</attribute>
         </xpath>
         <xpath expr="//head" position="inside">
             <!-- Order pages are branded by the ORDER (the storefront it was
@@ -1008,8 +1008,8 @@
                    ))
                )"/>
             <t t-if="rl_cr_portal">
-                <link rel="icon" type="image/png" href="/lifestyle_connector/static/src/img/cr_icon.png?v=2"/>
-                <link rel="shortcut icon" type="image/png" href="/lifestyle_connector/static/src/img/cr_icon.png?v=2"/>
+                <link rel="icon" type="image/png" href="/lifestyle_connector/static/src/img/cr_icon.png?v=3"/>
+                <link rel="shortcut icon" type="image/png" href="/lifestyle_connector/static/src/img/cr_icon.png?v=3"/>
                 <style>
                     #wrapwrap > header { display: none !important; }
                     #wrapwrap > footer { display: none !important; }
@@ -1106,9 +1106,9 @@
             <t t-set="title">Christian Revive Store</t>
             <t t-set="head">
                 <!-- ?v= busts the browser's (very sticky) favicon cache -->
-                <link rel="icon" type="image/png" sizes="any" href="/lifestyle_connector/static/src/img/cr_icon.png?v=2"/>
-                <link rel="shortcut icon" type="image/png" href="/lifestyle_connector/static/src/img/cr_icon.png?v=2"/>
-                <link rel="apple-touch-icon" href="/lifestyle_connector/static/src/img/cr_icon.png?v=2"/>
+                <link rel="icon" type="image/png" sizes="any" href="/lifestyle_connector/static/src/img/cr_icon.png?v=3"/>
+                <link rel="shortcut icon" type="image/png" href="/lifestyle_connector/static/src/img/cr_icon.png?v=3"/>
+                <link rel="apple-touch-icon" href="/lifestyle_connector/static/src/img/cr_icon.png?v=3"/>
             </t>
             <div id="wrap" class="oe_structure cr-page">
                 <nav class="cr-nav">

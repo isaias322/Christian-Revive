@@ -1095,6 +1095,18 @@
                         border-color: #8B6B4A !important;
                         color: #FAF6F1 !important;
                     }
+                    .btn-outline-secondary,
+                    #wrapwrap .btn-outline-secondary {
+                        background: transparent !important;
+                        border-color: rgba(139, 107, 74, 0.55) !important;
+                        color: #6B4F34 !important;
+                    }
+                    .btn-outline-secondary:hover,
+                    #wrapwrap .btn-outline-secondary:hover {
+                        background: #8B6B4A !important;
+                        border-color: #8B6B4A !important;
+                        color: #FAF6F1 !important;
+                    }
                     #wrapwrap main a:not(.btn):not(.cr-nav-brand):not(.dropdown-item) {
                         color: #8B6B4A;
                     }

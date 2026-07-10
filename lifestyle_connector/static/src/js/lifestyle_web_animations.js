@@ -960,11 +960,14 @@ function setupOrderConfirmation() {
     });
     wrap.appendChild(steps);
 
+    // On Christian Revive-branded pages (CR nav present), continue
+    // shopping must lead back to the CR store, not the Lifestyle shop.
+    var shopHref = document.querySelector('.cr-nav') ? '/christianrevive' : '/shop';
     var actions = document.createElement('div');
     actions.className = 'rl-confirm-actions';
     actions.innerHTML =
         '<a class="btn btn-primary" href="/my/orders"><i class="fa fa-map-marker"></i> Track your order</a>' +
-        '<a class="btn btn-outline-secondary" href="/shop"><i class="fa fa-arrow-left"></i> Continue shopping</a>';
+        '<a class="btn btn-outline-secondary" href="' + shopHref + '"><i class="fa fa-arrow-left"></i> Continue shopping</a>';
     wrap.appendChild(actions);
 
     host.insertBefore(wrap, host.firstChild);

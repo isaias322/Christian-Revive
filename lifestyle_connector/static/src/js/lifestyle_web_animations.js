@@ -602,6 +602,43 @@ function setupLoginPagePolish() {
     }
 }
 
+// Odoo titles the made-to-order refusal toast "Invalid Operation", which
+// reads like a system failure. Rewrite that one notification to a friendly
+// bold "Please note:" the moment it renders. Other notifications untouched.
+function setupFriendlyMtoNotice() {
+    var path = window.location.pathname;
+    if (!path.startsWith('/shop') && !path.startsWith('/christianrevive')) return;
+    if (!('MutationObserver' in window)) return;
+
+    function soften(scope) {
+        var notices = scope.querySelectorAll ? scope.querySelectorAll('.o_notification, .toast') : [];
+        Array.prototype.forEach.call(notices, function (notice) {
+            var text = notice.textContent || '';
+            if (text.indexOf('made to order') === -1) return;
+            var parts = notice.querySelectorAll('.o_notification_title, .o_notification_content, .o_notification_body, .toast-body, .toast-header');
+            Array.prototype.forEach.call(parts.length ? parts : [notice], function (el) {
+                var t = el.textContent || '';
+                if (t.indexOf('Invalid Operation') === -1) return;
+                var message = t.replace(/\s*Invalid Operation\.?\s*/i, ' ').trim();
+                el.textContent = '';
+                var bold = document.createElement('b');
+                bold.textContent = 'Please note: ';
+                el.appendChild(bold);
+                el.appendChild(document.createTextNode(message));
+            });
+        });
+    }
+
+    var observer = new MutationObserver(function (mutations) {
+        mutations.forEach(function (mutation) {
+            Array.prototype.forEach.call(mutation.addedNodes, function (node) {
+                if (node.nodeType === 1) soften(node.parentElement || node);
+            });
+        });
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+}
+
 function setupRequireLoginForCart() {
     if (!window.location.pathname.startsWith('/shop')) return;
     // Cache the status so the guard is armed instantly on later pages -
@@ -1094,6 +1131,7 @@ function enhanceWebsite() {
     setupContactFormValidation();
     setupSaveForLaterRedirect();
     setupLoginPagePolish();
+    setupFriendlyMtoNotice();
     setupRequireLoginForCart();
     setupColorSelection();
     setupCartLineColors();

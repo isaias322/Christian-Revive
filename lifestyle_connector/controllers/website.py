@@ -124,7 +124,20 @@ class LifestyleWebsite(http.Controller):
         ]
         search_text = str(search or '').strip()[:80]
         if search_text:
-            domain.append(('name', 'ilike', search_text))
+            # Match product names, category names, store descriptions and
+            # colors - so "shirts" finds everything in a "Shirt" category.
+            terms = {search_text}
+            if len(search_text) > 3 and search_text.lower().endswith('s'):
+                terms.add(search_text[:-1])  # naive singular for plurals
+            leaves = []
+            for term in terms:
+                leaves.extend([
+                    ('name', 'ilike', term),
+                    ('categ_id.name', 'ilike', term),
+                    ('store_description', 'ilike', term),
+                    ('color_options', 'ilike', term),
+                ])
+            domain += ['|'] * (len(leaves) - 1) + leaves
         all_products = Product.search(domain, order='store_sequence asc, id desc')
         categories = all_products.mapped('categ_id').sorted('name')
         categ_id = int(categ) if categ and str(categ).isdigit() else None

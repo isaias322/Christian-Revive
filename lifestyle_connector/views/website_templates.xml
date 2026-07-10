@@ -1049,25 +1049,51 @@
                     /* Full re-skin: every Lifestyle-sage element renders in
                        Christian Revive brown on CR pages. This block only
                        exists on CR-branded pages, so Lifestyle is untouched. */
+                    /* background shorthand: the Lifestyle theme paints
+                       buttons with a sage GRADIENT !important, so a
+                       background-color override never shows. Match its
+                       heaviest selectors and kill the gradient. */
                     .btn-primary,
-                    a.btn-primary,
-                    button.btn-primary {
-                        background-color: #4A3728 !important;
+                    .oe_website_sale .btn-primary,
+                    .oe_website_sale #wrap .btn-primary,
+                    .oe_website_sale #cart_total .btn-primary,
+                    .oe_website_sale .oe_cart .btn-primary,
+                    #wrapwrap .btn-primary {
+                        background: #4A3728 !important;
                         border-color: #4A3728 !important;
                         color: #FAF6F1 !important;
+                        box-shadow: 0 14px 30px rgba(74, 55, 40, 0.26) !important;
                     }
                     .btn-primary:hover,
                     .btn-primary:focus,
-                    a.btn-primary:hover,
-                    button.btn-primary:hover {
-                        background-color: #8B6B4A !important;
+                    .oe_website_sale .btn-primary:hover,
+                    .oe_website_sale .btn-primary:focus,
+                    .oe_website_sale #wrap .btn-primary:hover,
+                    .oe_website_sale #cart_total .btn-primary:hover,
+                    .oe_website_sale .oe_cart .btn-primary:hover,
+                    #wrapwrap .btn-primary:hover {
+                        background: #8B6B4A !important;
                         border-color: #8B6B4A !important;
                         color: #FAF6F1 !important;
+                        box-shadow: 0 18px 38px rgba(74, 55, 40, 0.32) !important;
                     }
                     .btn-primary.disabled,
-                    .btn-primary:disabled {
-                        background-color: #A98F76 !important;
+                    .btn-primary:disabled,
+                    #wrapwrap .btn-primary.disabled {
+                        background: #A98F76 !important;
                         border-color: #A98F76 !important;
+                    }
+                    .btn-outline-primary,
+                    #wrapwrap .btn-outline-primary {
+                        color: #6B4F34 !important;
+                        border-color: #8B6B4A !important;
+                        background: transparent !important;
+                    }
+                    .btn-outline-primary:hover,
+                    #wrapwrap .btn-outline-primary:hover {
+                        background: #8B6B4A !important;
+                        border-color: #8B6B4A !important;
+                        color: #FAF6F1 !important;
                     }
                     #wrapwrap main a:not(.btn):not(.cr-nav-brand):not(.dropdown-item) {
                         color: #8B6B4A;

@@ -884,7 +884,18 @@
                        t-attf-class="lifestyle-badge text-decoration-none #{'lifestyle-badge-active' if lifestyle_active_quick == 'popular' else ''}">Popular</a>
                 </div>
             </div>
-            <t t-set="pub_cats" t-value="request.env['product.public.category'].sudo().search([], order='sequence, id')"/>
+            <!-- product.public.category is a shared model - Marketplace
+                 creates its own rows there too (Women, Bridal, Men, ...).
+                 An unfiltered search([]) showed Marketplace's categories in
+                 the Lifestyle shop filter. Derive the list from categories
+                 actually used by a Lifestyle/CR-visible product instead. -->
+            <t t-set="Product" t-value="request.env['product.template']"/>
+            <t t-set="pub_cats" t-value="
+                Product.sudo().search(
+                    ['|'] + Product._lifestyle_app_visibility_domain() + Product._cr_app_visibility_domain()
+                    + [('sale_ok', '=', True), ('active', '=', True)]
+                ).mapped('public_categ_ids').sorted(lambda c: (c.sequence, c.id))
+            "/>
             <div t-if="pub_cats" class="rl-shop-filter-block mb-3">
                 <h6 class="mb-2"><b>Shop by Product</b></h6>
                 <div class="d-flex flex-wrap gap-2">

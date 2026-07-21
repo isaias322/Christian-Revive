@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- marketplace_website/data/website_data.xml deletes
+         website_sale.menu_shop on install, assuming (correctly, for its
+         own standalone project) that a database sells only through
+         /market. This deployment shares one website record between
+         Revive Lifestyle, Christian Revive and Marketplace, so that menu
+         is Revive Lifestyle's actual "Shop" nav link - recreate it here
+         with the same values Odoo's own website_sale/data/data.xml uses. -->
+    <data noupdate="1">
+        <record id="restored_menu_shop" model="website.menu">
+            <field name="name">Shop</field>
+            <field name="url">/shop</field>
+            <field name="parent_id" ref="website.main_menu"/>
+            <field name="sequence" eval="20"/>
+        </record>
+    </data>
+</odoo>

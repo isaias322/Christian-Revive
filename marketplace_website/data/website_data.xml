@@ -5,10 +5,15 @@
         <function model="ir.config_parameter" name="set_param"
                   eval="('auth_signup.invitation_scope', 'b2c')"/>
 
-        <!-- Remove the default Odoo eCommerce "Shop" menu: this project
-             sells exclusively through /market, and website_sale is only
-             installed for its cart/checkout/product infrastructure. -->
-        <delete model="website.menu" id="website_sale.menu_shop"/>
+        <!-- NOTE: the original standalone Marketplace project deleted
+             website_sale's default "Shop" menu here, on the assumption
+             this database sells only through /market. In THIS deployment
+             the same website record is shared with Revive Lifestyle and
+             Christian Revive, both of which need that "Shop" menu link -
+             deleting it took down their live navigation the first time
+             this installed. Left removed deliberately; see
+             lifestyle_connector/data/restore_shop_menu.xml, which
+             recreates the menu item after this module's install runs. -->
 
         <!-- Website menu entries -->
         <record id="menu_market" model="website.menu">

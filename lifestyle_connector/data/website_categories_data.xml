@@ -16,19 +16,19 @@
     <record id="menu_shop_furniture" model="website.menu">
         <field name="name">Furniture &amp; Home</field>
         <field name="url" eval="'/shop/category/%d' % ref('public_category_furniture')"/>
-        <field name="parent_id" ref="website_sale.menu_shop"/>
+        <field name="parent_id" ref="lifestyle_connector.restored_menu_shop"/>
         <field name="sequence">1</field>
     </record>
     <record id="menu_shop_fruits_veg" model="website.menu">
         <field name="name">Fruits &amp; Vegetables</field>
         <field name="url" eval="'/shop/category/%d' % ref('public_category_fruits_veg')"/>
-        <field name="parent_id" ref="website_sale.menu_shop"/>
+        <field name="parent_id" ref="lifestyle_connector.restored_menu_shop"/>
         <field name="sequence">2</field>
     </record>
     <record id="menu_shop_pantry" model="website.menu">
         <field name="name">Healthy Pantry</field>
         <field name="url" eval="'/shop/category/%d' % ref('public_category_pantry')"/>
-        <field name="parent_id" ref="website_sale.menu_shop"/>
+        <field name="parent_id" ref="lifestyle_connector.restored_menu_shop"/>
         <field name="sequence">3</field>
     </record>
 </odoo>

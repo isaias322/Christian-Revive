@@ -34,8 +34,8 @@
         'views/report_brand_templates.xml',
         'views/vendor_portal_templates.xml',
         'data/website_branding_data.xml',
-        'data/website_categories_data.xml',
         'data/restore_shop_menu.xml',
+        'data/website_categories_data.xml',
         'views/stock_notification_views.xml',
     ],
     'assets': {

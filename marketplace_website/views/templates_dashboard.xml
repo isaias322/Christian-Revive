@@ -1,0 +1,678 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ============================================================ -->
+    <!-- Overview                                                     -->
+    <!-- ============================================================ -->
+    <template id="dashboard_home" name="Seller Dashboard">
+        <t t-set="dash_page" t-value="'home'"/>
+        <t t-call="marketplace_website.dashboard_layout">
+            <div class="mk-dash-header">
+                <h4 class="mb-0">Overview</h4>
+                <span class="mk-dash-greeting">Welcome back, <strong t-out="seller.name"/> 👋</span>
+            </div>
+            <div class="row g-3 mb-4">
+                <div class="col-6 col-lg-3">
+                    <div class="card p-3 mk-stat">
+                        <div class="mk-stat-icon teal"><i class="fa fa-tags"/></div>
+                        <div class="fs-3 fw-bold" t-out="seller.active_listing_count"/>
+                        <div class="small text-muted">Active listings</div>
+                    </div>
+                </div>
+                <div class="col-6 col-lg-3">
+                    <div class="card p-3 mk-stat">
+                        <div class="mk-stat-icon violet"><i class="fa fa-cube"/></div>
+                        <div class="fs-3 fw-bold" t-out="seller.order_count"/>
+                        <div class="small text-muted">Orders</div>
+                    </div>
+                </div>
+                <div class="col-6 col-lg-3">
+                    <div class="card p-3 mk-stat">
+                        <div class="mk-stat-icon green"><i class="fa fa-money"/></div>
+                        <div class="fs-3 fw-bold">
+                            <t t-out="seller.currency_id.symbol"/> <t t-out="'%.0f' % seller.wallet_balance"/>
+                        </div>
+                        <div class="small text-muted">Wallet balance</div>
+                    </div>
+                </div>
+                <div class="col-6 col-lg-3">
+                    <div class="card p-3 mk-stat">
+                        <div class="mk-stat-icon amber"><i class="fa fa-star"/></div>
+                        <div class="fs-3 fw-bold">
+                            <t t-out="'%.1f' % seller.rating_avg"/>
+                        </div>
+                        <div class="small text-muted"><t t-out="seller.review_count"/> reviews</div>
+                    </div>
+                </div>
+            </div>
+
+            <div t-if="seller.kyc_status in ('none', 'rejected')" class="mk-action-card mb-4">
+                <div class="mk-action-icon"><i class="fa fa-id-card"/></div>
+                <div class="flex-grow-1">
+                    <div class="fw-bold">Complete KYC verification</div>
+                    <div class="small text-muted">
+                        Verify your identity to enable payouts to your bank or wallet.
+                        <t t-if="seller.kyc_status == 'rejected'"> Your previous submission was rejected — please resubmit.</t>
+                    </div>
+                </div>
+                <a href="/market/dashboard/settings" class="btn mk-btn btn-sm text-nowrap">Verify now</a>
+            </div>
+
+            <t t-if="orders_to_ship">
+                <div class="mk-nudge-card p-3 mb-4">
+                    <h6 class="fw-bold mb-1"><i class="fa fa-truck me-1 text-primary"/>Orders waiting to ship (<t t-out="len(orders_to_ship)"/>)</h6>
+                    <p class="small text-muted mb-2">Ship quickly to keep buyers happy and get paid sooner.</p>
+                    <a href="/market/dashboard/orders" class="btn mk-btn btn-sm align-self-start">Go to orders</a>
+                </div>
+            </t>
+
+            <div class="card p-3 mb-4">
+                <h6 class="fw-bold mb-3">Sales, last 8 weeks</h6>
+                <t t-set="max_total" t-value="max([w['total'] for w in analytics['weekly']] + [1.0])"/>
+                <div class="mk-chart">
+                    <t t-foreach="analytics['weekly']" t-as="week">
+                        <div class="mk-chart-col">
+                            <div class="mk-chart-bar-wrap">
+                                <div class="mk-chart-bar"
+                                     t-attf-style="height: #{max(4, round(week['total'] / max_total * 100))}%;"
+                                     t-att-title="'%s: %s %.0f (%d orders)' % (week['label'], seller.currency_id.symbol, week['total'], week['count'])"/>
+                            </div>
+                            <div class="mk-chart-label" t-out="week['label']"/>
+                        </div>
+                    </t>
+                </div>
+                <div class="row g-3 mt-1 text-center">
+                    <div class="col-4">
+                        <div class="fw-bold">
+                            <t t-out="seller.currency_id.symbol"/> <t t-out="'%.0f' % analytics['total_revenue']"/>
+                        </div>
+                        <div class="small text-muted">Total revenue</div>
+                    </div>
+                    <div class="col-4">
+                        <div class="fw-bold">
+                            <t t-out="seller.currency_id.symbol"/> <t t-out="'%.0f' % analytics['avg_order_value']"/>
+                        </div>
+                        <div class="small text-muted">Avg. order value</div>
+                    </div>
+                    <div class="col-4">
+                        <div class="fw-bold"><t t-out="'%.0f' % analytics['sell_through_pct']"/>%</div>
+                        <div class="small text-muted">Sell-through rate</div>
+                    </div>
+                </div>
+                <div t-if="analytics['top_listing']" class="small text-muted mt-2 text-center">
+                    Best seller: <a t-attf-href="/market/item/#{analytics['top_listing'].id}" t-out="analytics['top_listing'].name"/>
+                </div>
+            </div>
+
+            <div class="row g-3">
+                <div class="col-lg-6">
+                    <div class="card p-3 h-100">
+                        <h6 class="fw-bold mb-1">Recent orders</h6>
+                        <t t-foreach="recent_orders" t-as="order">
+                            <div class="mk-list-row">
+                                <div>
+                                    <div class="mk-order-ref" t-out="order.name"/>
+                                    <div class="small text-muted" t-out="order.partner_id.name"/>
+                                </div>
+                                <span class="fw-bold">
+                                    <t t-out="order.currency_id.symbol"/> <t t-out="'%.0f' % order.marketplace_item_total"/>
+                                </span>
+                            </div>
+                        </t>
+                        <div t-if="not recent_orders" class="text-muted small py-4 text-center">
+                            <i class="fa fa-inbox fa-2x d-block mb-2"/>No orders yet.
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="card p-3 h-100">
+                        <h6 class="fw-bold mb-1">Latest reviews</h6>
+                        <t t-foreach="recent_reviews" t-as="review">
+                            <div class="mk-review-row small">
+                                <span class="mk-review-stars">
+                                    <t t-foreach="range(int(review.rating))" t-as="i"><i class="fa fa-star"/></t>
+                                </span>
+                                <span class="ms-1" t-out="review.comment or ''"/>
+                            </div>
+                        </t>
+                        <div t-if="not recent_reviews" class="text-muted small py-4 text-center">
+                            <i class="fa fa-comment-o fa-2x d-block mb-2"/>No reviews yet.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- ============================================================ -->
+    <!-- Listings                                                     -->
+    <!-- ============================================================ -->
+    <template id="dashboard_listings" name="My Listings">
+        <t t-set="dash_page" t-value="'listings'"/>
+        <t t-call="marketplace_website.dashboard_layout">
+            <div class="mk-dash-header">
+                <h4 class="mb-0">My Listings</h4>
+                <a href="/market/dashboard/listings/new" class="btn mk-btn">
+                    <i class="fa fa-plus me-1"/>New Listing
+                </a>
+            </div>
+            <div t-if="request.params.get('error')" class="alert alert-danger"
+                 t-out="request.params.get('error')"/>
+            <div class="mb-3 d-flex gap-2 flex-wrap">
+                <a href="/market/dashboard/listings"
+                   t-attf-class="btn btn-sm mk-chip #{not state_filter and 'btn-dark' or 'btn-outline-dark'}">All</a>
+                <t t-foreach="[('active', 'Active'), ('draft', 'Draft'), ('pending', 'Pending'), ('reserved', 'Reserved'), ('sold', 'Sold'), ('removed', 'Archived')]" t-as="opt">
+                    <a t-attf-href="/market/dashboard/listings?state=#{opt[0]}"
+                       t-attf-class="btn btn-sm mk-chip #{state_filter == opt[0] and 'btn-dark' or 'btn-outline-dark'}"
+                       t-out="opt[1]"/>
+                </t>
+            </div>
+            <div class="card">
+                <table class="table align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>Item</th><th>Price</th><th>Stock</th><th>Status</th>
+                            <th>Views</th><th>Likes</th><th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="listings" t-as="listing">
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <img t-attf-src="/web/image/product.template/#{listing.id}/image_128"
+                                             class="mk-thumb-sm" alt="item"/>
+                                        <a t-attf-href="/market/item/#{listing.id}"
+                                           class="text-decoration-none text-truncate" style="max-width: 200px;"
+                                           t-out="listing.name"/>
+                                    </div>
+                                </td>
+                                <td><t t-out="listing.currency_id.symbol"/> <t t-out="'%.0f' % listing.list_price"/></td>
+                                <td t-out="listing.stock_quantity"/>
+                                <td>
+                                    <span t-attf-class="badge mk-state-#{listing.listing_state}"
+                                          t-out="dict(listing._fields['listing_state'].selection).get(listing.listing_state)"/>
+                                </td>
+                                <td t-out="listing.view_count"/>
+                                <td t-out="listing.favorite_count"/>
+                                <td class="text-end">
+                                    <a t-attf-href="/market/dashboard/listings/#{listing.id}/edit"
+                                       class="btn btn-sm btn-outline-dark">Edit</a>
+                                    <form t-if="listing.listing_state in ('draft', 'rejected')"
+                                          t-attf-action="/market/dashboard/listings/#{listing.id}/publish"
+                                          method="post" class="d-inline">
+                                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                        <button class="btn btn-sm mk-btn">Publish</button>
+                                    </form>
+                                    <form t-if="listing.listing_state == 'active'"
+                                          t-attf-action="/market/dashboard/listings/#{listing.id}/remove"
+                                          method="post" class="d-inline">
+                                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                        <button class="btn btn-sm btn-outline-secondary">Archive</button>
+                                    </form>
+                                    <form t-if="listing.listing_state == 'removed'"
+                                          t-attf-action="/market/dashboard/listings/#{listing.id}/relist"
+                                          method="post" class="d-inline">
+                                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                        <button class="btn btn-sm btn-outline-success">Unarchive</button>
+                                    </form>
+                                    <form t-if="listing.listing_state in ('draft', 'pending', 'rejected', 'removed')"
+                                          t-attf-action="/market/dashboard/listings/#{listing.id}/delete"
+                                          method="post" class="d-inline">
+                                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                        <button class="btn btn-sm btn-outline-danger"
+                                                onclick="return confirm('Delete this listing permanently? This cannot be undone.');">
+                                            Delete
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        </t>
+                        <tr t-if="not listings">
+                            <td colspan="7" class="text-center text-muted py-5">
+                                <i class="fa fa-tags fa-2x d-block mb-2"/>
+                                No listings here yet. <a href="/market/dashboard/listings/new">Create your first listing</a>.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </t>
+    </template>
+
+    <!-- ============================================================ -->
+    <!-- Listing form (new / edit)                                    -->
+    <!-- ============================================================ -->
+    <template id="dashboard_listing_form" name="Listing Form">
+        <t t-set="dash_page" t-value="'listings'"/>
+        <t t-call="marketplace_website.dashboard_layout">
+            <div class="mk-dash-header">
+                <h4 class="mb-0">
+                    <t t-if="listing">Edit listing</t>
+                    <t t-else="">New listing</t>
+                </h4>
+                <a href="/market/dashboard/listings" class="text-muted small text-decoration-none">
+                    <i class="fa fa-arrow-left me-1"/>Back to listings
+                </a>
+            </div>
+            <t t-call="marketplace_website.mk_alert"/>
+            <form action="/market/dashboard/listings/save" method="post"
+                  enctype="multipart/form-data" class="card p-4">
+                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                <input type="hidden" name="listing_id" t-att-value="listing and listing.id or ''"/>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Title *</label>
+                    <input type="text" name="name" class="form-control" required="required"
+                           placeholder="e.g. Khaadi embroidered lawn 3-piece, worn once"
+                           t-att-value="listing and listing.name or ''"/>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Description</label>
+                    <textarea name="description" class="form-control" rows="4"
+                              placeholder="Condition details, measurements, flaws, story..."><t t-if="listing" t-out="listing.description_sale or ''"/></textarea>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Photos <t t-if="not listing">*</t></label>
+                    <input type="file" name="images" class="form-control" accept="image/*" multiple="multiple"/>
+                    <div class="form-text">Up to 8 photos. The first photo becomes the cover.</div>
+                    <div t-if="listing" class="d-flex gap-2 mt-2 flex-wrap">
+                        <div t-if="listing.image_1920" class="text-center">
+                            <img t-attf-src="/web/image/product.template/#{listing.id}/image_128" class="mk-thumb-sm" alt="cover"/>
+                            <div class="small text-muted">cover</div>
+                        </div>
+                        <t t-foreach="listing.product_template_image_ids" t-as="img">
+                            <div class="text-center">
+                                <img t-attf-src="/web/image/product.image/#{img.id}/image_128" class="mk-thumb-sm" alt="photo"/>
+                                <div class="form-check small">
+                                    <input class="form-check-input" type="checkbox" name="remove_image_ids" t-att-value="img.id"/>
+                                    <label class="form-check-label">remove</label>
+                                </div>
+                            </div>
+                        </t>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label fw-bold">Price *</label>
+                        <input type="number" step="0.01" min="1" name="price" class="form-control" required="required"
+                               t-att-value="listing and listing.list_price or ''"/>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label fw-bold">Original price</label>
+                        <input type="number" step="0.01" name="original_price" class="form-control"
+                               t-att-value="listing and listing.original_price or ''"/>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label fw-bold">Quantity available *</label>
+                        <input type="number" step="1" min="1" name="stock_quantity" class="form-control" required="required"
+                               t-att-value="listing and listing.stock_quantity or 1"/>
+                        <div class="form-text">Have more than one of the same item? Set the count — no need for separate listings.</div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label fw-bold">Condition *</label>
+                        <select name="condition" class="form-select" required="required">
+                            <t t-foreach="conditions" t-as="cond">
+                                <option t-att-value="cond[0]"
+                                        t-att-selected="listing and listing.condition == cond[0] and 'selected' or None"
+                                        t-out="cond[1]"/>
+                            </t>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label fw-bold">Category</label>
+                        <select name="category_id" class="form-select">
+                            <option value="">Choose...</option>
+                            <t t-foreach="all_categories" t-as="cat">
+                                <option t-att-value="cat.id"
+                                        t-att-selected="listing and cat in listing.public_categ_ids and 'selected' or None">
+                                    <t t-if="cat.parent_id" t-out="cat.parent_id.name + ' / ' + cat.name"/>
+                                    <t t-else="" t-out="cat.name"/>
+                                </option>
+                            </t>
+                        </select>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label fw-bold">Brand</label>
+                        <input type="text" name="brand_name" class="form-control" list="mkBrandOptions"
+                               placeholder="Type or pick a brand"
+                               t-att-value="listing and listing.marketplace_brand_id.name or ''"/>
+                        <datalist id="mkBrandOptions">
+                            <t t-foreach="brands" t-as="brand">
+                                <option t-att-value="brand.name"/>
+                            </t>
+                        </datalist>
+                        <div class="form-text">Not in the list? Just type it — it'll be added.</div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label fw-bold">Size</label>
+                        <div class="d-flex gap-2">
+                            <select name="size_category" class="form-select" style="max-width: 120px;">
+                                <t t-foreach="[('women', 'Women'), ('men', 'Men'), ('kids', 'Kids'), ('shoes', 'Shoes'), ('other', 'Other')]" t-as="opt">
+                                    <option t-att-value="opt[0]"
+                                            t-att-selected="listing and listing.marketplace_size_id.category == opt[0] and 'selected' or None"
+                                            t-out="opt[1]"/>
+                                </t>
+                            </select>
+                            <input type="text" name="size_name" class="form-control" list="mkSizeOptions"
+                                   placeholder="e.g. M, 42, One Size"
+                                   t-att-value="listing and listing.marketplace_size_id.name or ''"/>
+                        </div>
+                        <datalist id="mkSizeOptions">
+                            <t t-foreach="sizes" t-as="size">
+                                <option t-att-value="size.name"/>
+                            </t>
+                        </datalist>
+                        <div class="form-text">Not in the list? Just type it — it'll be added.</div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Colour</label>
+                        <input type="text" name="color" class="form-control"
+                               t-att-value="listing and listing.color or ''"/>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Material</label>
+                        <input type="text" name="material" class="form-control"
+                               t-att-value="listing and listing.material or ''"/>
+                    </div>
+                </div>
+                <div class="d-flex gap-2">
+                    <button type="submit" name="action" value="save" class="btn btn-outline-dark">Save Draft</button>
+                    <button type="submit" name="action" value="publish" class="btn mk-btn">Save &amp; Publish</button>
+                </div>
+            </form>
+        </t>
+    </template>
+
+    <!-- ============================================================ -->
+    <!-- Seller orders                                                -->
+    <!-- ============================================================ -->
+    <template id="dashboard_orders" name="Seller Orders">
+        <t t-set="dash_page" t-value="'orders'"/>
+        <t t-call="marketplace_website.dashboard_layout">
+            <div class="mk-dash-header">
+                <h4 class="mb-0">Orders</h4>
+            </div>
+            <t t-call="marketplace_website.mk_alert"/>
+            <div t-foreach="orders" t-as="order"
+                 t-attf-class="card p-3 mb-3 mk-order-card mk-order-#{order.marketplace_delivery_state}">
+                <div class="d-flex justify-content-between flex-wrap gap-2">
+                    <div>
+                        <strong t-out="order.name"/> ·
+                        <span t-out="order.partner_id.name"/>
+                        <div class="small text-muted">
+                            <t t-out="order.create_date and order.create_date.strftime('%d %b %Y')"/>
+                            · Payment: <t t-out="dict(order._fields['marketplace_payment_method'].selection).get(order.marketplace_payment_method) or '-'"/>
+                            · Escrow: <t t-out="dict(order._fields['escrow_state'].selection).get(order.escrow_state)"/>
+                        </div>
+                        <div class="small">
+                            <i class="fa fa-map-marker text-muted me-1"/>
+                            Deliver to: <t t-out="order.partner_id.street or ''"/>, <t t-out="order.partner_id.city or ''"/>
+                            · <t t-out="order.partner_id.phone or ''"/>
+                        </div>
+                    </div>
+                    <div class="text-end">
+                        <div class="fw-bold">
+                            You earn: <t t-out="order.currency_id.symbol"/> <t t-out="'%.0f' % order.seller_payout_amount"/>
+                        </div>
+                        <span t-attf-class="badge mk-state-#{order.marketplace_delivery_state}"
+                              t-out="dict(order._fields['marketplace_delivery_state'].selection).get(order.marketplace_delivery_state)"/>
+                    </div>
+                </div>
+                <div class="d-flex gap-2 mt-2 flex-wrap">
+                    <t t-foreach="order._get_marketplace_listings()" t-as="item">
+                        <div class="d-flex align-items-center gap-2 border rounded mk-order-item-chip p-1 pe-2">
+                            <img t-attf-src="/web/image/product.template/#{item.id}/image_128" class="mk-thumb-sm" alt="item"/>
+                            <span class="small" t-out="item.name"/>
+                        </div>
+                    </t>
+                </div>
+                <form t-if="order.marketplace_delivery_state == 'pending'"
+                      t-attf-action="/market/dashboard/orders/#{order.id}/ship"
+                      method="post" class="d-flex gap-2 mt-3 flex-wrap align-items-end">
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                    <div>
+                        <label class="form-label small mb-0">Courier</label>
+                        <select name="courier_id" class="form-select form-select-sm">
+                            <t t-foreach="couriers" t-as="courier">
+                                <option t-att-value="courier.id" t-out="courier.name"/>
+                            </t>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="form-label small mb-0">Tracking number</label>
+                        <input type="text" name="tracking_number" class="form-control form-control-sm"/>
+                    </div>
+                    <button type="submit" class="btn mk-btn btn-sm">Mark Shipped</button>
+                </form>
+                <div t-if="order.tracking_number" class="small mt-2">
+                    <i class="fa fa-truck me-1"/>Tracking:
+                    <a t-if="order.tracking_url" t-att-href="order.tracking_url" target="_blank" t-out="order.tracking_number"/>
+                    <t t-else="" t-out="order.tracking_number"/>
+                    <a t-if="order.shipping_label_ref"
+                       t-attf-href="/market/dashboard/orders/#{order.id}/label"
+                       target="_blank" class="ms-2">
+                        <i class="fa fa-file-pdf-o me-1"/>Download Label
+                    </a>
+                </div>
+            </div>
+            <div t-if="not orders" class="text-center text-muted py-5">
+                <i class="fa fa-shopping-bag fa-2x d-block mb-2"/>
+                No orders yet. Share your shop link to get your first sale!
+            </div>
+        </t>
+    </template>
+
+    <!-- ============================================================ -->
+    <!-- Wallet                                                       -->
+    <!-- ============================================================ -->
+    <template id="dashboard_wallet" name="Wallet and Payouts">
+        <t t-set="dash_page" t-value="'wallet'"/>
+        <t t-call="marketplace_website.dashboard_layout">
+            <div class="mk-dash-header">
+                <h4 class="mb-0">Wallet &amp; Payouts</h4>
+            </div>
+            <t t-call="marketplace_website.mk_alert"/>
+            <div class="row g-3 mb-4">
+                <div class="col-md-6">
+                    <div class="card p-4 text-center mk-balance-card position-relative">
+                        <div class="text-muted small position-relative">Available balance</div>
+                        <div class="fs-2 fw-bold position-relative">
+                            <t t-out="seller.currency_id.symbol"/> <t t-out="'%.2f' % seller.wallet_balance"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <form action="/market/dashboard/wallet/payout" method="post" class="card p-4">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                        <label class="form-label fw-bold">Request payout</label>
+                        <div class="input-group mb-2">
+                            <input type="number" step="0.01" min="1" name="amount" class="form-control"
+                                   placeholder="Amount"/>
+                            <button type="submit" class="btn mk-btn">Request</button>
+                        </div>
+                        <div class="small text-muted">
+                            Paid to your <t t-out="dict(seller._fields['payout_method'].selection).get(seller.payout_method) or 'payout method'"/>.
+                            KYC verification required.
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <h6 class="fw-bold">Payout requests</h6>
+            <div class="card mb-4">
+                <table class="table table-sm mb-0">
+                    <thead><tr><th>Ref</th><th>Amount</th><th>Status</th><th>Paid</th></tr></thead>
+                    <tbody>
+                        <t t-foreach="payouts" t-as="payout">
+                            <tr>
+                                <td t-out="payout.name"/>
+                                <td><t t-out="payout.currency_id.symbol"/> <t t-out="'%.2f' % payout.amount"/></td>
+                                <td><span t-attf-class="badge mk-state-#{payout.state}"
+                                          t-out="dict(payout._fields['state'].selection).get(payout.state)"/></td>
+                                <td t-out="payout.paid_date and payout.paid_date.strftime('%d %b %Y') or '-'"/>
+                            </tr>
+                        </t>
+                        <tr t-if="not payouts"><td colspan="4" class="text-muted text-center py-4">
+                            <i class="fa fa-money fa-2x d-block mb-2"/>No payouts requested yet.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h6 class="fw-bold">Transactions</h6>
+            <div class="card">
+                <table class="table table-sm mb-0">
+                    <thead><tr><th>Date</th><th>Type</th><th>Reference</th><th class="text-end">Amount</th></tr></thead>
+                    <tbody>
+                        <t t-foreach="transactions" t-as="tx">
+                            <tr>
+                                <td t-out="tx.create_date and tx.create_date.strftime('%d %b %Y')"/>
+                                <td t-out="dict(tx._fields['transaction_type'].selection).get(tx.transaction_type)"/>
+                                <td t-out="tx.note or ''"/>
+                                <td t-attf-class="text-end fw-bold #{tx.signed_amount >= 0 and 'text-success' or 'text-danger'}">
+                                    <t t-out="'%+.2f' % tx.signed_amount"/>
+                                </td>
+                            </tr>
+                        </t>
+                        <tr t-if="not transactions"><td colspan="4" class="text-muted text-center py-4">
+                            <i class="fa fa-exchange fa-2x d-block mb-2"/>No transactions yet. Money appears here when escrow is released.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </t>
+    </template>
+
+    <!-- ============================================================ -->
+    <!-- Settings & KYC                                               -->
+    <!-- ============================================================ -->
+    <template id="dashboard_settings" name="Shop Settings">
+        <t t-set="dash_page" t-value="'settings'"/>
+        <t t-call="marketplace_website.dashboard_layout">
+            <div class="mk-dash-header">
+                <h4 class="mb-0">Shop Settings</h4>
+            </div>
+            <t t-call="marketplace_website.mk_alert"/>
+
+            <form action="/market/dashboard/settings/save" method="post"
+                  enctype="multipart/form-data" class="card p-4 mb-4">
+                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                <h6 class="fw-bold mb-3 mk-section-title">
+                    <span class="mk-section-icon"><i class="fa fa-user"/></span>Profile
+                </h6>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Shop name</label>
+                        <input type="text" name="name" class="form-control" t-att-value="seller.name"/>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">City</label>
+                        <input type="text" name="city" class="form-control" t-att-value="seller.city or ''"/>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Bio</label>
+                    <textarea name="bio" class="form-control" rows="3"><t t-out="seller.bio or ''"/></textarea>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Instagram handle</label>
+                        <input type="text" name="instagram_handle" class="form-control" t-att-value="seller.instagram_handle or ''"/>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">WhatsApp number</label>
+                        <input type="text" name="whatsapp_number" class="form-control" t-att-value="seller.whatsapp_number or ''"/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Logo</label>
+                        <input type="file" name="logo" class="form-control" accept="image/*"/>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Banner</label>
+                        <input type="file" name="banner" class="form-control" accept="image/*"/>
+                    </div>
+                </div>
+                <button type="submit" class="btn mk-btn align-self-start">Save Profile</button>
+            </form>
+
+            <form action="/market/dashboard/settings/payout" method="post" class="card p-4 mb-4">
+                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                <h6 class="fw-bold mb-3 mk-section-title">
+                    <span class="mk-section-icon"><i class="fa fa-credit-card"/></span>Payout method
+                </h6>
+                <div class="mb-3">
+                    <select name="payout_method" class="form-select" id="mkPayoutMethod">
+                        <option value="bank" t-att-selected="seller.payout_method == 'bank' and 'selected' or None">Bank transfer</option>
+                        <option value="jazzcash" t-att-selected="seller.payout_method == 'jazzcash' and 'selected' or None">JazzCash</option>
+                        <option value="easypaisa" t-att-selected="seller.payout_method == 'easypaisa' and 'selected' or None">EasyPaisa</option>
+                    </select>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Bank name</label>
+                        <input type="text" name="bank_name" class="form-control" t-att-value="seller.bank_name or ''"/>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Account title</label>
+                        <input type="text" name="bank_account_title" class="form-control" t-att-value="seller.bank_account_title or ''"/>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label">Account number / IBAN</label>
+                        <input type="text" name="bank_account_number" class="form-control" t-att-value="seller.bank_account_number or ''"/>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Mobile wallet number (JazzCash / EasyPaisa)</label>
+                    <input type="text" name="mobile_wallet_number" class="form-control" t-att-value="seller.mobile_wallet_number or ''"/>
+                </div>
+                <button type="submit" class="btn mk-btn align-self-start">Save Payout Details</button>
+            </form>
+
+            <form action="/market/dashboard/settings/kyc" method="post"
+                  enctype="multipart/form-data" class="card p-4">
+                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                <h6 class="fw-bold mb-1 mk-section-title">
+                    <span class="mk-section-icon"><i class="fa fa-id-card"/></span>Identity verification (KYC)
+                </h6>
+                <p class="small text-muted">Required once, before your first payout.</p>
+                <div class="mb-2">
+                    Status:
+                    <span t-attf-class="badge mk-state-#{seller.kyc_status}"
+                          t-out="dict(seller._fields['kyc_status'].selection).get(seller.kyc_status)"/>
+                </div>
+                <t t-if="seller.kyc_status in ('none', 'rejected')">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">ID type</label>
+                            <select name="kyc_id_type" class="form-select">
+                                <option value="cnic">CNIC (Pakistan)</option>
+                                <option value="passport">Passport</option>
+                                <option value="driving_license">Driving license</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">ID number</label>
+                            <input type="text" name="kyc_id_number" class="form-control"
+                                   t-att-value="seller.kyc_id_number or ''"/>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">ID document photos (front &amp; back)</label>
+                        <input type="file" name="kyc_documents" class="form-control" accept="image/*,.pdf" multiple="multiple"/>
+                    </div>
+                    <button type="submit" class="btn mk-btn align-self-start">Submit for Verification</button>
+                </t>
+                <div t-if="seller.kyc_status == 'pending'" class="alert alert-info mb-0">
+                    Your documents are being reviewed. This usually takes 1-2 business days.
+                </div>
+                <div t-if="seller.kyc_status == 'verified'" class="alert alert-success mb-0">
+                    <i class="fa fa-check-circle me-1"/>You are verified. Payouts are enabled.
+                </div>
+            </form>
+        </t>
+    </template>
+</odoo>

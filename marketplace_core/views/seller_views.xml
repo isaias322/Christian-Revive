@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_marketplace_seller_list" model="ir.ui.view">
+        <field name="name">marketplace.seller.list</field>
+        <field name="model">marketplace.seller</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="slug"/>
+                <field name="partner_id"/>
+                <field name="city"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'approved'"
+                       decoration-warning="state == 'pending'"
+                       decoration-danger="state == 'suspended'"/>
+                <field name="kyc_status" widget="badge"
+                       decoration-success="kyc_status == 'verified'"
+                       decoration-warning="kyc_status == 'pending'"/>
+                <field name="active_listing_count" string="Active Listings"/>
+                <field name="order_count"/>
+                <field name="rating_avg" string="Rating"/>
+                <field name="wallet_balance"/>
+                <field name="currency_id" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_marketplace_seller_form" model="ir.ui.view">
+        <field name="name">marketplace.seller.form</field>
+        <field name="model">marketplace.seller</field>
+        <field name="arch" type="xml">
+            <form string="Seller Shop">
+                <header>
+                    <button name="action_submit" type="object" string="Submit for Approval"
+                            invisible="state != 'draft'" class="btn-primary"/>
+                    <button name="action_approve" type="object" string="Approve"
+                            invisible="state != 'pending'" class="btn-primary"
+                            groups="marketplace_core.group_marketplace_moderator"/>
+                    <button name="action_suspend" type="object" string="Suspend"
+                            invisible="state != 'approved'"
+                            groups="marketplace_core.group_marketplace_moderator"
+                            confirm="Suspend this shop and take all its listings offline?"/>
+                    <button name="action_reactivate" type="object" string="Reactivate"
+                            invisible="state != 'suspended'"
+                            groups="marketplace_core.group_marketplace_moderator"/>
+                    <button name="action_verify_kyc" type="object" string="Verify KYC"
+                            invisible="kyc_status != 'pending'" class="btn-success"
+                            groups="marketplace_core.group_marketplace_moderator"/>
+                    <button name="action_reject_kyc" type="object" string="Reject KYC"
+                            invisible="kyc_status != 'pending'"
+                            groups="marketplace_core.group_marketplace_moderator"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,pending,approved"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" icon="fa-tags" type="object"
+                                name="action_view_listings">
+                            <field name="listing_count" widget="statinfo" string="Listings"/>
+                        </button>
+                        <button class="oe_stat_button" icon="fa-shopping-bag" type="object"
+                                name="action_view_orders">
+                            <field name="order_count" widget="statinfo" string="Orders"/>
+                        </button>
+                        <button class="oe_stat_button" icon="fa-star" type="object"
+                                name="action_view_reviews">
+                            <field name="rating_avg" widget="statinfo" string="Rating"/>
+                        </button>
+                    </div>
+                    <field name="logo" widget="image" class="oe_avatar"/>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Shop Name"/></h1>
+                        <h3><field name="slug" placeholder="shop-url-slug"/></h3>
+                    </div>
+                    <group>
+                        <group string="Owner">
+                            <field name="partner_id"/>
+                            <field name="user_id" readonly="1"/>
+                            <field name="city"/>
+                            <field name="country_id"/>
+                            <field name="instagram_handle"/>
+                            <field name="whatsapp_number"/>
+                        </group>
+                        <group string="Marketplace">
+                            <field name="is_featured"/>
+                            <field name="zero_fee_forever"/>
+                            <field name="commission_pct"/>
+                            <field name="follower_count"/>
+                            <field name="wallet_balance"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Profile" name="profile">
+                            <group>
+                                <field name="bio" placeholder="Short shop bio shown on the shop page..."/>
+                                <field name="banner" widget="image"/>
+                            </group>
+                            <field name="story" placeholder="Tell buyers the story of the shop..."/>
+                        </page>
+                        <page string="KYC" name="kyc">
+                            <group>
+                                <group>
+                                    <field name="kyc_status" readonly="1"/>
+                                    <field name="kyc_id_type"/>
+                                    <field name="kyc_id_number"/>
+                                </group>
+                                <group>
+                                    <field name="kyc_document_ids" widget="many2many_binary"/>
+                                </group>
+                            </group>
+                            <field name="kyc_notes" placeholder="Internal review notes..."/>
+                        </page>
+                        <page string="Payout Details" name="payout">
+                            <group>
+                                <group>
+                                    <field name="payout_method"/>
+                                    <field name="mobile_wallet_number"
+                                           invisible="payout_method == 'bank'"/>
+                                </group>
+                                <group invisible="payout_method != 'bank'">
+                                    <field name="bank_name"/>
+                                    <field name="bank_account_title"/>
+                                    <field name="bank_account_number"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Wallet" name="wallet">
+                            <field name="wallet_transaction_ids" readonly="1">
+                                <list>
+                                    <field name="create_date"/>
+                                    <field name="transaction_type"/>
+                                    <field name="order_id"/>
+                                    <field name="payout_id"/>
+                                    <field name="signed_amount"/>
+                                    <field name="state"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Followers" name="followers">
+                            <field name="follower_ids"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_marketplace_seller_search" model="ir.ui.view">
+        <field name="name">marketplace.seller.search</field>
+        <field name="model">marketplace.seller</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="slug"/>
+                <field name="partner_id"/>
+                <field name="city"/>
+                <filter string="Pending Approval" name="pending"
+                        domain="[('state', '=', 'pending')]"/>
+                <filter string="Approved" name="approved"
+                        domain="[('state', '=', 'approved')]"/>
+                <filter string="Suspended" name="suspended"
+                        domain="[('state', '=', 'suspended')]"/>
+                <separator/>
+                <filter string="KYC Pending" name="kyc_pending"
+                        domain="[('kyc_status', '=', 'pending')]"/>
+                <filter string="Featured" name="featured"
+                        domain="[('is_featured', '=', True)]"/>
+                <group>
+                    <filter string="Status" name="group_state"
+                            context="{'group_by': 'state'}"/>
+                    <filter string="KYC Status" name="group_kyc"
+                            context="{'group_by': 'kyc_status'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_marketplace_seller" model="ir.actions.act_window">
+        <field name="name">Seller Shops</field>
+        <field name="res_model">marketplace.seller</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_marketplace_seller_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No seller shops yet</p>
+            <p>Seller shops are created from the website "Start Selling" flow,
+               the mobile app, or manually here.</p>
+        </field>
+    </record>
+</odoo>

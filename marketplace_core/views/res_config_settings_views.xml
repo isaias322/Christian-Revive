@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form_marketplace" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.marketplace</field>
+        <field name="model">res.config.settings</field>
+        <field name="priority" eval="70"/>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="Marketplace" string="Marketplace" name="marketplace_core">
+                    <block title="Buyer Protection">
+                        <setting string="Buyer Protection Fee"
+                                 help="Fee added to every order at checkout: fixed part + percentage of the item price. This is the platform's main revenue.">
+                            <div class="row mt8">
+                                <label for="marketplace_buyer_protection_fixed" class="col-4 o_light_label"/>
+                                <field name="marketplace_buyer_protection_fixed" class="col-4"/>
+                            </div>
+                            <div class="row">
+                                <label for="marketplace_buyer_protection_pct" class="col-4 o_light_label"/>
+                                <field name="marketplace_buyer_protection_pct" class="col-4"/>
+                            </div>
+                        </setting>
+                        <setting string="Escrow Auto-Release"
+                                 help="Days after delivery before held funds are automatically released to the seller.">
+                            <field name="marketplace_escrow_auto_release_days"/>
+                        </setting>
+                    </block>
+                    <block title="Moderation">
+                        <setting string="Moderate Listings"
+                                 help="Require manual approval before a listing goes live.">
+                            <field name="marketplace_moderate_listings"/>
+                        </setting>
+                    </block>
+                    <block title="Card Payments (Stripe)">
+                        <setting string="Stripe Keys"
+                                 help="Card checkout redirects to a Stripe-hosted payment page. Get these from your Stripe Dashboard → Developers → API keys. Leave blank to keep card payments disabled — buyers will still be able to check out with COD / JazzCash / EasyPaisa / bank transfer.">
+                            <div class="row mt8">
+                                <label for="marketplace_stripe_publishable_key" class="col-4 o_light_label"/>
+                                <field name="marketplace_stripe_publishable_key" class="col-6" placeholder="pk_test_..."/>
+                            </div>
+                            <div class="row">
+                                <label for="marketplace_stripe_secret_key" class="col-4 o_light_label"/>
+                                <field name="marketplace_stripe_secret_key" class="col-6" password="True" placeholder="sk_test_..."/>
+                            </div>
+                            <div class="row">
+                                <label for="marketplace_stripe_webhook_secret" class="col-4 o_light_label"/>
+                                <field name="marketplace_stripe_webhook_secret" class="col-6" password="True" placeholder="whsec_..."/>
+                            </div>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+</odoo>

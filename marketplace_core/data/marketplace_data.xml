@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Sequences -->
+        <record id="seq_marketplace_dispute" model="ir.sequence">
+            <field name="name">Marketplace Dispute</field>
+            <field name="code">marketplace.dispute</field>
+            <field name="prefix">DSP/%(year)s/</field>
+            <field name="padding">5</field>
+        </record>
+        <record id="seq_marketplace_payout" model="ir.sequence">
+            <field name="name">Marketplace Payout</field>
+            <field name="code">marketplace.seller.payout</field>
+            <field name="prefix">PAY/%(year)s/</field>
+            <field name="padding">5</field>
+        </record>
+        <record id="seq_marketplace_label" model="ir.sequence">
+            <field name="name">Marketplace Shipping Label</field>
+            <field name="code">marketplace.shipping.label</field>
+            <field name="prefix">LBL/</field>
+            <field name="padding">8</field>
+        </record>
+
+        <!-- Fee products -->
+        <record id="product_buyer_protection_fee" model="product.template">
+            <field name="name">Buyer Protection Fee</field>
+            <field name="type">service</field>
+            <field name="list_price">0.0</field>
+            <field name="sale_ok" eval="False"/>
+            <field name="purchase_ok" eval="False"/>
+        </record>
+        <record id="product_shipping_fee" model="product.template">
+            <field name="name">Shipping Fee</field>
+            <field name="type">service</field>
+            <field name="list_price">0.0</field>
+            <field name="sale_ok" eval="False"/>
+            <field name="purchase_ok" eval="False"/>
+        </record>
+
+        <!-- Couriers (Pakistan launch set) -->
+        <record id="courier_tcs" model="marketplace.courier">
+            <field name="name">TCS</field>
+            <field name="code">tcs</field>
+            <field name="sequence">10</field>
+            <field name="supports_cod" eval="True"/>
+            <field name="flat_rate">250</field>
+            <field name="tracking_url_pattern">https://www.tcsexpress.com/track/?cn={tracking}</field>
+        </record>
+        <record id="courier_leopards" model="marketplace.courier">
+            <field name="name">Leopards Courier</field>
+            <field name="code">leopards</field>
+            <field name="sequence">20</field>
+            <field name="supports_cod" eval="True"/>
+            <field name="flat_rate">220</field>
+            <field name="tracking_url_pattern">https://www.leopardscourier.com/tracking?cn={tracking}</field>
+        </record>
+        <record id="courier_mnp" model="marketplace.courier">
+            <field name="name">M&amp;P (Muller &amp; Phipps)</field>
+            <field name="code">mnp</field>
+            <field name="sequence">30</field>
+            <field name="supports_cod" eval="True"/>
+            <field name="flat_rate">230</field>
+            <field name="tracking_url_pattern">https://www.mulphilog.com/tracking/{tracking}</field>
+        </record>
+        <record id="courier_bluex" model="marketplace.courier">
+            <field name="name">BlueEx</field>
+            <field name="code">bluex</field>
+            <field name="sequence">40</field>
+            <field name="supports_cod" eval="True"/>
+            <field name="flat_rate">240</field>
+            <field name="tracking_url_pattern">https://blue-ex.com/tracking?trackno={tracking}</field>
+        </record>
+
+        <!-- Sizes -->
+        <record id="size_w_xs" model="marketplace.size"><field name="name">XS</field><field name="category">women</field><field name="sequence">10</field></record>
+        <record id="size_w_s" model="marketplace.size"><field name="name">S</field><field name="category">women</field><field name="sequence">20</field></record>
+        <record id="size_w_m" model="marketplace.size"><field name="name">M</field><field name="category">women</field><field name="sequence">30</field></record>
+        <record id="size_w_l" model="marketplace.size"><field name="name">L</field><field name="category">women</field><field name="sequence">40</field></record>
+        <record id="size_w_xl" model="marketplace.size"><field name="name">XL</field><field name="category">women</field><field name="sequence">50</field></record>
+        <record id="size_w_unstitched" model="marketplace.size"><field name="name">Unstitched</field><field name="category">women</field><field name="sequence">60</field></record>
+        <record id="size_m_s" model="marketplace.size"><field name="name">S</field><field name="category">men</field><field name="sequence">10</field></record>
+        <record id="size_m_m" model="marketplace.size"><field name="name">M</field><field name="category">men</field><field name="sequence">20</field></record>
+        <record id="size_m_l" model="marketplace.size"><field name="name">L</field><field name="category">men</field><field name="sequence">30</field></record>
+        <record id="size_m_xl" model="marketplace.size"><field name="name">XL</field><field name="category">men</field><field name="sequence">40</field></record>
+        <record id="size_shoes_36" model="marketplace.size"><field name="name">36</field><field name="category">shoes</field><field name="sequence">10</field></record>
+        <record id="size_shoes_37" model="marketplace.size"><field name="name">37</field><field name="category">shoes</field><field name="sequence">20</field></record>
+        <record id="size_shoes_38" model="marketplace.size"><field name="name">38</field><field name="category">shoes</field><field name="sequence">30</field></record>
+        <record id="size_shoes_39" model="marketplace.size"><field name="name">39</field><field name="category">shoes</field><field name="sequence">40</field></record>
+        <record id="size_shoes_40" model="marketplace.size"><field name="name">40</field><field name="category">shoes</field><field name="sequence">50</field></record>
+        <record id="size_shoes_41" model="marketplace.size"><field name="name">41</field><field name="category">shoes</field><field name="sequence">60</field></record>
+        <record id="size_shoes_42" model="marketplace.size"><field name="name">42</field><field name="category">shoes</field><field name="sequence">70</field></record>
+        <record id="size_other" model="marketplace.size"><field name="name">One Size</field><field name="category">other</field><field name="sequence">10</field></record>
+
+        <!-- Banned keywords (starter policy) -->
+        <record id="banned_kw_weapon" model="marketplace.banned.keyword">
+            <field name="name">weapon</field>
+            <field name="reason">Weapons are prohibited on the marketplace.</field>
+        </record>
+        <record id="banned_kw_replica" model="marketplace.banned.keyword">
+            <field name="name">replica</field>
+            <field name="reason">Counterfeit / replica goods are prohibited.</field>
+        </record>
+        <record id="banned_kw_medicine" model="marketplace.banned.keyword">
+            <field name="name">medicine</field>
+            <field name="reason">Pharmaceuticals are prohibited.</field>
+        </record>
+
+        <!-- Website product categories (launch taxonomy) -->
+        <record id="categ_women" model="product.public.category">
+            <field name="name">Women</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="categ_women_eastern" model="product.public.category">
+            <field name="name">Eastern &amp; Occasion Wear</field>
+            <field name="parent_id" ref="categ_women"/>
+            <field name="sequence">10</field>
+        </record>
+        <record id="categ_women_bridal" model="product.public.category">
+            <field name="name">Bridal</field>
+            <field name="parent_id" ref="categ_women"/>
+            <field name="sequence">20</field>
+        </record>
+        <record id="categ_women_western" model="product.public.category">
+            <field name="name">Western Wear</field>
+            <field name="parent_id" ref="categ_women"/>
+            <field name="sequence">30</field>
+        </record>
+        <record id="categ_women_shoes" model="product.public.category">
+            <field name="name">Shoes</field>
+            <field name="parent_id" ref="categ_women"/>
+            <field name="sequence">40</field>
+        </record>
+        <record id="categ_women_bags" model="product.public.category">
+            <field name="name">Bags &amp; Accessories</field>
+            <field name="parent_id" ref="categ_women"/>
+            <field name="sequence">50</field>
+        </record>
+        <record id="categ_men" model="product.public.category">
+            <field name="name">Men</field>
+            <field name="sequence">20</field>
+        </record>
+        <record id="categ_kids" model="product.public.category">
+            <field name="name">Kids</field>
+            <field name="sequence">30</field>
+        </record>
+        <record id="categ_home" model="product.public.category">
+            <field name="name">Home &amp; Decor</field>
+            <field name="sequence">40</field>
+        </record>
+        <record id="categ_beauty" model="product.public.category">
+            <field name="name">Beauty</field>
+            <field name="sequence">50</field>
+        </record>
+        <record id="categ_other" model="product.public.category">
+            <field name="name">Other</field>
+            <field name="sequence">90</field>
+        </record>
+
+        <!-- Starter brands -->
+        <record id="brand_khaadi" model="marketplace.brand"><field name="name">Khaadi</field></record>
+        <record id="brand_sapphire" model="marketplace.brand"><field name="name">Sapphire</field></record>
+        <record id="brand_gulahmed" model="marketplace.brand"><field name="name">Gul Ahmed</field></record>
+        <record id="brand_sanasafinaz" model="marketplace.brand"><field name="name">Sana Safinaz</field></record>
+        <record id="brand_limelight" model="marketplace.brand"><field name="name">Limelight</field></record>
+        <record id="brand_outfitters" model="marketplace.brand"><field name="name">Outfitters</field></record>
+        <record id="brand_zara" model="marketplace.brand"><field name="name">Zara</field></record>
+        <record id="brand_hm" model="marketplace.brand"><field name="name">H&amp;M</field></record>
+        <record id="brand_nike" model="marketplace.brand"><field name="name">Nike</field></record>
+        <record id="brand_adidas" model="marketplace.brand"><field name="name">Adidas</field></record>
+        <record id="brand_gucci" model="marketplace.brand"><field name="name">Gucci</field><field name="is_luxury" eval="True"/></record>
+        <record id="brand_lv" model="marketplace.brand"><field name="name">Louis Vuitton</field><field name="is_luxury" eval="True"/></record>
+        <record id="brand_other" model="marketplace.brand"><field name="name">Other / No Brand</field></record>
+
+        <!-- Default config parameters -->
+        <record id="icp_buyer_protection_fixed" model="ir.config_parameter">
+            <field name="key">marketplace_core.buyer_protection_fixed</field>
+            <field name="value">100.0</field>
+        </record>
+        <record id="icp_buyer_protection_pct" model="ir.config_parameter">
+            <field name="key">marketplace_core.buyer_protection_pct</field>
+            <field name="value">5.0</field>
+        </record>
+        <record id="icp_escrow_days" model="ir.config_parameter">
+            <field name="key">marketplace_core.escrow_auto_release_days</field>
+            <field name="value">3</field>
+        </record>
+    </data>
+</odoo>

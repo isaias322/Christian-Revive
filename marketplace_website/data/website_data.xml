@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Allow public account creation (buyers sign up instantly) -->
+        <function model="ir.config_parameter" name="set_param"
+                  eval="('auth_signup.invitation_scope', 'b2c')"/>
+
+        <!-- Remove the default Odoo eCommerce "Shop" menu: this project
+             sells exclusively through /market, and website_sale is only
+             installed for its cart/checkout/product infrastructure. -->
+        <delete model="website.menu" id="website_sale.menu_shop"/>
+
+        <!-- Website menu entries -->
+        <record id="menu_market" model="website.menu">
+            <field name="name">Revive Marketplace</field>
+            <field name="url">/market</field>
+            <field name="parent_id" ref="website.main_menu"/>
+            <field name="sequence">15</field>
+        </record>
+        <record id="menu_sell" model="website.menu">
+            <field name="name">Sell an Item</field>
+            <field name="url">/market/sell</field>
+            <field name="parent_id" ref="website.main_menu"/>
+            <field name="sequence">16</field>
+        </record>
+    </data>
+</odoo>

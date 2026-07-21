@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_api_token_manager,marketplace.api.token manager,model_marketplace_api_token,marketplace_core.group_marketplace_manager,1,1,1,1

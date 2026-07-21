@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ============================================================ -->
+    <!-- Buyer orders list                                            -->
+    <!-- ============================================================ -->
+    <template id="market_orders" name="My Orders">
+        <t t-call="website.layout">
+            <t t-call="marketplace_website.mk_navbar"/>
+            <div class="container py-4" style="max-width: 860px;">
+                <h4 class="mb-3"><i class="fa fa-cube me-2"/>My Orders</h4>
+                <div t-foreach="orders" t-as="order" class="card p-3 mb-3">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                        <div>
+                            <a t-attf-href="/market/order/#{order.id}" class="fw-bold text-decoration-none"
+                               t-out="order.name"/>
+                            <div class="small text-muted">
+                                <t t-out="order.create_date and order.create_date.strftime('%d %b %Y')"/>
+                                · Sold by <t t-out="order.marketplace_seller_id.name"/>
+                            </div>
+                        </div>
+                        <div class="text-end">
+                            <div class="fw-bold">
+                                <t t-out="order.currency_id.symbol"/> <t t-out="'%.0f' % order.amount_total"/>
+                            </div>
+                            <span t-attf-class="badge mk-state-#{order.marketplace_delivery_state}"
+                                  t-out="dict(order._fields['marketplace_delivery_state'].selection).get(order.marketplace_delivery_state)"/>
+                            <span t-attf-class="badge mk-state-#{order.escrow_state}"
+                                  t-out="dict(order._fields['escrow_state'].selection).get(order.escrow_state)"/>
+                        </div>
+                    </div>
+                </div>
+                <div t-if="not orders" class="text-center text-muted py-5">
+                    <p>You haven't bought anything yet.</p>
+                    <a href="/market/search" class="btn mk-btn">Start shopping</a>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- ============================================================ -->
+    <!-- Buyer order detail                                           -->
+    <!-- ============================================================ -->
+    <template id="market_order_detail" name="Order Detail">
+        <t t-call="website.layout">
+            <t t-call="marketplace_website.mk_navbar"/>
+            <div class="container py-4" style="max-width: 860px;">
+                <a href="/market/orders" class="small text-muted">&#8592; All orders</a>
+                <h4 class="mb-3 mt-1">Order <t t-out="order.name"/></h4>
+                <t t-call="marketplace_website.mk_alert"/>
+
+                <!-- Progress -->
+                <div class="card p-3 mb-3">
+                    <div class="d-flex justify-content-between mk-progress">
+                        <div t-attf-class="mk-step #{order.state == 'sale' and 'done' or ''}">
+                            <i class="fa fa-check-circle"/> Placed
+                        </div>
+                        <div t-attf-class="mk-step #{order.marketplace_delivery_state in ('shipped', 'delivered') and 'done' or ''}">
+                            <i class="fa fa-truck"/> Shipped
+                        </div>
+                        <div t-attf-class="mk-step #{order.marketplace_delivery_state == 'delivered' and 'done' or ''}">
+                            <i class="fa fa-home"/> Delivered
+                        </div>
+                        <div t-attf-class="mk-step #{order.escrow_state == 'released' and 'done' or ''}">
+                            <i class="fa fa-unlock"/> Seller paid
+                        </div>
+                    </div>
+                    <div t-if="order.tracking_number" class="small mt-3">
+                        <i class="fa fa-truck me-1"/>
+                        <t t-out="order.marketplace_courier_id.name or 'Courier'"/> tracking:
+                        <a t-if="order.tracking_url" t-att-href="order.tracking_url" target="_blank"
+                           t-out="order.tracking_number"/>
+                        <t t-else="" t-out="order.tracking_number"/>
+                    </div>
+                </div>
+
+                <!-- Items -->
+                <div class="card p-3 mb-3">
+                    <h6 class="fw-bold">Items from <t t-out="order.marketplace_seller_id.name"/></h6>
+                    <t t-foreach="order._get_marketplace_listings()" t-as="item">
+                        <div class="d-flex align-items-center gap-3 py-2 border-bottom">
+                            <img t-attf-src="/web/image/product.template/#{item.id}/image_128" class="mk-thumb-sm" alt="item"/>
+                            <a t-attf-href="/market/item/#{item.id}" class="text-decoration-none flex-grow-1"
+                               t-out="item.name"/>
+                            <span class="fw-bold">
+                                <t t-out="item.currency_id.symbol"/> <t t-out="'%.0f' % item.list_price"/>
+                            </span>
+                        </div>
+                    </t>
+                    <div class="d-flex justify-content-between mt-2 small">
+                        <span>Buyer protection</span>
+                        <span t-out="'%.0f' % order.buyer_protection_fee"/>
+                    </div>
+                    <div class="d-flex justify-content-between small">
+                        <span>Shipping</span>
+                        <span t-out="'%.0f' % order.shipping_fee"/>
+                    </div>
+                    <div class="d-flex justify-content-between fw-bold">
+                        <span>Total</span>
+                        <span><t t-out="order.currency_id.symbol"/> <t t-out="'%.0f' % order.amount_total"/></span>
+                    </div>
+                    <div class="small text-muted mt-1">
+                        Payment: <t t-out="dict(order._fields['marketplace_payment_method'].selection).get(order.marketplace_payment_method) or '-'"/>
+                        · Escrow: <t t-out="dict(order._fields['escrow_state'].selection).get(order.escrow_state)"/>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="d-flex gap-2 flex-wrap mb-4">
+                    <form t-if="order.escrow_state == 'held' and order.marketplace_delivery_state in ('shipped', 'delivered') and not order.buyer_confirmed_delivery"
+                          t-attf-action="/market/order/#{order.id}/confirm-delivery" method="post">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                        <button type="submit" class="btn btn-success"
+                                onclick="return confirm('Confirm you received the item and everything is OK? This releases payment to the seller.');">
+                            <i class="fa fa-check me-1"/>Everything is OK — Confirm Delivery
+                        </button>
+                    </form>
+                    <button t-if="order.escrow_state == 'held'" class="btn btn-outline-danger"
+                            type="button" data-bs-toggle="collapse" data-bs-target="#mkDisputeForm">
+                        <i class="fa fa-exclamation-triangle me-1"/>Report a problem
+                    </button>
+                </div>
+
+                <!-- Dispute form -->
+                <div class="collapse mb-4" id="mkDisputeForm">
+                    <form t-attf-action="/market/order/#{order.id}/dispute" method="post" class="card p-3">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                        <h6 class="fw-bold">Open a dispute</h6>
+                        <div class="mb-2">
+                            <select name="reason" class="form-select">
+                                <option value="not_received">Item not received</option>
+                                <option value="not_as_described">Item not as described</option>
+                                <option value="damaged">Item damaged</option>
+                                <option value="counterfeit">Suspected counterfeit</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="mb-2">
+                            <textarea name="description" class="form-control" rows="3"
+                                      placeholder="Describe the problem..."/>
+                        </div>
+                        <button type="submit" class="btn btn-danger align-self-start">Submit Dispute</button>
+                    </form>
+                </div>
+
+                <!-- Existing disputes -->
+                <div t-if="order.dispute_ids" class="card p-3 mb-4">
+                    <h6 class="fw-bold">Disputes</h6>
+                    <t t-foreach="order.dispute_ids" t-as="dispute">
+                        <div class="d-flex justify-content-between small border-bottom py-2">
+                            <span t-out="dispute.name"/>
+                            <span t-out="dict(dispute._fields['reason'].selection).get(dispute.reason)"/>
+                            <span t-attf-class="badge mk-state-#{dispute.state}"
+                                  t-out="dict(dispute._fields['state'].selection).get(dispute.state)"/>
+                        </div>
+                    </t>
+                </div>
+
+                <!-- Review -->
+                <div t-if="order.marketplace_delivery_state == 'delivered' and not has_review" class="card p-3">
+                    <h6 class="fw-bold">Rate this seller</h6>
+                    <form t-attf-action="/market/order/#{order.id}/review" method="post">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                        <div class="mb-2">
+                            <select name="rating" class="form-select" style="max-width: 200px;">
+                                <option value="5">★★★★★ Excellent</option>
+                                <option value="4">★★★★ Very good</option>
+                                <option value="3">★★★ Good</option>
+                                <option value="2">★★ Fair</option>
+                                <option value="1">★ Poor</option>
+                            </select>
+                        </div>
+                        <div class="mb-2">
+                            <textarea name="comment" class="form-control" rows="2"
+                                      placeholder="How was the item and the seller?"/>
+                        </div>
+                        <button type="submit" class="btn mk-btn">Submit Review</button>
+                    </form>
+                </div>
+                <div t-if="has_review" class="alert alert-success">
+                    <i class="fa fa-star me-1"/>Thanks for reviewing this order!
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>

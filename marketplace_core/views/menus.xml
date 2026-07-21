@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_marketplace_root" name="Marketplace"
+              web_icon="marketplace_core,static/description/icon.png"
+              sequence="25"
+              groups="marketplace_core.group_marketplace_moderator"/>
+
+    <menuitem id="menu_marketplace_sellers" name="Sellers"
+              parent="menu_marketplace_root" sequence="10"
+              action="action_marketplace_seller"/>
+
+    <menuitem id="menu_marketplace_catalog" name="Catalog"
+              parent="menu_marketplace_root" sequence="20"/>
+    <menuitem id="menu_marketplace_listings" name="Listings"
+              parent="menu_marketplace_catalog" sequence="10"
+              action="action_marketplace_listings"/>
+    <menuitem id="menu_marketplace_moderation" name="Moderation Queue"
+              parent="menu_marketplace_catalog" sequence="20"
+              action="action_marketplace_listings_moderation"/>
+
+    <menuitem id="menu_marketplace_sales" name="Sales"
+              parent="menu_marketplace_root" sequence="30"/>
+    <menuitem id="menu_marketplace_orders" name="Orders"
+              parent="menu_marketplace_sales" sequence="10"
+              action="action_marketplace_orders"/>
+    <menuitem id="menu_marketplace_escrow" name="Escrow"
+              parent="menu_marketplace_sales" sequence="20"
+              action="action_marketplace_escrow"/>
+    <menuitem id="menu_marketplace_disputes" name="Disputes"
+              parent="menu_marketplace_sales" sequence="30"
+              action="action_marketplace_disputes"/>
+    <menuitem id="menu_marketplace_reviews" name="Reviews"
+              parent="menu_marketplace_sales" sequence="40"
+              action="action_marketplace_reviews"/>
+
+    <menuitem id="menu_marketplace_finance" name="Finance"
+              parent="menu_marketplace_root" sequence="40"
+              groups="marketplace_core.group_marketplace_manager"/>
+    <menuitem id="menu_marketplace_payouts" name="Payout Requests"
+              parent="menu_marketplace_finance" sequence="10"
+              action="action_marketplace_payouts"/>
+    <menuitem id="menu_marketplace_wallet" name="Wallet Transactions"
+              parent="menu_marketplace_finance" sequence="20"
+              action="action_marketplace_wallet_transactions"/>
+
+    <menuitem id="menu_marketplace_messaging" name="Conversations"
+              parent="menu_marketplace_root" sequence="50"
+              action="action_marketplace_threads"
+              groups="marketplace_core.group_marketplace_manager"/>
+
+    <menuitem id="menu_marketplace_config" name="Configuration"
+              parent="menu_marketplace_root" sequence="90"
+              groups="marketplace_core.group_marketplace_manager"/>
+    <menuitem id="menu_marketplace_brands" name="Brands"
+              parent="menu_marketplace_config" sequence="10"
+              action="action_marketplace_brands"/>
+    <menuitem id="menu_marketplace_sizes" name="Sizes"
+              parent="menu_marketplace_config" sequence="20"
+              action="action_marketplace_sizes"/>
+    <menuitem id="menu_marketplace_couriers" name="Couriers"
+              parent="menu_marketplace_config" sequence="30"
+              action="action_marketplace_couriers"/>
+    <menuitem id="menu_marketplace_banned" name="Banned Keywords"
+              parent="menu_marketplace_config" sequence="40"
+              action="action_marketplace_banned_keywords"/>
+</odoo>

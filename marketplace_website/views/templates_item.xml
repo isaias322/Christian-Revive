@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="market_item" name="Marketplace Item">
+        <t t-call="website.layout">
+            <t t-call="marketplace_website.mk_navbar"/>
+            <div class="container py-4">
+                <div t-if="request.params.get('error')" class="alert alert-danger"
+                     t-out="request.params.get('error')"/>
+                <div class="row g-4">
+                    <!-- Gallery -->
+                    <div class="col-lg-6">
+                        <div class="mk-gallery card p-2">
+                            <img id="mkMainImage"
+                                 t-attf-src="/web/image/product.template/#{listing.id}/image_1024"
+                                 class="mk-gallery-main w-100" t-att-alt="listing.name"/>
+                            <div class="d-flex gap-2 mt-2 flex-wrap">
+                                <img t-attf-src="/web/image/product.template/#{listing.id}/image_256"
+                                     class="mk-gallery-thumb active"
+                                     t-attf-data-full="/web/image/product.template/#{listing.id}/image_1024"
+                                     alt="thumbnail"/>
+                                <t t-foreach="listing.product_template_image_ids" t-as="img">
+                                    <img t-attf-src="/web/image/product.image/#{img.id}/image_256"
+                                         class="mk-gallery-thumb"
+                                         t-attf-data-full="/web/image/product.image/#{img.id}/image_1024"
+                                         alt="thumbnail"/>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Details -->
+                    <div class="col-lg-6">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <h3 class="mb-1" t-out="listing.name"/>
+                            <button t-if="is_logged and not is_own"
+                                    id="mkFavBtn" class="btn btn-outline-danger"
+                                    t-att-data-listing-id="listing.id"
+                                    t-att-data-favorite="is_favorite and '1' or '0'">
+                                <i t-attf-class="fa #{is_favorite and 'fa-heart' or 'fa-heart-o'}"/>
+                                <span id="mkFavCount" t-out="listing.favorite_count"/>
+                            </button>
+                        </div>
+                        <div class="text-muted mb-2">
+                            <t t-if="listing.marketplace_brand_id" t-out="listing.marketplace_brand_id.name"/>
+                            <t t-if="listing.marketplace_size_id"> · Size <t t-out="listing.marketplace_size_id.name"/></t>
+                            <t t-if="listing.condition"> · <t t-out="dict(listing._fields['condition'].selection).get(listing.condition)"/></t>
+                        </div>
+                        <div class="mk-item-price mb-1">
+                            <span class="fs-2 fw-bold">
+                                <t t-out="listing.currency_id.symbol"/> <t t-out="'%.0f' % listing.list_price"/>
+                            </span>
+                            <span t-if="listing.original_price and listing.original_price > listing.list_price"
+                                  class="text-muted text-decoration-line-through ms-2">
+                                <t t-out="listing.currency_id.symbol"/> <t t-out="'%.0f' % listing.original_price"/>
+                            </span>
+                        </div>
+                        <div class="small text-muted mb-3">
+                            <i class="fa fa-shield me-1"/>Buyer protection fee applies at checkout — your money is held until you confirm delivery.
+                        </div>
+                        <div t-if="listing.stock_quantity > 1" class="small text-muted mb-3">
+                            <t t-out="listing.stock_quantity"/> available
+                        </div>
+
+                        <t t-if="listing.listing_state == 'active' and not is_own">
+                            <form t-attf-action="/market/cart/add/#{listing.id}" method="post" class="d-grid gap-2 mb-3">
+                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                <button type="submit" class="btn mk-btn btn-lg">Buy Now</button>
+                            </form>
+                            <form t-if="is_logged" action="/market/messages/start" method="post" class="d-grid mb-3">
+                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                <input type="hidden" name="seller_id" t-att-value="seller.id"/>
+                                <input type="hidden" name="listing_id" t-att-value="listing.id"/>
+                                <button type="submit" class="btn btn-outline-dark">
+                                    <i class="fa fa-comment me-1"/>Message Seller
+                                </button>
+                            </form>
+                            <a t-if="not is_logged" t-attf-href="/web/login?redirect=/market/item/#{listing.id}"
+                               class="btn btn-outline-dark d-block mb-3">Log in to message the seller</a>
+                        </t>
+                        <div t-if="listing.listing_state == 'sold'" class="alert alert-dark">This item has been sold.</div>
+                        <div t-if="listing.listing_state == 'reserved'" class="alert alert-secondary">This item is reserved in another buyer's order.</div>
+                        <div t-if="is_own" class="alert alert-info">
+                            This is your listing.
+                            <a t-attf-href="/market/dashboard/listings/#{listing.id}/edit">Edit it here</a>.
+                        </div>
+
+                        <div t-if="listing.description_sale" class="mb-3">
+                            <h6 class="fw-bold">Description</h6>
+                            <p style="white-space: pre-line;" t-out="listing.description_sale"/>
+                        </div>
+                        <table class="table table-sm mk-item-specs">
+                            <tr t-if="listing.condition">
+                                <td class="text-muted">Condition</td>
+                                <td t-out="dict(listing._fields['condition'].selection).get(listing.condition)"/>
+                            </tr>
+                            <tr t-if="listing.marketplace_brand_id">
+                                <td class="text-muted">Brand</td>
+                                <td t-out="listing.marketplace_brand_id.name"/>
+                            </tr>
+                            <tr t-if="listing.marketplace_size_id">
+                                <td class="text-muted">Size</td>
+                                <td t-out="listing.marketplace_size_id.name"/>
+                            </tr>
+                            <tr t-if="listing.color">
+                                <td class="text-muted">Colour</td>
+                                <td t-out="listing.color"/>
+                            </tr>
+                            <tr t-if="listing.material">
+                                <td class="text-muted">Material</td>
+                                <td t-out="listing.material"/>
+                            </tr>
+                            <tr>
+                                <td class="text-muted">Views</td>
+                                <td t-out="listing.view_count"/>
+                            </tr>
+                        </table>
+
+                        <!-- Seller card -->
+                        <div class="card p-3 mt-3">
+                            <div class="d-flex align-items-center gap-3">
+                                <img t-attf-src="/web/image/marketplace.seller/#{seller.id}/logo/64x64"
+                                     class="rounded-circle mk-avatar" alt="seller"/>
+                                <div class="flex-grow-1">
+                                    <a t-attf-href="/market/shop/#{seller.slug}" class="fw-bold text-decoration-none"
+                                       t-out="seller.name"/>
+                                    <div class="small text-muted">
+                                        <i class="fa fa-star text-warning"/>
+                                        <t t-out="'%.1f' % seller.rating_avg"/>
+                                        (<t t-out="seller.review_count"/> reviews) ·
+                                        <t t-out="seller.follower_count"/> followers
+                                        <t t-if="seller.city"> · <t t-out="seller.city"/></t>
+                                    </div>
+                                </div>
+                                <a t-attf-href="/market/shop/#{seller.slug}" class="btn btn-sm btn-outline-dark">Visit Shop</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Seller reviews -->
+                <t t-if="reviews">
+                    <h5 class="mt-5 mb-3">Seller reviews</h5>
+                    <div class="row g-3">
+                        <t t-foreach="reviews" t-as="review">
+                            <div class="col-md-6">
+                                <div class="card p-3 h-100">
+                                    <div class="d-flex justify-content-between">
+                                        <strong t-out="review.reviewer_id.name"/>
+                                        <span class="text-warning">
+                                            <t t-foreach="range(int(review.rating))" t-as="i"><i class="fa fa-star"/></t>
+                                        </span>
+                                    </div>
+                                    <p class="mb-0 small" t-out="review.comment or ''"/>
+                                </div>
+                            </div>
+                        </t>
+                    </div>
+                </t>
+
+                <!-- Similar items -->
+                <t t-if="similar">
+                    <h5 class="mt-5 mb-3">Similar items</h5>
+                    <div class="row g-3">
+                        <t t-foreach="similar" t-as="listing">
+                            <div class="col-6 col-md-3 col-lg-2th">
+                                <t t-call="marketplace_website.listing_card"/>
+                            </div>
+                        </t>
+                    </div>
+                </t>
+            </div>
+        </t>
+    </template>
+</odoo>

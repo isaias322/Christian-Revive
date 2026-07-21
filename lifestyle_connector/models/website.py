@@ -16,6 +16,10 @@ def _rl_is_lifestyle_path(path):
     )
 
 
+def _rl_is_market_path(path):
+    return path == '/market' or path.startswith('/market/')
+
+
 class IrHttp(models.AbstractModel):
     _inherit = 'ir.http'
 
@@ -35,18 +39,23 @@ class IrHttp(models.AbstractModel):
             # session reset Odoo performs on login (the redirect target
             # carries it through the auth flow).
             brand_param = request.httprequest.args.get('rl_brand')
-            if brand_param in ('cr', 'lifestyle'):
+            if brand_param in ('cr', 'lifestyle', 'market'):
                 request.session['rl_web_brand'] = brand_param
                 return
             if path.startswith('/christianrevive'):
                 request.session['rl_web_brand'] = 'cr'
+            elif _rl_is_market_path(path):
+                request.session['rl_web_brand'] = 'market'
             elif _rl_is_lifestyle_path(path):
                 request.session['rl_web_brand'] = 'lifestyle'
             elif path.startswith('/my') or path.startswith('/shop/cart'):
                 referrer = request.httprequest.referrer or ''
+                referrer_path = urlparse(referrer).path if referrer else ''
                 if '/christianrevive' in referrer:
                     request.session['rl_web_brand'] = 'cr'
-                elif referrer and _rl_is_lifestyle_path(urlparse(referrer).path):
+                elif _rl_is_market_path(referrer_path):
+                    request.session['rl_web_brand'] = 'market'
+                elif referrer and _rl_is_lifestyle_path(referrer_path):
                     request.session['rl_web_brand'] = 'lifestyle'
         except Exception:
             pass

@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ============================================================ -->
+    <!-- Marketplace sub-navigation bar                               -->
+    <!-- ============================================================ -->
+    <template id="mk_navbar" name="Marketplace Navbar">
+        <div class="mk-nav border-bottom bg-white">
+            <div class="container d-flex align-items-center gap-3 py-2 flex-wrap">
+                <a href="/market" class="mk-logo fw-bold text-decoration-none fs-5">
+                    <i class="fa fa-shopping-bag me-1"/>Revive Marketplace
+                </a>
+                <form action="/market/search" method="get" class="flex-grow-1" style="max-width: 480px;">
+                    <div class="input-group">
+                        <input type="text" name="search" class="form-control"
+                               placeholder="Search items, brands, shops..."
+                               t-att-value="filters.get('search') if filters else None"/>
+                        <button class="btn mk-btn" type="submit"><i class="fa fa-search"/></button>
+                    </div>
+                </form>
+                <div class="ms-auto d-flex align-items-center gap-3">
+                    <a href="/market/favorites" class="mk-nav-link" title="Favourites">
+                        <i class="fa fa-heart"/>
+                    </a>
+                    <a href="/market/messages" class="mk-nav-link position-relative" title="Messages">
+                        <i class="fa fa-comments"/>
+                        <span t-if="mk_unread_count"
+                              class="badge rounded-pill bg-danger mk-badge-count"
+                              t-out="mk_unread_count"/>
+                    </a>
+                    <a href="/market/orders" class="mk-nav-link" title="My Orders">
+                        <i class="fa fa-cube"/>
+                    </a>
+                    <a href="/market/cart" class="mk-nav-link position-relative" title="Cart">
+                        <i class="fa fa-shopping-cart"/>
+                        <span t-if="mk_cart_count"
+                              class="badge rounded-pill bg-danger mk-badge-count"
+                              t-out="mk_cart_count"/>
+                    </a>
+                    <a href="/market/sell" class="btn mk-btn btn-sm">Sell an Item</a>
+                </div>
+            </div>
+            <div class="container pb-2 d-flex gap-3 flex-wrap mk-cat-row">
+                <t t-foreach="mk_categories" t-as="cat">
+                    <a t-attf-href="/market/search?category_id=#{cat.id}"
+                       class="mk-cat-link" t-out="cat.name"/>
+                </t>
+            </div>
+        </div>
+    </template>
+
+    <!-- ============================================================ -->
+    <!-- Listing card (used in every grid)                            -->
+    <!-- ============================================================ -->
+    <template id="listing_card" name="Listing Card">
+        <div class="mk-card card h-100 position-relative">
+            <a t-attf-href="/market/item/#{listing.id}" class="text-decoration-none">
+                <div class="mk-card-img-wrap">
+                    <img t-attf-src="/web/image/product.template/#{listing.id}/image_512"
+                         class="mk-card-img" t-att-alt="listing.name" loading="lazy"/>
+                    <span t-if="listing.is_bumped" class="badge mk-badge-bump">Promoted</span>
+                    <span t-if="listing.listing_state == 'sold'" class="badge bg-dark mk-badge-sold">Sold</span>
+                    <span t-if="listing.listing_state == 'reserved'" class="badge bg-secondary mk-badge-sold">Reserved</span>
+                </div>
+            </a>
+            <div class="card-body p-2">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div class="mk-card-price fw-bold">
+                        <t t-out="listing.currency_id.symbol"/> <t t-out="'%.0f' % listing.list_price"/>
+                    </div>
+                    <span class="mk-fav-count text-muted small">
+                        <i class="fa fa-heart-o"/> <t t-out="listing.favorite_count"/>
+                    </span>
+                </div>
+                <a t-attf-href="/market/item/#{listing.id}"
+                   class="mk-card-title text-decoration-none d-block text-truncate"
+                   t-out="listing.name"/>
+                <div class="text-muted small text-truncate">
+                    <t t-if="listing.marketplace_brand_id" t-out="listing.marketplace_brand_id.name"/>
+                    <t t-if="listing.marketplace_size_id"> · <t t-out="listing.marketplace_size_id.name"/></t>
+                    <t t-if="listing.condition"> · <t t-out="dict(listing._fields['condition'].selection).get(listing.condition)"/></t>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!-- ============================================================ -->
+    <!-- Dashboard layout with side menu                              -->
+    <!-- ============================================================ -->
+    <template id="dashboard_layout" name="Seller Dashboard Layout">
+        <t t-call="website.layout">
+            <t t-call="marketplace_website.mk_navbar"/>
+            <div class="container py-4">
+                <div class="row">
+                    <div class="col-lg-3 mb-4">
+                        <div class="mk-dash-menu card p-3">
+                            <div class="d-flex align-items-center gap-2 mb-3">
+                                <img t-attf-src="/web/image/marketplace.seller/#{seller.id}/logo/64x64"
+                                     class="rounded-circle mk-avatar" alt="logo"/>
+                                <div>
+                                    <div class="fw-bold" t-out="seller.name"/>
+                                    <a t-attf-href="/market/shop/#{seller.slug}" class="small">View shop</a>
+                                </div>
+                            </div>
+                            <a href="/market/dashboard" t-attf-class="mk-dash-link #{dash_page == 'home' and 'active' or ''}">
+                                <i class="fa fa-tachometer me-2"/>Overview</a>
+                            <a href="/market/dashboard/listings" t-attf-class="mk-dash-link #{dash_page == 'listings' and 'active' or ''}">
+                                <i class="fa fa-tags me-2"/>Listings</a>
+                            <a href="/market/dashboard/orders" t-attf-class="mk-dash-link #{dash_page == 'orders' and 'active' or ''}">
+                                <i class="fa fa-cube me-2"/>Orders</a>
+                            <a href="/market/dashboard/wallet" t-attf-class="mk-dash-link #{dash_page == 'wallet' and 'active' or ''}">
+                                <i class="fa fa-money me-2"/>Wallet &amp; Payouts</a>
+                            <a href="/market/dashboard/settings" t-attf-class="mk-dash-link #{dash_page == 'settings' and 'active' or ''}">
+                                <i class="fa fa-cog me-2"/>Shop Settings</a>
+                        </div>
+                    </div>
+                    <div class="col-lg-9">
+                        <t t-out="0"/>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- Page-scoped overrides: the marketplace.css bundle loads on every
+         page of the site (Revive Lifestyle and Christian Revive share the
+         same web.assets_frontend bundle), so rules that touch body/html/
+         #wrapwrap or generic Bootstrap primitives (.card, .btn-outline-dark,
+         headings) CANNOT live in that always-loaded file - they would hide
+         the other storefronts' header/nav and recolor their text/cards
+         site-wide. Injected only when the request path is under /market. -->
+    <template id="mk_page_styles" name="Marketplace Page-Scoped Styles"
+              inherit_id="website.layout">
+        <xpath expr="//head" position="inside">
+            <t t-if="request and request.httprequest.path.startswith('/market')">
+                <style>
+                    body { color: var(--mk-ink); }
+                    html { scroll-behavior: smooth; }
+                    h1, h2, h3, h4, h5 { letter-spacing: -.015em; }
+                    .btn-outline-dark { border-radius: 10px; font-weight: 600; }
+                    .btn.btn-sm { border-radius: 8px; }
+                    .card { border-radius: var(--mk-radius); }
+                    .card table.table tbody tr { transition: background .15s ease; }
+                    .card table.table tbody tr:hover { background: var(--mk-surface-soft); }
+                    .card table.table thead th {
+                        font-size: .78rem;
+                        text-transform: uppercase;
+                        letter-spacing: .03em;
+                        color: var(--mk-muted);
+                        border-bottom-width: 1px;
+                    }
+                    /* White-label: hide the stock Odoo footer credit and the
+                       generic site header/mobile header on /market pages
+                       only - the marketplace has its own purpose-built nav
+                       (.mk-nav) that points at the real cart/search/messages,
+                       so the stock header would be redundant here. */
+                    .o_footer_copyright { display: none !important; }
+                    header#top.o_header_standard,
+                    .o_header_mobile { display: none !important; }
+                    /* Odoo pads page content to account for a sticky header;
+                       without one (hidden above) that padding just leaves
+                       dead space at the top of /market pages. */
+                    #wrapwrap { padding-top: 0 !important; }
+                </style>
+            </t>
+        </xpath>
+    </template>
+
+    <!-- Reusable error alert -->
+    <template id="mk_alert" name="Marketplace Alert">
+        <div t-if="error" class="alert alert-danger" t-out="error"/>
+        <div t-if="saved" class="alert alert-success">Saved successfully.</div>
+    </template>
+
+    <!-- White-label: strip the "generator" meta tag Odoo adds to every
+         page head (invisible in the UI, but visible in page source /
+         devtools to anyone who looks). -->
+    <template id="mk_strip_generator_meta" name="Strip generator meta tag"
+              inherit_id="website.layout">
+        <xpath expr="//meta[@name='generator']" position="replace"/>
+    </template>
+
+    <!-- ============================================================ -->
+    <!-- Branded login page                                            -->
+    <!-- ============================================================ -->
+    <!-- Replaces the generic Odoo company-logo/"Powered by Odoo"/
+         "Manage Databases" login chrome with Marketplace branding. Also
+         removes the built-in quick-login user switcher: on a
+         customer-facing site that dropdown lists every account in the
+         database by email, which is a real information leak, not just
+         an off-brand look. -->
+    <!-- The website module (priority 20) already replaces
+         web.login_layout's whole body with a plain
+         .oe_website_login_container div — website-enabled databases
+         never actually render the plain card/logo/footer markup this
+         addon's earlier attempt targeted, hence priority="25" here: it
+         has to run AFTER website's replacement to see the container it
+         needs to style. -->
+    <!-- /web/login is ONE shared route for every storefront sharing this
+         database (Revive Lifestyle, Christian Revive, Marketplace). These
+         two templates used to brand it unconditionally, which meant every
+         Lifestyle/Christian Revive customer (and the backend admin login)
+         would see the "Revive Marketplace" logo and button styling too.
+         Gated on the same rl_web_brand session flag the other storefronts
+         already use, set by lifestyle_connector's ir.http._pre_dispatch
+         when the visitor is on a /market page (or was referred from one). -->
+    <template id="mk_login_layout" name="Branded Login Layout"
+              inherit_id="web.login_layout" priority="25">
+        <xpath expr="//div[hasclass('oe_website_login_container')]"
+               position="before">
+            <t t-if="request and request.session.get('rl_web_brand') == 'market'">
+                <div class="text-center mb-3">
+                    <a href="/market" class="mk-login-brand text-decoration-none">
+                        <i class="fa fa-shopping-bag me-1"/>Revive Marketplace
+                    </a>
+                </div>
+            </t>
+        </xpath>
+        <xpath expr="//div[hasclass('oe_website_login_container')]"
+               position="attributes">
+            <attribute name="t-attf-class">oe_website_login_container #{'mk-login-card' if request and request.session.get('rl_web_brand') == 'market' else ''}</attribute>
+        </xpath>
+    </template>
+
+    <template id="mk_login_hide_switcher" name="Branded login button"
+              inherit_id="web.login">
+        <xpath expr="//button[@type='submit'][not(@name)]" position="attributes">
+            <attribute name="t-attf-class">btn btn-primary #{'mk-btn' if request and request.session.get('rl_web_brand') == 'market' else ''}</attribute>
+        </xpath>
+    </template>
+</odoo>

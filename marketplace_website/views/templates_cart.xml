@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ============================================================ -->
+    <!-- Cart                                                         -->
+    <!-- ============================================================ -->
+    <template id="market_cart" name="Marketplace Cart">
+        <t t-call="website.layout">
+            <t t-call="marketplace_website.mk_navbar"/>
+            <div class="container py-4" style="max-width: 860px;">
+                <h4 class="mb-3"><i class="fa fa-shopping-cart me-2"/>Your Cart</h4>
+                <t t-if="items">
+                    <div class="card mb-3">
+                        <t t-foreach="items" t-as="item">
+                            <div class="d-flex align-items-center gap-3 p-3 border-bottom">
+                                <img t-attf-src="/web/image/product.template/#{item.product_tmpl_id.id}/image_128"
+                                     class="mk-thumb-sm" alt="item"/>
+                                <div class="flex-grow-1">
+                                    <a t-attf-href="/market/item/#{item.product_tmpl_id.id}"
+                                       class="text-decoration-none fw-bold" t-out="item.product_tmpl_id.name"/>
+                                    <div class="small text-muted">
+                                        Sold by <t t-out="item.seller_id.name"/>
+                                    </div>
+                                </div>
+                                <div class="fw-bold">
+                                    <t t-out="item.product_tmpl_id.currency_id.symbol"/>
+                                    <t t-out="'%.0f' % item.price"/>
+                                </div>
+                                <form t-attf-action="/market/cart/remove/#{item.id}" method="post">
+                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                    <button class="btn btn-sm btn-outline-danger" title="Remove">
+                                        <i class="fa fa-trash"/>
+                                    </button>
+                                </form>
+                            </div>
+                        </t>
+                    </div>
+                    <div class="card p-3 mb-3">
+                        <div class="d-flex justify-content-between">
+                            <span>Items</span>
+                            <span><t t-out="'%.0f' % subtotal"/></span>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span>Buyer protection <i class="fa fa-shield text-muted"/></span>
+                            <span><t t-out="'%.0f' % protection_fee"/></span>
+                        </div>
+                        <hr class="my-2"/>
+                        <div class="d-flex justify-content-between fw-bold">
+                            <span>Total (before shipping)</span>
+                            <span><t t-out="'%.0f' % total"/></span>
+                        </div>
+                    </div>
+                    <a href="/market/checkout" class="btn mk-btn btn-lg w-100">Checkout</a>
+                </t>
+                <div t-else="" class="text-center text-muted py-5">
+                    <i class="fa fa-shopping-cart fa-2x mb-2"/>
+                    <p>Your cart is empty.</p>
+                    <a href="/market/search" class="btn mk-btn">Browse items</a>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- ============================================================ -->
+    <!-- Checkout                                                     -->
+    <!-- ============================================================ -->
+    <template id="market_checkout" name="Marketplace Checkout">
+        <t t-call="website.layout">
+            <t t-call="marketplace_website.mk_navbar"/>
+            <div class="container py-4" style="max-width: 960px;">
+                <h4 class="mb-3">Checkout</h4>
+                <t t-call="marketplace_website.mk_alert"/>
+                <form action="/market/checkout/confirm" method="post">
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                    <div class="row g-4">
+                        <div class="col-lg-7">
+                            <div class="card p-4 mb-3">
+                                <h6 class="fw-bold mb-3">Delivery details</h6>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Full name *</label>
+                                        <input type="text" name="name" class="form-control" required="required"
+                                               t-att-value="mk_partner.name"/>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Phone *</label>
+                                        <input type="text" name="phone" class="form-control" required="required"
+                                               t-att-value="mk_partner.phone or ''"/>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Street address *</label>
+                                    <input type="text" name="street" class="form-control" required="required"
+                                           t-att-value="mk_partner.street or ''"/>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-8 mb-3">
+                                        <label class="form-label">City *</label>
+                                        <input type="text" name="city" class="form-control" required="required"
+                                               t-att-value="mk_partner.city or ''"/>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label">Postal code</label>
+                                        <input type="text" name="zip" class="form-control"
+                                               t-att-value="mk_partner.zip or ''"/>
+                                    </div>
+                                </div>
+                                <div class="mb-2">
+                                    <label class="form-label">Courier</label>
+                                    <select name="courier_id" class="form-select">
+                                        <t t-foreach="couriers" t-as="courier">
+                                            <option t-att-value="courier.id">
+                                                <t t-out="courier.name"/> — <t t-out="'%.0f' % courier.flat_rate"/> per seller
+                                            </option>
+                                        </t>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="card p-4">
+                                <h6 class="fw-bold mb-3">Payment method</h6>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="radio" name="payment_method"
+                                           value="cod" id="pmCod" checked="checked"/>
+                                    <label class="form-check-label" for="pmCod">
+                                        <strong>Cash on Delivery</strong>
+                                        <div class="small text-muted">Pay the courier when your order arrives.</div>
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="radio" name="payment_method"
+                                           value="jazzcash" id="pmJazz"/>
+                                    <label class="form-check-label" for="pmJazz">
+                                        <strong>JazzCash</strong>
+                                        <div class="small text-muted">Instructions sent after ordering.</div>
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="radio" name="payment_method"
+                                           value="easypaisa" id="pmEasy"/>
+                                    <label class="form-check-label" for="pmEasy">
+                                        <strong>EasyPaisa</strong>
+                                        <div class="small text-muted">Instructions sent after ordering.</div>
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="payment_method"
+                                           value="bank" id="pmBank"/>
+                                    <label class="form-check-label" for="pmBank">
+                                        <strong>Bank transfer</strong>
+                                        <div class="small text-muted">Transfer to the platform account; order ships after confirmation.</div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-5">
+                            <div class="card p-4">
+                                <h6 class="fw-bold mb-3">Order summary</h6>
+                                <t t-foreach="items" t-as="item">
+                                    <div class="d-flex justify-content-between small mb-1">
+                                        <span class="text-truncate me-2" t-out="item.product_tmpl_id.name"/>
+                                        <span><t t-out="'%.0f' % item.price"/></span>
+                                    </div>
+                                </t>
+                                <hr/>
+                                <div class="d-flex justify-content-between">
+                                    <span>Items</span><span t-out="'%.0f' % subtotal"/>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <span>Buyer protection</span><span t-out="'%.0f' % protection_fee"/>
+                                </div>
+                                <div class="d-flex justify-content-between text-muted small">
+                                    <span>Shipping</span><span>added per seller</span>
+                                </div>
+                                <hr/>
+                                <div class="d-flex justify-content-between fw-bold fs-5">
+                                    <span>Total</span>
+                                    <span t-out="'%.0f' % (subtotal + protection_fee)"/>
+                                </div>
+                                <div class="small text-muted mt-2 mb-3">
+                                    <i class="fa fa-shield me-1"/>Your money is held in escrow and only
+                                    released to the seller after you confirm delivery.
+                                </div>
+                                <button type="submit" class="btn mk-btn btn-lg w-100">Place Order</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </t>
+    </template>
+
+    <!-- ============================================================ -->
+    <!-- Thank you                                                    -->
+    <!-- ============================================================ -->
+    <template id="market_thanks" name="Order Placed">
+        <t t-call="website.layout">
+            <t t-call="marketplace_website.mk_navbar"/>
+            <div class="container py-5 text-center" style="max-width: 640px;">
+                <t t-if="awaiting_stripe">
+                    <i class="fa fa-clock-o fa-4x text-warning mb-3"/>
+                    <h3>Payment received — confirming your order</h3>
+                    <p class="text-muted">
+                        This usually takes a few seconds. This page will refresh
+                        automatically.
+                    </p>
+                    <script>setTimeout(function () { location.reload(); }, 3000);</script>
+                </t>
+                <t t-else="">
+                    <i class="fa fa-check-circle fa-4x text-success mb-3"/>
+                    <h3>Order placed!</h3>
+                    <p class="text-muted">
+                        Your money is protected — it will only be released to the seller
+                        after you confirm delivery.
+                    </p>
+                    <div t-foreach="orders" t-as="order" class="card p-3 mb-2 text-start">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <strong t-out="order.name"/>
+                                <div class="small text-muted">Sold by <t t-out="order.marketplace_seller_id.name"/></div>
+                            </div>
+                            <div class="fw-bold">
+                                <t t-out="order.currency_id.symbol"/> <t t-out="'%.0f' % order.amount_total"/>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="/market/orders" class="btn mk-btn mt-3">Track My Orders</a>
+                </t>
+            </div>
+        </t>
+    </template>
+</odoo>

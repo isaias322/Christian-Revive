@@ -1,0 +1,720 @@
+/* ==========================================================
+   Marketplace storefront design system
+   ========================================================== */
+:root {
+    --mk-primary: #0d9488;
+    --mk-primary-dark: #0b7a70;
+    --mk-primary-light: #14b8a6;
+    --mk-accent: #f59e0b;
+    --mk-ink: #111827;
+    --mk-body: #4b5563;
+    --mk-muted: #9ca3af;
+    --mk-border: #e5e7eb;
+    --mk-surface: #ffffff;
+    --mk-surface-soft: #f7f7f8;
+    --mk-radius: 14px;
+    --mk-radius-sm: 9px;
+    --mk-shadow-sm: 0 1px 2px rgba(17, 24, 39, .05);
+    --mk-shadow-md: 0 8px 24px rgba(17, 24, 39, .09);
+    --mk-shadow-lg: 0 20px 45px rgba(17, 24, 39, .14);
+}
+
+/* NOTE: this bundle loads on EVERY page of the site (Revive Lifestyle and
+   Christian Revive share the frontend asset bundle with Marketplace), not
+   just /market pages. Rules that must only affect Marketplace pages -
+   anything touching body/html/#wrapwrap or generic Bootstrap primitives
+   like .card/.btn-outline-dark - live in the page-scoped <style> block
+   injected by the "Marketplace Page Styles" website.layout inherit
+   (views/templates_layout.xml), gated on the request path. Only rules
+   scoped to .mk-* classes belong in this always-loaded file. */
+
+/* ---------------------------------------------------------- */
+/* Buttons                                                     */
+/* ---------------------------------------------------------- */
+.mk-btn {
+    background: linear-gradient(135deg, var(--mk-primary-light), var(--mk-primary));
+    color: #fff !important;
+    border: none;
+    font-weight: 600;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(13, 148, 136, .25);
+    transition: box-shadow .18s ease, transform .12s ease, filter .15s ease;
+}
+.mk-btn:hover, .mk-btn:focus {
+    filter: brightness(1.04);
+    box-shadow: 0 6px 16px rgba(13, 148, 136, .32);
+    color: #fff;
+}
+.mk-btn:active { transform: translateY(1px); }
+
+/* .btn-outline-dark / .btn.btn-sm radius rules moved to the page-scoped
+   style block - see note above. */
+
+/* ---------------------------------------------------------- */
+/* Navbar                                                       */
+/* ---------------------------------------------------------- */
+.mk-nav {
+    position: sticky;
+    top: 0;
+    z-index: 1020;
+    backdrop-filter: saturate(180%) blur(6px);
+    background: rgba(255, 255, 255, .96) !important;
+    box-shadow: var(--mk-shadow-sm);
+}
+.mk-logo {
+    color: var(--mk-primary) !important;
+    letter-spacing: -.02em;
+}
+.mk-logo i { color: var(--mk-accent); }
+.mk-nav-link {
+    color: var(--mk-body);
+    font-size: 1.2rem;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    transition: background .15s ease, color .15s ease;
+}
+.mk-nav-link:hover {
+    color: var(--mk-primary);
+    background: rgba(13, 148, 136, .08);
+}
+.mk-badge-count {
+    position: absolute;
+    top: 0px;
+    right: 2px;
+    font-size: .6rem;
+    box-shadow: 0 0 0 2px #fff;
+}
+.mk-cat-row {
+    font-size: .9rem;
+    overflow-x: auto;
+    flex-wrap: nowrap !important;
+    scrollbar-width: none;
+}
+.mk-cat-row::-webkit-scrollbar { display: none; }
+.mk-cat-link {
+    color: var(--mk-body);
+    text-decoration: none;
+    white-space: nowrap;
+    font-weight: 500;
+    padding: 4px 2px;
+    border-bottom: 2px solid transparent;
+    transition: color .15s ease, border-color .15s ease;
+}
+.mk-cat-link:hover {
+    color: var(--mk-primary);
+    border-color: var(--mk-primary);
+}
+.mk-nav .input-group .form-control {
+    border-right: none;
+}
+.mk-nav .input-group .mk-btn {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    box-shadow: none;
+}
+.mk-nav .input-group .form-control {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+/* ---------------------------------------------------------- */
+/* Hero                                                         */
+/* ---------------------------------------------------------- */
+.mk-hero {
+    position: relative;
+    overflow: hidden;
+    background: radial-gradient(circle at 15% 20%, rgba(13, 148, 136, .16), transparent 45%),
+                radial-gradient(circle at 85% 15%, rgba(245, 158, 11, .16), transparent 40%),
+                linear-gradient(180deg, #f0fdfa 0%, #fefce8 100%);
+}
+.mk-hero h1 {
+    letter-spacing: -.03em;
+    color: var(--mk-ink);
+}
+.mk-hero .lead {
+    color: var(--mk-body);
+    max-width: 620px;
+    margin-left: auto;
+    margin-right: auto;
+}
+.mk-hero .btn-outline-dark {
+    border-color: var(--mk-ink);
+}
+
+/* ---------------------------------------------------------- */
+/* Listing cards                                                */
+/* ---------------------------------------------------------- */
+.col-lg-2th {
+    flex: 0 0 auto;
+    width: 16.666%;
+}
+@media (max-width: 991px) {
+    .col-lg-2th { width: 25%; }
+}
+@media (max-width: 767px) {
+    .col-lg-2th { width: 50%; }
+}
+.mk-card {
+    border: 1px solid var(--mk-border);
+    border-radius: var(--mk-radius);
+    overflow: hidden;
+    box-shadow: var(--mk-shadow-sm);
+    transition: box-shadow .2s ease, transform .2s ease, border-color .2s ease;
+}
+.mk-card:hover {
+    box-shadow: var(--mk-shadow-md);
+    transform: translateY(-3px);
+    border-color: rgba(13, 148, 136, .25);
+}
+.mk-card-img-wrap {
+    position: relative;
+    aspect-ratio: 3 / 4;
+    background: var(--mk-surface-soft);
+    overflow: hidden;
+}
+.mk-card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform .35s ease;
+}
+.mk-card:hover .mk-card-img { transform: scale(1.045); }
+.mk-badge-bump {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background: var(--mk-accent);
+    font-weight: 600;
+    box-shadow: 0 2px 6px rgba(245, 158, 11, .4);
+}
+.mk-badge-sold {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    font-weight: 600;
+    backdrop-filter: blur(2px);
+}
+.mk-card-price {
+    color: var(--mk-ink);
+    font-size: 1.02rem;
+}
+.mk-card-title {
+    color: var(--mk-ink);
+    font-size: .92rem;
+    font-weight: 500;
+}
+.mk-fav-count { transition: color .15s ease; }
+.mk-card:hover .mk-fav-count { color: var(--mk-primary) !important; }
+
+/* ---------------------------------------------------------- */
+/* Shop tiles / avatars                                         */
+/* ---------------------------------------------------------- */
+.mk-shop-logo { width: 64px; height: 64px; object-fit: cover; }
+.mk-shop-logo-lg {
+    width: 96px;
+    height: 96px;
+    object-fit: cover;
+    border: 4px solid #fff;
+    box-shadow: var(--mk-shadow-md);
+}
+.mk-avatar { width: 48px; height: 48px; object-fit: cover; }
+.mk-shop-tile {
+    border-radius: var(--mk-radius);
+    border: 1px solid var(--mk-border);
+    transition: box-shadow .2s ease, transform .2s ease;
+}
+.mk-shop-tile:hover {
+    box-shadow: var(--mk-shadow-md);
+    transform: translateY(-3px);
+}
+.mk-shop-banner {
+    height: 200px;
+    background-color: #ccfbf1;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+}
+.mk-shop-banner::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,.18) 100%);
+}
+.mk-shop-head {
+    margin-top: -48px;
+    border-radius: var(--mk-radius);
+    box-shadow: var(--mk-shadow-lg);
+    background: var(--mk-surface);
+    position: relative;
+    z-index: 2;
+}
+
+/* ---------------------------------------------------------- */
+/* Item page                                                    */
+/* ---------------------------------------------------------- */
+.mk-gallery {
+    border-radius: var(--mk-radius);
+    box-shadow: var(--mk-shadow-sm);
+}
+.mk-gallery-main {
+    aspect-ratio: 1 / 1;
+    object-fit: contain;
+    background: var(--mk-surface-soft);
+    border-radius: 10px;
+}
+.mk-gallery-thumb {
+    width: 64px;
+    height: 64px;
+    object-fit: cover;
+    border-radius: 8px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: border-color .15s ease, opacity .15s ease;
+    opacity: .75;
+}
+.mk-gallery-thumb:hover { opacity: 1; }
+.mk-gallery-thumb.active,
+.mk-gallery-thumb:hover { border-color: var(--mk-primary); opacity: 1; }
+.mk-item-specs td { padding: .45rem .5rem; }
+.mk-item-specs tr:not(:last-child) td { border-bottom: 1px solid var(--mk-border); }
+.mk-item-price .fs-2 { letter-spacing: -.02em; }
+
+/* ---------------------------------------------------------- */
+/* Dashboard                                                    */
+/* ---------------------------------------------------------- */
+.mk-dash-menu {
+    border-radius: var(--mk-radius);
+    border: 1px solid var(--mk-border);
+    box-shadow: var(--mk-shadow-sm);
+    position: sticky;
+    top: 76px;
+}
+.mk-dash-menu .mk-dash-link {
+    display: flex;
+    align-items: center;
+    padding: .55rem .75rem;
+    border-radius: var(--mk-radius-sm);
+    color: var(--mk-body);
+    text-decoration: none;
+    margin-bottom: 2px;
+    font-weight: 500;
+    transition: background .15s ease, color .15s ease;
+}
+.mk-dash-menu .mk-dash-link:hover { background: var(--mk-surface-soft); color: var(--mk-ink); }
+.mk-dash-menu .mk-dash-link.active {
+    background: linear-gradient(135deg, var(--mk-primary-light), var(--mk-primary));
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(13, 148, 136, .3);
+}
+.mk-stat {
+    border-radius: var(--mk-radius);
+    border: 1px solid var(--mk-border);
+    box-shadow: var(--mk-shadow-sm);
+    transition: box-shadow .2s ease, transform .2s ease, border-color .2s ease;
+    position: relative;
+    overflow: hidden;
+}
+.mk-stat:hover {
+    box-shadow: var(--mk-shadow-md);
+    transform: translateY(-3px);
+    border-color: rgba(13, 148, 136, .2);
+}
+.mk-stat i { font-size: 1.3rem; display: block; }
+.mk-stat-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+    font-size: 1.05rem;
+}
+.mk-stat-icon.teal { background: rgba(13, 148, 136, .12); color: var(--mk-primary); }
+.mk-stat-icon.violet { background: rgba(124, 58, 237, .12); color: #7c3aed; }
+.mk-stat-icon.green { background: rgba(22, 163, 74, .12); color: #16a34a; }
+.mk-stat-icon.amber { background: rgba(245, 158, 11, .14); color: #b45309; }
+.mk-stat .fs-3 { letter-spacing: -.02em; }
+
+/* Dashboard page header */
+.mk-dash-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.25rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--mk-border);
+}
+.mk-dash-header h4 { letter-spacing: -.02em; }
+.mk-dash-greeting {
+    color: var(--mk-muted);
+    font-size: .85rem;
+}
+
+/* KYC / action prompt card */
+.mk-action-card {
+    border-radius: var(--mk-radius);
+    border: 1px solid rgba(245, 158, 11, .3);
+    background: linear-gradient(135deg, rgba(245, 158, 11, .08), rgba(245, 158, 11, .02));
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+}
+.mk-action-card .mk-action-icon {
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+    border-radius: 50%;
+    background: rgba(245, 158, 11, .18);
+    color: #b45309;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Ship-now nudge card */
+.mk-nudge-card {
+    border-radius: var(--mk-radius);
+    border: 1px solid rgba(13, 148, 136, .25);
+    background: linear-gradient(135deg, rgba(13, 148, 136, .06), transparent);
+}
+
+/* Recent orders / reviews list rows */
+.mk-list-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 4px;
+    border-bottom: 1px solid var(--mk-border);
+    transition: background .15s ease;
+}
+.mk-list-row:last-child { border-bottom: none; }
+.mk-list-row:hover { background: var(--mk-surface-soft); }
+.mk-list-row .mk-order-ref { font-weight: 600; color: var(--mk-ink); }
+.mk-review-row {
+    padding: 10px 4px;
+    border-bottom: 1px solid var(--mk-border);
+    transition: background .15s ease;
+}
+.mk-review-row:last-child { border-bottom: none; }
+.mk-review-row:hover { background: var(--mk-surface-soft); }
+.mk-review-stars { color: var(--mk-accent); font-size: .8rem; letter-spacing: 1px; }
+
+/* Filter chip row (listing state filters, etc.) */
+.mk-chip {
+    border-radius: 20px !important;
+    font-weight: 500;
+    transition: transform .15s ease, box-shadow .15s ease;
+}
+.mk-chip:hover { transform: translateY(-1px); }
+
+/* Section icon headers (Settings / form cards) */
+.mk-section-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.mk-section-title .mk-section-icon {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    border-radius: 9px;
+    background: rgba(13, 148, 136, .1);
+    color: var(--mk-primary);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .95rem;
+}
+
+/* Wallet balance hero card */
+.mk-balance-card {
+    border-radius: var(--mk-radius);
+    background: linear-gradient(135deg, var(--mk-primary), var(--mk-primary-dark));
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+}
+.mk-balance-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 85% 15%, rgba(255,255,255,.16), transparent 45%);
+}
+.mk-balance-card .text-muted { color: rgba(255,255,255,.75) !important; }
+
+/* Table polish: hoverable rows without needing bootstrap's table-hover.
+   Scoped to descend from the dashboard's own menu, so it never touches
+   plain .card tables on Lifestyle/Christian Revive pages - the unscoped
+   ".card table.table" variant moved to the page-scoped style block. */
+.mk-dash-menu ~ * table.table tbody tr { transition: background .15s ease; }
+
+/* Order cards on the seller Orders page */
+.mk-order-card {
+    border-radius: var(--mk-radius);
+    border: 1px solid var(--mk-border);
+    border-left: 4px solid var(--mk-border);
+    box-shadow: var(--mk-shadow-sm);
+    transition: box-shadow .2s ease, border-left-color .2s ease;
+}
+.mk-order-card:hover { box-shadow: var(--mk-shadow-md); }
+.mk-order-card.mk-order-pending { border-left-color: var(--mk-accent); }
+.mk-order-card.mk-order-shipped { border-left-color: #3b82f6; }
+.mk-order-card.mk-order-delivered { border-left-color: #16a34a; }
+.mk-order-item-chip {
+    border-radius: 20px;
+    transition: background .15s ease;
+}
+.mk-order-item-chip:hover { background: var(--mk-surface-soft); }
+
+.mk-thumb-sm {
+    width: 48px;
+    height: 48px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+/* ---------------------------------------------------------- */
+/* State badges                                                 */
+/* ---------------------------------------------------------- */
+.mk-state-active, .mk-state-approved, .mk-state-released, .mk-state-paid,
+.mk-state-delivered, .mk-state-verified, .mk-state-resolved_release {
+    background: #d1fae5; color: #065f46;
+}
+.mk-state-draft, .mk-state-none, .mk-state-pending, .mk-state-requested {
+    background: #fef3c7; color: #92400e;
+}
+.mk-state-sold, .mk-state-shipped, .mk-state-approved_payout {
+    background: #dbeafe; color: #1e40af;
+}
+.mk-state-rejected, .mk-state-refunded, .mk-state-suspended,
+.mk-state-open, .mk-state-resolved_refund {
+    background: #fee2e2; color: #991b1b;
+}
+.mk-state-reserved, .mk-state-held, .mk-state-under_review, .mk-state-cancelled,
+.mk-state-removed {
+    background: #e5e7eb; color: #374151;
+}
+.badge[class*="mk-state-"] {
+    font-weight: 600;
+    border-radius: 20px;
+    padding: .35em .7em;
+}
+
+/* ---------------------------------------------------------- */
+/* Order progress                                                */
+/* ---------------------------------------------------------- */
+.mk-progress { position: relative; }
+.mk-progress .mk-step {
+    color: var(--mk-muted);
+    text-align: center;
+    flex: 1;
+    font-size: .85rem;
+    position: relative;
+}
+.mk-progress .mk-step.done { color: var(--mk-primary); font-weight: 600; }
+.mk-progress .mk-step i {
+    display: block;
+    font-size: 1.3rem;
+    margin-bottom: 4px;
+}
+
+/* ---------------------------------------------------------- */
+/* Chat                                                          */
+/* ---------------------------------------------------------- */
+.mk-chat {
+    max-height: 420px;
+    overflow-y: auto;
+    background:
+        radial-gradient(circle at 20% 10%, rgba(13, 148, 136, .04), transparent 40%),
+        var(--mk-surface-soft);
+}
+.mk-msg { margin-bottom: 10px; }
+.mk-msg-bubble {
+    display: inline-block;
+    background: #fff;
+    border: 1px solid var(--mk-border);
+    border-radius: 14px 14px 14px 3px;
+    padding: 9px 14px;
+    max-width: 75%;
+    white-space: pre-line;
+    box-shadow: var(--mk-shadow-sm);
+}
+.mk-msg.mine { text-align: right; }
+.mk-msg.mine .mk-msg-bubble {
+    background: linear-gradient(135deg, var(--mk-primary-light), var(--mk-primary));
+    color: #fff;
+    border-radius: 14px 14px 3px 14px;
+    border-color: var(--mk-primary);
+}
+.mk-thread-row { transition: background .15s ease; }
+.mk-thread-row:hover { background: var(--mk-surface-soft); }
+
+/* ---------------------------------------------------------- */
+/* Sales analytics bar chart                                    */
+/* ---------------------------------------------------------- */
+.mk-chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 6px;
+    height: 120px;
+}
+.mk-chart-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    height: 100%;
+}
+.mk-chart-bar-wrap {
+    flex: 1;
+    display: flex;
+    align-items: flex-end;
+}
+.mk-chart-bar {
+    width: 100%;
+    min-height: 4px;
+    background: linear-gradient(180deg, var(--mk-primary-light), var(--mk-primary));
+    border-radius: 4px 4px 0 0;
+    transition: filter .15s ease;
+}
+.mk-chart-bar:hover { filter: brightness(1.08); }
+.mk-chart-label {
+    text-align: center;
+    font-size: .68rem;
+    color: var(--mk-muted);
+    margin-top: 4px;
+    white-space: nowrap;
+}
+
+/* ---------------------------------------------------------- */
+/* Trust row                                                     */
+/* ---------------------------------------------------------- */
+.mk-trust {
+    background: var(--mk-surface-soft);
+    border-radius: var(--mk-radius);
+}
+.mk-trust i { color: var(--mk-primary); }
+.mk-trust h6 { font-weight: 700; }
+
+/* ---------------------------------------------------------- */
+/* Cards & sections general polish                              */
+/* ---------------------------------------------------------- */
+/* .card radius, heading letter-spacing, and the header/footer white-label
+   rules below all moved to the page-scoped style block: this file loads
+   on every page, and unscoped versions of these hid Revive Lifestyle's
+   AND Christian Revive's site header/nav everywhere, not just /market. */
+
+/* Empty / loading states */
+.fa-2x.text-muted, .fa-4x.text-success { opacity: .85; }
+
+/* ---------------------------------------------------------- */
+/* Branded login page                                           */
+/* ---------------------------------------------------------- */
+.mk-login-brand {
+    color: var(--mk-primary);
+    font-weight: 700;
+    font-size: 1.4rem;
+    letter-spacing: -.02em;
+}
+.mk-login-brand i { color: var(--mk-accent); }
+.mk-login-card {
+    max-width: 400px;
+    margin: 40px auto;
+    background: var(--mk-surface);
+    border-radius: var(--mk-radius);
+    box-shadow: var(--mk-shadow-lg);
+    border: 1px solid var(--mk-border);
+    padding: 2rem;
+    animation: mkFadeUp .4s cubic-bezier(.22, 1, .36, 1);
+}
+.mk-login-card .form-control {
+    border-radius: 10px;
+    padding: .6rem .8rem;
+}
+.mk-login-card .form-control:focus {
+    border-color: var(--mk-primary);
+    box-shadow: 0 0 0 3px rgba(13, 148, 136, .12);
+}
+.mk-login-card .mk-btn {
+    width: 100%;
+    padding: .6rem;
+}
+
+/* ---------------------------------------------------------- */
+/* Global motion                                                */
+/* ---------------------------------------------------------- */
+/* html { scroll-behavior: smooth; } moved to the page-scoped style block. */
+
+@keyframes mkFadeUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes mkPop {
+    0%   { transform: scale(1); }
+    35%  { transform: scale(1.35); }
+    60%  { transform: scale(.92); }
+    100% { transform: scale(1); }
+}
+@keyframes mkShimmer {
+    0%   { background-position: -200px 0; }
+    100% { background-position: calc(200px + 100%) 0; }
+}
+@keyframes mkPulseSoft {
+    0%, 100% { box-shadow: 0 2px 6px rgba(245, 158, 11, .4); }
+    50%      { box-shadow: 0 2px 14px rgba(245, 158, 11, .7); }
+}
+
+/* Scroll-reveal: elements start hidden, marketplace.js flips
+   .mk-visible on when they enter the viewport. Respects users who
+   asked their OS for reduced motion. */
+.mk-reveal {
+    opacity: 0;
+    transform: translateY(18px);
+}
+.mk-reveal.mk-visible {
+    animation: mkFadeUp .55s cubic-bezier(.22, 1, .36, 1) forwards;
+}
+.mk-reveal.mk-visible:nth-child(2) { animation-delay: .04s; }
+.mk-reveal.mk-visible:nth-child(3) { animation-delay: .08s; }
+.mk-reveal.mk-visible:nth-child(4) { animation-delay: .12s; }
+.mk-reveal.mk-visible:nth-child(5) { animation-delay: .16s; }
+.mk-reveal.mk-visible:nth-child(6) { animation-delay: .2s; }
+@media (prefers-reduced-motion: reduce) {
+    .mk-reveal, .mk-reveal.mk-visible { opacity: 1; transform: none; animation: none; }
+    html { scroll-behavior: auto; }
+}
+
+/* Image fade-in once loaded, instead of popping in abruptly */
+.mk-card-img, .mk-gallery-main {
+    opacity: 0;
+    transition: opacity .35s ease;
+}
+.mk-card-img.mk-loaded, .mk-gallery-main.mk-loaded { opacity: 1; }
+
+/* Favourite heart micro-interaction */
+.mk-fav-pop { animation: mkPop .38s ease; }
+
+/* Promoted badge gets a subtle breathing glow instead of sitting static */
+.mk-badge-bump { animation: mkPulseSoft 2.4s ease-in-out infinite; }
+
+/* Skeleton shimmer shown behind images while they load */
+.mk-card-img-wrap::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, #f0f0f2 25%, #f8f8fa 37%, #f0f0f2 63%);
+    background-size: 400px 100%;
+    animation: mkShimmer 1.4s ease-in-out infinite;
+}
+.mk-card-img-wrap.mk-loaded::before { display: none; }
+
+/* Toast-style entrance for alerts instead of appearing flat-footed */
+.alert { animation: mkFadeUp .3s ease-out; }

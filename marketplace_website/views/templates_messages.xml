@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ============================================================ -->
+    <!-- Threads list                                                 -->
+    <!-- ============================================================ -->
+    <template id="market_messages" name="My Messages">
+        <t t-call="website.layout">
+            <t t-call="marketplace_website.mk_navbar"/>
+            <div class="container py-4" style="max-width: 720px;">
+                <h4 class="mb-3"><i class="fa fa-comments me-2"/>Messages</h4>
+                <div class="card">
+                    <t t-foreach="threads" t-as="thread">
+                        <t t-set="unread" t-value="thread.unread_count(mk_partner)"/>
+                        <a t-attf-href="/market/messages/thread/#{thread.id}"
+                           class="d-flex align-items-center gap-3 p-3 border-bottom text-decoration-none mk-thread-row">
+                            <img t-if="thread.listing_id"
+                                 t-attf-src="/web/image/product.template/#{thread.listing_id.id}/image_128"
+                                 class="mk-thumb-sm" alt="item"/>
+                            <img t-else=""
+                                 t-attf-src="/web/image/marketplace.seller/#{thread.seller_id.id}/logo/64x64"
+                                 class="mk-thumb-sm rounded-circle" alt="shop"/>
+                            <div class="flex-grow-1">
+                                <div class="fw-bold" t-out="thread.display_subject"/>
+                                <div class="small text-muted text-truncate" style="max-width: 400px;"
+                                     t-out="thread.message_ids and thread.message_ids[-1].body or 'No messages yet'"/>
+                            </div>
+                            <div class="text-end">
+                                <div class="small text-muted"
+                                     t-out="thread.last_message_date and thread.last_message_date.strftime('%d %b') or ''"/>
+                                <span t-if="unread" class="badge rounded-pill bg-danger" t-out="unread"/>
+                            </div>
+                        </a>
+                    </t>
+                    <div t-if="not threads" class="text-center text-muted py-5">
+                        No conversations yet. Message a seller from any item page.
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- ============================================================ -->
+    <!-- Chat thread                                                  -->
+    <!-- ============================================================ -->
+    <template id="market_thread" name="Conversation">
+        <t t-call="website.layout">
+            <t t-call="marketplace_website.mk_navbar"/>
+            <div class="container py-4" style="max-width: 720px;">
+                <a href="/market/messages" class="small text-muted">&#8592; All messages</a>
+                <div class="card mt-2">
+                    <div class="p-3 border-bottom d-flex align-items-center gap-3">
+                        <t t-if="thread.listing_id">
+                            <img t-attf-src="/web/image/product.template/#{thread.listing_id.id}/image_128"
+                                 class="mk-thumb-sm" alt="item"/>
+                            <div>
+                                <a t-attf-href="/market/item/#{thread.listing_id.id}"
+                                   class="fw-bold text-decoration-none" t-out="thread.listing_id.name"/>
+                                <div class="small text-muted">
+                                    <t t-out="thread.listing_id.currency_id.symbol"/>
+                                    <t t-out="'%.0f' % thread.listing_id.list_price"/>
+                                    · <t t-out="thread.seller_id.name"/>
+                                </div>
+                            </div>
+                        </t>
+                        <t t-else="">
+                            <div class="fw-bold" t-out="thread.display_subject"/>
+                        </t>
+                    </div>
+                    <div id="mkChatBox" class="mk-chat p-3"
+                         t-att-data-thread-id="thread.id"
+                         t-att-data-last-id="thread.message_ids and thread.message_ids[-1].id or 0">
+                        <t t-foreach="thread.message_ids" t-as="msg">
+                            <div t-attf-class="mk-msg #{msg.author_partner_id == mk_partner and 'mine' or ''}">
+                                <div class="mk-msg-bubble">
+                                    <t t-out="msg.body"/>
+                                </div>
+                                <div class="mk-msg-meta small text-muted">
+                                    <t t-out="msg.author_partner_id.name"/> ·
+                                    <t t-out="msg.create_date and msg.create_date.strftime('%d %b %H:%M')"/>
+                                </div>
+                            </div>
+                        </t>
+                        <div t-if="not thread.message_ids" class="text-center text-muted py-4">
+                            Say salaam! Ask about size, condition, or negotiate the price.
+                        </div>
+                    </div>
+                    <form t-attf-action="/market/messages/thread/#{thread.id}/send" method="post"
+                          class="d-flex gap-2 p-3 border-top">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                        <input type="text" name="body" class="form-control" autocomplete="off"
+                               placeholder="Type a message..." required="required"/>
+                        <button type="submit" class="btn mk-btn"><i class="fa fa-paper-plane"/></button>
+                    </form>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>

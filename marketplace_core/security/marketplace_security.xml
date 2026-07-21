@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="module_category_marketplace" model="ir.module.category">
+        <field name="name">Marketplace</field>
+        <field name="sequence">25</field>
+    </record>
+
+    <record id="res_groups_privilege_marketplace" model="res.groups.privilege">
+        <field name="name">Marketplace</field>
+        <field name="sequence">25</field>
+        <field name="category_id" ref="module_category_marketplace"/>
+    </record>
+
+    <record id="group_marketplace_moderator" model="res.groups">
+        <field name="name">Moderator</field>
+        <field name="sequence">10</field>
+        <field name="privilege_id" ref="res_groups_privilege_marketplace"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+
+    <record id="group_marketplace_manager" model="res.groups">
+        <field name="name">Manager</field>
+        <field name="sequence">20</field>
+        <field name="privilege_id" ref="res_groups_privilege_marketplace"/>
+        <field name="implied_ids" eval="[(4, ref('group_marketplace_moderator'))]"/>
+        <field name="user_ids" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+    </record>
+
+    <!-- Portal users (buyers & sellers) interact through website/API
+         controllers which enforce ownership explicitly; the record rules
+         below add defence-in-depth for direct portal access. -->
+
+    <record id="rule_seller_portal_own" model="ir.rule">
+        <field name="name">Portal: own seller shop</field>
+        <field name="model_id" ref="model_marketplace_seller"/>
+        <field name="domain_force">[('partner_id', '=', user.partner_id.id)]</field>
+        <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+    </record>
+
+    <record id="rule_cart_portal_own" model="ir.rule">
+        <field name="name">Portal: own cart</field>
+        <field name="model_id" ref="model_marketplace_cart_item"/>
+        <field name="domain_force">[('partner_id', '=', user.partner_id.id)]</field>
+        <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+    </record>
+
+    <record id="rule_thread_portal_own" model="ir.rule">
+        <field name="name">Portal: own conversations</field>
+        <field name="model_id" ref="model_marketplace_thread"/>
+        <field name="domain_force">['|', ('buyer_partner_id', '=', user.partner_id.id), ('seller_id.partner_id', '=', user.partner_id.id)]</field>
+        <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+    </record>
+
+    <record id="rule_thread_message_portal_own" model="ir.rule">
+        <field name="name">Portal: own conversation messages</field>
+        <field name="model_id" ref="model_marketplace_thread_message"/>
+        <field name="domain_force">['|', ('thread_id.buyer_partner_id', '=', user.partner_id.id), ('thread_id.seller_id.partner_id', '=', user.partner_id.id)]</field>
+        <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+    </record>
+
+    <record id="rule_payout_portal_own" model="ir.rule">
+        <field name="name">Portal: own payouts</field>
+        <field name="model_id" ref="model_marketplace_seller_payout"/>
+        <field name="domain_force">[('seller_id.partner_id', '=', user.partner_id.id)]</field>
+        <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+    </record>
+
+    <record id="rule_wallet_tx_portal_own" model="ir.rule">
+        <field name="name">Portal: own wallet transactions</field>
+        <field name="model_id" ref="model_marketplace_wallet_transaction"/>
+        <field name="domain_force">[('seller_id.partner_id', '=', user.partner_id.id)]</field>
+        <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+    </record>
+
+    <record id="rule_dispute_portal_own" model="ir.rule">
+        <field name="name">Portal: own disputes</field>
+        <field name="model_id" ref="model_marketplace_dispute"/>
+        <field name="domain_force">['|', ('buyer_id', '=', user.partner_id.id), ('seller_id.partner_id', '=', user.partner_id.id)]</field>
+        <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+    </record>
+
+    <record id="rule_review_portal" model="ir.rule">
+        <field name="name">Portal: published reviews or own</field>
+        <field name="model_id" ref="model_marketplace_review"/>
+        <field name="domain_force">['|', ('state', '=', 'published'), ('reviewer_id', '=', user.partner_id.id)]</field>
+        <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+    </record>
+</odoo>

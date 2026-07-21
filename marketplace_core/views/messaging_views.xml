@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_marketplace_thread_list" model="ir.ui.view">
+        <field name="name">marketplace.thread.list</field>
+        <field name="model">marketplace.thread</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="display_subject"/>
+                <field name="buyer_partner_id"/>
+                <field name="seller_id"/>
+                <field name="listing_id"/>
+                <field name="last_message_date"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_marketplace_thread_form" model="ir.ui.view">
+        <field name="name">marketplace.thread.form</field>
+        <field name="model">marketplace.thread</field>
+        <field name="arch" type="xml">
+            <form string="Conversation">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="buyer_partner_id"/>
+                            <field name="seller_id"/>
+                        </group>
+                        <group>
+                            <field name="listing_id"/>
+                            <field name="last_message_date"/>
+                        </group>
+                    </group>
+                    <field name="message_ids" readonly="1">
+                        <list>
+                            <field name="create_date"/>
+                            <field name="author_partner_id"/>
+                            <field name="body"/>
+                            <field name="is_read"/>
+                        </list>
+                    </field>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_marketplace_threads" model="ir.actions.act_window">
+        <field name="name">Conversations</field>
+        <field name="res_model">marketplace.thread</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

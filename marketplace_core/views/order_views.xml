@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_sale_order_form_marketplace" model="ir.ui.view">
+        <field name="name">sale.order.form.marketplace</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="action_generate_label" type="object"
+                        string="Generate Label"
+                        invisible="not is_marketplace_order or marketplace_delivery_state != 'pending'"/>
+                <button name="action_mark_shipped" type="object"
+                        string="Mark Shipped"
+                        invisible="not is_marketplace_order or marketplace_delivery_state != 'pending' or state != 'sale'"/>
+                <button name="action_mark_delivered" type="object"
+                        string="Mark Delivered"
+                        invisible="not is_marketplace_order or marketplace_delivery_state != 'shipped'"/>
+                <button name="action_release_escrow" type="object"
+                        string="Release Escrow" class="btn-success"
+                        invisible="not is_marketplace_order or escrow_state != 'held'"
+                        groups="marketplace_core.group_marketplace_manager"
+                        confirm="Release held funds to the seller wallet?"/>
+                <button name="action_refund_escrow" type="object"
+                        string="Refund Escrow" class="btn-danger"
+                        invisible="not is_marketplace_order or escrow_state != 'held'"
+                        groups="marketplace_core.group_marketplace_manager"
+                        confirm="Refund held funds to the buyer?"/>
+            </xpath>
+            <xpath expr="//notebook" position="inside">
+                <page string="Marketplace" name="marketplace"
+                      invisible="not is_marketplace_order">
+                    <group>
+                        <group string="Marketplace">
+                            <field name="is_marketplace_order" invisible="1"/>
+                            <field name="marketplace_seller_id"/>
+                            <field name="marketplace_payment_method"/>
+                            <field name="payment_received"/>
+                            <field name="escrow_state" readonly="1"/>
+                            <field name="escrow_release_date" readonly="1"/>
+                        </group>
+                        <group string="Logistics">
+                            <field name="marketplace_delivery_state"/>
+                            <field name="marketplace_courier_id"/>
+                            <field name="tracking_number"/>
+                            <field name="tracking_url" widget="url" readonly="1"/>
+                            <field name="shipping_label_ref" readonly="1"/>
+                            <field name="shipped_date" readonly="1"/>
+                            <field name="delivered_date" readonly="1"/>
+                            <field name="buyer_confirmed_delivery" readonly="1"/>
+                        </group>
+                        <group string="Money Split">
+                            <field name="marketplace_item_total"/>
+                            <field name="buyer_protection_fee"/>
+                            <field name="shipping_fee"/>
+                            <field name="platform_commission"/>
+                            <field name="seller_payout_amount"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_marketplace_order_list" model="ir.ui.view">
+        <field name="name">marketplace.order.list</field>
+        <field name="model">sale.order</field>
+        <field name="priority">60</field>
+        <field name="arch" type="xml">
+            <list string="Marketplace Orders" default_order="create_date desc">
+                <field name="name"/>
+                <field name="partner_id" string="Buyer"/>
+                <field name="marketplace_seller_id"/>
+                <field name="amount_total"/>
+                <field name="marketplace_payment_method"/>
+                <field name="escrow_state" widget="badge"
+                       decoration-warning="escrow_state == 'held'"
+                       decoration-success="escrow_state == 'released'"
+                       decoration-danger="escrow_state == 'refunded'"/>
+                <field name="marketplace_delivery_state" widget="badge"
+                       decoration-info="marketplace_delivery_state == 'shipped'"
+                       decoration-success="marketplace_delivery_state == 'delivered'"/>
+                <field name="tracking_number"/>
+                <field name="create_date"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_marketplace_orders" model="ir.actions.act_window">
+        <field name="name">Marketplace Orders</field>
+        <field name="res_model">sale.order</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('is_marketplace_order', '=', True)]</field>
+        <field name="view_id" ref="view_marketplace_order_list"/>
+    </record>
+
+    <record id="action_marketplace_escrow" model="ir.actions.act_window">
+        <field name="name">Escrow (Funds Held)</field>
+        <field name="res_model">sale.order</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('is_marketplace_order', '=', True), ('escrow_state', '=', 'held')]</field>
+        <field name="view_id" ref="view_marketplace_order_list"/>
+    </record>
+</odoo>

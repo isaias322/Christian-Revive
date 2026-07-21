@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_marketplace_dispute_list" model="ir.ui.view">
+        <field name="name">marketplace.dispute.list</field>
+        <field name="model">marketplace.dispute</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="order_id"/>
+                <field name="buyer_id"/>
+                <field name="seller_id"/>
+                <field name="reason"/>
+                <field name="amount"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="state" widget="badge"
+                       decoration-danger="state == 'open'"
+                       decoration-warning="state == 'under_review'"
+                       decoration-success="state in ('resolved_refund', 'resolved_release')"/>
+                <field name="create_date"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_marketplace_dispute_form" model="ir.ui.view">
+        <field name="name">marketplace.dispute.form</field>
+        <field name="model">marketplace.dispute</field>
+        <field name="arch" type="xml">
+            <form string="Dispute">
+                <header>
+                    <button name="action_start_review" type="object" string="Start Review"
+                            invisible="state != 'open'" class="btn-primary"
+                            groups="marketplace_core.group_marketplace_moderator"/>
+                    <button name="action_resolve_refund" type="object" string="Refund Buyer"
+                            invisible="state not in ('open', 'under_review')" class="btn-danger"
+                            groups="marketplace_core.group_marketplace_moderator"
+                            confirm="Refund the buyer and re-activate the listing?"/>
+                    <button name="action_resolve_release" type="object" string="Release to Seller"
+                            invisible="state not in ('open', 'under_review')" class="btn-success"
+                            groups="marketplace_core.group_marketplace_moderator"
+                            confirm="Release the held funds to the seller?"/>
+                    <button name="action_cancel" type="object" string="Cancel"
+                            invisible="state not in ('open', 'under_review')"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="open,under_review"/>
+                </header>
+                <sheet>
+                    <div class="oe_title"><h1><field name="name" readonly="1"/></h1></div>
+                    <group>
+                        <group>
+                            <field name="order_id" readonly="state != 'open'"/>
+                            <field name="buyer_id"/>
+                            <field name="seller_id"/>
+                            <field name="amount"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                        <group>
+                            <field name="reason"/>
+                        </group>
+                    </group>
+                    <group string="Buyer Statement">
+                        <field name="description" nolabel="1"/>
+                    </group>
+                    <group string="Resolution Notes">
+                        <field name="resolution_notes" nolabel="1"/>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_marketplace_disputes" model="ir.actions.act_window">
+        <field name="name">Disputes</field>
+        <field name="res_model">marketplace.dispute</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_open': 1}</field>
+    </record>
+
+    <record id="view_marketplace_dispute_search" model="ir.ui.view">
+        <field name="name">marketplace.dispute.search</field>
+        <field name="model">marketplace.dispute</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="order_id"/>
+                <field name="seller_id"/>
+                <field name="buyer_id"/>
+                <filter string="Open" name="open" domain="[('state', '=', 'open')]"/>
+                <filter string="Under Review" name="under_review"
+                        domain="[('state', '=', 'under_review')]"/>
+                <group>
+                    <filter string="Status" name="group_state" context="{'group_by': 'state'}"/>
+                    <filter string="Reason" name="group_reason" context="{'group_by': 'reason'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+</odoo>

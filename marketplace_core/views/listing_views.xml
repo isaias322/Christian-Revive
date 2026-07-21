@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_product_template_form_marketplace" model="ir.ui.view">
+        <field name="name">product.template.form.marketplace</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Marketplace" name="marketplace"
+                      invisible="not is_marketplace_listing">
+                    <div class="mb-3">
+                        <button name="action_submit_listing" type="object"
+                                string="Publish Listing" class="btn-primary"
+                                invisible="listing_state not in ('draft', 'rejected', 'removed')"/>
+                        <button name="action_approve_listing" type="object"
+                                string="Approve" class="btn-success"
+                                invisible="listing_state != 'pending'"
+                                groups="marketplace_core.group_marketplace_moderator"/>
+                        <button name="action_reject_listing" type="object"
+                                string="Reject"
+                                invisible="listing_state != 'pending'"
+                                groups="marketplace_core.group_marketplace_moderator"/>
+                        <button name="action_remove_listing" type="object"
+                                string="Archive"
+                                invisible="listing_state != 'active'"/>
+                        <button name="action_relist" type="object"
+                                string="Unarchive"
+                                invisible="listing_state not in ('reserved', 'removed')"/>
+                        <button name="action_delete_listing" type="object"
+                                string="Delete"
+                                invisible="listing_state not in ('draft', 'pending', 'rejected', 'removed')"
+                                confirm="Delete this listing permanently? This cannot be undone."/>
+                        <button name="action_bump" type="object"
+                                string="Bump (7 days)"
+                                invisible="listing_state != 'active'"
+                                groups="marketplace_core.group_marketplace_manager"/>
+                    </div>
+                    <group>
+                        <group string="Listing">
+                            <field name="is_marketplace_listing" invisible="1"/>
+                            <field name="marketplace_seller_id"/>
+                            <field name="listing_state" readonly="1"/>
+                            <field name="condition"/>
+                            <field name="marketplace_brand_id"/>
+                            <field name="marketplace_size_id"/>
+                            <field name="color"/>
+                            <field name="material"/>
+                            <field name="original_price"/>
+                        </group>
+                        <group string="Performance">
+                            <field name="view_count" readonly="1"/>
+                            <field name="favorite_count" readonly="1"/>
+                            <field name="bump_until" readonly="1"/>
+                            <field name="is_verified_item"/>
+                            <field name="rejection_reason" readonly="1"
+                                   invisible="listing_state != 'rejected'"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_marketplace_listing_list" model="ir.ui.view">
+        <field name="name">marketplace.listing.list</field>
+        <field name="model">product.template</field>
+        <field name="priority">50</field>
+        <field name="arch" type="xml">
+            <list string="Listings" default_order="create_date desc">
+                <field name="name"/>
+                <field name="marketplace_seller_id"/>
+                <field name="marketplace_brand_id"/>
+                <field name="marketplace_size_id"/>
+                <field name="condition"/>
+                <field name="list_price"/>
+                <field name="stock_quantity"/>
+                <field name="listing_state" widget="badge"
+                       decoration-success="listing_state == 'active'"
+                       decoration-warning="listing_state == 'pending'"
+                       decoration-info="listing_state == 'sold'"
+                       decoration-danger="listing_state == 'rejected'"/>
+                <field name="view_count"/>
+                <field name="favorite_count"/>
+                <field name="create_date"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_marketplace_listing_search" model="ir.ui.view">
+        <field name="name">marketplace.listing.search</field>
+        <field name="model">product.template</field>
+        <field name="priority">50</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="marketplace_seller_id"/>
+                <field name="marketplace_brand_id"/>
+                <filter string="Active" name="active_listings"
+                        domain="[('listing_state', '=', 'active')]"/>
+                <filter string="Pending Review" name="pending"
+                        domain="[('listing_state', '=', 'pending')]"/>
+                <filter string="Sold" name="sold"
+                        domain="[('listing_state', '=', 'sold')]"/>
+                <group>
+                    <filter string="Seller" name="group_seller"
+                            context="{'group_by': 'marketplace_seller_id'}"/>
+                    <filter string="Status" name="group_state"
+                            context="{'group_by': 'listing_state'}"/>
+                    <filter string="Brand" name="group_brand"
+                            context="{'group_by': 'marketplace_brand_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_marketplace_listings" model="ir.actions.act_window">
+        <field name="name">Listings</field>
+        <field name="res_model">product.template</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('is_marketplace_listing', '=', True)]</field>
+        <field name="context">{'default_is_marketplace_listing': True, 'default_type': 'consu'}</field>
+        <field name="view_id" ref="view_marketplace_listing_list"/>
+        <field name="search_view_id" ref="view_marketplace_listing_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No listings yet</p>
+            <p>Marketplace listings are created by sellers from the website
+               or mobile app.</p>
+        </field>
+    </record>
+
+    <record id="action_marketplace_listings_moderation" model="ir.actions.act_window">
+        <field name="name">Listing Moderation</field>
+        <field name="res_model">product.template</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('is_marketplace_listing', '=', True), ('listing_state', '=', 'pending')]</field>
+        <field name="view_id" ref="view_marketplace_listing_list"/>
+        <field name="search_view_id" ref="view_marketplace_listing_search"/>
+    </record>
+</odoo>

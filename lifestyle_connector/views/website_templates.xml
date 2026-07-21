@@ -1002,7 +1002,7 @@
              Christian Revive pages - injecting extra icon links is not
              enough because browsers may prefer the first/primary link. -->
         <xpath expr="//t[@t-set='x_icon']" position="attributes">
-            <attribute name="t-value">'/lifestyle_connector/static/src/img/cr_icon.png?v=3' if (request and (request.httprequest.path.startswith('/christianrevive') or (request.session.get('rl_web_brand') == 'cr' and any(request.httprequest.path.startswith(p) for p in ('/my', '/shop', '/payment', '/web/login', '/web/signup', '/web/reset_password'))))) else '/lifestyle_connector/static/src/img/rl_favicon.png?v=1'</attribute>
+            <attribute name="t-value">'/lifestyle_connector/static/src/img/cr_icon.png?v=3' if (request and (request.httprequest.path.startswith('/christianrevive') or (request.session.get('rl_web_brand') == 'cr' and any(request.httprequest.path.startswith(p) for p in ('/my', '/shop', '/payment', '/web/login', '/web/signup', '/web/reset_password'))))) else ('/marketplace_core/static/description/icon.png?v=1' if (request and (request.httprequest.path.startswith('/market') or (request.session.get('rl_web_brand') == 'market' and any(request.httprequest.path.startswith(p) for p in ('/my', '/shop', '/payment', '/web/login', '/web/signup', '/web/reset_password'))))) else '/lifestyle_connector/static/src/img/rl_favicon.png?v=1')</attribute>
         </xpath>
         <xpath expr="//head" position="inside">
             <!-- Order pages are branded by the ORDER (the storefront it was
@@ -1176,6 +1176,17 @@
                         document.querySelectorAll('a[href="/shop"]').forEach(function (link) {
                             link.setAttribute('href', '/christianrevive');
                         });
+                    });
+                </script>
+            </t>
+            <!-- Marketplace already brands its own /market pages fully
+                 (nav, footer, colors via marketplace_website) - only the
+                 tab title needs fixing here, since it inherits the shared
+                 website's "| Revive Lifestyle" suffix otherwise. -->
+            <t t-if="request and request.httprequest.path.startswith('/market')">
+                <script type="text/javascript">
+                    document.addEventListener('DOMContentLoaded', function () {
+                        document.title = document.title.replace(/\s*\|[^|]*$/, ' | Revive Marketplace');
                     });
                 </script>
             </t>

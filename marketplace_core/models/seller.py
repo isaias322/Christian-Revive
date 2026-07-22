@@ -226,10 +226,15 @@ class MarketplaceSeller(models.Model):
         self.write({'state': 'suspended'})
         self.listing_ids.filtered(
             lambda l: l.listing_state == 'active').write({
-                'listing_state': 'removed', 'is_published': False})
+                'listing_state': 'removed', 'is_published': False,
+                'removed_by_suspension': True})
 
     def action_reactivate(self):
         self.write({'state': 'approved'})
+        self.listing_ids.filtered(
+            lambda l: l.removed_by_suspension).write({
+                'listing_state': 'active', 'is_published': True,
+                'removed_by_suspension': False})
 
     def action_submit_kyc(self):
         for seller in self:

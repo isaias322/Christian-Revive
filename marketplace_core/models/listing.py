@@ -39,6 +39,12 @@ class ProductTemplate(models.Model):
     original_price = fields.Float(
         help='What the item cost new (optional, shown crossed out).')
     rejection_reason = fields.Text()
+    removed_by_suspension = fields.Boolean(
+        default=False, copy=False,
+        help='Set when this listing was auto-removed because the seller '
+             'shop was suspended, so reactivating the shop knows to '
+             'restore exactly these listings and not ones the seller '
+             'had already taken down themselves.')
     stock_quantity = fields.Integer(
         string='Quantity Available', default=1,
         help='How many identical units the seller has. Buying one '
@@ -174,7 +180,10 @@ class ProductTemplate(models.Model):
     def action_relist(self):
         self.filtered(
             lambda t: t.listing_state in ('reserved', 'removed')
-        ).write({'listing_state': 'active', 'is_published': True})
+        ).write({
+            'listing_state': 'active', 'is_published': True,
+            'removed_by_suspension': False,
+        })
 
     def action_remove_listing(self):
         self.write({'listing_state': 'removed', 'is_published': False})

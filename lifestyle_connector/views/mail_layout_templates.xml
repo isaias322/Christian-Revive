@@ -26,7 +26,7 @@
              gets a fresh, uncached URL. -->
         <xpath expr="//td[img[contains(@t-att-src, 'logo.png')]]" position="replace">
             <td valign="middle" align="right">
-                <img src="/lifestyle_connector/static/src/img/logo_wordmark.png"
+                <img src="/lifestyle_connector/static/src/img/revive_lifestyle_logo.png"
                      style="padding: 0px; margin: 0px; height: 48px;" alt="Revive Lifestyle"/>
             </td>
         </xpath>

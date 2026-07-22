@@ -207,14 +207,18 @@ a {
 
 
 .rl-contact-logo-mark {
+    /* Sized for the wide wordmark logo (~3.27:1) rather than the old
+       near-square icon+text mark - a fixed square box would shrink a
+       wide banner logo down to a tiny sliver with empty space above
+       and below it. */
     position: absolute;
-    top: -18px;
+    top: -16px;
     right: 18px;
-    width: 72px;
-    height: 72px;
+    width: 150px;
+    height: 46px;
     object-fit: contain;
-    padding: 0.65rem;
-    border-radius: 20px;
+    padding: 0.5rem 0.75rem;
+    border-radius: 16px;
     background: rgba(255, 253, 249, 0.92);
     box-shadow: 0 18px 40px rgba(0, 0, 0, 0.18);
 }

@@ -3,7 +3,10 @@
     <!-- Re-applies on every module upgrade (no noupdate="1"), so the
          website logo/favicon always match the bundled brand assets. -->
     <record id="website.default_website" model="website">
-        <field name="logo" type="base64" file="lifestyle_connector/static/src/img/app_icon.png"/>
+        <!-- Nav-bar logo: the new wide wordmark. Favicon stays the square
+             leaf icon - a wide banner logo shrunk into a tiny browser-tab
+             square would be an unrecognizable sliver. -->
+        <field name="logo" type="base64" file="lifestyle_connector/static/src/img/revive_lifestyle_logo.png"/>
         <field name="favicon" type="base64" file="lifestyle_connector/static/src/img/app_icon.png"/>
     </record>
 </odoo>

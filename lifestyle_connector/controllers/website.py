@@ -219,6 +219,13 @@ class LifestyleWebsiteSale(WebsiteSale):
 
     @http.route()
     def shop(self, *args, **kwargs):
+        # /shop (and its /shop/category, /shop/page variants - all handled
+        # by this same controller) is Revive Lifestyle's page. Christian
+        # Revive has no shop URL of its own - its storefront IS the
+        # homepage on that domain - so a visitor there must never see
+        # Lifestyle's shop just because the route technically exists.
+        if LifestyleWebsite._rl_is_christian_revive_website():
+            return request.redirect('/')
         request.session['rl_web_brand'] = 'lifestyle'
         return super().shop(*args, **kwargs)
 

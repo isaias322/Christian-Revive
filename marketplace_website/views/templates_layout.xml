@@ -6,8 +6,8 @@
     <template id="mk_navbar" name="Marketplace Navbar">
         <div class="mk-nav border-bottom bg-white">
             <div class="container d-flex align-items-center gap-3 py-2 flex-wrap">
-                <a href="/market" class="mk-logo fw-bold text-decoration-none fs-5">
-                    <i class="fa fa-shopping-bag me-1"/>Revive Marketplace
+                <a href="/market" class="mk-logo text-decoration-none">
+                    <img src="/marketplace_website/static/src/img/logo.png" class="mk-logo-img" alt="Revive Marketplace"/>
                 </a>
                 <form action="/market/search" method="get" class="flex-grow-1" style="max-width: 480px;">
                     <div class="input-group">
@@ -210,7 +210,7 @@
             <t t-if="request and request.session.get('rl_web_brand') == 'market'">
                 <div class="text-center mb-3">
                     <a href="/market" class="mk-login-brand text-decoration-none">
-                        <i class="fa fa-shopping-bag me-1"/>Revive Marketplace
+                        <img src="/marketplace_website/static/src/img/logo.png" class="mk-login-logo-img" alt="Revive Marketplace"/>
                     </a>
                 </div>
             </t>

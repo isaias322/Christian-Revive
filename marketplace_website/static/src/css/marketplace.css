@@ -64,8 +64,10 @@
 .mk-logo {
     color: var(--mk-primary) !important;
     letter-spacing: -.02em;
+    display: inline-flex;
+    align-items: center;
 }
-.mk-logo i { color: var(--mk-accent); }
+.mk-logo-img { height: 34px; width: auto; display: block; }
 .mk-nav-link {
     color: var(--mk-body);
     font-size: 1.2rem;
@@ -623,8 +625,9 @@
     font-weight: 700;
     font-size: 1.4rem;
     letter-spacing: -.02em;
+    display: inline-block;
 }
-.mk-login-brand i { color: var(--mk-accent); }
+.mk-login-logo-img { height: 42px; width: auto; display: block; margin: 0 auto; }
 .mk-login-card {
     max-width: 400px;
     margin: 40px auto;

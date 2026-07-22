@@ -10,8 +10,24 @@ from odoo.addons.website_sale.controllers.cart import Cart
 
 class LifestyleWebsite(http.Controller):
 
+    @staticmethod
+    def _rl_is_christian_revive_website():
+        """True when Odoo resolved the current request to the Christian
+        Revive website record (real multi-website, matched by its own
+        Domain field - not the shared-site session/path trick used
+        elsewhere). Checked by domain substring since that record was
+        created by hand in Settings and has no stable xml id to ref()."""
+        site = getattr(request, 'website', False)
+        return bool(site and site.domain and 'christianrevive' in site.domain.lower())
+
     @http.route('/', type='http', auth='public', website=True, sitemap=True)
     def homepage(self, **kwargs):
+        # Real multi-website: the Christian Revive website record's own
+        # homepage is the Christian Revive storefront, not the Lifestyle
+        # one. /christianrevive keeps working as an alias regardless of
+        # which domain reaches it.
+        if self._rl_is_christian_revive_website():
+            return self.christian_revive_store(**kwargs)
         request.session['rl_web_brand'] = 'lifestyle'
         homepage_slides = request.env['ir.ui.view'].browse()
         homepage_sections = request.env['ir.ui.view'].browse()

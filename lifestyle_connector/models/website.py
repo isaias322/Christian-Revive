@@ -42,6 +42,15 @@ class IrHttp(models.AbstractModel):
             if brand_param in ('cr', 'lifestyle', 'market'):
                 request.session['rl_web_brand'] = brand_param
                 return
+            # Real second website: any path reached via the Christian
+            # Revive domain is CR-branded, even a shared path like /shop
+            # that would otherwise path-match as Lifestyle - a visitor
+            # arriving straight at shop.christianrevive.org/shop (not via
+            # the homepage first) must still get CR branding.
+            site = getattr(request, 'website', False)
+            if site and site.domain and 'christianrevive' in site.domain.lower():
+                request.session['rl_web_brand'] = 'cr'
+                return
             if path.startswith('/christianrevive'):
                 request.session['rl_web_brand'] = 'cr'
             elif _rl_is_market_path(path):

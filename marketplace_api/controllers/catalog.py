@@ -217,8 +217,8 @@ class MarketplaceApiCatalog(http.Controller):
             vals['public_categ_ids'] = (
                 [(6, 0, [int(body['category_id'])])]
                 if body.get('category_id') else [(5, 0, 0)])
-        if 'color' in body:
-            vals['color'] = body.get('color') or False
+        if 'listing_color' in body:
+            vals['listing_color'] = body.get('listing_color') or False
         if 'material' in body:
             vals['material'] = body.get('material') or False
         if 'original_price' in body:

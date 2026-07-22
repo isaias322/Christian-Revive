@@ -43,7 +43,7 @@
                             <field name="condition"/>
                             <field name="marketplace_brand_id"/>
                             <field name="marketplace_size_id"/>
-                            <field name="color"/>
+                            <field name="listing_color" string="Colour"/>
                             <field name="material"/>
                             <field name="original_price"/>
                         </group>

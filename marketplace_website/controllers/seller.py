@@ -183,7 +183,7 @@ class MarketplaceSeller(MarketplaceMain):
             'stock_quantity': stock_quantity,
             'description_sale': post.get('description') or False,
             'condition': post.get('condition') or False,
-            'color': post.get('color') or False,
+            'listing_color': post.get('listing_color') or False,
             'material': post.get('material') or False,
             'type': 'consu',
         }

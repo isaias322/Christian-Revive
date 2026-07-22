@@ -100,9 +100,9 @@
                                 <td class="text-muted">Size</td>
                                 <td t-out="listing.marketplace_size_id.name"/>
                             </tr>
-                            <tr t-if="listing.color">
+                            <tr t-if="listing.listing_color">
                                 <td class="text-muted">Colour</td>
-                                <td t-out="listing.color"/>
+                                <td t-out="listing.listing_color"/>
                             </tr>
                             <tr t-if="listing.material">
                                 <td class="text-muted">Material</td>

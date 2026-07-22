@@ -34,7 +34,12 @@ class ProductTemplate(models.Model):
         'marketplace.brand', string='Brand')
     marketplace_size_id = fields.Many2one(
         'marketplace.size', string='Size')
-    color = fields.Char(string='Colour')
+    # Named listing_color (not "color"): a bare "color" field on the
+    # heavily shared product.template model collided with another
+    # module's kanban color-index field of the same name, expecting
+    # integer - Odoo tried to convert this Char column to integer on
+    # every upgrade and crashed on any non-numeric value already in it.
+    listing_color = fields.Char(string='Colour')
     material = fields.Char()
     original_price = fields.Float(
         help='What the item cost new (optional, shown crossed out).')

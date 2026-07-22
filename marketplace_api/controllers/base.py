@@ -128,7 +128,7 @@ def serialize_listing(listing, partner=None, detail=False):
     if detail:
         data.update({
             'description': listing.description_sale or None,
-            'color': listing.color or None,
+            'listing_color': listing.listing_color or None,
             'material': listing.material or None,
             'is_verified_item': listing.is_verified_item,
             'image_urls': (

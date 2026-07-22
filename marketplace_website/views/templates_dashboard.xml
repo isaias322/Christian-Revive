@@ -369,8 +369,8 @@
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label fw-bold">Colour</label>
-                        <input type="text" name="color" class="form-control"
-                               t-att-value="listing and listing.color or ''"/>
+                        <input type="text" name="listing_color" class="form-control"
+                               t-att-value="listing and listing.listing_color or ''"/>
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label fw-bold">Material</label>

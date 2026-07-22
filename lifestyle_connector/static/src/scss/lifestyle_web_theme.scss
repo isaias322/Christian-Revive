@@ -1915,15 +1915,32 @@ a {
     color: #5C7050;
 }
 
-// Header logo - the leaf icon was nearly invisible at its default tiny
-// size with no background contrast against the white header.
+// Header logo pill, matching the polish of the Christian Revive nav
+// badge (rounded pill, soft shadow, hover lift) - but on a light
+// background, since this logo's own blue/green colors need a light
+// backdrop to stay legible (unlike CR's white-on-dark wordmark).
+// Fixed to auto-width: Odoo's default markup reserves a small
+// 95x40px box sized for a compact icon, which squeezed this wider
+// banner logo down to an illegible sliver.
+.navbar-brand.logo {
+    display: inline-flex;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.navbar-brand.logo:hover {
+    transform: translateY(-1px);
+}
+
 .navbar-brand.logo img {
-    width: 48px !important;
-    height: 48px !important;
+    width: auto !important;
+    max-width: none !important;
+    height: 42px !important;
     object-fit: contain;
-    padding: 7px;
-    background-color: #E3EADB;
-    border-radius: 12px;
+    padding: 0.5rem 1rem;
+    background-color: #FFFDF9;
+    border: 1px solid rgba(92, 112, 80, 0.16);
+    border-radius: 999px;
+    box-shadow: 0 10px 26px rgba(46, 46, 42, 0.12);
 }
 
 // Shop sidebar filters and category tabs

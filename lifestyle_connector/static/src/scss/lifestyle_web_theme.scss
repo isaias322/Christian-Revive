@@ -1924,7 +1924,8 @@ a {
 // banner logo down to an illegible sliver.
 .navbar-brand.logo {
     display: inline-flex;
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    margin-left: -0.75rem;
+    transition: transform 0.15s ease;
 }
 
 .navbar-brand.logo:hover {
@@ -1934,13 +1935,8 @@ a {
 .navbar-brand.logo img {
     width: auto !important;
     max-width: none !important;
-    height: 42px !important;
+    height: 64px !important;
     object-fit: contain;
-    padding: 0.5rem 1rem;
-    background-color: #FFFDF9;
-    border: 1px solid rgba(92, 112, 80, 0.16);
-    border-radius: 999px;
-    box-shadow: 0 10px 26px rgba(46, 46, 42, 0.12);
 }
 
 // Shop sidebar filters and category tabs

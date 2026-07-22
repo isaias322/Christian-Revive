@@ -88,16 +88,16 @@ class Website(models.Model):
         (e.g. for a real custom domain), a hard-coded xmlid was silently
         updating the WRONG record and the live site never changed."""
         import base64
-        from odoo.modules.module import get_module_resource
+        from odoo.modules.module import get_resource_path
 
         sites = self.sudo().search([]).filtered(
             lambda site: not (site.domain and 'christianrevive' in site.domain.lower())
         )
         if not sites:
             return
-        logo_path = get_module_resource(
+        logo_path = get_resource_path(
             'lifestyle_connector', 'static', 'src', 'img', 'revive_lifestyle_logo.png')
-        favicon_path = get_module_resource(
+        favicon_path = get_resource_path(
             'lifestyle_connector', 'static', 'src', 'img', 'app_icon.png')
         vals = {}
         if logo_path:

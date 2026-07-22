@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from urllib.parse import urlparse
 
-from odoo import fields, models
+from odoo import api, fields, models
 from odoo.http import request
 
 
@@ -77,6 +77,37 @@ class Website(models.Model):
     (and any other product in this shared database) would otherwise leak
     through onto this storefront."""
     _inherit = 'website'
+
+    @api.model
+    def _rl_apply_lifestyle_branding(self):
+        """Re-applies the Lifestyle logo/favicon on every module upgrade.
+
+        Written to find the right website record(s) dynamically rather
+        than assume website.default_website is the one actually serving
+        traffic - once a second, hand-created website record existed
+        (e.g. for a real custom domain), a hard-coded xmlid was silently
+        updating the WRONG record and the live site never changed."""
+        import base64
+        from odoo.modules.module import get_module_resource
+
+        sites = self.sudo().search([]).filtered(
+            lambda site: not (site.domain and 'christianrevive' in site.domain.lower())
+        )
+        if not sites:
+            return
+        logo_path = get_module_resource(
+            'lifestyle_connector', 'static', 'src', 'img', 'revive_lifestyle_logo.png')
+        favicon_path = get_module_resource(
+            'lifestyle_connector', 'static', 'src', 'img', 'app_icon.png')
+        vals = {}
+        if logo_path:
+            with open(logo_path, 'rb') as f:
+                vals['logo'] = base64.b64encode(f.read())
+        if favicon_path:
+            with open(favicon_path, 'rb') as f:
+                vals['favicon'] = base64.b64encode(f.read())
+        if vals:
+            sites.write(vals)
 
     def _product_domain(self):
         domain = super()._product_domain()

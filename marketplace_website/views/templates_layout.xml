@@ -9,7 +9,7 @@
                 <a href="/market" class="mk-logo text-decoration-none">
                     <img src="/marketplace_website/static/src/img/logo.png" class="mk-logo-img" alt="Revive Marketplace"/>
                 </a>
-                <form action="/market/search" method="get" class="flex-grow-1" style="max-width: 480px;">
+                <form action="/market/search" method="get" class="flex-grow-1 mx-auto" style="max-width: 480px;">
                     <div class="input-group">
                         <input type="text" name="search" class="form-control"
                                placeholder="Search items, brands, shops..."

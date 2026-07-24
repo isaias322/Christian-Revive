@@ -1,51 +1,131 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <template id="market_shop_create" name="Create Your Shop">
+    <template id="market_shop_create" name="Sell on Marketplace">
         <t t-call="website.layout">
             <t t-call="marketplace_website.mk_navbar"/>
             <div class="container py-5" style="max-width: 640px;">
-                <div class="text-center mb-4">
-                    <h2>Open your shop</h2>
-                    <p class="text-muted">Free forever. No listing fees, no commission.
-                       Bring your Instagram shop to a real storefront.</p>
-                </div>
-                <t t-call="marketplace_website.mk_alert"/>
-                <form action="/market/sell/create" method="post" enctype="multipart/form-data" class="card p-4">
-                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Shop name *</label>
-                        <input type="text" name="shop_name" class="form-control" required="required"
-                               placeholder="e.g. Mahnoor's Closet"/>
+
+                <t t-if="not seller">
+                    <div class="text-center mb-4">
+                        <h2>Apply to sell on Marketplace</h2>
+                        <p class="text-muted">Free forever. No listing fees, no commission.
+                           Tell us about your business and we'll review your
+                           application within 1-2 days.</p>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Shop logo</label>
-                        <input type="file" name="logo" class="form-control" accept="image/*"/>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Bio</label>
-                        <textarea name="bio" class="form-control" rows="3"
-                                  placeholder="Tell buyers what you sell..."/>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label fw-bold">City</label>
-                            <input type="text" name="city" class="form-control" placeholder="Lahore"/>
+                    <t t-call="marketplace_website.mk_alert"/>
+                    <form action="/market/sell/create" method="post" enctype="multipart/form-data" class="card p-4">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                        <h6 class="text-muted text-uppercase small fw-bold mb-3">Business details</h6>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Shop / business name *</label>
+                            <input type="text" name="shop_name" class="form-control" required="required"
+                                   placeholder="e.g. Mahnoor's Closet"/>
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label fw-bold">Instagram handle</label>
-                            <input type="text" name="instagram_handle" class="form-control" placeholder="@yourshop"/>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Type of business *</label>
+                            <select name="business_type" class="form-select" required="required">
+                                <option value="">Select one...</option>
+                                <option value="individual">Individual Seller</option>
+                                <option value="home_based">Home-Based Business</option>
+                                <option value="boutique">Boutique / Retail Store</option>
+                                <option value="online_shop">Online Shop (Instagram/Facebook/Website)</option>
+                                <option value="other">Other</option>
+                            </select>
                         </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Shop logo</label>
+                            <input type="file" name="logo" class="form-control" accept="image/*"/>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">What do you sell? *</label>
+                            <textarea name="bio" class="form-control" rows="3" required="required"
+                                      placeholder="Tell us what you plan to sell..."/>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">City *</label>
+                                <input type="text" name="city" class="form-control" required="required"
+                                       placeholder="Lahore"/>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Instagram handle</label>
+                                <input type="text" name="instagram_handle" class="form-control" placeholder="@yourshop"/>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">WhatsApp number *</label>
+                            <input type="text" name="whatsapp_number" class="form-control" required="required"
+                                   placeholder="+92 3xx xxxxxxx"/>
+                        </div>
+
+                        <h6 class="text-muted text-uppercase small fw-bold mb-3 mt-4">Identity verification</h6>
+                        <p class="small text-muted">We verify every seller's identity before
+                           approving a shop — this keeps the marketplace safe for buyers.</p>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">ID type *</label>
+                                <select name="kyc_id_type" class="form-select" required="required">
+                                    <option value="cnic">CNIC (Pakistan)</option>
+                                    <option value="passport">Passport</option>
+                                    <option value="driving_license">Driving License</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">ID number *</label>
+                                <input type="text" name="kyc_id_number" class="form-control" required="required"
+                                       placeholder="42101-1234567-1"/>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Photo of your ID *</label>
+                            <input type="file" name="kyc_documents" class="form-control" accept="image/*"
+                                   multiple="multiple" required="required"/>
+                            <div class="form-text">You can attach both front and back photos.</div>
+                        </div>
+
+                        <button type="submit" class="btn mk-btn btn-lg mt-2">Submit Application</button>
+                        <p class="small text-muted mt-3 mb-0">
+                            A moderator reviews every application before it goes live —
+                            you'll be able to list items as soon as you're approved.
+                        </p>
+                    </form>
+                </t>
+
+                <t t-if="seller and seller.state == 'pending'">
+                    <div class="card p-5 text-center">
+                        <i class="fa fa-clock-o fa-3x text-warning mb-3"/>
+                        <h3>Your application is under review</h3>
+                        <p class="text-muted">
+                            Thanks for applying, <t t-out="seller.name"/>! A moderator is
+                            reviewing your details and will approve your shop shortly
+                            — usually within 1-2 days.
+                        </p>
+                        <p class="small text-muted mb-0">
+                            You'll be able to list items as soon as your shop is approved.
+                        </p>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">WhatsApp number</label>
-                        <input type="text" name="whatsapp_number" class="form-control" placeholder="+92 3xx xxxxxxx"/>
+                </t>
+
+                <t t-if="seller and seller.state == 'suspended'">
+                    <div class="card p-5 text-center">
+                        <i class="fa fa-exclamation-triangle fa-3x text-danger mb-3"/>
+                        <h3>Your shop isn't currently approved to sell</h3>
+                        <p class="text-muted">
+                            <t t-out="seller.name"/> isn't active on the marketplace right
+                            now. If you think this is a mistake, please contact support.
+                        </p>
                     </div>
-                    <button type="submit" class="btn mk-btn btn-lg">Create My Shop</button>
-                    <p class="small text-muted mt-3 mb-0">
-                        You can start listing immediately. ID verification (KYC) is only
-                        needed before your first payout.
-                    </p>
-                </form>
+                </t>
+
+                <t t-if="seller and seller.state == 'draft'">
+                    <div class="card p-5 text-center">
+                        <i class="fa fa-clock-o fa-3x text-warning mb-3"/>
+                        <h3>Your application is being finalized</h3>
+                        <p class="text-muted">Please check back shortly.</p>
+                    </div>
+                </t>
+
             </div>
         </t>
     </template>

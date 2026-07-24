@@ -17,7 +17,7 @@ class MarketplaceSeller(MarketplaceMain):
 
     def _seller_required(self):
         seller = self._seller()
-        if not seller:
+        if not seller or seller.state != 'approved':
             return None
         return seller
 
@@ -30,39 +30,71 @@ class MarketplaceSeller(MarketplaceMain):
         if not self._is_logged():
             return request.redirect('/web/login?redirect=/market/sell')
         seller = self._seller()
-        if seller:
+        if seller and seller.state == 'approved':
             return request.redirect('/market/dashboard')
         values = self._base_values()
         values['error'] = kw.get('error')
+        values['seller'] = seller
         return request.render('marketplace_website.market_shop_create', values)
 
     @http.route('/market/sell/create', type='http', auth='user',
                 methods=['POST'], website=True)
     def market_sell_create(self, **post):
         if self._seller():
-            return request.redirect('/market/dashboard')
+            return request.redirect('/market/sell')
         name = (post.get('shop_name') or '').strip()
         if not name:
             return request.redirect(
                 '/market/sell?error=%s' % _('Please choose a shop name.'))
+        required = {
+            'business_type': _('Please select a business type.'),
+            'bio': _('Please tell us what you plan to sell.'),
+            'city': _('Please enter your city.'),
+            'whatsapp_number': _('Please enter a WhatsApp number.'),
+            'kyc_id_type': _('Please select an ID type.'),
+            'kyc_id_number': _('Please enter your ID number.'),
+        }
+        for field, message in required.items():
+            if not (post.get(field) or '').strip():
+                return request.redirect('/market/sell?error=%s' % message)
+        documents = request.httprequest.files.getlist('kyc_documents')
+        documents = [f for f in documents if f and f.filename]
+        if not documents:
+            return request.redirect(
+                '/market/sell?error=%s' % _('Please attach a photo of your ID.'))
+
         Seller = request.env['marketplace.seller'].sudo()
         try:
             seller = Seller.create({
                 'name': name,
                 'slug': Seller._slugify(name),
                 'partner_id': self._partner().id,
+                'business_type': post.get('business_type'),
                 'bio': post.get('bio') or False,
                 'city': post.get('city') or False,
                 'instagram_handle': post.get('instagram_handle') or False,
                 'whatsapp_number': post.get('whatsapp_number') or False,
-                'state': 'approved',  # instant onboarding; KYC gates payouts
+                'kyc_id_type': post.get('kyc_id_type') or False,
+                'kyc_id_number': post.get('kyc_id_number') or False,
+                'kyc_status': 'pending',
+                'state': 'pending',  # requires moderator approval before selling
             })
         except ValidationError as e:
             return request.redirect('/market/sell?error=%s' % str(e))
         logo = request.httprequest.files.get('logo')
         if logo and logo.filename:
             seller.logo = base64.b64encode(logo.read())
-        return request.redirect('/market/dashboard')
+        attachment_ids = []
+        for f in documents:
+            attachment = request.env['ir.attachment'].sudo().create({
+                'name': f.filename,
+                'datas': base64.b64encode(f.read()),
+                'res_model': 'marketplace.seller',
+                'res_id': seller.id,
+            })
+            attachment_ids.append(attachment.id)
+        seller.write({'kyc_document_ids': [(4, i) for i in attachment_ids]})
+        return request.redirect('/market/sell')
 
     # ==================================================================
     # Dashboard home
@@ -183,7 +215,7 @@ class MarketplaceSeller(MarketplaceMain):
             'stock_quantity': stock_quantity,
             'description_sale': post.get('description') or False,
             'condition': post.get('condition') or False,
-            'listing_color': post.get('listing_color') or False,
+            'color': post.get('color') or False,
             'material': post.get('material') or False,
             'type': 'consu',
         }

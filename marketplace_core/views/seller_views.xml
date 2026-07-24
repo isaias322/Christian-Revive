@@ -76,6 +76,7 @@
                         <group string="Owner">
                             <field name="partner_id"/>
                             <field name="user_id" readonly="1"/>
+                            <field name="business_type"/>
                             <field name="city"/>
                             <field name="country_id"/>
                             <field name="instagram_handle"/>

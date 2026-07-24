@@ -32,6 +32,13 @@ class MarketplaceSeller(models.Model):
     whatsapp_number = fields.Char(string='WhatsApp Number')
     city = fields.Char()
     country_id = fields.Many2one('res.country', string='Country')
+    business_type = fields.Selection([
+        ('individual', 'Individual Seller'),
+        ('home_based', 'Home-Based Business'),
+        ('boutique', 'Boutique / Retail Store'),
+        ('online_shop', 'Online Shop (Instagram/Facebook/Website)'),
+        ('other', 'Other'),
+    ], string='Business Type', tracking=True)
 
     # ------------------------------------------------------------------
     # Lifecycle

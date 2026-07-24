@@ -129,4 +129,5 @@ class MarketplaceApiAuth(http.Controller):
             'zip': partner.zip or None,
             'has_shop': bool(seller),
             'shop_id': seller.id or None,
+            'shop_state': seller.state if seller else None,
         }

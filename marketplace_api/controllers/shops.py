@@ -63,19 +63,56 @@ class MarketplaceApiShops(http.Controller):
         if not name:
             return json_response(error='Shop name is required.',
                                  status=400, error_code='validation')
+        required = {
+            'business_type': 'Please select a business type.',
+            'bio': 'Please tell us what you plan to sell.',
+            'city': 'Please enter your city.',
+            'whatsapp_number': 'Please enter a WhatsApp number.',
+            'id_type': 'Please select an ID type.',
+            'id_number': 'Please enter your ID number.',
+        }
+        for field, message in required.items():
+            if not (body.get(field) or '').strip():
+                return json_response(error=message, status=400,
+                                     error_code='validation')
+        documents = [d for d in (body.get('documents') or []) if d]
+        if not documents:
+            return json_response(error='Please attach a photo of your ID.',
+                                 status=400, error_code='validation')
+
         Seller = request.env['marketplace.seller'].sudo()
         seller = Seller.create({
             'name': name,
             'slug': Seller._slugify(name),
             'partner_id': partner.id,
+            'business_type': body.get('business_type'),
             'bio': body.get('bio') or False,
             'city': body.get('city') or False,
             'instagram_handle': body.get('instagram_handle') or False,
             'whatsapp_number': body.get('whatsapp_number') or False,
-            'state': 'approved',
+            'kyc_id_type': body.get('id_type') or False,
+            'kyc_id_number': body.get('id_number') or False,
+            'kyc_status': 'pending',
+            'state': 'pending',  # requires moderator approval before selling
         })
         if body.get('logo'):
             self._set_image(seller, 'logo', body['logo'])
+        attachment_ids = []
+        for index, doc in enumerate(documents[:4]):
+            payload = doc.split(',', 1)[1] if doc.startswith('data:') else doc
+            try:
+                base64.b64decode(payload.encode('ascii'), validate=True)
+            except Exception:
+                continue
+            attachment = request.env['ir.attachment'].sudo().create({
+                'name': 'id-document-%s' % (index + 1),
+                'datas': payload.encode('ascii'),
+                'res_model': 'marketplace.seller',
+                'res_id': seller.id,
+            })
+            attachment_ids.append(attachment.id)
+        if attachment_ids:
+            seller.write({'kyc_document_ids': [(4, a) for a in attachment_ids]})
         return json_response(
             serialize_shop(seller, partner, detail=True), status=201)
 
@@ -107,7 +144,7 @@ class MarketplaceApiShops(http.Controller):
                 methods=['GET'], csrf=False)
     @api_endpoint(auth_required=True)
     def my_shop_analytics(self, api_user=None, **kw):
-        seller = self._require_shop(api_user)
+        seller = self._require_approved_shop(api_user)
         if isinstance(seller, dict):
             return json_response(**seller)
         data = seller.get_sales_analytics()
@@ -148,7 +185,7 @@ class MarketplaceApiShops(http.Controller):
                 methods=['GET'], csrf=False)
     @api_endpoint(auth_required=True)
     def my_listings(self, api_user=None, state=None, **kw):
-        seller = self._require_shop(api_user)
+        seller = self._require_approved_shop(api_user)
         if isinstance(seller, dict):
             return json_response(**seller)
         listings = seller.listing_ids
@@ -200,7 +237,7 @@ class MarketplaceApiShops(http.Controller):
                 methods=['GET'], csrf=False)
     @api_endpoint(auth_required=True)
     def my_wallet(self, api_user=None, **kw):
-        seller = self._require_shop(api_user)
+        seller = self._require_approved_shop(api_user)
         if isinstance(seller, dict):
             return json_response(**seller)
         return json_response({
@@ -227,7 +264,7 @@ class MarketplaceApiShops(http.Controller):
                 methods=['POST'], csrf=False)
     @api_endpoint(auth_required=True)
     def request_payout(self, api_user=None, **kw):
-        seller = self._require_shop(api_user)
+        seller = self._require_approved_shop(api_user)
         if isinstance(seller, dict):
             return json_response(**seller)
         body = get_json_body()
@@ -247,7 +284,7 @@ class MarketplaceApiShops(http.Controller):
                 methods=['GET'], csrf=False)
     @api_endpoint(auth_required=True)
     def my_shop_orders(self, api_user=None, **kw):
-        seller = self._require_shop(api_user)
+        seller = self._require_approved_shop(api_user)
         if isinstance(seller, dict):
             return json_response(**seller)
         orders = request.env['sale.order'].sudo().search([
@@ -261,7 +298,7 @@ class MarketplaceApiShops(http.Controller):
                 auth='public', methods=['POST'], csrf=False)
     @api_endpoint(auth_required=True)
     def ship_order(self, order_id, api_user=None, **kw):
-        seller = self._require_shop(api_user)
+        seller = self._require_approved_shop(api_user)
         if isinstance(seller, dict):
             return json_response(**seller)
         order = request.env['sale.order'].sudo().browse(order_id)
@@ -317,6 +354,15 @@ class MarketplaceApiShops(http.Controller):
         if not seller:
             return {'error': 'You do not have a shop yet.',
                     'status': 404, 'error_code': 'no_shop'}
+        return seller
+
+    def _require_approved_shop(self, api_user):
+        seller = self._require_shop(api_user)
+        if isinstance(seller, dict):
+            return seller
+        if seller.state != 'approved':
+            return {'error': 'Your shop is not approved yet.',
+                    'status': 403, 'error_code': 'not_approved'}
         return seller
 
     def _set_image(self, record, field, payload):

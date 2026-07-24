@@ -96,7 +96,7 @@ class MarketplaceApiCatalog(http.Controller):
     # ------------------------------------------------------------------
     def _own_seller(self, api_user):
         seller = api_user.partner_id.sudo().get_marketplace_seller()
-        if not seller:
+        if not seller or seller.state != 'approved':
             return None
         return seller
 
@@ -107,8 +107,8 @@ class MarketplaceApiCatalog(http.Controller):
         seller = self._own_seller(api_user)
         if not seller:
             return json_response(
-                error='Create a shop first (POST /api/v1/shops).',
-                status=400, error_code='no_shop')
+                error='You need an approved shop before you can list items.',
+                status=403, error_code='not_approved')
         body = get_json_body()
         vals, error = self._listing_vals(body, require_all=True)
         if error:
@@ -217,8 +217,8 @@ class MarketplaceApiCatalog(http.Controller):
             vals['public_categ_ids'] = (
                 [(6, 0, [int(body['category_id'])])]
                 if body.get('category_id') else [(5, 0, 0)])
-        if 'listing_color' in body:
-            vals['listing_color'] = body.get('listing_color') or False
+        if 'color' in body:
+            vals['color'] = body.get('color') or False
         if 'material' in body:
             vals['material'] = body.get('material') or False
         if 'original_price' in body:

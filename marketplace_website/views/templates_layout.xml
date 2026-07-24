@@ -131,7 +131,7 @@
     <template id="mk_page_styles" name="Marketplace Page-Scoped Styles"
               inherit_id="website.layout">
         <xpath expr="//head" position="inside">
-            <t t-if="request and request.httprequest.path.startswith('/market')">
+            <t t-if="request and (request.httprequest.path.startswith('/market') or (request.website and request.website.domain and 'revivemarketplace' in request.website.domain.lower()))">
                 <style>
                     body { color: var(--mk-ink); }
                     html { scroll-behavior: smooth; }

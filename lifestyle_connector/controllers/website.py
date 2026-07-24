@@ -20,6 +20,13 @@ class LifestyleWebsite(http.Controller):
         site = getattr(request, 'website', False)
         return bool(site and site.domain and 'christianrevive' in site.domain.lower())
 
+    @staticmethod
+    def _rl_is_marketplace_website():
+        """Same real-multi-website check as Christian Revive, for the
+        Marketplace website record (Domain: revivemarketplace.co)."""
+        site = getattr(request, 'website', False)
+        return bool(site and site.domain and 'revivemarketplace' in site.domain.lower())
+
     @http.route('/', type='http', auth='public', website=True, sitemap=True)
     def homepage(self, **kwargs):
         # Real multi-website: the Christian Revive website record's own
@@ -28,6 +35,14 @@ class LifestyleWebsite(http.Controller):
         # which domain reaches it.
         if self._rl_is_christian_revive_website():
             return self.christian_revive_store(**kwargs)
+        # Same idea for Marketplace: its own domain's root shows the
+        # Marketplace home directly instead of Lifestyle's. /market keeps
+        # working as an alias regardless of which domain reaches it - the
+        # marketplace_website module's own controller/templates are reused
+        # as-is, just imported lazily to avoid a hard module dependency.
+        if self._rl_is_marketplace_website():
+            from odoo.addons.marketplace_website.controllers.main import MarketplaceMain
+            return MarketplaceMain().market_home(**kwargs)
         request.session['rl_web_brand'] = 'lifestyle'
         homepage_slides = request.env['ir.ui.view'].browse()
         homepage_sections = request.env['ir.ui.view'].browse()

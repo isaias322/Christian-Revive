@@ -51,6 +51,9 @@ class IrHttp(models.AbstractModel):
             if site and site.domain and 'christianrevive' in site.domain.lower():
                 request.session['rl_web_brand'] = 'cr'
                 return
+            if site and site.domain and 'revivemarketplace' in site.domain.lower():
+                request.session['rl_web_brand'] = 'market'
+                return
             if path.startswith('/christianrevive'):
                 request.session['rl_web_brand'] = 'cr'
             elif _rl_is_market_path(path):
@@ -90,9 +93,11 @@ class Website(models.Model):
         import base64
         from odoo.tools import file_open
 
-        sites = self.sudo().search([]).filtered(
-            lambda site: not (site.domain and 'christianrevive' in site.domain.lower())
-        )
+        def _is_other_brand(site):
+            domain = (site.domain or '').lower()
+            return 'christianrevive' in domain or 'revivemarketplace' in domain
+
+        sites = self.sudo().search([]).filtered(lambda site: not _is_other_brand(site))
         if not sites:
             return
         vals = {}

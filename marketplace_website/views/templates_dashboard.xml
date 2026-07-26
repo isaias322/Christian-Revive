@@ -291,22 +291,30 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-4 mb-3">
-                        <label class="form-label fw-bold">Price *</label>
-                        <input type="number" step="0.01" min="1" name="price" class="form-control" required="required"
-                               t-att-value="listing and listing.list_price or ''"/>
-                    </div>
-                    <div class="col-md-4 mb-3">
+                    <div class="col-md-3 mb-3">
                         <label class="form-label fw-bold">Original price</label>
-                        <input type="number" step="0.01" name="original_price" class="form-control"
+                        <input type="number" step="0.01" name="original_price" id="mkOriginalPrice" class="form-control"
                                t-att-value="listing and listing.original_price or ''"/>
                     </div>
-                    <div class="col-md-4 mb-3">
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label fw-bold">Discount %</label>
+                        <input type="number" step="1" min="0" max="95" name="discount_pct" id="mkDiscountPct" class="form-control"
+                               t-att-value="listing and listing.discount_pct or ''"/>
+                        <div class="form-text">Set an original price too and the sale price is calculated for you.</div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label class="form-label fw-bold">Price *</label>
+                        <input type="number" step="0.01" min="1" name="price" id="mkPrice" class="form-control" required="required"
+                               t-att-value="listing and listing.list_price or ''"/>
+                    </div>
+                    <div class="col-md-3 mb-3">
                         <label class="form-label fw-bold">Quantity available *</label>
                         <input type="number" step="1" min="1" name="stock_quantity" class="form-control" required="required"
                                t-att-value="listing and listing.stock_quantity or 1"/>
                         <div class="form-text">Have more than one of the same item? Set the count — no need for separate listings.</div>
                     </div>
+                </div>
+                <div class="row">
                     <div class="col-md-4 mb-3">
                         <label class="form-label fw-bold">Condition *</label>
                         <select name="condition" class="form-select" required="required">
@@ -369,8 +377,8 @@
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label fw-bold">Colour</label>
-                        <input type="text" name="listing_color" class="form-control"
-                               t-att-value="listing and listing.listing_color or ''"/>
+                        <input type="text" name="color" class="form-control"
+                               t-att-value="listing and listing.color or ''"/>
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label fw-bold">Material</label>

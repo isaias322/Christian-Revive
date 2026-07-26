@@ -193,9 +193,21 @@ class MarketplaceSeller(MarketplaceMain):
             return request.redirect(
                 '%s?error=%s' % (back, _('Title is required.')))
         try:
+            original_price = float(post.get('original_price') or 0)
+        except ValueError:
+            original_price = 0
+        try:
+            discount_pct = float(post.get('discount_pct') or 0)
+        except ValueError:
+            discount_pct = 0
+        has_discount_calc = bool(original_price and discount_pct)
+
+        try:
             price = float(post.get('price') or 0)
         except ValueError:
             price = 0
+        if price <= 0 and has_discount_calc:
+            price = round(original_price * (1 - discount_pct / 100.0), 2)
         if price <= 0:
             return request.redirect(
                 '%s?error=%s' % (back, _('Please set a valid price.')))
@@ -232,10 +244,9 @@ class MarketplaceSeller(MarketplaceMain):
         if post.get('category_id'):
             vals['public_categ_ids'] = [(6, 0, [int(post['category_id'])])]
         if post.get('original_price'):
-            try:
-                vals['original_price'] = float(post['original_price'])
-            except ValueError:
-                pass
+            vals['original_price'] = original_price
+        if post.get('discount_pct'):
+            vals['discount_pct'] = discount_pct
 
         Product = request.env['product.template'].sudo()
         if listing_id:

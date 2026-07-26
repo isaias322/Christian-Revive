@@ -110,6 +110,27 @@
         }
 
         // ------------------------------------------------------------
+        // Listing form: auto-calculate the sale price from Original
+        // price + Discount %, so a seller never has to do the maths
+        // themselves. The server recomputes this again on save
+        // regardless — this is purely a live preview.
+        // ------------------------------------------------------------
+        var origPriceInput = document.getElementById('mkOriginalPrice');
+        var discountInput = document.getElementById('mkDiscountPct');
+        var priceInput = document.getElementById('mkPrice');
+        if (origPriceInput && discountInput && priceInput) {
+            var recalcPrice = function () {
+                var original = parseFloat(origPriceInput.value);
+                var discount = parseFloat(discountInput.value);
+                if (original > 0 && discount > 0) {
+                    priceInput.value = (original * (1 - discount / 100)).toFixed(2);
+                }
+            };
+            origPriceInput.addEventListener('input', recalcPrice);
+            discountInput.addEventListener('input', recalcPrice);
+        }
+
+        // ------------------------------------------------------------
         // Chat: scroll to bottom + poll for new messages
         // ------------------------------------------------------------
         var chatBox = document.getElementById('mkChatBox');

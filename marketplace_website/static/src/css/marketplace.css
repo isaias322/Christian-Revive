@@ -19,14 +19,9 @@
     --mk-shadow-lg: 0 20px 45px rgba(17, 24, 39, .14);
 }
 
-/* NOTE: this bundle loads on EVERY page of the site (Revive Lifestyle and
-   Christian Revive share the frontend asset bundle with Marketplace), not
-   just /market pages. Rules that must only affect Marketplace pages -
-   anything touching body/html/#wrapwrap or generic Bootstrap primitives
-   like .card/.btn-outline-dark - live in the page-scoped <style> block
-   injected by the "Marketplace Page Styles" website.layout inherit
-   (views/templates_layout.xml), gated on the request path. Only rules
-   scoped to .mk-* classes belong in this always-loaded file. */
+body {
+    color: var(--mk-ink);
+}
 
 /* ---------------------------------------------------------- */
 /* Buttons                                                     */
@@ -47,8 +42,11 @@
 }
 .mk-btn:active { transform: translateY(1px); }
 
-/* .btn-outline-dark / .btn.btn-sm radius rules moved to the page-scoped
-   style block - see note above. */
+.btn-outline-dark {
+    border-radius: 10px;
+    font-weight: 600;
+}
+.btn.btn-sm { border-radius: 8px; }
 
 /* ---------------------------------------------------------- */
 /* Navbar                                                       */
@@ -200,6 +198,13 @@
     right: 8px;
     font-weight: 600;
     backdrop-filter: blur(2px);
+}
+.mk-badge-discount {
+    position: absolute;
+    bottom: 8px;
+    left: 8px;
+    font-weight: 600;
+    box-shadow: 0 2px 6px rgba(220, 38, 38, .35);
 }
 .mk-card-price {
     color: var(--mk-ink);
@@ -452,11 +457,17 @@
 }
 .mk-balance-card .text-muted { color: rgba(255,255,255,.75) !important; }
 
-/* Table polish: hoverable rows without needing bootstrap's table-hover.
-   Scoped to descend from the dashboard's own menu, so it never touches
-   plain .card tables on Lifestyle/Christian Revive pages - the unscoped
-   ".card table.table" variant moved to the page-scoped style block. */
-.mk-dash-menu ~ * table.table tbody tr { transition: background .15s ease; }
+/* Table polish: hoverable rows without needing bootstrap's table-hover */
+.mk-dash-menu ~ * table.table tbody tr,
+.card table.table tbody tr { transition: background .15s ease; }
+.card table.table tbody tr:hover { background: var(--mk-surface-soft); }
+.card table.table thead th {
+    font-size: .78rem;
+    text-transform: uppercase;
+    letter-spacing: .03em;
+    color: var(--mk-muted);
+    border-bottom-width: 1px;
+}
 
 /* Order cards on the seller Orders page */
 .mk-order-card {
@@ -609,13 +620,29 @@
 /* ---------------------------------------------------------- */
 /* Cards & sections general polish                              */
 /* ---------------------------------------------------------- */
-/* .card radius, heading letter-spacing, and the header/footer white-label
-   rules below all moved to the page-scoped style block: this file loads
-   on every page, and unscoped versions of these hid Revive Lifestyle's
-   AND Christian Revive's site header/nav everywhere, not just /market. */
+.card {
+    border-radius: var(--mk-radius);
+}
+h1, h2, h3, h4, h5 { letter-spacing: -.015em; }
 
 /* Empty / loading states */
 .fa-2x.text-muted, .fa-4x.text-success { opacity: .85; }
+
+/* ---------------------------------------------------------- */
+/* White-label: hide the stock Odoo footer credit and the       */
+/* generic site header (logo/menu/cart/search/phone placeholder */
+/* block Odoo's website builder adds by default) — the          */
+/* marketplace has its own purpose-built nav (.mk-nav) that      */
+/* actually points at the real cart/search/messages, so the      */
+/* stock header is redundant and shows unfixed defaults like     */
+/* "Your Logo" and a placeholder phone number.                   */
+/* ---------------------------------------------------------- */
+.o_footer_copyright { display: none !important; }
+header#top.o_header_standard,
+.o_header_mobile { display: none !important; }
+/* Odoo pads page content to account for a sticky header; without
+   one that padding just leaves dead space at the top. */
+#wrapwrap { padding-top: 0 !important; }
 
 /* ---------------------------------------------------------- */
 /* Branded login page                                           */
@@ -654,7 +681,7 @@
 /* ---------------------------------------------------------- */
 /* Global motion                                                */
 /* ---------------------------------------------------------- */
-/* html { scroll-behavior: smooth; } moved to the page-scoped style block. */
+html { scroll-behavior: smooth; }
 
 @keyframes mkFadeUp {
     from { opacity: 0; transform: translateY(18px); }

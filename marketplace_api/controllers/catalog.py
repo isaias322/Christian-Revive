@@ -177,11 +177,26 @@ class MarketplaceApiCatalog(http.Controller):
             if not name:
                 return None, 'Title is required.'
             vals['name'] = name
+        if 'original_price' in body:
+            try:
+                vals['original_price'] = float(body.get('original_price') or 0)
+            except (TypeError, ValueError):
+                pass
+        if 'discount_pct' in body:
+            try:
+                vals['discount_pct'] = float(body.get('discount_pct') or 0)
+            except (TypeError, ValueError):
+                pass
+        has_discount_calc = bool(
+            vals.get('original_price') and vals.get('discount_pct'))
         if 'price' in body or require_all:
             try:
                 price = float(body.get('price') or 0)
             except (TypeError, ValueError):
                 price = 0
+            if price <= 0 and has_discount_calc:
+                price = round(
+                    vals['original_price'] * (1 - vals['discount_pct'] / 100.0), 2)
             if price <= 0:
                 return None, 'A positive price is required.'
             vals['list_price'] = price
@@ -221,11 +236,6 @@ class MarketplaceApiCatalog(http.Controller):
             vals['color'] = body.get('color') or False
         if 'material' in body:
             vals['material'] = body.get('material') or False
-        if 'original_price' in body:
-            try:
-                vals['original_price'] = float(body.get('original_price') or 0)
-            except (TypeError, ValueError):
-                pass
         return vals, None
 
     def _apply_images(self, listing, images_b64):

@@ -99,6 +99,7 @@ def serialize_listing(listing, partner=None, detail=False):
         'name': listing.name,
         'price': listing.list_price,
         'original_price': listing.original_price or None,
+        'discount_pct': listing.discount_pct or None,
         'currency': listing.currency_id.name,
         'currency_symbol': listing.currency_id.symbol,
         'condition': listing.condition,
@@ -128,7 +129,7 @@ def serialize_listing(listing, partner=None, detail=False):
     if detail:
         data.update({
             'description': listing.description_sale or None,
-            'listing_color': listing.listing_color or None,
+            'color': listing.color or None,
             'material': listing.material or None,
             'is_verified_item': listing.is_verified_item,
             'image_urls': (

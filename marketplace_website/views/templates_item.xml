@@ -52,6 +52,9 @@
                                   class="text-muted text-decoration-line-through ms-2">
                                 <t t-out="listing.currency_id.symbol"/> <t t-out="'%.0f' % listing.original_price"/>
                             </span>
+                            <span t-if="listing.discount_pct" class="badge bg-danger ms-2">
+                                -<t t-out="'%.0f' % listing.discount_pct"/>%
+                            </span>
                         </div>
                         <div class="small text-muted mb-3">
                             <i class="fa fa-shield me-1"/>Buyer protection fee applies at checkout — your money is held until you confirm delivery.
@@ -100,9 +103,9 @@
                                 <td class="text-muted">Size</td>
                                 <td t-out="listing.marketplace_size_id.name"/>
                             </tr>
-                            <tr t-if="listing.listing_color">
+                            <tr t-if="listing.color">
                                 <td class="text-muted">Colour</td>
-                                <td t-out="listing.listing_color"/>
+                                <td t-out="listing.color"/>
                             </tr>
                             <tr t-if="listing.material">
                                 <td class="text-muted">Material</td>

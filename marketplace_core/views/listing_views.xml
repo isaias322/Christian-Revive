@@ -43,9 +43,10 @@
                             <field name="condition"/>
                             <field name="marketplace_brand_id"/>
                             <field name="marketplace_size_id"/>
-                            <field name="listing_color" string="Colour"/>
+                            <field name="color"/>
                             <field name="material"/>
                             <field name="original_price"/>
+                            <field name="discount_pct"/>
                         </group>
                         <group string="Performance">
                             <field name="view_count" readonly="1"/>

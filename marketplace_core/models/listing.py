@@ -34,15 +34,15 @@ class ProductTemplate(models.Model):
         'marketplace.brand', string='Brand')
     marketplace_size_id = fields.Many2one(
         'marketplace.size', string='Size')
-    # Named listing_color (not "color"): a bare "color" field on the
-    # heavily shared product.template model collided with another
-    # module's kanban color-index field of the same name, expecting
-    # integer - Odoo tried to convert this Char column to integer on
-    # every upgrade and crashed on any non-numeric value already in it.
-    listing_color = fields.Char(string='Colour')
+    color = fields.Char(string='Colour')
     material = fields.Char()
     original_price = fields.Float(
         help='What the item cost new (optional, shown crossed out).')
+    discount_pct = fields.Float(
+        string='Discount %', default=0.0,
+        help='Set together with Original Price to have the sale price '
+             '(list_price) calculated automatically: '
+             'list_price = original_price * (1 - discount_pct / 100).')
     rejection_reason = fields.Text()
     removed_by_suspension = fields.Boolean(
         default=False, copy=False,
@@ -95,6 +95,43 @@ class ProductTemplate(models.Model):
             if tmpl.is_marketplace_listing and not tmpl.marketplace_seller_id:
                 raise ValidationError(_(
                     'A marketplace listing must belong to a seller shop.'))
+
+    @api.constrains('discount_pct')
+    def _check_discount_pct(self):
+        for tmpl in self:
+            if not 0 <= tmpl.discount_pct <= 95:
+                raise ValidationError(_(
+                    'Discount must be between 0 and 95%.'))
+
+    # ------------------------------------------------------------------
+    # Discount: sale price is calculated automatically, not typed in
+    # ------------------------------------------------------------------
+    @api.onchange('discount_pct', 'original_price')
+    def _onchange_discount_pct(self):
+        for tmpl in self:
+            if tmpl.original_price and tmpl.discount_pct:
+                tmpl.list_price = round(
+                    tmpl.original_price * (1 - tmpl.discount_pct / 100.0), 2)
+
+    def _recompute_discounted_price(self):
+        for tmpl in self:
+            if tmpl.original_price and tmpl.discount_pct:
+                new_price = round(
+                    tmpl.original_price * (1 - tmpl.discount_pct / 100.0), 2)
+                if tmpl.list_price != new_price:
+                    tmpl.list_price = new_price
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        records = super().create(vals_list)
+        records._recompute_discounted_price()
+        return records
+
+    def write(self, vals):
+        res = super().write(vals)
+        if 'discount_pct' in vals or 'original_price' in vals:
+            self._recompute_discounted_price()
+        return res
 
     # ------------------------------------------------------------------
     # Moderation / lifecycle

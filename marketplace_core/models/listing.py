@@ -131,7 +131,20 @@ class ProductTemplate(models.Model):
         res = super().write(vals)
         if 'discount_pct' in vals or 'original_price' in vals:
             self._recompute_discounted_price()
+        if 'stock_quantity' in vals:
+            self._relist_if_restocked()
         return res
+
+    def _relist_if_restocked(self):
+        """A seller bumping stock back up (e.g. editing the listing after
+        it sold out) should bring it back onto the marketplace on its
+        own - mirrors the same restock-on-refund behaviour used when
+        escrow is refunded (see sale.order.action_refund_escrow)."""
+        for tmpl in self:
+            if (tmpl.is_marketplace_listing
+                    and tmpl.listing_state in ('sold', 'reserved')
+                    and tmpl.stock_quantity > 0):
+                tmpl.write({'listing_state': 'active', 'is_published': True})
 
     # ------------------------------------------------------------------
     # Moderation / lifecycle

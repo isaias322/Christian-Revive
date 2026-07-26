@@ -5,6 +5,7 @@ All endpoints are plain `type='http'` routes returning JSON so the mobile
 app talks straightforward REST (no JSON-RPC envelope). Authentication is a
 Bearer token resolved through `marketplace.api.token`.
 """
+import base64
 import functools
 import json
 import logging
@@ -136,6 +137,8 @@ def serialize_listing(listing, partner=None, detail=False):
                 ['/api/v1/image/product.template/%s' % listing.id] +
                 ['/api/v1/image/product.image/%s' % img.id
                  for img in listing.product_template_image_ids]),
+            'video_url': ('/api/v1/video/product.template/%s' % listing.id
+                          if listing.video else None),
         })
     return data
 
@@ -307,3 +310,31 @@ class MarketplaceApiBase(http.Controller):
 
         return request.env['ir.binary']._get_image_stream_from(
             record, field).get_response()
+
+    @http.route(API + '/video/<string:model>/<int:rid>', type='http',
+                auth='public', methods=['GET'], csrf=False)
+    def api_video(self, model, rid, **kw):
+        """Serve a listing's product video. Same visibility rule as
+        listing photos: public once the listing is live, otherwise
+        only visible to its own seller."""
+        if model != 'product.template':
+            return request.not_found()
+        record = request.env[model].sudo().browse(rid)
+        if not record.exists() or not record.video:
+            return request.not_found()
+
+        user = get_auth_user()
+        partner = user.partner_id if user else None
+        allowed = record.listing_state in ('active', 'reserved', 'sold')
+        if not allowed and partner:
+            allowed = record.marketplace_seller_id.partner_id == partner
+        if not allowed:
+            return request.not_found()
+
+        return request.make_response(
+            base64.b64decode(record.video),
+            headers=[
+                ('Content-Type', 'video/mp4'),
+                ('Content-Disposition',
+                 'inline; filename="%s"' % (record.video_filename or 'video.mp4')),
+            ])

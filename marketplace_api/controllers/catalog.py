@@ -123,6 +123,9 @@ class MarketplaceApiCatalog(http.Controller):
         })
         listing = request.env['product.template'].sudo().create(vals)
         self._apply_images(listing, body.get('images') or [])
+        if body.get('video') is not None:
+            self._apply_video(listing, body.get('video'),
+                              body.get('video_filename'))
         if body.get('publish', True):
             listing.action_submit_listing()
         return json_response(
@@ -145,6 +148,9 @@ class MarketplaceApiCatalog(http.Controller):
             listing.write({'image_1920': False})
             listing.product_template_image_ids.unlink()
             self._apply_images(listing, body.get('images') or [])
+        if 'video' in body:
+            self._apply_video(listing, body.get('video'),
+                              body.get('video_filename'))
         action = body.get('action')
         if action == 'publish':
             listing.action_submit_listing()
@@ -259,6 +265,24 @@ class MarketplaceApiCatalog(http.Controller):
                     'name': '%s-%s' % (listing.name, index),
                     'image_1920': data,
                 })
+
+    def _apply_video(self, listing, video_b64, filename=None):
+        """video_b64: a single base64-encoded video payload, or falsy to
+        clear the listing's video."""
+        if not video_b64:
+            listing.write({'video': False, 'video_filename': False})
+            return
+        if ',' in video_b64[:64] and video_b64.strip().startswith('data:'):
+            video_b64 = video_b64.split(',', 1)[1]
+        try:
+            data = video_b64.encode('ascii')
+            base64.b64decode(data, validate=True)
+        except Exception:
+            return
+        listing.write({
+            'video': data,
+            'video_filename': filename or 'video.mp4',
+        })
 
     # ------------------------------------------------------------------
     # Favourites

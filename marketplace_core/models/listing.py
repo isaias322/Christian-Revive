@@ -43,6 +43,8 @@ class ProductTemplate(models.Model):
         help='Set together with Original Price to have the sale price '
              '(list_price) calculated automatically: '
              'list_price = original_price * (1 - discount_pct / 100).')
+    video = fields.Binary(string='Product Video', attachment=True)
+    video_filename = fields.Char(string='Video Filename')
     rejection_reason = fields.Text()
     removed_by_suspension = fields.Boolean(
         default=False, copy=False,
@@ -102,6 +104,25 @@ class ProductTemplate(models.Model):
             if not 0 <= tmpl.discount_pct <= 95:
                 raise ValidationError(_(
                     'Discount must be between 0 and 95%.'))
+
+    @api.constrains('video', 'video_filename')
+    def _check_video(self):
+        max_bytes = 50 * 1024 * 1024  # 50MB
+        allowed_ext = ('.mp4', '.mov', '.webm', '.avi', '.mkv', '.m4v')
+        for tmpl in self:
+            if not tmpl.video:
+                continue
+            # base64 is ~4/3 the size of the raw bytes; good enough for
+            # a size cap without decoding the whole payload.
+            approx_bytes = len(tmpl.video) * 3 / 4
+            if approx_bytes > max_bytes:
+                raise ValidationError(_(
+                    'Product video must be smaller than 50MB.'))
+            name = (tmpl.video_filename or '').lower()
+            if name and not name.endswith(allowed_ext):
+                raise ValidationError(_(
+                    'Product video must be a common video format '
+                    '(MP4, MOV, WebM, AVI, MKV).'))
 
     # ------------------------------------------------------------------
     # Discount: sale price is calculated automatically, not typed in

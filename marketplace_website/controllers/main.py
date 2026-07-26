@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import base64
+
 from odoo import http, fields, _
 from odoo.exceptions import UserError
 from odoo.http import request
@@ -146,6 +148,25 @@ class MarketplaceMain(http.Controller):
         state = listing.action_toggle_favorite(self._partner())
         return request.make_json_response({
             'favorite': state, 'count': listing.favorite_count})
+
+    @http.route('/market/video/<int:listing_id>', type='http', auth='public',
+                website=True, sitemap=False)
+    def market_video(self, listing_id, **kw):
+        listing = self._listing_or_404(listing_id, published_only=False)
+        if not listing.video:
+            raise request.not_found()
+        is_owner = (self._is_logged() and
+                    listing.marketplace_seller_id.partner_id == self._partner())
+        if listing.listing_state not in ('active', 'reserved', 'sold') \
+                and not is_owner:
+            raise request.not_found()
+        return request.make_response(
+            base64.b64decode(listing.video),
+            headers=[
+                ('Content-Type', 'video/mp4'),
+                ('Content-Disposition',
+                 'inline; filename="%s"' % (listing.video_filename or 'video.mp4')),
+            ])
 
     # ==================================================================
     # Shop page

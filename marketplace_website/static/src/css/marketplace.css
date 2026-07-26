@@ -490,6 +490,20 @@
     border-radius: 8px;
 }
 
+.mk-video-thumb {
+    width: 160px;
+    max-width: 100%;
+    border-radius: 8px;
+    background: #000;
+}
+
+.mk-item-video {
+    width: 100%;
+    border-radius: 12px;
+    background: #000;
+    margin-bottom: 12px;
+}
+
 /* ---------------------------------------------------------- */
 /* State badges                                                 */
 /* ---------------------------------------------------------- */

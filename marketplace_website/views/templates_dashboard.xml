@@ -290,6 +290,18 @@
                         </t>
                     </div>
                 </div>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Video</label>
+                    <input type="file" name="video" class="form-control" accept="video/*"/>
+                    <div class="form-text">Optional. Up to 50MB (MP4, MOV, WebM, AVI, MKV).</div>
+                    <div t-if="listing and listing.video" class="d-flex align-items-center gap-2 mt-2">
+                        <video t-attf-src="/market/video/#{listing.id}" controls="controls" class="mk-video-thumb"/>
+                        <div class="form-check small">
+                            <input class="form-check-input" type="checkbox" name="remove_video" value="1"/>
+                            <label class="form-check-label">remove video</label>
+                        </div>
+                    </div>
+                </div>
                 <div class="row">
                     <div class="col-md-3 mb-3">
                         <label class="form-label fw-bold">Original price</label>

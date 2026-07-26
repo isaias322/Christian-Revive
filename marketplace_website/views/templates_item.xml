@@ -26,6 +26,9 @@
                                 </t>
                             </div>
                         </div>
+                        <video t-if="listing.video" controls="controls"
+                               t-attf-src="/market/video/#{listing.id}"
+                               class="mk-item-video mt-2"/>
                     </div>
                     <!-- Details -->
                     <div class="col-lg-6">

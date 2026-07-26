@@ -284,6 +284,21 @@ class MarketplaceSeller(MarketplaceMain):
             imgs.filtered(
                 lambda i: i.product_tmpl_id == listing).unlink()
 
+        # Video: optional single upload
+        video_file = request.httprequest.files.get('video')
+        if video_file and video_file.filename:
+            video_data = video_file.read()
+            if len(video_data) > 50 * 1024 * 1024:
+                return request.redirect(
+                    '/market/dashboard/listings/%s/edit?error=%s'
+                    % (listing.id, _('Product video must be smaller than 50MB.')))
+            listing.write({
+                'video': base64.b64encode(video_data),
+                'video_filename': video_file.filename,
+            })
+        elif post.get('remove_video'):
+            listing.write({'video': False, 'video_filename': False})
+
         if post.get('action') == 'publish':
             try:
                 listing.action_submit_listing()

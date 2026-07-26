@@ -4,6 +4,23 @@ import re
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError, ValidationError
 
+PHONE_RE = re.compile(r'^[0-9+\-\s()]+$')
+
+
+def _validate_phone_number(value):
+    """Returns an error message string if value isn't a plausible phone
+    number (digits only, plus optional +/-/space/parens formatting), or
+    None if it's fine to save. Empty/unset values are always fine -
+    required-ness is a separate check where it matters."""
+    value = (value or '').strip()
+    if not value:
+        return None
+    if not PHONE_RE.match(value):
+        return _('may only contain numbers.')
+    if len(re.sub(r'\D', '', value)) < 7:
+        return _('must be a valid phone number.')
+    return None
+
 
 class MarketplaceSeller(models.Model):
     _name = 'marketplace.seller'
@@ -193,6 +210,18 @@ class MarketplaceSeller(models.Model):
         for seller in self:
             if not 0 <= seller.commission_pct <= 100:
                 raise ValidationError(_('Commission must be between 0 and 100%.'))
+
+    @api.constrains('whatsapp_number', 'mobile_wallet_number')
+    def _check_phone_fields(self):
+        labels = {
+            'whatsapp_number': _('WhatsApp number'),
+            'mobile_wallet_number': _('Mobile wallet number'),
+        }
+        for seller in self:
+            for field_name, label in labels.items():
+                error = _validate_phone_number(seller[field_name])
+                if error:
+                    raise ValidationError('%s: %s' % (label, error))
 
     # ------------------------------------------------------------------
     # Helpers

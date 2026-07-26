@@ -590,7 +590,9 @@
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label">WhatsApp number</label>
-                        <input type="text" name="whatsapp_number" class="form-control" t-att-value="seller.whatsapp_number or ''"/>
+                        <input type="tel" name="whatsapp_number" class="form-control mk-phone-input"
+                               pattern="[0-9+\-\s()]+" title="Numbers only"
+                               t-att-value="seller.whatsapp_number or ''"/>
                     </div>
                 </div>
                 <div class="row">
@@ -634,7 +636,9 @@
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Mobile wallet number (JazzCash / EasyPaisa)</label>
-                    <input type="text" name="mobile_wallet_number" class="form-control" t-att-value="seller.mobile_wallet_number or ''"/>
+                    <input type="tel" name="mobile_wallet_number" class="form-control mk-phone-input"
+                           pattern="[0-9+\-\s()]+" title="Numbers only"
+                           t-att-value="seller.mobile_wallet_number or ''"/>
                 </div>
                 <button type="submit" class="btn mk-btn align-self-start">Save Payout Details</button>
             </form>

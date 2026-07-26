@@ -83,7 +83,8 @@
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label class="form-label">Phone *</label>
-                                        <input type="text" name="phone" class="form-control" required="required"
+                                        <input type="tel" name="phone" class="form-control mk-phone-input" required="required"
+                                               pattern="[0-9+\-\s()]+" title="Numbers only"
                                                t-att-value="mk_partner.phone or ''"/>
                                     </div>
                                 </div>

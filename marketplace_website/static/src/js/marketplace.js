@@ -110,6 +110,19 @@
         }
 
         // ------------------------------------------------------------
+        // Phone-type fields: strip anything that isn't a digit or basic
+        // formatting character (+, -, space, parens) as the user types.
+        // The server validates the same way regardless, but stopping
+        // stray letters from being typed at all is the friendlier fix.
+        // ------------------------------------------------------------
+        document.querySelectorAll('.mk-phone-input').forEach(function (input) {
+            input.addEventListener('input', function () {
+                var cleaned = input.value.replace(/[^0-9+\-\s()]/g, '');
+                if (cleaned !== input.value) { input.value = cleaned; }
+            });
+        });
+
+        // ------------------------------------------------------------
         // Listing form: auto-calculate the sale price from Original
         // price + Discount %, so a seller never has to do the maths
         // themselves. The server recomputes this again on save

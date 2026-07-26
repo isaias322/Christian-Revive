@@ -6,6 +6,8 @@ import requests
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError
 
+from .seller import _validate_phone_number
+
 _logger = logging.getLogger(__name__)
 STRIPE_API_BASE = 'https://api.stripe.com/v1'
 
@@ -84,6 +86,9 @@ class MarketplaceCartItem(models.Model):
         if missing:
             raise UserError(_(
                 'Missing checkout information: %s') % ', '.join(missing))
+        phone_error = _validate_phone_number(values.get('phone'))
+        if phone_error:
+            raise UserError(_('Phone number %s') % phone_error)
 
         partner_sudo = partner.sudo()
         partner_sudo.write({

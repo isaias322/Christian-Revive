@@ -124,6 +124,50 @@
         </t>
     </template>
 
+    <!-- Page-scoped overrides: the marketplace.css bundle loads on every
+         page of the site (Revive Lifestyle and Christian Revive share the
+         same web.assets_frontend bundle), so rules that touch body/html/
+         #wrapwrap or generic Bootstrap primitives (.card, .btn-outline-dark,
+         headings) CANNOT live in that always-loaded file - they would hide
+         the other storefronts' header/nav and recolor their text/cards
+         site-wide. Injected only when the request path is under /market. -->
+    <template id="mk_page_styles" name="Marketplace Page-Scoped Styles"
+              inherit_id="website.layout">
+        <xpath expr="//head" position="inside">
+            <t t-if="request and (request.httprequest.path.startswith('/market') or (request.website and request.website.domain and 'revivemarketplace' in request.website.domain.lower()))">
+                <style>
+                    body { color: var(--mk-ink); }
+                    html { scroll-behavior: smooth; }
+                    h1, h2, h3, h4, h5 { letter-spacing: -.015em; }
+                    .btn-outline-dark { border-radius: 10px; font-weight: 600; }
+                    .btn.btn-sm { border-radius: 8px; }
+                    .card { border-radius: var(--mk-radius); }
+                    .card table.table tbody tr { transition: background .15s ease; }
+                    .card table.table tbody tr:hover { background: var(--mk-surface-soft); }
+                    .card table.table thead th {
+                        font-size: .78rem;
+                        text-transform: uppercase;
+                        letter-spacing: .03em;
+                        color: var(--mk-muted);
+                        border-bottom-width: 1px;
+                    }
+                    /* White-label: hide the stock Odoo footer credit and the
+                       generic site header/mobile header on /market pages
+                       only - the marketplace has its own purpose-built nav
+                       (.mk-nav) that points at the real cart/search/messages,
+                       so the stock header would be redundant here. */
+                    .o_footer_copyright { display: none !important; }
+                    header#top.o_header_standard,
+                    .o_header_mobile { display: none !important; }
+                    /* Odoo pads page content to account for a sticky header;
+                       without one (hidden above) that padding just leaves
+                       dead space at the top of /market pages. */
+                    #wrapwrap { padding-top: 0 !important; }
+                </style>
+            </t>
+        </xpath>
+    </template>
+
     <!-- Reusable error alert -->
     <template id="mk_alert" name="Marketplace Alert">
         <div t-if="error" class="alert alert-danger" t-out="error"/>
@@ -154,26 +198,36 @@
          addon's earlier attempt targeted, hence priority="25" here: it
          has to run AFTER website's replacement to see the container it
          needs to style. -->
+    <!-- /web/login is ONE shared route for every storefront sharing this
+         database (Revive Lifestyle, Christian Revive, Marketplace). These
+         two templates used to brand it unconditionally, which meant every
+         Lifestyle/Christian Revive customer (and the backend admin login)
+         would see the "Revive Marketplace" logo and button styling too.
+         Gated on the same rl_web_brand session flag the other storefronts
+         already use, set by lifestyle_connector's ir.http._pre_dispatch
+         when the visitor is on a /market page (or was referred from one). -->
     <template id="mk_login_layout" name="Branded Login Layout"
               inherit_id="web.login_layout" priority="25">
         <xpath expr="//div[hasclass('oe_website_login_container')]"
                position="before">
-            <div class="text-center mb-3">
-                <a href="/market" class="mk-login-brand text-decoration-none">
-                    <img src="/marketplace_website/static/src/img/logo.png" class="mk-login-logo-img" alt="Revive Marketplace"/>
-                </a>
-            </div>
+            <t t-if="request and request.session.get('rl_web_brand') == 'market'">
+                <div class="text-center mb-3">
+                    <a href="/market" class="mk-login-brand text-decoration-none">
+                        <img src="/marketplace_website/static/src/img/logo.png" class="mk-login-logo-img" alt="Revive Marketplace"/>
+                    </a>
+                </div>
+            </t>
         </xpath>
         <xpath expr="//div[hasclass('oe_website_login_container')]"
                position="attributes">
-            <attribute name="class" add="mk-login-card" separator=" "/>
+            <attribute name="t-attf-class">oe_website_login_container #{'mk-login-card' if request and request.session.get('rl_web_brand') == 'market' else ''}</attribute>
         </xpath>
     </template>
 
     <template id="mk_login_hide_switcher" name="Branded login button"
               inherit_id="web.login">
         <xpath expr="//button[@type='submit'][not(@name)]" position="attributes">
-            <attribute name="class" add="mk-btn" separator=" "/>
+            <attribute name="t-attf-class">btn btn-primary #{'mk-btn' if request and request.session.get('rl_web_brand') == 'market' else ''}</attribute>
         </xpath>
     </template>
 </odoo>

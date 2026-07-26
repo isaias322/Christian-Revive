@@ -56,7 +56,7 @@ class MarketplaceThread(models.Model):
             })
         return thread
 
-    def post_message(self, author_partner, body):
+    def post_message(self, author_partner, body, image=None, image_filename=None):
         self.ensure_one()
         body = (body or '').strip()
         if not body:
@@ -64,11 +64,15 @@ class MarketplaceThread(models.Model):
         allowed = (self.buyer_partner_id | self.seller_id.partner_id)
         if author_partner not in allowed:
             raise UserError(_('You are not part of this conversation.'))
-        message = self.env['marketplace.thread.message'].sudo().create({
+        vals = {
             'thread_id': self.id,
             'author_partner_id': author_partner.id,
             'body': body,
-        })
+        }
+        if image:
+            vals['image'] = image
+            vals['image_filename'] = image_filename or 'photo.jpg'
+        message = self.env['marketplace.thread.message'].sudo().create(vals)
         self.sudo().last_message_date = fields.Datetime.now()
         return message
 
@@ -98,4 +102,6 @@ class MarketplaceThreadMessage(models.Model):
     author_partner_id = fields.Many2one(
         'res.partner', string='Author', required=True)
     body = fields.Text(required=True)
+    image = fields.Binary(attachment=True)
+    image_filename = fields.Char()
     is_read = fields.Boolean(default=False)

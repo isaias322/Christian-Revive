@@ -68,7 +68,11 @@ class MarketplaceApiMessaging(http.Controller):
     def post_message(self, thread_id, api_user=None, **kw):
         thread = self._thread(thread_id, api_user)
         body = get_json_body()
+        image = body.get('image')
+        if image and ',' in image[:64] and image.strip().startswith('data:'):
+            image = image.split(',', 1)[1]
         message = thread.post_message(
-            api_user.partner_id, body.get('body') or '')
+            api_user.partner_id, body.get('body') or '',
+            image=image, image_filename=body.get('image_filename'))
         return json_response(
             serialize_message(message, api_user.partner_id), status=201)

@@ -48,6 +48,43 @@
                 <h4 class="mb-3 mt-1">Order <t t-out="order.name"/></h4>
                 <t t-call="marketplace_website.mk_alert"/>
 
+                <!-- Made-to-order progress -->
+                <div t-if="order.is_mto_order" class="card p-3 mb-3">
+                    <h6 class="fw-bold mb-2">
+                        <i class="fa fa-magic me-1"/>Made-to-Order Progress
+                    </h6>
+                    <div class="d-flex justify-content-between small mb-1">
+                        <span t-out="dict(order._fields['mto_stage'].selection).get(order.mto_stage)"/>
+                        <span><t t-out="order.mto_progress_percent"/>%</span>
+                    </div>
+                    <div class="mk-mto-progress-bar mb-3">
+                        <div t-attf-style="width: #{order.mto_progress_percent}%;"/>
+                    </div>
+                    <div class="mk-mto-timeline mb-3">
+                        <t t-foreach="[('requested', 'Requested'), ('confirmed', 'Confirmed'), ('materials', 'Materials'), ('in_progress', 'In Progress'), ('finishing', 'Finishing'), ('ready', 'Ready'), ('completed', 'Shipping')]" t-as="stage_opt">
+                            <t t-set="stage_order" t-value="['requested', 'confirmed', 'materials', 'in_progress', 'finishing', 'ready', 'completed']"/>
+                            <div t-attf-class="mk-mto-stage #{stage_order.index(order.mto_stage) > stage_order.index(stage_opt[0]) and 'done' or (order.mto_stage == stage_opt[0] and 'current' or '')}"
+                                 t-out="stage_opt[1]"/>
+                        </t>
+                    </div>
+                    <div t-if="not order.mto_deposit_paid" class="alert alert-warning small mb-0">
+                        Awaiting deposit confirmation.
+                    </div>
+                    <div t-if="order.mto_balance_requested and not order.mto_balance_paid" class="mt-2">
+                        <p class="small mb-2">
+                            Your order is ready! Remaining balance:
+                            <strong><t t-out="order.currency_id.symbol"/> <t t-out="'%.0f' % order.mto_balance_amount"/></strong>
+                        </p>
+                        <form t-attf-action="/market/order/#{order.id}/mto/pay-balance" method="post">
+                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                            <button type="submit" class="btn mk-btn">Pay Remaining Balance</button>
+                        </form>
+                    </div>
+                    <div t-if="order.mto_stage == 'cancelled'" class="alert alert-danger small mb-0 mt-2">
+                        This made-to-order request was declined/cancelled. Your deposit has been refunded.
+                    </div>
+                </div>
+
                 <!-- Progress -->
                 <div class="card p-3 mb-3">
                     <div class="d-flex justify-content-between mk-progress">

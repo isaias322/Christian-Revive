@@ -5,7 +5,7 @@ from odoo import http
 from odoo.http import request
 
 from .base import (API, api_endpoint, get_json_body, json_response,
-                   serialize_listing)
+                   serialize_listing, serialize_order)
 
 PAGE_SIZE = 20
 
@@ -20,6 +20,7 @@ class MarketplaceApiCatalog(http.Controller):
     @api_endpoint(auth_required=False)
     def meta(self, api_user=None, **kw):
         env = request.env
+        icp = env['ir.config_parameter'].sudo()
         return json_response({
             'categories': [{
                 'id': c.id,
@@ -46,6 +47,12 @@ class MarketplaceApiCatalog(http.Controller):
                 env['sale.order']._fields['marketplace_payment_method'].selection],
             'stripe_configured':
                 env['marketplace.cart.item'].sudo().stripe_configured(),
+            'buyer_protection_fixed':
+                float(icp.get_param('marketplace_core.buyer_protection_fixed', '100.0')),
+            'buyer_protection_pct':
+                float(icp.get_param('marketplace_core.buyer_protection_pct', '5.0')),
+            'mto_deposit_pct':
+                float(icp.get_param('marketplace_core.mto_deposit_pct', '50.0')),
         })
 
     # ------------------------------------------------------------------
@@ -242,6 +249,10 @@ class MarketplaceApiCatalog(http.Controller):
             vals['color'] = body.get('color') or False
         if 'material' in body:
             vals['material'] = body.get('material') or False
+        if 'mto_enabled' in body:
+            vals['mto_enabled'] = bool(body.get('mto_enabled'))
+        if 'mto_description' in body:
+            vals['mto_description'] = body.get('mto_description') or False
         return vals, None
 
     def _apply_images(self, listing, images_b64):
@@ -283,6 +294,39 @@ class MarketplaceApiCatalog(http.Controller):
             'video': data,
             'video_filename': filename or 'video.mp4',
         })
+
+    # ------------------------------------------------------------------
+    # Made-to-order
+    # ------------------------------------------------------------------
+    @http.route(API + '/listings/<int:listing_id>/mto/request', type='http',
+                auth='public', methods=['POST'], csrf=False)
+    @api_endpoint(auth_required=True)
+    def mto_request(self, listing_id, api_user=None, **kw):
+        listing = request.env['product.template'].sudo().browse(listing_id)
+        if not listing.exists() or not listing.is_marketplace_listing:
+            raise request.not_found()
+        body = get_json_body()
+        values = {
+            'name': body.get('name'),
+            'phone': body.get('phone'),
+            'street': body.get('street'),
+            'city': body.get('city'),
+            'zip': body.get('zip'),
+            'payment_method': body.get('payment_method'),
+            'courier_id': body.get('courier_id'),
+        }
+        if body.get('payment_method') == 'card':
+            root = request.httprequest.url_root.rstrip('/')
+            url = request.env['marketplace.cart.item'].create_mto_deposit_stripe_session(
+                api_user.partner_id, listing, values,
+                success_url=root + '/market/order/thanks',
+                cancel_url=root + '/market/item/%s' % listing_id)
+            return json_response({'checkout_url': url}, status=200)
+        order = request.env['marketplace.cart.item'].mto_request(
+            api_user.partner_id, listing, values)
+        order.action_mto_confirm_deposit_paid()
+        return json_response(
+            serialize_order(order, role='buyer'), status=201)
 
     # ------------------------------------------------------------------
     # Favourites

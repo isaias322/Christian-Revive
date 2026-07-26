@@ -58,8 +58,11 @@
                     <img t-attf-src="/web/image/product.template/#{listing.id}/image_512"
                          class="mk-card-img" t-att-alt="listing.name" loading="lazy"/>
                     <span t-if="listing.is_bumped" class="badge mk-badge-bump">Promoted</span>
-                    <span t-if="listing.listing_state == 'sold'" class="badge bg-dark mk-badge-sold">Sold</span>
-                    <span t-if="listing.listing_state == 'reserved'" class="badge bg-secondary mk-badge-sold">Reserved</span>
+                    <span t-if="listing.is_mto_available" class="badge bg-warning text-dark mk-badge-sold">
+                        <i class="fa fa-magic"/> Made-to-Order
+                    </span>
+                    <span t-if="listing.listing_state == 'sold' and not listing.is_mto_available" class="badge bg-dark mk-badge-sold">Sold</span>
+                    <span t-if="listing.listing_state == 'reserved' and not listing.is_mto_available" class="badge bg-secondary mk-badge-sold">Reserved</span>
                     <span t-if="listing.discount_pct" class="badge bg-danger mk-badge-discount">
                         -<t t-out="'%.0f' % listing.discount_pct"/>%
                     </span>
@@ -110,6 +113,8 @@
                                 <i class="fa fa-tags me-2"/>Listings</a>
                             <a href="/market/dashboard/orders" t-attf-class="mk-dash-link #{dash_page == 'orders' and 'active' or ''}">
                                 <i class="fa fa-cube me-2"/>Orders</a>
+                            <a href="/market/dashboard/made-to-order" t-attf-class="mk-dash-link #{dash_page == 'mto' and 'active' or ''}">
+                                <i class="fa fa-magic me-2"/>Made-to-Order</a>
                             <a href="/market/dashboard/wallet" t-attf-class="mk-dash-link #{dash_page == 'wallet' and 'active' or ''}">
                                 <i class="fa fa-money me-2"/>Wallet &amp; Payouts</a>
                             <a href="/market/dashboard/settings" t-attf-class="mk-dash-link #{dash_page == 'settings' and 'active' or ''}">

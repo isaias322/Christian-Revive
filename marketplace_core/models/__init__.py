@@ -3,6 +3,7 @@ from . import config
 from . import courier
 from . import seller
 from . import listing
+from . import fcm
 from . import cart
 from . import order
 from . import review

@@ -49,3 +49,26 @@ class ResConfigSettings(models.TransientModel):
              'pointing at <your domain>/payment/stripe/webhook, listening '
              'for the checkout.session.completed event. Without this, '
              'incoming webhook calls are rejected.')
+
+    marketplace_mto_deposit_pct = fields.Float(
+        string='Made-to-Order Deposit (%)',
+        config_parameter='marketplace_core.mto_deposit_pct',
+        default=50.0,
+        help='Percentage of the item price a buyer pays up front to start '
+             'a made-to-order item; the rest is billed once the seller '
+             'marks it ready to ship.')
+    marketplace_fcm_project_id = fields.Char(
+        string='Firebase Project ID',
+        config_parameter='marketplace_core.fcm_project_id',
+        groups='marketplace_core.group_marketplace_manager',
+        help='Firebase project ID (Project Settings → General). '
+             'Push notifications are disabled until this and the service '
+             'account key below are both set.')
+    marketplace_fcm_service_account_json = fields.Text(
+        string='Firebase Service Account JSON',
+        config_parameter='marketplace_core.fcm_service_account_json',
+        groups='marketplace_core.group_marketplace_manager',
+        help='The full JSON key file from Firebase → Project Settings → '
+             'Service Accounts → Generate new private key. Paste the '
+             "entire file contents here. Never shipped to the app - "
+             'server-side only.')

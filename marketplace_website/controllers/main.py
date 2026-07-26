@@ -149,6 +149,86 @@ class MarketplaceMain(http.Controller):
         return request.make_json_response({
             'favorite': state, 'count': listing.favorite_count})
 
+    # ==================================================================
+    # Made-to-order
+    # ==================================================================
+    @http.route('/market/item/<int:listing_id>/mto', type='http',
+                auth='user', website=True, sitemap=False)
+    def market_mto_request(self, listing_id, **kw):
+        listing = self._listing_or_404(listing_id)
+        if not listing.is_mto_available:
+            return request.redirect('/market/item/%s' % listing_id)
+        icp = request.env['ir.config_parameter'].sudo()
+        deposit_pct = float(icp.get_param('marketplace_core.mto_deposit_pct', '50.0'))
+        fixed = float(icp.get_param('marketplace_core.buyer_protection_fixed', '100.0'))
+        pct = float(icp.get_param('marketplace_core.buyer_protection_pct', '5.0'))
+        fee = fixed + listing.list_price * pct / 100.0
+        order_total = listing.list_price + fee
+        values = self._base_values()
+        values.update({
+            'listing': listing,
+            'deposit_pct': deposit_pct,
+            'order_total': order_total,
+            'deposit_amount': round(order_total * deposit_pct / 100.0, 2),
+            'couriers': request.env['marketplace.courier'].sudo().search([]),
+            'stripe_configured':
+                request.env['marketplace.cart.item'].stripe_configured(),
+            'error': kw.get('error'),
+        })
+        return request.render('marketplace_website.market_mto_request', values)
+
+    @http.route('/market/item/<int:listing_id>/mto-request', type='http',
+                auth='user', methods=['POST'], website=True)
+    def market_mto_request_confirm(self, listing_id, **post):
+        listing = self._listing_or_404(listing_id)
+        values = {
+            'name': post.get('name'),
+            'phone': post.get('phone'),
+            'street': post.get('street'),
+            'city': post.get('city'),
+            'zip': post.get('zip'),
+            'payment_method': post.get('payment_method'),
+            'courier_id': post.get('courier_id'),
+        }
+        root = request.httprequest.url_root.rstrip('/')
+        if post.get('payment_method') == 'card':
+            try:
+                url = request.env['marketplace.cart.item'].create_mto_deposit_stripe_session(
+                    self._partner(), listing, values,
+                    success_url=root + '/market/order/thanks',
+                    cancel_url=root + '/market/item/%s/mto' % listing_id)
+            except UserError as e:
+                return request.redirect(
+                    '/market/item/%s/mto?error=%s' % (listing_id, str(e)))
+            return request.redirect(url, local=False)
+        try:
+            order = request.env['marketplace.cart.item'].mto_request(
+                self._partner(), listing, values)
+            order.action_mto_confirm_deposit_paid()
+        except UserError as e:
+            return request.redirect(
+                '/market/item/%s/mto?error=%s' % (listing_id, str(e)))
+        return request.redirect('/market/order/thanks?orders=%s' % order.id)
+
+    @http.route('/market/order/<int:order_id>/mto/pay-balance', type='http',
+                auth='user', methods=['POST'], website=True)
+    def market_mto_pay_balance(self, order_id, **kw):
+        order = self._buyer_order_or_404(order_id)
+        if not order.is_mto_order:
+            raise request.not_found()
+        root = request.httprequest.url_root.rstrip('/')
+        if order.marketplace_payment_method == 'card':
+            try:
+                url = request.env['marketplace.cart.item'].create_mto_balance_stripe_session(
+                    order, success_url=root + '/market/order/thanks',
+                    cancel_url=root + '/market/order/%s' % order.id)
+            except UserError as e:
+                return request.redirect(
+                    '/market/order/%s?error=%s' % (order_id, str(e)))
+            return request.redirect(url, local=False)
+        order.action_mto_confirm_balance_paid()
+        return request.redirect('/market/order/%s' % order_id)
+
     @http.route('/market/video/<int:listing_id>', type='http', auth='public',
                 website=True, sitemap=False)
     def market_video(self, listing_id, **kw):

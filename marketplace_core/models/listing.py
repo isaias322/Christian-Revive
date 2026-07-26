@@ -59,6 +59,22 @@ class ProductTemplate(models.Model):
              'buyers until stock runs out, instead of delisting after '
              'a single sale.')
 
+    mto_enabled = fields.Boolean(
+        string='Allow Made-to-Order', default=False,
+        help='Once this listing sells out, buyers can still order it as '
+             'made-to-order: they pay a deposit up front and the seller '
+             'makes a new unit for them.')
+    mto_description = fields.Text(
+        string='Made-to-Order Notes',
+        help='Shown to buyers alongside the standard deposit explanation '
+             "when they order this item made-to-order. Optional - describe "
+             'anything specific to this item (materials, lead time, etc).')
+    is_mto_available = fields.Boolean(
+        compute='_compute_is_mto_available',
+        search='_search_is_mto_available',
+        help='True once this listing is sold out and the seller has '
+             'opted it into made-to-order.')
+
     view_count = fields.Integer(default=0, copy=False)
     favorite_partner_ids = fields.Many2many(
         'res.partner', 'marketplace_listing_favorite_rel',
@@ -77,6 +93,26 @@ class ProductTemplate(models.Model):
     def _compute_favorite_count(self):
         for tmpl in self:
             tmpl.favorite_count = len(tmpl.favorite_partner_ids)
+
+    @api.depends('mto_enabled', 'stock_quantity', 'listing_state')
+    def _compute_is_mto_available(self):
+        for tmpl in self:
+            tmpl.is_mto_available = bool(
+                tmpl.mto_enabled and tmpl.stock_quantity <= 0
+                and tmpl.listing_state in ('sold', 'reserved'))
+
+    def _search_is_mto_available(self, operator, value):
+        domain = [
+            ('mto_enabled', '=', True),
+            ('stock_quantity', '<=', 0),
+            ('listing_state', 'in', ('sold', 'reserved')),
+        ]
+        if (operator == '=' and not value) or (operator == '!=' and value):
+            return ['|', '|',
+                    ('mto_enabled', '=', False),
+                    ('stock_quantity', '>', 0),
+                    ('listing_state', 'not in', ('sold', 'reserved'))]
+        return domain
 
     @api.depends('bump_until')
     def _compute_is_bumped(self):
@@ -313,7 +349,8 @@ class ProductTemplate(models.Model):
         filters = filters or {}
         domain = [
             ('is_marketplace_listing', '=', True),
-            ('listing_state', '=', 'active'),
+            '|', ('listing_state', '=', 'active'),
+                 ('is_mto_available', '=', True),
             ('marketplace_seller_id.state', '=', 'approved'),
         ]
         if filters.get('search'):

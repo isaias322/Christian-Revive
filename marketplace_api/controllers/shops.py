@@ -315,6 +315,68 @@ class MarketplaceApiShops(http.Controller):
             template.sudo().send_mail(order.id)
         return json_response(serialize_order(order, role='seller'))
 
+    def _mto_order_or_404(self, order_id, seller):
+        order = request.env['sale.order'].sudo().browse(order_id)
+        if not order.exists() or order.marketplace_seller_id != seller \
+                or not order.is_mto_order:
+            raise request.not_found()
+        return order
+
+    @http.route(API + '/shops/me/orders/<int:order_id>/mto/confirm',
+                type='http', auth='public', methods=['POST'], csrf=False)
+    @api_endpoint(auth_required=True)
+    def mto_confirm(self, order_id, api_user=None, **kw):
+        seller = self._require_approved_shop(api_user)
+        if isinstance(seller, dict):
+            return json_response(**seller)
+        order = self._mto_order_or_404(order_id, seller)
+        order.action_mto_confirm()
+        return json_response(serialize_order(order, role='seller'))
+
+    @http.route(API + '/shops/me/orders/<int:order_id>/mto/decline',
+                type='http', auth='public', methods=['POST'], csrf=False)
+    @api_endpoint(auth_required=True)
+    def mto_decline(self, order_id, api_user=None, **kw):
+        seller = self._require_approved_shop(api_user)
+        if isinstance(seller, dict):
+            return json_response(**seller)
+        order = self._mto_order_or_404(order_id, seller)
+        body = get_json_body()
+        order.action_mto_decline(reason=body.get('reason'))
+        return json_response(serialize_order(order, role='seller'))
+
+    @http.route(API + '/shops/me/orders/<int:order_id>/mto/advance',
+                type='http', auth='public', methods=['POST'], csrf=False)
+    @api_endpoint(auth_required=True)
+    def mto_advance(self, order_id, api_user=None, **kw):
+        seller = self._require_approved_shop(api_user)
+        if isinstance(seller, dict):
+            return json_response(**seller)
+        order = self._mto_order_or_404(order_id, seller)
+        body = get_json_body()
+        stage = body.get('stage')
+        if not stage:
+            return json_response(error='Stage is required.', status=400,
+                                 error_code='validation')
+        photo = body.get('photo')
+        if photo and ',' in photo[:64] and photo.strip().startswith('data:'):
+            photo = photo.split(',', 1)[1]
+        order.action_mto_advance(
+            stage, percent=body.get('percent'), note=body.get('note'),
+            photo_b64=photo, photo_filename=body.get('photo_filename'))
+        return json_response(serialize_order(order, role='seller'))
+
+    @http.route(API + '/shops/me/orders/<int:order_id>/mto/request-balance',
+                type='http', auth='public', methods=['POST'], csrf=False)
+    @api_endpoint(auth_required=True)
+    def mto_request_balance(self, order_id, api_user=None, **kw):
+        seller = self._require_approved_shop(api_user)
+        if isinstance(seller, dict):
+            return json_response(**seller)
+        order = self._mto_order_or_404(order_id, seller)
+        order.action_mto_request_balance()
+        return json_response(serialize_order(order, role='seller'))
+
     @http.route(API + '/shops/me/orders/<int:order_id>/label', type='http',
                 auth='public', methods=['GET'], csrf=False)
     def order_label(self, order_id, token=None, **kw):

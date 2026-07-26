@@ -229,6 +229,8 @@ class MarketplaceSeller(MarketplaceMain):
             'condition': post.get('condition') or False,
             'color': post.get('color') or False,
             'material': post.get('material') or False,
+            'mto_enabled': bool(post.get('mto_enabled')),
+            'mto_description': post.get('mto_description') or False,
             'type': 'consu',
         }
         brand_name = (post.get('brand_name') or '').strip()
@@ -328,6 +330,101 @@ class MarketplaceSeller(MarketplaceMain):
             return request.redirect(
                 '/market/dashboard/listings?error=%s' % str(e))
         return request.redirect('/market/dashboard/listings')
+
+    # ==================================================================
+    # Made-to-order
+    # ==================================================================
+    def _own_mto_order_or_404(self, seller, order_id):
+        order = request.env['sale.order'].sudo().browse(order_id)
+        if not order.exists() or order.marketplace_seller_id != seller \
+                or not order.is_mto_order:
+            raise request.not_found()
+        return order
+
+    @http.route('/market/dashboard/made-to-order', type='http', auth='user',
+                website=True, sitemap=False)
+    def dashboard_mto(self, **kw):
+        seller = self._seller_required()
+        if not seller:
+            return request.redirect('/market/sell')
+        orders = request.env['sale.order'].sudo().search([
+            ('marketplace_seller_id', '=', seller.id),
+            ('is_mto_order', '=', True),
+        ], order='create_date desc')
+        values = self._base_values()
+        values.update({
+            'seller': seller,
+            'mto_orders': orders,
+            'error': kw.get('error'),
+        })
+        return request.render('marketplace_website.dashboard_mto', values)
+
+    @http.route('/market/dashboard/made-to-order/<int:order_id>/confirm',
+                type='http', auth='user', methods=['POST'], website=True)
+    def dashboard_mto_confirm(self, order_id, **kw):
+        seller = self._seller_required()
+        if not seller:
+            return request.redirect('/market/sell')
+        order = self._own_mto_order_or_404(seller, order_id)
+        try:
+            order.action_mto_confirm()
+        except UserError as e:
+            return request.redirect(
+                '/market/dashboard/made-to-order?error=%s' % str(e))
+        return request.redirect('/market/dashboard/made-to-order')
+
+    @http.route('/market/dashboard/made-to-order/<int:order_id>/decline',
+                type='http', auth='user', methods=['POST'], website=True)
+    def dashboard_mto_decline(self, order_id, **post):
+        seller = self._seller_required()
+        if not seller:
+            return request.redirect('/market/sell')
+        order = self._own_mto_order_or_404(seller, order_id)
+        try:
+            order.action_mto_decline(reason=post.get('reason'))
+        except UserError as e:
+            return request.redirect(
+                '/market/dashboard/made-to-order?error=%s' % str(e))
+        return request.redirect('/market/dashboard/made-to-order')
+
+    @http.route('/market/dashboard/made-to-order/<int:order_id>/advance',
+                type='http', auth='user', methods=['POST'], website=True)
+    def dashboard_mto_advance(self, order_id, **post):
+        seller = self._seller_required()
+        if not seller:
+            return request.redirect('/market/sell')
+        order = self._own_mto_order_or_404(seller, order_id)
+        photo_file = request.httprequest.files.get('photo')
+        photo_b64 = None
+        photo_filename = None
+        if photo_file and photo_file.filename:
+            photo_b64 = base64.b64encode(photo_file.read()).decode('ascii')
+            photo_filename = photo_file.filename
+        try:
+            percent = post.get('percent')
+            order.action_mto_advance(
+                post.get('stage'),
+                percent=int(percent) if percent else None,
+                note=post.get('note') or None,
+                photo_b64=photo_b64, photo_filename=photo_filename)
+        except (UserError, ValueError) as e:
+            return request.redirect(
+                '/market/dashboard/made-to-order?error=%s' % str(e))
+        return request.redirect('/market/dashboard/made-to-order')
+
+    @http.route('/market/dashboard/made-to-order/<int:order_id>/request-balance',
+                type='http', auth='user', methods=['POST'], website=True)
+    def dashboard_mto_request_balance(self, order_id, **kw):
+        seller = self._seller_required()
+        if not seller:
+            return request.redirect('/market/sell')
+        order = self._own_mto_order_or_404(seller, order_id)
+        try:
+            order.action_mto_request_balance()
+        except UserError as e:
+            return request.redirect(
+                '/market/dashboard/made-to-order?error=%s' % str(e))
+        return request.redirect('/market/dashboard/made-to-order')
 
     # ==================================================================
     # Seller orders

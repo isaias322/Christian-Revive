@@ -116,6 +116,22 @@ class MarketplaceApiAuth(http.Controller):
             partner.write(vals)
         return json_response(self._serialize_user(api_user))
 
+    @http.route(API + '/device-token', type='http', auth='public',
+                methods=['POST'], csrf=False)
+    @api_endpoint(auth_required=True)
+    def register_device_token(self, api_user=None, **kw):
+        """Registers this device for push notifications (made-to-order
+        progress updates, etc). No-op-safe: works whether or not Firebase
+        has actually been configured on the server yet."""
+        body = get_json_body()
+        token = (body.get('token') or '').strip()
+        if not token:
+            return json_response(error='Token is required.', status=400,
+                                 error_code='validation')
+        request.env['marketplace.device.token'].sudo().register(
+            api_user.partner_id, token, platform=body.get('platform'))
+        return json_response({'registered': True})
+
     def _serialize_user(self, user):
         partner = user.partner_id
         seller = partner.sudo().get_marketplace_seller()

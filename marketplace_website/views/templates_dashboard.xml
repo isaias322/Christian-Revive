@@ -398,11 +398,140 @@
                                t-att-value="listing and listing.material or ''"/>
                     </div>
                 </div>
+                <div class="mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="mto_enabled" value="1"
+                               id="mkMtoEnabled" t-att-checked="listing and listing.mto_enabled and 'checked' or None"/>
+                        <label class="form-check-label fw-bold" for="mkMtoEnabled">
+                            Allow Made-to-Order
+                        </label>
+                        <div class="form-text">
+                            Once this listing sells out, buyers can still order it as
+                            made-to-order: they pay a deposit to start production and you
+                            make a new unit for them.
+                        </div>
+                    </div>
+                    <textarea name="mto_description" class="form-control mt-2" rows="2"
+                              placeholder="Optional: anything specific about making this item (materials, lead time...)"><t t-if="listing" t-out="listing.mto_description or ''"/></textarea>
+                </div>
                 <div class="d-flex gap-2">
                     <button type="submit" name="action" value="save" class="btn btn-outline-dark">Save Draft</button>
                     <button type="submit" name="action" value="publish" class="btn mk-btn">Save &amp; Publish</button>
                 </div>
             </form>
+        </t>
+    </template>
+
+    <!-- ============================================================ -->
+    <!-- Made-to-order                                                -->
+    <!-- ============================================================ -->
+    <template id="dashboard_mto" name="Made-to-Order Requests">
+        <t t-set="dash_page" t-value="'mto'"/>
+        <t t-call="marketplace_website.dashboard_layout">
+            <div class="mk-dash-header">
+                <h4 class="mb-0">Made-to-Order</h4>
+            </div>
+            <t t-call="marketplace_website.mk_alert"/>
+            <t t-foreach="mto_orders" t-as="order">
+                <div class="card p-3 mb-3">
+                    <div class="d-flex justify-content-between flex-wrap gap-2 mb-2">
+                        <div>
+                            <strong t-out="order.name"/> ·
+                            <span t-out="order.partner_id.name"/>
+                            <div class="small text-muted">
+                                <a t-attf-href="/market/item/#{order.mto_listing_id.id}" t-out="order.mto_listing_id.name"/>
+                                · <t t-out="order.create_date and order.create_date.strftime('%d %b %Y')"/>
+                            </div>
+                        </div>
+                        <span t-attf-class="badge mk-state-#{order.mto_stage}"
+                              t-out="dict(order._fields['mto_stage'].selection).get(order.mto_stage)"/>
+                    </div>
+
+                    <div t-if="not order.mto_deposit_paid" class="alert alert-warning small mb-2">
+                        Waiting on deposit confirmation.
+                    </div>
+
+                    <t t-if="order.mto_deposit_paid and order.mto_stage not in ('completed', 'cancelled')">
+                        <div class="mk-mto-progress-bar mb-2">
+                            <div t-attf-style="width: #{order.mto_progress_percent}%;"/>
+                        </div>
+                        <div class="small text-muted mb-2"><t t-out="order.mto_progress_percent"/>% complete</div>
+
+                        <div class="d-flex gap-2 flex-wrap mb-2">
+                            <form t-if="order.mto_stage == 'requested'"
+                                  t-attf-action="/market/dashboard/made-to-order/#{order.id}/confirm"
+                                  method="post" class="d-inline">
+                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                <button class="btn btn-sm mk-btn">Confirm &amp; Start Making</button>
+                            </form>
+                            <form t-if="order.mto_stage == 'requested'"
+                                  t-attf-action="/market/dashboard/made-to-order/#{order.id}/decline"
+                                  method="post" class="d-inline d-flex gap-1">
+                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                <input type="text" name="reason" class="form-control form-control-sm"
+                                       placeholder="Reason (optional)" style="width: 160px;"/>
+                                <button class="btn btn-sm btn-outline-danger"
+                                        onclick="return confirm('Decline this request and refund the deposit?');">
+                                    Decline
+                                </button>
+                            </form>
+                            <form t-if="order.mto_stage == 'ready' and not order.mto_balance_requested"
+                                  t-attf-action="/market/dashboard/made-to-order/#{order.id}/request-balance"
+                                  method="post" class="d-inline">
+                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                <button class="btn btn-sm btn-outline-dark">Request Balance Payment</button>
+                            </form>
+                        </div>
+
+                        <form t-if="order.mto_stage not in ('requested',)"
+                              t-attf-action="/market/dashboard/made-to-order/#{order.id}/advance"
+                              method="post" enctype="multipart/form-data"
+                              class="row g-2 align-items-end mt-1 border-top pt-2">
+                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                            <div class="col-md-3">
+                                <label class="form-label small mb-0">Stage</label>
+                                <select name="stage" class="form-select form-select-sm">
+                                    <t t-foreach="[('materials', 'Sourcing Materials'), ('in_progress', 'In Progress'), ('finishing', 'Finishing Touches'), ('ready', 'Ready to Ship')]" t-as="opt">
+                                        <option t-att-value="opt[0]" t-att-selected="order.mto_stage == opt[0] and 'selected' or None" t-out="opt[1]"/>
+                                    </t>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label small mb-0">%</label>
+                                <input type="number" name="percent" min="0" max="100" class="form-control form-control-sm"
+                                       t-att-value="order.mto_progress_percent"/>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label small mb-0">Note</label>
+                                <input type="text" name="note" class="form-control form-control-sm"
+                                       placeholder="e.g. Frame is cut and sanded"/>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label small mb-0">Photo</label>
+                                <input type="file" name="photo" class="form-control form-control-sm" accept="image/*"/>
+                            </div>
+                            <div class="col-md-1">
+                                <button class="btn btn-sm mk-btn w-100">Update</button>
+                            </div>
+                        </form>
+                    </t>
+
+                    <div t-if="order.mto_balance_requested and not order.mto_balance_paid" class="small mt-2">
+                        <i class="fa fa-clock-o me-1"/>Awaiting balance payment
+                        (<t t-out="order.currency_id.symbol"/> <t t-out="'%.0f' % order.mto_balance_amount"/>).
+                    </div>
+                    <div t-if="order.mto_stage == 'completed'" class="alert alert-success small mb-0 mt-2">
+                        Balance paid — ready for normal shipping from the Orders tab.
+                    </div>
+                    <div t-if="order.mto_stage == 'cancelled'" class="alert alert-secondary small mb-0 mt-2">
+                        Declined/cancelled — deposit refunded.
+                    </div>
+                </div>
+            </t>
+            <div t-if="not mto_orders" class="text-center text-muted py-5">
+                <i class="fa fa-magic fa-2x d-block mb-2"/>
+                No made-to-order requests yet.
+            </div>
         </t>
     </template>
 

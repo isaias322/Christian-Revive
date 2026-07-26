@@ -59,6 +59,35 @@ class MarketplaceApiOrders(http.Controller):
             template.sudo().send_mail(order.id)
         return json_response(serialize_order(order))
 
+    @http.route(API + '/orders/<int:order_id>/mto/balance-session',
+                type='http', auth='public', methods=['POST'], csrf=False)
+    @api_endpoint(auth_required=True)
+    def mto_balance_session(self, order_id, api_user=None, **kw):
+        order = self._buyer_order(order_id, api_user)
+        if not order.is_mto_order:
+            return json_response(error='Not a made-to-order order.',
+                                 status=400, error_code='validation')
+        root = request.httprequest.url_root.rstrip('/')
+        url = request.env['marketplace.cart.item'].create_mto_balance_stripe_session(
+            order, success_url=root + '/market/order/thanks',
+            cancel_url=root + '/market/orders/%s' % order.id)
+        return json_response({'checkout_url': url})
+
+    @http.route(API + '/orders/<int:order_id>/mto/pay-balance-manual',
+                type='http', auth='public', methods=['POST'], csrf=False)
+    @api_endpoint(auth_required=True)
+    def mto_pay_balance_manual(self, order_id, api_user=None, **kw):
+        """For offline payment methods (COD/JazzCash/EasyPaisa/bank): the
+        buyer confirms they've arranged payment directly with the seller,
+        same trust-then-reconcile pattern the rest of checkout uses for
+        these methods."""
+        order = self._buyer_order(order_id, api_user)
+        if not order.is_mto_order:
+            return json_response(error='Not a made-to-order order.',
+                                 status=400, error_code='validation')
+        order.action_mto_confirm_balance_paid()
+        return json_response(serialize_order(order))
+
     @http.route(API + '/orders/<int:order_id>/disputes', type='http',
                 auth='public', methods=['POST'], csrf=False)
     @api_endpoint(auth_required=True)

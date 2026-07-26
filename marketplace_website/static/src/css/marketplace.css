@@ -550,6 +550,54 @@
 }
 
 /* ---------------------------------------------------------- */
+/* Made-to-order                                                 */
+/* ---------------------------------------------------------- */
+.mk-mto-card {
+    border: 1px dashed var(--mk-accent);
+    background: #fffbeb;
+}
+.mk-mto-progress-bar {
+    height: 10px;
+    border-radius: 6px;
+    background: var(--mk-border);
+    overflow: hidden;
+}
+.mk-mto-progress-bar > div {
+    height: 100%;
+    background: var(--mk-primary);
+    transition: width .3s ease;
+}
+.mk-mto-timeline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+.mk-mto-timeline .mk-mto-stage {
+    flex: 1;
+    min-width: 70px;
+    text-align: center;
+    font-size: .72rem;
+    color: var(--mk-muted);
+    padding-top: 6px;
+    border-top: 3px solid var(--mk-border);
+}
+.mk-mto-timeline .mk-mto-stage.done {
+    color: var(--mk-primary);
+    font-weight: 600;
+    border-top-color: var(--mk-primary);
+}
+.mk-mto-timeline .mk-mto-stage.current {
+    color: var(--mk-accent);
+    font-weight: 600;
+    border-top-color: var(--mk-accent);
+}
+.mk-mto-update-photo {
+    max-width: 96px;
+    border-radius: 8px;
+    margin-top: 4px;
+}
+
+/* ---------------------------------------------------------- */
 /* Chat                                                          */
 /* ---------------------------------------------------------- */
 .mk-chat {

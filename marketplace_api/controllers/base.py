@@ -116,6 +116,7 @@ def serialize_listing(listing, partner=None, detail=False):
         'favorite_count': listing.favorite_count,
         'view_count': listing.view_count,
         'is_bumped': listing.is_bumped,
+        'is_mto_available': listing.is_mto_available,
         'is_favorite': bool(partner) and listing.is_favorited_by(partner),
         'created_at': dt(listing.create_date),
         'seller': {
@@ -139,6 +140,8 @@ def serialize_listing(listing, partner=None, detail=False):
                  for img in listing.product_template_image_ids]),
             'video_url': ('/api/v1/video/product.template/%s' % listing.id
                           if listing.video else None),
+            'mto_enabled': listing.mto_enabled,
+            'mto_description': listing.mto_description or None,
         })
     return data
 
@@ -206,7 +209,20 @@ def serialize_order(order, role='buyer'):
         } if order.marketplace_seller_id else None,
         'has_open_dispute': bool(order.dispute_ids.filtered(
             lambda d: d.state in ('open', 'under_review'))),
+        'is_mto_order': order.is_mto_order,
     }
+    if order.is_mto_order:
+        data['mto'] = {
+            'stage': order.mto_stage,
+            'stage_label': dict(order._fields['mto_stage'].selection).get(
+                order.mto_stage),
+            'progress_percent': order.mto_progress_percent,
+            'deposit_amount': order.mto_deposit_amount,
+            'deposit_paid': order.mto_deposit_paid,
+            'balance_amount': order.mto_balance_amount,
+            'balance_requested': order.mto_balance_requested,
+            'balance_paid': order.mto_balance_paid,
+        }
     if role == 'seller':
         data.update({
             'buyer': {
@@ -257,6 +273,8 @@ def serialize_message(message, partner):
         'author': message.author_partner_id.name,
         'mine': message.author_partner_id == partner,
         'created_at': dt(message.create_date),
+        'image_url': ('/api/v1/chat-image/%s' % message.id
+                      if message.image else None),
     }
 
 
@@ -337,4 +355,25 @@ class MarketplaceApiBase(http.Controller):
                 ('Content-Type', 'video/mp4'),
                 ('Content-Disposition',
                  'inline; filename="%s"' % (record.video_filename or 'video.mp4')),
+            ])
+
+    @http.route(API + '/chat-image/<int:message_id>', type='http',
+                auth='public', methods=['GET'], csrf=False)
+    def api_chat_image(self, message_id, **kw):
+        """Serve a photo attached to a chat message (e.g. a made-to-order
+        progress update) — only to the two participants of that thread."""
+        message = request.env['marketplace.thread.message'].sudo().browse(
+            message_id)
+        if not message.exists() or not message.image:
+            return request.not_found()
+        user = get_auth_user()
+        if not user or not message.thread_id.partner_can_access(
+                user.partner_id):
+            return request.not_found()
+        return request.make_response(
+            base64.b64decode(message.image),
+            headers=[
+                ('Content-Type', 'image/jpeg'),
+                ('Content-Disposition',
+                 'inline; filename="%s"' % (message.image_filename or 'photo.jpg')),
             ])

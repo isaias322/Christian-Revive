@@ -28,3 +28,5 @@ access_wallet_tx_manager,marketplace.wallet.transaction manager,model_marketplac
 access_wallet_tx_portal,marketplace.wallet.transaction portal,model_marketplace_wallet_transaction,base.group_portal,1,0,0,0
 access_payout_manager,marketplace.seller.payout manager,model_marketplace_seller_payout,group_marketplace_manager,1,1,1,1
 access_payout_portal,marketplace.seller.payout portal,model_marketplace_seller_payout,base.group_portal,1,0,1,0
+access_device_token_manager,marketplace.device.token manager,model_marketplace_device_token,group_marketplace_manager,1,1,1,1
+access_device_token_portal,marketplace.device.token portal,model_marketplace_device_token,base.group_portal,1,0,0,0

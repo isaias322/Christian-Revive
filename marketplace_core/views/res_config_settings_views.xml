@@ -48,6 +48,25 @@
                             </div>
                         </setting>
                     </block>
+                    <block title="Made-to-Order">
+                        <setting string="Deposit Percentage"
+                                 help="Buyers pay this percentage up front to start a made-to-order item; the remainder is billed once the seller marks it ready to ship.">
+                            <field name="marketplace_mto_deposit_pct"/>
+                        </setting>
+                    </block>
+                    <block title="Push Notifications (Firebase)">
+                        <setting string="Firebase Credentials"
+                                 help="Lets the app send made-to-order progress updates as real phone push notifications. Create a Firebase project, add an Android app, then Project Settings → Service Accounts → Generate new private key. Leave blank to keep push disabled — progress updates still post to the in-app chat and email either way.">
+                            <div class="row mt8">
+                                <label for="marketplace_fcm_project_id" class="col-4 o_light_label"/>
+                                <field name="marketplace_fcm_project_id" class="col-6"/>
+                            </div>
+                            <div class="row">
+                                <label for="marketplace_fcm_service_account_json" class="col-4 o_light_label"/>
+                                <field name="marketplace_fcm_service_account_json" class="col-8" widget="text"/>
+                            </div>
+                        </setting>
+                    </block>
                 </app>
             </xpath>
         </field>

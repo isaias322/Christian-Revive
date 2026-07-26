@@ -25,6 +25,24 @@
                         invisible="not is_marketplace_order or escrow_state != 'held'"
                         groups="marketplace_core.group_marketplace_manager"
                         confirm="Refund held funds to the buyer?"/>
+                <button name="action_mto_confirm_deposit_paid" type="object"
+                        string="Mark Deposit Paid" class="btn-success"
+                        invisible="not is_mto_order or mto_deposit_paid"
+                        groups="marketplace_core.group_marketplace_manager"/>
+                <button name="action_mto_confirm" type="object"
+                        string="Confirm &amp; Start Making" class="btn-primary"
+                        invisible="not is_mto_order or mto_stage != 'requested'"/>
+                <button name="action_mto_decline" type="object"
+                        string="Decline (Refund Deposit)"
+                        invisible="not is_mto_order or mto_stage != 'requested'"
+                        confirm="Decline this made-to-order request and refund the deposit?"/>
+                <button name="action_mto_request_balance" type="object"
+                        string="Request Balance Payment"
+                        invisible="not is_mto_order or mto_stage != 'ready' or mto_balance_requested"/>
+                <button name="action_mto_confirm_balance_paid" type="object"
+                        string="Mark Balance Paid" class="btn-success"
+                        invisible="not is_mto_order or mto_balance_paid or not mto_balance_requested"
+                        groups="marketplace_core.group_marketplace_manager"/>
             </xpath>
             <xpath expr="//notebook" position="inside">
                 <page string="Marketplace" name="marketplace"
@@ -54,6 +72,22 @@
                             <field name="shipping_fee"/>
                             <field name="platform_commission"/>
                             <field name="seller_payout_amount"/>
+                        </group>
+                    </group>
+                    <group invisible="not is_mto_order">
+                        <group string="Made-to-Order">
+                            <field name="is_mto_order" invisible="1"/>
+                            <field name="mto_listing_id"/>
+                            <field name="mto_stage" readonly="1"/>
+                            <field name="mto_progress_percent"/>
+                        </group>
+                        <group string="Deposit / Balance">
+                            <field name="mto_deposit_pct"/>
+                            <field name="mto_deposit_amount"/>
+                            <field name="mto_deposit_paid" readonly="1"/>
+                            <field name="mto_balance_amount"/>
+                            <field name="mto_balance_requested" readonly="1"/>
+                            <field name="mto_balance_paid" readonly="1"/>
                         </group>
                     </group>
                 </page>

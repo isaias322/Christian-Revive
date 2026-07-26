@@ -3,6 +3,7 @@ import base64
 import io
 
 import qrcode
+import requests
 from reportlab.lib.pagesizes import landscape
 from reportlab.lib.units import mm
 from reportlab.pdfgen import canvas
@@ -11,6 +12,27 @@ from odoo import api, fields, models, _
 from odoo.exceptions import UserError
 
 LABEL_SIZE = (100 * mm, 150 * mm)
+
+MTO_STAGES = [
+    ('requested', 'Requested'),
+    ('confirmed', 'Confirmed by Seller'),
+    ('materials', 'Sourcing Materials'),
+    ('in_progress', 'In Progress'),
+    ('finishing', 'Finishing Touches'),
+    ('ready', 'Ready to Ship'),
+    ('completed', 'Completed'),
+    ('cancelled', 'Cancelled'),
+]
+MTO_STAGE_PROGRESS = {
+    'requested': 0,
+    'confirmed': 10,
+    'materials': 25,
+    'in_progress': 50,
+    'finishing': 80,
+    'ready': 100,
+    'completed': 100,
+    'cancelled': 0,
+}
 
 
 class SaleOrder(models.Model):
@@ -81,6 +103,51 @@ class SaleOrder(models.Model):
     dispute_ids = fields.One2many('marketplace.dispute', 'order_id')
     dispute_count = fields.Integer(compute='_compute_dispute_count')
     review_ids = fields.One2many('marketplace.review', 'order_id')
+
+    # ------------------------------------------------------------------
+    # Made-to-order
+    # ------------------------------------------------------------------
+    is_mto_order = fields.Boolean(
+        string='Made-to-Order', default=False, copy=False, index=True)
+    mto_listing_id = fields.Many2one(
+        'product.template', string='Made-to-Order Item', copy=False,
+        help='The (sold-out) listing this made-to-order request is based '
+             'on. Kept separately from the order line, which is created '
+             'fresh since the original listing has no stock left.')
+    mto_stage = fields.Selection(
+        MTO_STAGES, default='requested', tracking=True, copy=False,
+        string='Made-to-Order Stage')
+    mto_progress_percent = fields.Integer(
+        default=0, copy=False, tracking=True,
+        string='Made-to-Order Progress %')
+    mto_deposit_pct = fields.Float(
+        copy=False,
+        help='Snapshot of the deposit percentage in effect when this '
+             'order was requested (later config changes should not '
+             'retroactively change what an existing buyer owes).')
+    mto_deposit_amount = fields.Monetary(
+        compute='_compute_mto_amounts', store=True)
+    mto_balance_amount = fields.Monetary(
+        compute='_compute_mto_amounts', store=True)
+    mto_deposit_paid = fields.Boolean(
+        default=False, copy=False, tracking=True)
+    mto_deposit_stripe_intent = fields.Char(copy=False)
+    mto_balance_requested = fields.Boolean(default=False, copy=False)
+    mto_balance_paid = fields.Boolean(
+        default=False, copy=False, tracking=True)
+    mto_balance_stripe_intent = fields.Char(copy=False)
+
+    @api.depends('amount_total', 'mto_deposit_pct', 'is_mto_order')
+    def _compute_mto_amounts(self):
+        for order in self:
+            if not order.is_mto_order:
+                order.mto_deposit_amount = 0.0
+                order.mto_balance_amount = 0.0
+                continue
+            deposit = round(
+                order.amount_total * (order.mto_deposit_pct or 0) / 100.0, 2)
+            order.mto_deposit_amount = deposit
+            order.mto_balance_amount = order.amount_total - deposit
 
     @api.depends('order_line.price_total', 'order_line.product_id',
                  'marketplace_seller_id')
@@ -362,6 +429,10 @@ class SaleOrder(models.Model):
             if order.escrow_state != 'held':
                 raise UserError(_(
                     'Escrow is not held on order %s.') % order.name)
+            if order.is_mto_order and not order.mto_balance_paid:
+                raise UserError(_(
+                    'The remaining balance must be paid before delivery '
+                    'can be confirmed on order %s.') % order.name)
             order.write({
                 'buyer_confirmed_delivery': True,
                 'marketplace_delivery_state': 'delivered',
@@ -375,6 +446,10 @@ class SaleOrder(models.Model):
             if order.escrow_state != 'held':
                 raise UserError(_(
                     'Escrow is not held on order %s.') % order.name)
+            if order.is_mto_order and not order.mto_balance_paid:
+                raise UserError(_(
+                    'The remaining balance must be paid before escrow can '
+                    'be released on order %s.') % order.name)
             if order.dispute_ids.filtered(
                     lambda d: d.state in ('open', 'under_review')):
                 raise UserError(_(
@@ -417,6 +492,186 @@ class SaleOrder(models.Model):
             order.message_post(body=_(
                 'Escrow refunded to buyer. Listing re-activated.'))
         return True
+
+    # ------------------------------------------------------------------
+    # Made-to-order lifecycle
+    # ------------------------------------------------------------------
+    def action_mto_confirm_deposit_paid(self):
+        """Called once the deposit payment succeeds (Stripe webhook) or is
+        confirmed manually for offline payment methods. Opens escrow and
+        lets the seller know a request is waiting on them."""
+        for order in self:
+            if not order.is_mto_order:
+                raise UserError(_('%s is not a made-to-order order.') % order.name)
+            if order.mto_deposit_paid:
+                continue
+            order.mto_deposit_paid = True
+            order.action_confirm_marketplace()
+            order.message_post(body=_(
+                'Made-to-order deposit received - awaiting seller '
+                'confirmation.'))
+            order._mto_notify_seller(_(
+                'A customer has requested a made-to-order item and paid '
+                'the deposit. Please confirm to start production.'))
+        return True
+
+    def action_mto_confirm(self):
+        """Seller accepts a made-to-order request and starts production."""
+        for order in self:
+            if not order.is_mto_order:
+                raise UserError(_('%s is not a made-to-order order.') % order.name)
+            if not order.mto_deposit_paid:
+                raise UserError(_(
+                    'The deposit has not been paid yet on order %s.'
+                ) % order.name)
+            if order.mto_stage != 'requested':
+                raise UserError(_(
+                    'Order %s has already been confirmed.') % order.name)
+            order._mto_advance(
+                'confirmed',
+                note=_('Your order has been confirmed! Production has '
+                       'started.'))
+        return True
+
+    def action_mto_decline(self, reason=None):
+        """Seller can't fulfil the request - refund the deposit."""
+        for order in self:
+            if not order.is_mto_order:
+                raise UserError(_('%s is not a made-to-order order.') % order.name)
+            if order.mto_stage in ('completed', 'cancelled'):
+                raise UserError(_(
+                    'Order %s can no longer be declined.') % order.name)
+            if order.mto_deposit_paid:
+                order._mto_stripe_refund(order.mto_deposit_stripe_intent)
+                order.escrow_state = 'refunded'
+            order.mto_stage = 'cancelled'
+            order.mto_progress_percent = 0
+            order.message_post(body=_(
+                'Made-to-order request declined by seller%(reason)s.',
+                reason=(': %s' % reason) if reason else ''))
+            order._mto_notify_buyer(_(
+                'Your made-to-order request was declined%(reason)s. '
+                'Your deposit has been refunded.',
+                reason=(': %s' % reason) if reason else ''))
+        return True
+
+    def action_mto_advance(self, stage, percent=None, note=None,
+                            photo_b64=None, photo_filename=None):
+        """Seller-driven progress update: move to `stage`, optionally
+        override the stage's default progress %, and post an update
+        (with an optional photo) into the buyer/seller chat thread."""
+        for order in self:
+            if not order.is_mto_order:
+                raise UserError(_('%s is not a made-to-order order.') % order.name)
+            if not order.mto_deposit_paid:
+                raise UserError(_(
+                    'The deposit has not been paid yet on order %s.'
+                ) % order.name)
+            if stage not in dict(MTO_STAGES):
+                raise UserError(_('Unknown made-to-order stage.'))
+            order._mto_advance(
+                stage, percent=percent, note=note,
+                photo_b64=photo_b64, photo_filename=photo_filename)
+        return True
+
+    def _mto_advance(self, stage, percent=None, note=None,
+                      photo_b64=None, photo_filename=None):
+        self.ensure_one()
+        progress = (percent if percent is not None
+                    else MTO_STAGE_PROGRESS.get(stage, self.mto_progress_percent))
+        progress = max(0, min(100, int(progress)))
+        self.write({'mto_stage': stage, 'mto_progress_percent': progress})
+        stage_label = dict(MTO_STAGES).get(stage, stage)
+        body = note or _('Progress update: %(stage)s (%(pct)s%%)',
+                          stage=stage_label, pct=progress)
+        self._mto_post_update(body, photo_b64=photo_b64,
+                              photo_filename=photo_filename)
+        self._mto_notify_buyer(body)
+        if stage == 'ready' and not self.mto_balance_requested:
+            self.action_mto_request_balance()
+        return True
+
+    def _mto_post_update(self, body, photo_b64=None, photo_filename=None):
+        """Post a made-to-order progress update into the existing
+        buyer/seller chat thread so it shows up alongside their normal
+        conversation, not in a separate feed."""
+        self.ensure_one()
+        seller = self.marketplace_seller_id
+        thread = self.env['marketplace.thread'].sudo().get_or_create_thread(
+            self.partner_id, seller, self.mto_listing_id or None)
+        thread.sudo().post_message(
+            seller.partner_id, body,
+            image=photo_b64, image_filename=photo_filename)
+
+    def action_mto_request_balance(self):
+        """Ask the buyer to pay the remaining balance before shipping."""
+        for order in self:
+            if not order.is_mto_order:
+                raise UserError(_('%s is not a made-to-order order.') % order.name)
+            if order.mto_balance_paid:
+                raise UserError(_(
+                    'The balance is already paid on order %s.') % order.name)
+            order.mto_balance_requested = True
+            body = _(
+                'Your order is ready! Please pay the remaining balance '
+                '(%(currency)s %(amount).2f) so it can be shipped.',
+                currency=order.currency_id.symbol, amount=order.mto_balance_amount)
+            order._mto_post_update(body)
+            order._mto_notify_buyer(body)
+        return True
+
+    def action_mto_confirm_balance_paid(self):
+        """Called once the balance payment succeeds (Stripe webhook) or is
+        confirmed manually for offline payment methods."""
+        for order in self:
+            if not order.is_mto_order:
+                raise UserError(_('%s is not a made-to-order order.') % order.name)
+            order.write({
+                'mto_balance_paid': True,
+                'mto_stage': 'completed',
+                'payment_received': True,
+            })
+            order.message_post(body=_(
+                'Made-to-order balance payment received - ready to ship.'))
+            order._mto_notify_buyer(_(
+                'Balance payment received! Your seller will ship your '
+                'order shortly.'))
+        return True
+
+    def _mto_notify_buyer(self, body):
+        """Best-effort push notification; no-ops silently if Firebase
+        hasn't been configured yet (mirrors how Stripe stays optional)."""
+        self.ensure_one()
+        self.env['marketplace.fcm.sender'].sudo().notify_partner(
+            self.partner_id, _('Made-to-Order Update'), body,
+            data={'order_id': str(self.id)})
+
+    def _mto_notify_seller(self, body):
+        self.ensure_one()
+        self.env['marketplace.fcm.sender'].sudo().notify_partner(
+            self.marketplace_seller_id.partner_id,
+            _('Made-to-Order Request'), body,
+            data={'order_id': str(self.id)})
+
+    def _mto_stripe_refund(self, payment_intent_id):
+        """Best-effort Stripe refund - swallows errors since a failed
+        refund attempt shouldn't block the seller from declining/
+        cancelling; it just needs a human to follow up manually."""
+        if not payment_intent_id:
+            return
+        secret_key = self.env['ir.config_parameter'].sudo().get_param(
+            'marketplace_core.stripe_secret_key')
+        if not secret_key:
+            return
+        try:
+            requests.post(
+                'https://api.stripe.com/v1/refunds',
+                data={'payment_intent': payment_intent_id},
+                auth=(secret_key, ''), timeout=15)
+        except requests.RequestException:
+            self.message_post(body=_(
+                'Automatic Stripe refund failed - please refund the '
+                'deposit manually.'))
 
     # ------------------------------------------------------------------
     # Cron

@@ -73,6 +73,13 @@ class MarketplaceStripeWebhook(http.Controller):
 
     def _fulfill_session(self, session):
         metadata = session.get('metadata') or {}
+        mto_leg = metadata.get('mto_leg')
+        if mto_leg == 'deposit':
+            self._fulfill_mto_deposit(session, metadata)
+            return
+        if mto_leg == 'balance':
+            self._fulfill_mto_balance(session, metadata)
+            return
         partner_id = metadata.get('partner_id')
         item_ids_raw = metadata.get('cart_item_ids')
         if not partner_id or not item_ids_raw:
@@ -101,4 +108,51 @@ class MarketplaceStripeWebhook(http.Controller):
             # too (the cart items are gone by then) — logged, not re-raised,
             # since Stripe retries on any non-2xx response.
             _logger.exception('Failed to fulfil Stripe session %s',
+                              session.get('id'))
+
+    def _fulfill_mto_deposit(self, session, metadata):
+        partner_id = metadata.get('partner_id')
+        listing_id = metadata.get('listing_id')
+        if not partner_id or not listing_id:
+            _logger.error('MTO deposit session %s missing metadata',
+                          session.get('id'))
+            return
+        partner = request.env['res.partner'].sudo().browse(int(partner_id))
+        listing = request.env['product.template'].sudo().browse(int(listing_id))
+        values = {
+            'name': metadata.get('name'),
+            'phone': metadata.get('phone'),
+            'street': metadata.get('street'),
+            'city': metadata.get('city'),
+            'zip': metadata.get('zip') or False,
+            'courier_id': metadata.get('courier_id') or False,
+            'payment_method': 'card',
+        }
+        try:
+            order = request.env['marketplace.cart.item'].sudo().mto_request(
+                partner, listing, values)
+            order.mto_deposit_stripe_intent = session.get('payment_intent')
+            order.action_mto_confirm_deposit_paid()
+            _logger.info('MTO deposit session %s fulfilled: order %s',
+                        session.get('id'), order.name)
+        except Exception:
+            _logger.exception('Failed to fulfil MTO deposit session %s',
+                              session.get('id'))
+
+    def _fulfill_mto_balance(self, session, metadata):
+        order_id = metadata.get('mto_order_id')
+        if not order_id:
+            _logger.error('MTO balance session %s missing order id',
+                          session.get('id'))
+            return
+        order = request.env['sale.order'].sudo().browse(int(order_id))
+        if not order.exists() or order.mto_balance_paid:
+            return
+        try:
+            order.mto_balance_stripe_intent = session.get('payment_intent')
+            order.action_mto_confirm_balance_paid()
+            _logger.info('MTO balance session %s fulfilled: order %s',
+                        session.get('id'), order.name)
+        except Exception:
+            _logger.exception('Failed to fulfil MTO balance session %s',
                               session.get('id'))

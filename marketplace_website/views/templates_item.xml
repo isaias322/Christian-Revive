@@ -82,8 +82,20 @@
                             <a t-if="not is_logged" t-attf-href="/web/login?redirect=/market/item/#{listing.id}"
                                class="btn btn-outline-dark d-block mb-3">Log in to message the seller</a>
                         </t>
-                        <div t-if="listing.listing_state == 'sold'" class="alert alert-dark">This item has been sold.</div>
-                        <div t-if="listing.listing_state == 'reserved'" class="alert alert-secondary">This item is reserved in another buyer's order.</div>
+                        <div t-if="listing.listing_state == 'sold' and not listing.is_mto_available" class="alert alert-dark">This item has been sold.</div>
+                        <div t-if="listing.listing_state == 'reserved' and not listing.is_mto_available" class="alert alert-secondary">This item is reserved in another buyer's order.</div>
+                        <div t-if="listing.is_mto_available and not is_own" class="card p-3 mb-3 mk-mto-card">
+                            <h6 class="fw-bold mb-1"><i class="fa fa-magic me-1"/>Available Made-to-Order</h6>
+                            <p class="small text-muted mb-2">
+                                This item is sold out, but the seller can make you a new
+                                one. Pay a deposit now to start production; the rest is
+                                billed once it's ready to ship.
+                            </p>
+                            <p t-if="listing.mto_description" class="small mb-2" t-out="listing.mto_description"/>
+                            <a t-attf-href="/market/item/#{listing.id}/mto" class="btn mk-btn">
+                                Order Made-to-Order
+                            </a>
+                        </div>
                         <div t-if="is_own" class="alert alert-info">
                             This is your listing.
                             <a t-attf-href="/market/dashboard/listings/#{listing.id}/edit">Edit it here</a>.
@@ -173,6 +185,139 @@
                         </t>
                     </div>
                 </t>
+            </div>
+        </t>
+    </template>
+
+    <!-- ============================================================ -->
+    <!-- Made-to-order request                                        -->
+    <!-- ============================================================ -->
+    <template id="market_mto_request" name="Order Made-to-Order">
+        <t t-call="website.layout">
+            <t t-call="marketplace_website.mk_navbar"/>
+            <div class="container py-4" style="max-width: 960px;">
+                <h4 class="mb-1">Order Made-to-Order</h4>
+                <p class="text-muted"><t t-out="listing.name"/></p>
+                <t t-call="marketplace_website.mk_alert"/>
+                <div class="alert alert-info small">
+                    <i class="fa fa-info-circle me-1"/>
+                    This item will be specially made for you. You pay
+                    <t t-out="'%.0f' % deposit_pct"/>% now as a deposit to start
+                    production; the remaining balance is billed once the
+                    seller marks it ready to ship.
+                </div>
+                <form t-attf-action="/market/item/#{listing.id}/mto-request" method="post">
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                    <div class="row g-4">
+                        <div class="col-lg-7">
+                            <div class="card p-4 mb-3">
+                                <h6 class="fw-bold mb-3">Delivery details</h6>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Full name *</label>
+                                        <input type="text" name="name" class="form-control" required="required"
+                                               t-att-value="mk_partner.name"/>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Phone *</label>
+                                        <input type="tel" name="phone" class="form-control mk-phone-input" required="required"
+                                               pattern="[0-9+\-\s()]+" title="Numbers only"
+                                               t-att-value="mk_partner.phone or ''"/>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Street address *</label>
+                                    <input type="text" name="street" class="form-control" required="required"
+                                           t-att-value="mk_partner.street or ''"/>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-8 mb-3">
+                                        <label class="form-label">City *</label>
+                                        <input type="text" name="city" class="form-control" required="required"
+                                               t-att-value="mk_partner.city or ''"/>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label class="form-label">Postal code</label>
+                                        <input type="text" name="zip" class="form-control"
+                                               t-att-value="mk_partner.zip or ''"/>
+                                    </div>
+                                </div>
+                                <div class="mb-2">
+                                    <label class="form-label">Courier</label>
+                                    <select name="courier_id" class="form-select">
+                                        <t t-foreach="couriers" t-as="courier">
+                                            <option t-att-value="courier.id">
+                                                <t t-out="courier.name"/> — <t t-out="'%.0f' % courier.flat_rate"/>
+                                            </option>
+                                        </t>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="card p-4">
+                                <h6 class="fw-bold mb-3">Payment method (deposit)</h6>
+                                <div class="form-check mb-2" t-if="stripe_configured">
+                                    <input class="form-check-input" type="radio" name="payment_method"
+                                           value="card" id="pmMtoCard" checked="checked"/>
+                                    <label class="form-check-label" for="pmMtoCard">
+                                        <strong>Card</strong>
+                                        <div class="small text-muted">Pay the deposit securely via card.</div>
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="radio" name="payment_method"
+                                           value="jazzcash" id="pmMtoJazz"
+                                           t-att-checked="not stripe_configured and 'checked' or None"/>
+                                    <label class="form-check-label" for="pmMtoJazz">
+                                        <strong>JazzCash</strong>
+                                        <div class="small text-muted">Instructions sent after ordering.</div>
+                                    </label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="radio" name="payment_method"
+                                           value="easypaisa" id="pmMtoEasy"/>
+                                    <label class="form-check-label" for="pmMtoEasy">
+                                        <strong>EasyPaisa</strong>
+                                        <div class="small text-muted">Instructions sent after ordering.</div>
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="payment_method"
+                                           value="bank" id="pmMtoBank"/>
+                                    <label class="form-check-label" for="pmMtoBank">
+                                        <strong>Bank transfer</strong>
+                                        <div class="small text-muted">Transfer to the platform account; production starts after confirmation.</div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-5">
+                            <div class="card p-4">
+                                <h6 class="fw-bold mb-3">Order summary</h6>
+                                <div class="d-flex justify-content-between small mb-1">
+                                    <span class="text-truncate me-2" t-out="listing.name"/>
+                                    <span><t t-out="'%.0f' % listing.list_price"/></span>
+                                </div>
+                                <hr/>
+                                <div class="d-flex justify-content-between">
+                                    <span>Estimated total</span><span t-out="'%.0f' % order_total"/>
+                                </div>
+                                <div class="d-flex justify-content-between fw-bold fs-5">
+                                    <span>Deposit due now</span>
+                                    <span t-out="'%.0f' % deposit_amount"/>
+                                </div>
+                                <div class="d-flex justify-content-between text-muted small">
+                                    <span>Balance (billed later)</span>
+                                    <span t-out="'%.0f' % (order_total - deposit_amount)"/>
+                                </div>
+                                <div class="small text-muted mt-2 mb-3">
+                                    <i class="fa fa-shield me-1"/>Your deposit is held until
+                                    delivery is confirmed, same as any other order.
+                                </div>
+                                <button type="submit" class="btn mk-btn btn-lg w-100">Pay Deposit &amp; Order</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
             </div>
         </t>
     </template>

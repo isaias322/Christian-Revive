@@ -13,6 +13,10 @@ class ResPartner(models.Model):
     marketplace_followed_shop_ids = fields.Many2many(
         'marketplace.seller', 'marketplace_seller_follower_rel',
         'partner_id', 'seller_id', string='Followed Shops')
+    marketplace_email_verified = fields.Boolean(
+        string='Marketplace Email Verified', default=False,
+        help='Confirmed via the verification link sent when this partner '
+             'registered through the marketplace app.')
 
     def get_marketplace_seller(self):
         """Return this partner's shop (or empty recordset)."""

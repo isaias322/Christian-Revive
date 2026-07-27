@@ -1,6 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <!-- ============================================================ -->
+    <!-- Email verification                                           -->
+    <!-- ============================================================ -->
+    <template id="market_verify_email" name="Verify Email">
+        <t t-call="website.layout">
+            <t t-call="marketplace_website.mk_navbar"/>
+            <div class="container py-5 text-center" style="max-width: 560px;">
+                <t t-if="verified">
+                    <i class="fa fa-check-circle fa-4x text-success mb-3"/>
+                    <h3>Email verified!</h3>
+                    <p class="text-muted">Your account is all set.</p>
+                    <a href="/market" class="btn mk-btn mt-3">Go to Marketplace</a>
+                </t>
+                <t t-else="">
+                    <i class="fa fa-exclamation-circle fa-4x text-danger mb-3"/>
+                    <h3>Link invalid or expired</h3>
+                    <p class="text-muted">
+                        This verification link has already been used or has
+                        expired. Request a new one from the app's profile
+                        screen.
+                    </p>
+                    <a href="/market" class="btn btn-outline-dark mt-3">Go to Marketplace</a>
+                </t>
+            </div>
+        </t>
+    </template>
+
+    <!-- ============================================================ -->
     <!-- Buyer orders list                                            -->
     <!-- ============================================================ -->
     <template id="market_orders" name="My Orders">

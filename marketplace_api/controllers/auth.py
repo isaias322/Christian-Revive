@@ -62,10 +62,34 @@ class MarketplaceApiAuth(http.Controller):
                 status=500, error_code='server_error')
         token = request.env['marketplace.api.token'].issue(
             user, body.get('device_name'))
+        try:
+            request.env['marketplace.email.verification'].sudo().send_verification_email(
+                user.partner_id, request.httprequest.url_root)
+        except Exception:
+            _logger.exception(
+                'Failed to send verification email to %s', email)
         return json_response({
             'token': token.token,
             'user': self._serialize_user(user),
         }, status=201)
+
+    @http.route(API + '/auth/resend-verification', type='http', auth='public',
+                methods=['POST'], csrf=False)
+    @api_endpoint(auth_required=True)
+    def resend_verification(self, api_user=None, **kw):
+        partner = api_user.partner_id
+        if partner.marketplace_email_verified:
+            return json_response({'already_verified': True})
+        try:
+            request.env['marketplace.email.verification'].sudo().send_verification_email(
+                partner, request.httprequest.url_root)
+        except Exception:
+            _logger.exception(
+                'Failed to resend verification email to %s', partner.email)
+            return json_response(
+                error='Could not send the email right now — try again '
+                      'shortly.', status=500, error_code='server_error')
+        return json_response({'sent': True})
 
     @http.route(API + '/auth/login', type='http', auth='public',
                 methods=['POST'], csrf=False)
@@ -146,4 +170,5 @@ class MarketplaceApiAuth(http.Controller):
             'has_shop': bool(seller),
             'shop_id': seller.id or None,
             'shop_state': seller.state if seller else None,
+            'email_verified': partner.marketplace_email_verified,
         }

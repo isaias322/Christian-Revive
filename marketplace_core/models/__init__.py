@@ -11,5 +11,6 @@ from . import dispute
 from . import messaging
 from . import payout
 from . import res_partner
+from . import email_verification
 from . import res_config_settings
 from . import website

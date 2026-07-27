@@ -150,6 +150,17 @@ class MarketplaceMain(http.Controller):
             'favorite': state, 'count': listing.favorite_count})
 
     # ==================================================================
+    # Email verification
+    # ==================================================================
+    @http.route('/market/verify-email', type='http', auth='public',
+                website=True, sitemap=False)
+    def market_verify_email(self, token=None, **kw):
+        partner = request.env['marketplace.email.verification'].sudo().verify(token)
+        values = self._base_values()
+        values['verified'] = bool(partner)
+        return request.render('marketplace_website.market_verify_email', values)
+
+    # ==================================================================
     # Made-to-order
     # ==================================================================
     @http.route('/market/item/<int:listing_id>/mto', type='http',

@@ -64,10 +64,24 @@ class MarketplaceEmailVerification(models.Model):
         self.env['mail.mail'].sudo().create({
             'subject': _('Verify your email for Bazaar Marketplace'),
             'body_html': body,
+            'email_from': self._default_email_from(),
             'email_to': partner.email,
             'auto_delete': True,
         }).send()
         return token
+
+    def _default_email_from(self):
+        """Providers like Gmail's SMTP relay silently reject mail whose
+        From address doesn't match the authenticated account, so a blank
+        or arbitrary From (mail.mail's default when none is given) fails
+        delivery outright rather than erroring loudly. Use whatever
+        account the configured outgoing mail server actually
+        authenticates as, falling back to the company email."""
+        mail_server = self.env['ir.mail_server'].sudo().search(
+            [], limit=1, order='sequence')
+        if mail_server and mail_server.smtp_user:
+            return mail_server.smtp_user
+        return self.env.company.email or False
 
     @api.model
     def verify(self, token_str):

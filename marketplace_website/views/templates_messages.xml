@@ -72,6 +72,8 @@
                         <t t-foreach="thread.message_ids" t-as="msg">
                             <div t-attf-class="mk-msg #{msg.author_partner_id == mk_partner and 'mine' or ''}">
                                 <div class="mk-msg-bubble">
+                                    <img t-if="msg.image" t-attf-src="/market/chat-image/#{msg.id}"
+                                         class="mk-msg-photo" alt="photo"/>
                                     <t t-out="msg.body"/>
                                 </div>
                                 <div class="mk-msg-meta small text-muted">

@@ -642,6 +642,14 @@
     border-radius: 14px 14px 3px 14px;
     border-color: var(--mk-primary);
 }
+.mk-msg-photo {
+    display: block;
+    max-width: 220px;
+    max-height: 220px;
+    border-radius: 10px;
+    margin-bottom: 6px;
+    cursor: pointer;
+}
 .mk-thread-row { transition: background .15s ease; }
 .mk-thread-row:hover { background: var(--mk-surface-soft); }
 

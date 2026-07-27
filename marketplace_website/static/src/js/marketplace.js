@@ -167,8 +167,12 @@
                             lastId = m.id;
                             var wrap = document.createElement('div');
                             wrap.className = 'mk-msg' + (m.mine ? ' mine' : '');
+                            var photoHtml = m.image_url
+                                ? '<img src="' + escapeHtml(m.image_url) + '" class="mk-msg-photo" alt="photo"/>'
+                                : '';
                             wrap.innerHTML =
-                                '<div class="mk-msg-bubble">' + escapeHtml(m.body) + '</div>' +
+                                '<div class="mk-msg-bubble">' + photoHtml +
+                                escapeHtml(m.body) + '</div>' +
                                 '<div class="mk-msg-meta small text-muted">' +
                                 escapeHtml(m.author) + '</div>';
                             chatBox.appendChild(wrap);

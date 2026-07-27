@@ -359,14 +359,21 @@ class MarketplaceApiBase(http.Controller):
 
     @http.route(API + '/chat-image/<int:message_id>', type='http',
                 auth='public', methods=['GET'], csrf=False)
-    def api_chat_image(self, message_id, **kw):
+    def api_chat_image(self, message_id, token=None, **kw):
         """Serve a photo attached to a chat message (e.g. a made-to-order
-        progress update) — only to the two participants of that thread."""
+        progress update) — only to the two participants of that thread.
+        Accepts the token as a query param too (not just the Authorization
+        header), since this URL is meant to be dropped straight into an
+        <img src>, which can't attach custom headers."""
         message = request.env['marketplace.thread.message'].sudo().browse(
             message_id)
         if not message.exists() or not message.image:
             return request.not_found()
-        user = get_auth_user()
+        header = request.httprequest.headers.get('Authorization', '')
+        header_token = (header[7:].strip()
+                        if header.lower().startswith('bearer ') else '')
+        user = request.env['marketplace.api.token'].sudo().resolve(
+            token or header_token)
         if not user or not message.thread_id.partner_can_access(
                 user.partner_id):
             return request.not_found()

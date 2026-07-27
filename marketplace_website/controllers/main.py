@@ -576,4 +576,21 @@ class MarketplaceMain(http.Controller):
             'author': m.author_partner_id.name,
             'mine': m.author_partner_id == self._partner(),
             'date': fields.Datetime.to_string(m.create_date),
+            'image_url': ('/market/chat-image/%s' % m.id if m.image else None),
         } for m in messages])
+
+    @http.route('/market/chat-image/<int:message_id>', type='http',
+                auth='user', website=True, sitemap=False)
+    def market_chat_image(self, message_id, **kw):
+        message = request.env['marketplace.thread.message'].sudo().browse(
+            message_id)
+        if not message.exists() or not message.image \
+                or not message.thread_id.partner_can_access(self._partner()):
+            raise request.not_found()
+        return request.make_response(
+            base64.b64decode(message.image),
+            headers=[
+                ('Content-Type', 'image/jpeg'),
+                ('Content-Disposition',
+                 'inline; filename="%s"' % (message.image_filename or 'photo.jpg')),
+            ])

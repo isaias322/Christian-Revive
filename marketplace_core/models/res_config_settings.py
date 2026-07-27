@@ -64,7 +64,7 @@ class ResConfigSettings(models.TransientModel):
         help='Firebase project ID (Project Settings → General). '
              'Push notifications are disabled until this and the service '
              'account key below are both set.')
-    marketplace_fcm_service_account_json = fields.Text(
+    marketplace_fcm_service_account_json = fields.Char(
         string='Firebase Service Account JSON',
         config_parameter='marketplace_core.fcm_service_account_json',
         groups='marketplace_core.group_marketplace_manager',

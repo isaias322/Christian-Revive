@@ -223,15 +223,32 @@
 /* ---------------------------------------------------------- */
 /* Shop tiles / avatars                                         */
 /* ---------------------------------------------------------- */
-.mk-shop-logo { width: 64px; height: 64px; object-fit: cover; }
+.mk-shop-logo {
+    width: 64px;
+    height: 64px;
+    object-fit: contain;
+    background: #fff;
+    padding: 4px;
+    box-sizing: border-box;
+}
 .mk-shop-logo-lg {
     width: 96px;
     height: 96px;
-    object-fit: cover;
+    object-fit: contain;
+    background: #fff;
+    padding: 6px;
+    box-sizing: border-box;
     border: 4px solid #fff;
     box-shadow: var(--mk-shadow-md);
 }
-.mk-avatar { width: 48px; height: 48px; object-fit: cover; }
+.mk-avatar {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+    background: #fff;
+    padding: 3px;
+    box-sizing: border-box;
+}
 .mk-shop-tile {
     border-radius: var(--mk-radius);
     border: 1px solid var(--mk-border);

@@ -74,6 +74,8 @@
                                 <div class="mk-msg-bubble">
                                     <img t-if="msg.image" t-attf-src="/market/chat-image/#{msg.id}"
                                          class="mk-msg-photo" alt="photo"/>
+                                    <video t-if="msg.video" t-attf-src="/market/chat-video/#{msg.id}"
+                                           class="mk-msg-photo" controls="controls"/>
                                     <t t-out="msg.body"/>
                                 </div>
                                 <div class="mk-msg-meta small text-muted">

@@ -71,8 +71,12 @@ class MarketplaceApiMessaging(http.Controller):
         image = body.get('image')
         if image and ',' in image[:64] and image.strip().startswith('data:'):
             image = image.split(',', 1)[1]
+        video = body.get('video')
+        if video and ',' in video[:64] and video.strip().startswith('data:'):
+            video = video.split(',', 1)[1]
         message = thread.post_message(
             api_user.partner_id, body.get('body') or '',
-            image=image, image_filename=body.get('image_filename'))
+            image=image, image_filename=body.get('image_filename'),
+            video=video, video_filename=body.get('video_filename'))
         return json_response(
             serialize_message(message, api_user.partner_id), status=201)

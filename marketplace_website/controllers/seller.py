@@ -400,13 +400,25 @@ class MarketplaceSeller(MarketplaceMain):
         if photo_file and photo_file.filename:
             photo_b64 = base64.b64encode(photo_file.read()).decode('ascii')
             photo_filename = photo_file.filename
+        video_file = request.httprequest.files.get('video')
+        video_b64 = None
+        video_filename = None
+        if video_file and video_file.filename:
+            video_data = video_file.read()
+            if len(video_data) > 50 * 1024 * 1024:
+                return request.redirect(
+                    '/market/dashboard/made-to-order?error=%s'
+                    % _('Video must be smaller than 50MB.'))
+            video_b64 = base64.b64encode(video_data).decode('ascii')
+            video_filename = video_file.filename
         try:
             percent = post.get('percent')
             order.action_mto_advance(
                 post.get('stage'),
                 percent=int(percent) if percent else None,
                 note=post.get('note') or None,
-                photo_b64=photo_b64, photo_filename=photo_filename)
+                photo_b64=photo_b64, photo_filename=photo_filename,
+                video_b64=video_b64, video_filename=video_filename)
         except (UserError, ValueError) as e:
             return request.redirect(
                 '/market/dashboard/made-to-order?error=%s' % str(e))

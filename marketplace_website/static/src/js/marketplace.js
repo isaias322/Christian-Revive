@@ -170,8 +170,11 @@
                             var photoHtml = m.image_url
                                 ? '<img src="' + escapeHtml(m.image_url) + '" class="mk-msg-photo" alt="photo"/>'
                                 : '';
+                            var videoHtml = m.video_url
+                                ? '<video src="' + escapeHtml(m.video_url) + '" class="mk-msg-photo" controls="controls"></video>'
+                                : '';
                             wrap.innerHTML =
-                                '<div class="mk-msg-bubble">' + photoHtml +
+                                '<div class="mk-msg-bubble">' + photoHtml + videoHtml +
                                 escapeHtml(m.body) + '</div>' +
                                 '<div class="mk-msg-meta small text-muted">' +
                                 escapeHtml(m.author) + '</div>';

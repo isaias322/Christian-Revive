@@ -361,9 +361,13 @@ class MarketplaceApiShops(http.Controller):
         photo = body.get('photo')
         if photo and ',' in photo[:64] and photo.strip().startswith('data:'):
             photo = photo.split(',', 1)[1]
+        video = body.get('video')
+        if video and ',' in video[:64] and video.strip().startswith('data:'):
+            video = video.split(',', 1)[1]
         order.action_mto_advance(
             stage, percent=body.get('percent'), note=body.get('note'),
-            photo_b64=photo, photo_filename=body.get('photo_filename'))
+            photo_b64=photo, photo_filename=body.get('photo_filename'),
+            video_b64=video, video_filename=body.get('video_filename'))
         return json_response(serialize_order(order, role='seller'))
 
     @http.route(API + '/shops/me/orders/<int:order_id>/mto/request-balance',

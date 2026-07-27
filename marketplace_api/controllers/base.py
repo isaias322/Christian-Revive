@@ -275,6 +275,8 @@ def serialize_message(message, partner):
         'created_at': dt(message.create_date),
         'image_url': ('/api/v1/chat-image/%s' % message.id
                       if message.image else None),
+        'video_url': ('/api/v1/chat-video/%s' % message.id
+                      if message.video else None),
     }
 
 
@@ -383,4 +385,29 @@ class MarketplaceApiBase(http.Controller):
                 ('Content-Type', 'image/jpeg'),
                 ('Content-Disposition',
                  'inline; filename="%s"' % (message.image_filename or 'photo.jpg')),
+            ])
+
+    @http.route(API + '/chat-video/<int:message_id>', type='http',
+                auth='public', methods=['GET'], csrf=False)
+    def api_chat_video(self, message_id, token=None, **kw):
+        """Serve a video attached to a chat message - same access rule
+        and query-param token fallback as api_chat_image."""
+        message = request.env['marketplace.thread.message'].sudo().browse(
+            message_id)
+        if not message.exists() or not message.video:
+            return request.not_found()
+        header = request.httprequest.headers.get('Authorization', '')
+        header_token = (header[7:].strip()
+                        if header.lower().startswith('bearer ') else '')
+        user = request.env['marketplace.api.token'].sudo().resolve(
+            token or header_token)
+        if not user or not message.thread_id.partner_can_access(
+                user.partner_id):
+            return request.not_found()
+        return request.make_response(
+            base64.b64decode(message.video),
+            headers=[
+                ('Content-Type', 'video/mp4'),
+                ('Content-Disposition',
+                 'inline; filename="%s"' % (message.video_filename or 'video.mp4')),
             ])

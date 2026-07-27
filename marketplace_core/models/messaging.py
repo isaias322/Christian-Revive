@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from odoo import api, fields, models, _
-from odoo.exceptions import UserError
+from odoo.exceptions import UserError, ValidationError
 
 
 class MarketplaceThread(models.Model):
@@ -56,7 +56,8 @@ class MarketplaceThread(models.Model):
             })
         return thread
 
-    def post_message(self, author_partner, body, image=None, image_filename=None):
+    def post_message(self, author_partner, body, image=None, image_filename=None,
+                     video=None, video_filename=None):
         self.ensure_one()
         body = (body or '').strip()
         if not body:
@@ -72,6 +73,9 @@ class MarketplaceThread(models.Model):
         if image:
             vals['image'] = image
             vals['image_filename'] = image_filename or 'photo.jpg'
+        if video:
+            vals['video'] = video
+            vals['video_filename'] = video_filename or 'video.mp4'
         message = self.env['marketplace.thread.message'].sudo().create(vals)
         self.sudo().last_message_date = fields.Datetime.now()
         return message
@@ -104,4 +108,23 @@ class MarketplaceThreadMessage(models.Model):
     body = fields.Text(required=True)
     image = fields.Binary(attachment=True)
     image_filename = fields.Char()
+    video = fields.Binary(attachment=True)
+    video_filename = fields.Char()
     is_read = fields.Boolean(default=False)
+
+    @api.constrains('video', 'video_filename')
+    def _check_video(self):
+        max_bytes = 50 * 1024 * 1024  # 50MB
+        allowed_ext = ('.mp4', '.mov', '.webm', '.avi', '.mkv', '.m4v')
+        for msg in self:
+            if not msg.video:
+                continue
+            approx_bytes = len(msg.video) * 3 / 4
+            if approx_bytes > max_bytes:
+                raise ValidationError(_(
+                    'Video must be smaller than 50MB.'))
+            name = (msg.video_filename or '').lower()
+            if name and not name.endswith(allowed_ext):
+                raise ValidationError(_(
+                    'Video must be a common video format '
+                    '(MP4, MOV, WebM, AVI, MKV).'))

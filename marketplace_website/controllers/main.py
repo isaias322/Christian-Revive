@@ -577,6 +577,7 @@ class MarketplaceMain(http.Controller):
             'mine': m.author_partner_id == self._partner(),
             'date': fields.Datetime.to_string(m.create_date),
             'image_url': ('/market/chat-image/%s' % m.id if m.image else None),
+            'video_url': ('/market/chat-video/%s' % m.id if m.video else None),
         } for m in messages])
 
     @http.route('/market/chat-image/<int:message_id>', type='http',
@@ -593,4 +594,20 @@ class MarketplaceMain(http.Controller):
                 ('Content-Type', 'image/jpeg'),
                 ('Content-Disposition',
                  'inline; filename="%s"' % (message.image_filename or 'photo.jpg')),
+            ])
+
+    @http.route('/market/chat-video/<int:message_id>', type='http',
+                auth='user', website=True, sitemap=False)
+    def market_chat_video(self, message_id, **kw):
+        message = request.env['marketplace.thread.message'].sudo().browse(
+            message_id)
+        if not message.exists() or not message.video \
+                or not message.thread_id.partner_can_access(self._partner()):
+            raise request.not_found()
+        return request.make_response(
+            base64.b64decode(message.video),
+            headers=[
+                ('Content-Type', 'video/mp4'),
+                ('Content-Disposition',
+                 'inline; filename="%s"' % (message.video_filename or 'video.mp4')),
             ])

@@ -508,11 +508,14 @@
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label small mb-0">Photo</label>
-                                <input type="file" name="photo" class="form-control form-control-sm" accept="image/*"/>
+                                <input type="file" name="photo" class="form-control form-control-sm"
+                                       accept="image/*" capture="environment"/>
+                                <div class="form-text">On a phone, this opens your camera to take one now (or pick an existing photo).</div>
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label small mb-0">Video (optional)</label>
-                                <input type="file" name="video" class="form-control form-control-sm" accept="video/*"/>
+                                <input type="file" name="video" class="form-control form-control-sm"
+                                       accept="video/*" capture="environment"/>
                             </div>
                             <div class="col-md-4">
                                 <button class="btn btn-sm mk-btn w-100">Update</button>

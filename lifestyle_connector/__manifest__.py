@@ -37,6 +37,7 @@
         'data/restore_shop_menu.xml',
         'data/website_categories_data.xml',
         'views/stock_notification_views.xml',
+        'data/sale_order_brand_backfill_data.xml',
     ],
     'assets': {
         'web._assets_primary_variables': [

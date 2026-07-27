@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Re-applies on every module upgrade (no noupdate="1"). Backfills
+         Storefront Brand on marketplace orders created before rl_brand had
+         a 'market' option - see SaleOrder._rl_backfill_marketplace_brand. -->
+    <function model="sale.order" name="_rl_backfill_marketplace_brand" eval="[]"/>
+</odoo>

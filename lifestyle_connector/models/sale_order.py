@@ -169,11 +169,34 @@ class SaleOrder(models.Model):
         return f'{names[0]}, {names[1]} and {len(names) - 2} more'
 
     rl_brand = fields.Selection(
-        [('lifestyle', 'Revive Lifestyle'), ('cr', 'Christian Revive')],
+        [('lifestyle', 'Revive Lifestyle'), ('cr', 'Christian Revive'), ('market', 'Revive Marketplace')],
         string='Storefront Brand', copy=False,
         help='Which storefront/app this order was placed from. Drives the '
              'branding (logo, colors, wording) of the order\'s portal page.',
     )
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        # Marketplace orders never go through _cart_add (they have their own
+        # cart/checkout models), so they'd otherwise land here with rl_brand
+        # blank - is_marketplace_order is set in the same create() call by
+        # marketplace_core, so stamp from that instead.
+        for vals in vals_list:
+            if vals.get('is_marketplace_order') and not vals.get('rl_brand'):
+                vals['rl_brand'] = 'market'
+        return super().create(vals_list)
+
+    @api.model
+    def _rl_backfill_marketplace_brand(self):
+        """One-time backfill (safe to rerun on every upgrade): marketplace
+        orders created before rl_brand had a 'market' option are stuck
+        blank in the Storefront Brand column instead of showing where they
+        came from."""
+        if 'is_marketplace_order' not in self._fields:
+            return
+        orders = self.sudo().search([('is_marketplace_order', '=', True), ('rl_brand', '=', False)])
+        if orders:
+            orders.write({'rl_brand': 'market'})
 
     def _rl_portal_brand(self):
         """Brand to use for this order's customer-facing pages: the order's
@@ -183,8 +206,8 @@ class SaleOrder(models.Model):
             return self.rl_brand
         try:
             from odoo.http import request as _req
-            if _req and _req.session.get('rl_web_brand') == 'cr':
-                return 'cr'
+            if _req and _req.session.get('rl_web_brand') in ('cr', 'market'):
+                return _req.session.get('rl_web_brand')
         except Exception:
             pass
         return 'lifestyle'

@@ -71,14 +71,18 @@ class MarketplaceEmailVerification(models.Model):
 
     @api.model
     def verify(self, token_str):
-        """Marks the partner verified if the token is valid and unused.
-        Returns the partner record on success, an empty recordset
-        otherwise."""
+        """Marks the partner verified and activates their (pending, until
+        now inactive) account if the token is valid and unused. Returns
+        the partner record on success, an empty recordset otherwise."""
         if not token_str:
             return self.env['res.partner']
         record = self.sudo().search([('token', '=', token_str)], limit=1)
         if not record or record.used or record.expires_at < fields.Datetime.now():
             return self.env['res.partner']
         record.used = True
-        record.partner_id.marketplace_email_verified = True
-        return record.partner_id
+        partner = record.partner_id
+        partner.marketplace_email_verified = True
+        users = self.env['res.users'].sudo().with_context(
+            active_test=False).search([('partner_id', '=', partner.id)])
+        users.write({'active': True})
+        return partner

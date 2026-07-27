@@ -142,6 +142,10 @@ class MarketplaceApiAuth(http.Controller):
         header = request.httprequest.headers.get('Authorization', '')
         token = header[7:].strip() if header.lower().startswith('bearer ') else ''
         request.env['marketplace.api.token'].revoke(token)
+        body = get_json_body()
+        device_token = (body.get('device_token') or '').strip()
+        if device_token:
+            request.env['marketplace.device.token'].sudo().unregister(device_token)
         return json_response({'logged_out': True})
 
     @http.route(API + '/me', type='http', auth='public',

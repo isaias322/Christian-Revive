@@ -263,6 +263,10 @@ class SaleOrder(models.Model):
                 continue
             if order.marketplace_delivery_state != 'pending':
                 raise UserError(_('Order %s is already shipped.') % order.name)
+            if order.is_mto_order and not order.mto_balance_paid:
+                raise UserError(_(
+                    'Order %s is made-to-order and cannot ship until it is '
+                    'marked ready and the balance is paid.') % order.name)
             vals = {
                 'marketplace_delivery_state': 'shipped',
                 'shipped_date': fields.Datetime.now(),

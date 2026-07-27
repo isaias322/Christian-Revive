@@ -170,7 +170,7 @@
 
                 <!-- Actions -->
                 <div class="d-flex gap-2 flex-wrap mb-4">
-                    <form t-if="order.escrow_state == 'held' and order.marketplace_delivery_state in ('shipped', 'delivered') and not order.buyer_confirmed_delivery"
+                    <form t-if="order.escrow_state == 'held' and order.marketplace_delivery_state in ('shipped', 'delivered') and not order.buyer_confirmed_delivery and (not order.is_mto_order or order.mto_balance_paid)"
                           t-attf-action="/market/order/#{order.id}/confirm-delivery" method="post">
                         <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                         <button type="submit" class="btn btn-success"

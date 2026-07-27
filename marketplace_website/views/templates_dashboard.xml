@@ -578,7 +578,15 @@
                         </div>
                     </t>
                 </div>
-                <form t-if="order.marketplace_delivery_state == 'pending'"
+                <div t-if="order.is_mto_order and order.marketplace_delivery_state == 'pending' and order.mto_stage != 'completed'"
+                     class="alert alert-warning small mt-3 mb-0">
+                    <i class="fa fa-magic me-1"/>
+                    Made-to-order — <t t-out="dict(order._fields['mto_stage'].selection).get(order.mto_stage)"/>
+                    (<t t-out="order.mto_progress_percent"/>%). Not ready to ship yet
+                    — manage progress in the
+                    <a href="/market/dashboard/made-to-order">Made-to-Order tab</a>.
+                </div>
+                <form t-if="order.marketplace_delivery_state == 'pending' and (not order.is_mto_order or order.mto_stage == 'completed')"
                       t-attf-action="/market/dashboard/orders/#{order.id}/ship"
                       method="post" class="d-flex gap-2 mt-3 flex-wrap align-items-end">
                     <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>

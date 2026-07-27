@@ -30,6 +30,9 @@
                     <a href="/market/orders" class="mk-nav-link" title="My Orders">
                         <i class="fa fa-cube"/>
                     </a>
+                    <a href="/market/profile" class="mk-nav-link" title="My Profile">
+                        <i class="fa fa-user-circle"/>
+                    </a>
                     <a href="/market/cart" class="mk-nav-link position-relative" title="Cart">
                         <i class="fa fa-shopping-cart"/>
                         <span t-if="mk_cart_count"

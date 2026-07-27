@@ -28,6 +28,105 @@
     </template>
 
     <!-- ============================================================ -->
+    <!-- My Profile                                                   -->
+    <!-- ============================================================ -->
+    <template id="market_profile" name="My Profile">
+        <t t-call="website.layout">
+            <t t-call="marketplace_website.mk_navbar"/>
+            <div class="container py-4" style="max-width: 640px;">
+                <h4 class="mb-3"><i class="fa fa-user-circle me-2"/>My Profile</h4>
+                <t t-call="marketplace_website.mk_alert"/>
+
+                <div class="card p-4 mb-3">
+                    <div class="d-flex align-items-center gap-3 mb-4">
+                        <div class="mk-avatar d-flex align-items-center justify-content-center"
+                             style="width:56px;height:56px;border-radius:50%;background:var(--mk-primary,#0d9488);color:#fff;font-size:22px;font-weight:700;">
+                            <t t-out="(partner.name or '?')[0].upper()"/>
+                        </div>
+                        <div>
+                            <div class="fw-bold fs-5" t-out="partner.name"/>
+                            <div class="small text-muted">
+                                <t t-out="login"/>
+                                <span t-if="partner.marketplace_email_verified"
+                                      class="badge bg-success ms-1">Verified</span>
+                                <span t-else="" class="badge bg-warning text-dark ms-1">Not verified</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form action="/market/profile/update" method="post">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" disabled="disabled"
+                                   t-att-value="login"/>
+                            <div class="form-text">Email can't be changed here.</div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Full name</label>
+                            <input type="text" name="name" class="form-control" required="required"
+                                   t-att-value="partner.name"/>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Phone</label>
+                            <input type="tel" name="phone" class="form-control"
+                                   t-att-value="partner.phone"/>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Street address</label>
+                            <input type="text" name="street" class="form-control"
+                                   t-att-value="partner.street"/>
+                        </div>
+                        <div class="row">
+                            <div class="col-8 mb-3">
+                                <label class="form-label">City</label>
+                                <input type="text" name="city" class="form-control"
+                                       t-att-value="partner.city"/>
+                            </div>
+                            <div class="col-4 mb-3">
+                                <label class="form-label">Postal code</label>
+                                <input type="text" name="zip" class="form-control"
+                                       t-att-value="partner.zip"/>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn mk-btn">Save Changes</button>
+                    </form>
+                </div>
+
+                <div class="card p-3 mb-3">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                        <div>
+                            <div class="fw-bold">Password</div>
+                            <div class="small text-muted">Change the password you use to log in.</div>
+                        </div>
+                        <a href="/my/security" class="btn btn-outline-dark btn-sm">Change Password</a>
+                    </div>
+                </div>
+
+                <div class="card p-3 mb-3" t-if="seller">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                        <div>
+                            <div class="fw-bold">Shop</div>
+                            <div class="small text-muted" t-out="seller.name"/>
+                        </div>
+                        <a t-if="seller.state == 'approved'" href="/market/dashboard" class="btn mk-btn btn-sm">
+                            Shop Dashboard
+                        </a>
+                        <span t-else="" class="badge bg-secondary align-self-center"
+                              t-out="dict(seller._fields['state'].selection).get(seller.state)"/>
+                    </div>
+                </div>
+
+                <div class="card p-3">
+                    <a href="/web/session/logout?redirect=/market" class="text-danger text-decoration-none">
+                        <i class="fa fa-sign-out me-2"/>Log out
+                    </a>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- ============================================================ -->
     <!-- Buyer orders list                                            -->
     <!-- ============================================================ -->
     <template id="market_orders" name="My Orders">

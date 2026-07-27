@@ -451,6 +451,39 @@ class MarketplaceMain(http.Controller):
         values['orders'] = orders
         return request.render('marketplace_website.market_orders', values)
 
+    # ==================================================================
+    # Profile
+    # ==================================================================
+    @http.route('/market/profile', type='http', auth='user', website=True,
+                sitemap=False)
+    def market_profile(self, **kw):
+        partner = self._partner()
+        seller = partner.sudo().get_marketplace_seller()
+        values = self._base_values()
+        values.update({
+            'partner': partner,
+            'seller': seller,
+            'login': request.env.user.login,
+            'error': kw.get('error'),
+            'saved': kw.get('saved'),
+        })
+        return request.render('marketplace_website.market_profile', values)
+
+    @http.route('/market/profile/update', type='http', auth='user',
+                methods=['POST'], website=True)
+    def market_profile_update(self, **post):
+        partner = self._partner()
+        vals = {}
+        name = (post.get('name') or '').strip()
+        if not name:
+            return request.redirect(
+                '/market/profile?error=Full name is required.')
+        vals['name'] = name
+        for field in ('phone', 'street', 'city', 'zip'):
+            vals[field] = (post.get(field) or '').strip() or False
+        partner.sudo().write(vals)
+        return request.redirect('/market/profile?saved=1')
+
     def _buyer_order_or_404(self, order_id):
         order = request.env['sale.order'].sudo().browse(order_id)
         if not order.exists() or not order.is_marketplace_order or \

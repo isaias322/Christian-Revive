@@ -57,9 +57,12 @@
     <template id="listing_card" name="Listing Card">
         <div class="mk-card card h-100 position-relative">
             <a t-attf-href="/market/item/#{listing.id}" class="text-decoration-none">
-                <div class="mk-card-img-wrap">
-                    <img t-attf-src="/web/image/product.template/#{listing.id}/image_512"
+                <div t-attf-class="mk-card-img-wrap #{'' if listing.image_1920 else 'mk-loaded'}">
+                    <img t-if="listing.image_1920" t-attf-src="/web/image/product.template/#{listing.id}/image_512"
                          class="mk-card-img" t-att-alt="listing.name" loading="lazy"/>
+                    <div t-else="" class="mk-card-img-placeholder">
+                        <i class="fa fa-picture-o"/>
+                    </div>
                     <span t-if="listing.is_bumped" class="badge mk-badge-bump">Promoted</span>
                     <span t-if="listing.is_mto_available" class="badge bg-warning text-dark mk-badge-sold">
                         <i class="fa fa-magic"/> Made-to-Order
@@ -87,6 +90,10 @@
                     <t t-if="listing.marketplace_brand_id" t-out="listing.marketplace_brand_id.name"/>
                     <t t-if="listing.marketplace_size_id"> · <t t-out="listing.marketplace_size_id.name"/></t>
                     <t t-if="listing.condition"> · <t t-out="dict(listing._fields['condition'].selection).get(listing.condition)"/></t>
+                </div>
+                <div t-if="listing.marketplace_seller_id" class="mk-card-seller text-truncate">
+                    <img t-attf-src="/web/image/marketplace.seller/#{listing.marketplace_seller_id.id}/logo/64x64" alt="seller"/>
+                    <span t-out="listing.marketplace_seller_id.name"/>
                 </div>
             </div>
         </div>
@@ -144,10 +151,21 @@
         <xpath expr="//head" position="inside">
             <t t-if="request and (request.httprequest.path.startswith('/market') or (request.website and request.website.domain and 'revivemarketplace' in request.website.domain.lower()))">
                 <style>
-                    body { color: var(--mk-ink); }
+                    body { color: var(--mk-ink); font-family: var(--mk-font-body); }
                     html { scroll-behavior: smooth; }
-                    h1, h2, h3, h4, h5 { letter-spacing: -.015em; }
-                    .btn-outline-dark { border-radius: 10px; font-weight: 600; }
+                    h1, h2, h3, h4, h5 { letter-spacing: -.015em; font-family: var(--mk-font-display); }
+                    .btn-outline-dark {
+                        border-radius: 10px;
+                        border-width: 1.5px;
+                        font-weight: 600;
+                        transition: background .15s ease, color .15s ease, transform .12s ease;
+                    }
+                    .btn-outline-dark:hover, .btn-outline-dark:focus {
+                        background: var(--mk-ink);
+                        border-color: var(--mk-ink);
+                        color: #fff;
+                    }
+                    .btn-outline-dark:active { transform: translateY(1px); }
                     .btn.btn-sm { border-radius: 8px; }
                     .card { border-radius: var(--mk-radius); }
                     .card table.table tbody tr { transition: background .15s ease; }

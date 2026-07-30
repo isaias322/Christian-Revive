@@ -6,13 +6,19 @@
     <template id="market_home" name="Marketplace Home">
         <t t-call="website.layout">
             <t t-call="marketplace_website.mk_navbar"/>
-            <div class="mk-hero py-5 text-center">
+            <div class="mk-hero text-center">
                 <div class="container">
-                    <h1 class="display-5 fw-bold">Buy &amp; sell pre-loved fashion</h1>
+                    <span class="mk-hero-eyebrow"><i class="fa fa-leaf"/> Pakistan's resale marketplace</span>
+                    <h1 class="display-5">Buy &amp; sell <em>pre-loved</em> fashion</h1>
                     <p class="lead mb-4">Zero seller fees. Buyer protection on every order. From Instagram shop to real shop in minutes.</p>
-                    <div class="d-flex gap-2 justify-content-center">
+                    <div class="d-flex gap-2 justify-content-center flex-wrap">
                         <a href="/market/search" class="btn mk-btn btn-lg">Start Shopping</a>
                         <a href="/market/sell" class="btn btn-outline-dark btn-lg">Start Selling</a>
+                    </div>
+                    <div class="mk-hero-trust d-flex justify-content-center gap-4 flex-wrap mt-4">
+                        <span><i class="fa fa-shield"/>Escrow-protected</span>
+                        <span><i class="fa fa-bolt"/>Zero seller fees</span>
+                        <span><i class="fa fa-check-circle"/>Verified sellers</span>
                     </div>
                 </div>
             </div>
@@ -79,19 +85,19 @@
                     </div>
                 </t>
 
-                <div class="mk-trust row text-center py-4 g-3">
+                <div class="mk-trust row text-center g-3">
                     <div class="col-md-4">
-                        <i class="fa fa-shield fa-2x mb-2"/>
+                        <span class="mk-trust-icon"><i class="fa fa-shield"/></span>
                         <h6>Buyer Protection</h6>
                         <p class="small text-muted mb-0">Your money is held safely in escrow until you confirm delivery.</p>
                     </div>
                     <div class="col-md-4">
-                        <i class="fa fa-truck fa-2x mb-2"/>
+                        <span class="mk-trust-icon"><i class="fa fa-truck"/></span>
                         <h6>Integrated Shipping</h6>
                         <p class="small text-muted mb-0">Prepaid labels with TCS, Leopards, M&amp;P and BlueEx — COD supported.</p>
                     </div>
                     <div class="col-md-4">
-                        <i class="fa fa-money fa-2x mb-2"/>
+                        <span class="mk-trust-icon"><i class="fa fa-money"/></span>
                         <h6>Zero Seller Fees</h6>
                         <p class="small text-muted mb-0">List and sell for free. Get paid to your bank, JazzCash or EasyPaisa.</p>
                     </div>

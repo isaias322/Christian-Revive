@@ -39,6 +39,17 @@ class LiveStream(models.Model):
         string='Duration (minutes)',
         default=60,
     )
+    play_for_days = fields.Integer(
+        string='Play For (days)',
+        default=1,
+        help='How many days this video should stay active from the Air Date.',
+    )
+    play_until_date = fields.Date(
+        string='Play Until',
+        compute='_compute_play_until_date',
+        store=True,
+        index=True,
+    )
 
     # Stored UTC datetimes for efficient querying — indexed for cron + status filters
     air_datetime_start = fields.Datetime(
@@ -99,12 +110,6 @@ class LiveStream(models.Model):
 
     is_published = fields.Boolean(string='Published', default=True)
     is_featured  = fields.Boolean(string='Featured (Main Player)')
-
-    # When a day has no scheduled content at all, this single video plays
-    # on repeat instead of cycling through past programs. Only one stream
-    # can hold this flag at a time — enabling it here clears it everywhere
-    # else, the same way is_featured works for the main player.
-    is_loop_fallback = fields.Boolean(string='Loop Fallback')
 
     send_notification = fields.Boolean(string='Send Push Notification', default=False)
 
@@ -259,13 +264,7 @@ class LiveStream(models.Model):
                 minutes = self._fetch_file_duration_minutes(vals['video_file'])
             if minutes:
                 vals['duration'] = minutes
-        records = super().create(vals_list)
-        if any(vals.get('is_loop_fallback') for vals in vals_list):
-            # Only the most recently created loop-fallback record keeps the flag.
-            winner = records.filtered('is_loop_fallback')[-1:]
-            (self.search([('is_loop_fallback', '=', True)]) - winner).write(
-                {'is_loop_fallback': False})
-        return records
+        return super().create(vals_list)
 
     # ── Cascade: keep the back-to-back chain in sync when a record's
     # schedule changes ─────────────────────────────────────────
@@ -285,12 +284,6 @@ class LiveStream(models.Model):
         return new_date, '%02d:%02d' % (h, m)
 
     def write(self, vals):
-        # Enabling the loop fallback anywhere (header button, list toggle,
-        # API) must clear it everywhere else — only one stream may hold it.
-        if vals.get('is_loop_fallback'):
-            (self.search([('is_loop_fallback', '=', True)]) - self).write(
-                {'is_loop_fallback': False})
-
         # Only duration/air_time changes cascade to keep the lineup
         # back-to-back. Moving a record to a different air_date on its own
         # is a deliberate "relocate this one lesson" action and must stay
@@ -334,13 +327,16 @@ class LiveStream(models.Model):
                 cursor += (d.duration or 60)
         return res
 
-    # ── Loop fallback toggle — write() enforces that only one stream
-    # may hold the flag at a time ───────────────────────────────────
-    def action_toggle_loop_fallback(self):
-        for rec in self:
-            rec.is_loop_fallback = not rec.is_loop_fallback
-
     # ── Get server/user timezone ──────────────────────────────
+    @api.depends('air_date', 'play_for_days')
+    def _compute_play_until_date(self):
+        for rec in self:
+            if not rec.air_date:
+                rec.play_until_date = False
+                continue
+            days = max(rec.play_for_days or 1, 1)
+            rec.play_until_date = rec.air_date + timedelta(days=days - 1)
+
     def _get_tz(self):
         """Return the active timezone — user tz > system tz > Asia/Karachi."""
         tz_name = (
@@ -397,13 +393,32 @@ class LiveStream(models.Model):
                 rec.air_datetime_local = ''
 
     # ── Auto status from current UTC time ─────────────────────
-    @api.depends('air_datetime_start', 'air_datetime_end')
+    def _active_window_utc_end(self):
+        self.ensure_one()
+        if not self.air_date:
+            return False
+        try:
+            tz = self._get_tz()
+            days = max(self.play_for_days or 1, 1)
+            local_end_date = self.air_date + timedelta(days=days)
+            local_naive = datetime(
+                local_end_date.year,
+                local_end_date.month,
+                local_end_date.day,
+                0, 0, 0,
+            )
+            return tz.localize(local_naive, is_dst=None).astimezone(
+                pytz.UTC).replace(tzinfo=None)
+        except Exception:
+            return self.air_datetime_end
+
+    @api.depends('air_datetime_start', 'air_datetime_end', 'play_for_days')
     def _compute_status_auto(self):
         now_utc = datetime.utcnow()
         for rec in self:
             try:
                 start = rec.air_datetime_start
-                end   = rec.air_datetime_end
+                end   = rec._active_window_utc_end()
                 if not start or not end:
                     rec.status      = 'scheduled'
                     rec.is_live_now = False
@@ -427,7 +442,7 @@ class LiveStream(models.Model):
         now_utc = datetime.utcnow()
         for rec in records:
             start = rec.air_datetime_start
-            end   = rec.air_datetime_end
+            end   = rec._active_window_utc_end()
             if not start or not end:
                 new_status = 'scheduled'
             elif now_utc < start:

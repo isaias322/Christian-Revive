@@ -7,17 +7,6 @@
         <field name="model">crtv.live.stream</field>
         <field name="arch" type="xml">
             <form>
-                <header>
-                    <button name="action_toggle_loop_fallback" type="object"
-                            string="Set as Loop Fallback"
-                            class="btn-primary"
-                            invisible="is_loop_fallback"
-                            help="Plays this video on repeat for any day with no scheduled content"/>
-                    <button name="action_toggle_loop_fallback" type="object"
-                            string="✓ Looping When Empty — Click to Stop"
-                            class="btn-secondary"
-                            invisible="not is_loop_fallback"/>
-                </header>
                 <sheet>
                     <field name="thumbnail" widget="image" class="oe_avatar"/>
                     <div class="oe_title">
@@ -27,6 +16,8 @@
                     <group>
                         <group string="Schedule">
                             <field name="air_date"/>
+                            <field name="play_for_days"/>
+                            <field name="play_until_date" readonly="1"/>
                             <field name="air_time" placeholder="09:00"/>
                             <field name="duration"/>
                             <field name="air_datetime_local"
@@ -40,7 +31,6 @@
                             <field name="language"/>
                             <field name="is_published"/>
                             <field name="is_featured"/>
-                            <field name="is_loop_fallback" readonly="1"/>
                             <field name="send_notification"/>
                         </group>
                     </group>
@@ -71,6 +61,8 @@
                 <field name="name"/>
                 <field name="subtitle"/>
                 <field name="air_date"/>
+                <field name="play_for_days" string="Days"/>
+                <field name="play_until_date"/>
                 <field name="air_time"/>
                 <field name="air_datetime_local" string="Local Time"/>
                 <field name="duration" string="Mins"/>
@@ -79,7 +71,6 @@
                 <field name="status"/>
                 <field name="is_published" widget="boolean_toggle"/>
                 <field name="is_featured" widget="boolean_toggle"/>
-                <field name="is_loop_fallback" widget="boolean_toggle" string="Loop"/>
             </list>
         </field>
     </record>

@@ -2603,7 +2603,7 @@ footer a:hover,
 .oe_website_sale .oe_product_image,
 .oe_website_sale .o_wsale_product_grid_wrapper .card-img-top,
 .oe_website_sale .oe_product_cart .oe_product_image {
-    min-height: 230px;
+    min-height: 180px;
     overflow: hidden;
     background:
         linear-gradient(180deg, #FFFFFF 0%, #F3F1EC 100%) !important;
@@ -2613,7 +2613,7 @@ footer a:hover,
 .oe_website_sale .oe_product_cart img,
 .oe_website_sale .o_wsale_product_grid_wrapper img {
     width: 100%;
-    height: 230px;
+    height: 180px;
     object-fit: contain;
     padding: 0.65rem;
 }

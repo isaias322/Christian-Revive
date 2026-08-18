@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Re-applies on every module upgrade (no noupdate="1"). The seed
+         slides in homepage_slide_data.xml are noupdate="1" (never
+         re-applied), so this is a real function call rather than a
+         <record> edit - see
+         ReviveHomepageSlide._rl_fix_slide_copy_for_actual_catalog. -->
+    <function model="lifestyle.homepage.slide" name="_rl_fix_slide_copy_for_actual_catalog" eval="[]"/>
+</odoo>

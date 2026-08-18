@@ -18,6 +18,7 @@
         'views/homepage_section_views.xml',
         'data/homepage_slide_data.xml',
         'data/homepage_section_data.xml',
+        'data/homepage_slide_copy_fix_data.xml',
     ],
     'installable': True,
     'application': True,

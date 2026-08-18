@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from odoo import fields, models
+from odoo import api, fields, models
 
 
 class ReviveHomepageSlide(models.Model):
@@ -98,3 +98,63 @@ class ReviveHomepageSlide(models.Model):
     show_visual_card = fields.Boolean(string='Show Right Visual Card', default=True)
     show_badges = fields.Boolean(string='Show Floating Badges', default=True)
     autoplay_seconds = fields.Integer(string='Autoplay Seconds', default=5)
+
+    @api.model
+    def _rl_fix_slide_copy_for_actual_catalog(self):
+        """Re-applies on every module upgrade. The seed data (noupdate="1",
+        so it never updates itself) wrote all three hero slides as if
+        furniture were the only thing sold - the store also carries
+        cold-pressed oils and pantry staples, so every slide claimed an
+        incomplete catalog. Slide 1 becomes a combined intro, slide 2 stays
+        furniture-specific (a real feature, not a false "furniture only"
+        claim), slide 3 becomes the pantry/natural-goods slide."""
+        updates = {
+            'homepage_slide_furniture': {
+                'kicker': 'Revive Lifestyle',
+                'title': 'Furniture and natural pantry goods, made honestly',
+                'subtitle': (
+                    'Handmade furniture built to order, plus cold-pressed oils and '
+                    'healthy pantry staples - browse everything and track your order '
+                    'from first look to your door.'
+                ),
+                'primary_button_label': 'Shop All',
+                'trust_2_icon': 'fa-leaf',
+                'trust_2_text': 'Cold-pressed',
+                'card_icon': 'fa-leaf',
+                'card_title': 'Two kinds of care',
+                'card_text': (
+                    'From handcrafted furniture to cold-pressed oils - each one made '
+                    'and packed with the same attention.'
+                ),
+            },
+            'homepage_slide_updates': {
+                'kicker': 'Healthy Pantry',
+                'title': 'Cold-pressed oils and pantry staples, made naturally',
+                'subtitle': (
+                    'Small-batch cold-pressed oils, desi shakkar, and healthy pantry '
+                    'staples - simple ingredients, made the honest way.'
+                ),
+                'primary_button_label': 'Shop Pantry',
+                'secondary_button_label': 'Talk to Us',
+                'trust_1_icon': 'fa-leaf',
+                'trust_1_text': 'Cold-pressed',
+                'trust_2_icon': 'fa-check',
+                'trust_2_text': 'Small batch',
+                'trust_3_icon': 'fa-truck',
+                'trust_3_text': 'Fresh delivery',
+                'card_icon': 'fa-leaf',
+                'card_title': 'Simple, honest ingredients',
+                'card_text': (
+                    'No shortcuts - just cold-pressed oils and pantry staples made '
+                    'the way they should be.'
+                ),
+                'badge_1_value': '100%',
+                'badge_1_label': 'Natural',
+                'badge_2_icon': 'fa-leaf',
+                'badge_2_label': 'Fresh batch',
+            },
+        }
+        for xmlid, vals in updates.items():
+            slide = self.env.ref('revive_homepage_slider.%s' % xmlid, raise_if_not_found=False)
+            if slide:
+                slide.write(vals)

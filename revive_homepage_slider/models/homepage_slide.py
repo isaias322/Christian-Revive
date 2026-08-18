@@ -111,9 +111,9 @@ class ReviveHomepageSlide(models.Model):
         updates = {
             'homepage_slide_furniture': {
                 'kicker': 'Revive Lifestyle',
-                'title': 'Furniture and natural pantry goods, made honestly',
+                'title': 'Handcrafted pieces and natural pantry goods, made honestly',
                 'subtitle': (
-                    'Handmade furniture built to order, plus cold-pressed oils and '
+                    'Built-to-order pieces for your home, plus cold-pressed oils and '
                     'healthy pantry staples - browse everything and track your order '
                     'from first look to your door.'
                 ),

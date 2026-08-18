@@ -4,10 +4,18 @@
 body {
     font-family: 'Manrope', sans-serif;
     color: #2E2E2A;
+    // Slightly roomier line-height reads calmer/less "catalog-dense" -
+    // a small legibility change that suits unhurried, natural-goods copy.
+    line-height: 1.65;
 }
 
 h1, h2, h3, .h1, .h2, .h3 {
     font-family: 'Fraunces', serif;
+    letter-spacing: -0.01em;
+}
+
+p {
+    color: #4A4A44;
 }
 
 a {
@@ -17,11 +25,18 @@ a {
 .btn-primary {
     background-color: #7C9070;
     border-color: #7C9070;
+    border-radius: 999px;
+    padding-left: 1.35rem;
+    padding-right: 1.35rem;
 }
 
 .btn-primary:hover, .btn-primary:focus {
     background-color: #5C7050;
     border-color: #5C7050;
+}
+
+.btn-outline-dark {
+    border-radius: 999px;
 }
 
 .oe_product, .card, .o_wsale_product_grid_wrapper .card {
@@ -42,18 +57,25 @@ a {
     border-radius: 18px;
     overflow: hidden;
     background-color: #FFFDF9;
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
-    border: none;
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    // Warm-tinted shadow (clay, not flat black) - a small thing, but it's
+    // the difference between "photo on a screen" and "product on a shelf".
+    box-shadow: 0 6px 16px rgba(92, 71, 42, 0.09);
+    border: 1px solid rgba(92, 112, 80, 0.08);
+    transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
 }
 
 .oe_product_cart:hover {
     transform: translateY(-3px);
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 14px 30px rgba(92, 71, 42, 0.14);
+    border-color: rgba(124, 144, 112, 0.28);
 }
 
 .oe_product_image {
-    background-color: #F7F5F0;
+    // Soft radial warmth behind the product photo instead of a flat tint -
+    // like natural light falling on a shelf, not a studio backdrop.
+    background:
+        radial-gradient(120% 120% at 50% 15%, rgba(255, 253, 249, 0.9), rgba(247, 245, 240, 0) 65%),
+        #F3F1EA;
 }
 
 .oe_product_cart .o_wsale_product_information {
@@ -1990,6 +2012,39 @@ a {
     --rl-line: rgba(92, 112, 80, 0.14);
     --rl-shadow-soft: 0 18px 44px rgba(46, 46, 42, 0.10);
     --rl-shadow-lift: 0 28px 70px rgba(46, 46, 42, 0.15);
+    /* Warm, earthy accents - clay/terracotta and honey - already used ad hoc
+       elsewhere in this file (#C97D60, #D9B777); named here so new "natural"
+       styling below draws from the same two tones instead of inventing more. */
+    --rl-clay: #C97D60;
+    --rl-clay-dark: #A9603F;
+    --rl-honey: #D9B777;
+    --rl-shadow-warm: 0 18px 44px rgba(92, 71, 42, 0.12);
+}
+
+/* Reusable, very subtle paper-grain texture - a hand-made/organic surface
+   feel instead of flat digital color. Kept faint (opacity 0.05) and layered
+   under a solid background-color so it reads as texture, not noise. */
+.rl-grain {
+    position: relative;
+}
+
+.rl-grain::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.05;
+    background-image:
+        radial-gradient(rgba(46, 46, 42, 0.55) 0.6px, transparent 0.6px),
+        radial-gradient(rgba(46, 46, 42, 0.4) 0.6px, transparent 0.6px);
+    background-size: 3px 3px;
+    background-position: 0 0, 1.5px 1.5px;
+}
+
+.rl-grain > * {
+    position: relative;
+    z-index: 1;
 }
 
 html {
@@ -2922,8 +2977,19 @@ footer a:hover,
     color: #D9B777;
     font-size: 0.78rem;
     font-weight: 800;
-    letter-spacing: 0.08rem;
+    letter-spacing: 0.12rem;
     text-transform: uppercase;
+}
+
+// Small clay accent mark ahead of every section label - a quiet,
+// consistent "hand-placed" touch rather than a plain text tag.
+.rl-home-kicker::before {
+    content: "";
+    display: inline-block;
+    width: 0.4rem;
+    height: 0.4rem;
+    border-radius: 50%;
+    background: var(--rl-clay, #C97D60);
 }
 
 .rl-home-kicker.text-sage {

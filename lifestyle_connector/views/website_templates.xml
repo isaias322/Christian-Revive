@@ -967,9 +967,9 @@
         <xpath expr="//div[@id='products_grid']/*[1]" position="before">
             <section class="rl-shop-intro">
                 <div class="rl-shop-intro-card">
-                    <span class="rl-shop-kicker">Furniture showroom</span>
-                    <h2>Choose by product, finish, and availability</h2>
-                    <p>Browse ready pieces, compare favorites, and keep your furniture order easy from first look to delivery.</p>
+                    <span class="rl-shop-kicker">Crafted &amp; grown, naturally</span>
+                    <h2>Choose by product, finish, and freshness</h2>
+                    <p>Handmade furniture and cold-pressed pantry staples, made the honest way - browse, compare, and follow your order from first look to your door.</p>
                     <div class="rl-shop-quick-row">
                         <a t-att-href="keep('/shop', lifestyle_availability='in_stock')"><i class="fa fa-check"></i> Ready stock</a>
                         <a t-att-href="keep('/shop', lifestyle_quick='new')"><i class="fa fa-star"></i> New pieces</a>

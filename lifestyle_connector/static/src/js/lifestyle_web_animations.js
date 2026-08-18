@@ -559,16 +559,47 @@ function setupMobileShopFilters() {
     const rail = document.querySelector('.o_wsale_products_grid_before_rail');
     if (!rail || document.querySelector('.rl-mobile-filter-toggle')) return;
 
+    // Dimmed backdrop behind the sheet - tapping it closes the sheet, same
+    // as tapping outside any standard mobile drawer/modal.
+    const overlay = document.createElement('div');
+    overlay.className = 'rl-mobile-filter-overlay';
+    document.body.appendChild(overlay);
+
     const button = document.createElement('button');
     button.type = 'button';
     button.className = 'rl-mobile-filter-toggle';
     button.innerHTML = '<i class="fa fa-sliders"></i><span>Filters</span>';
     document.body.appendChild(button);
 
+    const closeFilters = () => {
+        rail.classList.remove('rl-mobile-filters-open');
+        overlay.classList.remove('is-visible');
+        button.classList.remove('is-active');
+        button.innerHTML = '<i class="fa fa-sliders"></i><span>Filters</span>';
+        document.body.classList.remove('rl-mobile-filters-locked');
+    };
+
+    const openFilters = () => {
+        rail.classList.add('rl-mobile-filters-open');
+        overlay.classList.add('is-visible');
+        button.classList.add('is-active');
+        // The toggle button stays visible above the open sheet (higher
+        // z-index) so it doubles as the sheet's close control - swapping
+        // its icon/label to "Close" makes that obvious instead of relying
+        // on the user to guess that tapping the same spot dismisses it.
+        button.innerHTML = '<i class="fa fa-times"></i><span>Close</span>';
+        document.body.classList.add('rl-mobile-filters-locked');
+    };
+
     button.addEventListener('click', () => {
-        rail.classList.toggle('rl-mobile-filters-open');
-        button.classList.toggle('is-active');
+        if (rail.classList.contains('rl-mobile-filters-open')) {
+            closeFilters();
+        } else {
+            openFilters();
+        }
     });
+
+    overlay.addEventListener('click', closeFilters);
 }
 // Guests must sign in before adding to cart: orders need a real account so
 // stage updates can reach the customer (app push or email) and the portal

@@ -5642,90 +5642,16 @@ footer .rounded-circle,
 }
 
 @media (max-width: 991.98px) {
+    .oe_website_sale .o_wsale_products_grid_before_rail {
+        position: relative;
+        max-height: 38vh;
+        overflow: auto;
+    }
+
     .rl-shop-intro h2 {
         font-size: 1.75rem;
     }
-}
 
-// Smaller/cramped laptop and tablet widths: same toggle-drawer pattern as
-// mobile (reuses the same JS-managed classes and overlay), but the
-// button sits on the left edge and the sheet slides in from the left
-// instead of up from the bottom - matches how a sidebar "wants" to
-// appear on a wider screen, and leaves full desktop monitors (992px+)
-// with the sidebar permanently visible as before, since there's
-// already plenty of room there.
-@media (min-width: 768px) and (max-width: 991.98px) {
-    .rl-mobile-filter-overlay {
-        position: fixed;
-        inset: 0;
-        z-index: 8700;
-        background: rgba(37, 40, 33, 0.5);
-        opacity: 0;
-        visibility: hidden;
-        transition: opacity 0.25s ease;
-    }
-
-    .rl-mobile-filter-overlay.is-visible {
-        opacity: 1;
-        visibility: visible;
-    }
-
-    body.rl-mobile-filters-locked {
-        overflow: hidden;
-    }
-
-    .rl-mobile-filter-toggle {
-        position: fixed;
-        left: 0;
-        top: 50%;
-        bottom: auto;
-        z-index: 9200;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        min-height: 3rem;
-        padding: 0.8rem 1.1rem 0.8rem 0.9rem;
-        border: 1px solid rgba(92, 112, 80, 0.18);
-        border-radius: 0 999px 999px 0;
-        color: #FFFDF9;
-        background: #5C7050;
-        box-shadow: 0 18px 46px rgba(46, 46, 42, 0.22);
-        font-weight: 900;
-        transform: translateY(-50%);
-    }
-
-    .rl-mobile-filter-toggle.is-active {
-        background: #2E2E2A;
-    }
-
-    .oe_website_sale .o_wsale_products_grid_before_rail {
-        display: none;
-    }
-
-    .oe_website_sale .o_wsale_products_grid_before_rail.rl-mobile-filters-open {
-        display: block;
-        position: fixed;
-        left: 0;
-        top: 0;
-        bottom: 0;
-        z-index: 8800;
-        width: min(340px, 86vw);
-        max-height: none;
-        overflow: auto;
-        border-radius: 0 22px 22px 0;
-        box-shadow: 18px 0 46px rgba(46, 46, 42, 0.24);
-        padding: 5.5rem 1.25rem 2rem;
-        animation: rlFilterSheetLeft 0.28s ease both;
-    }
-}
-
-@keyframes rlFilterSheetLeft {
-    from {
-        transform: translateX(-100%);
-    }
-    to {
-        transform: translateX(0);
-    }
 }
 
 @media (max-width: 575.98px) {
@@ -7195,26 +7121,6 @@ footer .rounded-circle,
     .rl-confirm-step {
         flex: 1 1 100%;
     }
-
-    /* ── Shop: keep the first product row above the fold ─────────────
-       The intro card, announcements, title and search stacked up to a
-       full screen of height before any product appeared on mobile -
-       tighten all of it. Was previously unscoped (applying everywhere,
-       including desktop) and still too large for narrow phones, which
-       forced the heading into an unreadable one-word-per-line wrap. */
-    .rl-shop-intro {
-        margin-bottom: 0.85rem;
-    }
-
-    .rl-shop-intro-card {
-        padding: 1.1rem 1.4rem;
-    }
-
-    .rl-shop-intro h2 {
-        font-size: 1.35rem;
-        line-height: 1.2;
-        margin-bottom: 0.3rem;
-    }
 }
 
 .rl-cart-line-color {
@@ -7253,6 +7159,22 @@ footer .rounded-circle,
 
 .rl-cart-line-color i {
     font-size: 0.82rem;
+}
+
+/* ── Shop: keep the first product row above the fold ─────────────────── */
+/* The intro card, announcements, title and search stacked up to a full
+   screen of height before any product appeared. Tighten all of it. */
+.rl-shop-intro {
+    margin-bottom: 0.85rem;
+}
+
+.rl-shop-intro-card {
+    padding: 1.1rem 1.4rem;
+}
+
+.rl-shop-intro h2 {
+    font-size: 1.65rem;
+    margin-bottom: 0.3rem;
 }
 
 .rl-shop-intro p {

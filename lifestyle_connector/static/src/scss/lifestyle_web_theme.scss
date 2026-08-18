@@ -2957,27 +2957,6 @@ footer a:hover,
     position: relative !important;
     z-index: 8000 !important;
 }
-
-/* Force more, smaller columns on wide screens - independent of whatever
-   Odoo's own "products per row" setting is doing server-side. Overrides
-   the Bootstrap col-* width/flex Odoo assigns per card directly, so it
-   works no matter what that setting is (or was renamed to) under the
-   hood. Mobile/tablet sizing is left as Odoo's own default. */
-@media (min-width: 992px) {
-    .rl-shop-page .oe_website_sale #products_grid .oe_product,
-    .rl-shop-page .oe_website_sale #products_grid .o_wsale_product_grid_wrapper {
-        flex: 0 0 25% !important;
-        max-width: 25% !important;
-    }
-}
-
-@media (min-width: 1600px) {
-    .rl-shop-page .oe_website_sale #products_grid .oe_product,
-    .rl-shop-page .oe_website_sale #products_grid .o_wsale_product_grid_wrapper {
-        flex: 0 0 20% !important;
-        max-width: 20% !important;
-    }
-}
 /* Revive homepage */
 .rl-home-page {
     background: #F7F5F0;

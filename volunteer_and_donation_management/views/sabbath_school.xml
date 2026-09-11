@@ -11,6 +11,7 @@
                 <field name="date"/>
                 <field name="quarter"/>
                 <field name="year"/>
+                <field name="language"/>
                 <field name="is_published"/>
             </list>
         </field>
@@ -41,6 +42,7 @@
                             <field name="date"/>
                             <field name="quarter"/>
                             <field name="year"/>
+                            <field name="language" widget="radio"/>
                             <field name="is_published"/>
                         </group>
                         <group>
@@ -79,10 +81,18 @@
                 <field name="name"/>
                 <field name="quarter"/>
                 <field name="year"/>
+                <field name="language"/>
                 <filter name="published" string="Published"
                         domain="[('is_published','=',True)]"/>
                 <filter name="unpublished" string="Unpublished"
                         domain="[('is_published','=',False)]"/>
+                <filter name="lang_en" string="English"
+                        domain="[('language','=','en')]"/>
+                <filter name="lang_ur" string="Urdu"
+                        domain="[('language','=','ur')]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_language" string="Language" context="{'group_by':'language'}"/>
+                </group>
             </search>
         </field>
     </record>

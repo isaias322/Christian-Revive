@@ -14,6 +14,10 @@ class SabbathSchoolLesson(models.Model):
         ('q4', 'Q4 (Oct-Dec)'),
     ], string='Quarter', required=True)
     year = fields.Char(string='Year', required=True)
+    language = fields.Selection([
+        ('en', 'English'),
+        ('ur', 'Urdu'),
+    ], string='Language', default='en', required=True)
     description = fields.Text(string='Description')
     content = fields.Html(string='Content')
     image = fields.Binary(string='Cover Image', attachment=True)

@@ -90,9 +90,6 @@
                         domain="[('language','=','en')]"/>
                 <filter name="lang_ur" string="Urdu"
                         domain="[('language','=','ur')]"/>
-                <group expand="0" string="Group By">
-                    <filter name="group_language" string="Language" context="{'group_by':'language'}"/>
-                </group>
             </search>
         </field>
     </record>

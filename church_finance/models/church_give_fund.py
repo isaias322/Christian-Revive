@@ -37,3 +37,19 @@ class ChurchGiveFund(models.Model):
             'fund_type': f.fund_type, 'description': f.description or '',
             'total_contributed': f.total_contributed,
         } for f in funds]}
+
+    @api.model
+    def app_create_fund(self, vals, requester_staff_id=None):
+        employee = self.env['hr.employee'].sudo().browse(requester_staff_id)
+        if not employee.exists() or employee.staff_role not in ('admin', 'finance_officer'):
+            return {'success': False, 'error': 'Not authorized'}
+        vals = dict(vals or {})
+        if not vals.get('name'):
+            return {'success': False, 'error': 'name is required'}
+        fund = self.sudo().create({
+            'name': vals['name'],
+            'code': vals.get('code') or False,
+            'description': vals.get('description') or False,
+            'fund_type': vals.get('fund_type') or 'general',
+        })
+        return {'success': True, 'fund_id': fund.id}

@@ -1,4 +1,4 @@
-from odoo import models, fields
+from odoo import models, fields, api
 
 
 class HrEmployeeSeniorPastor(models.Model):
@@ -33,3 +33,60 @@ class PastorAssignment(models.Model):
         ('pastor_member_uniq', 'unique(pastor_id, member_id)',
          'This member is already assigned to this pastor.'),
     ]
+
+    # ── Church Management RPC ────────────────────────────────────
+    # Assigning pastors controls who can see which members' data, so this
+    # is restricted to mode='all' (church admin / senior pastor) only —
+    # not the relaxed 'assigned' scope used for member/family management.
+
+    @api.model
+    def app_get_pastors(self, requester_staff_id=None):
+        mode, _scope = self.env['res.partner']._church_caller_scope(
+            requester_staff_id=requester_staff_id)
+        if mode != 'all':
+            return {'success': False, 'error': 'Not authorized'}
+        pastors = self.env['hr.employee'].sudo().search(
+            [('staff_role', '=', 'pastor')], order='name')
+        return {'success': True, 'pastors': [{
+            'id': p.id, 'name': p.name,
+            'is_senior_pastor': p.is_senior_pastor,
+        } for p in pastors]}
+
+    @api.model
+    def app_get_pastor_assignments(self, requester_staff_id=None):
+        mode, _scope = self.env['res.partner']._church_caller_scope(
+            requester_staff_id=requester_staff_id)
+        if mode != 'all':
+            return {'success': False, 'error': 'Not authorized'}
+        assignments = self.sudo().search([], order='pastor_id, member_id')
+        return {'success': True, 'assignments': [{
+            'id': a.id,
+            'pastor_id': a.pastor_id.id, 'pastor_name': a.pastor_id.name,
+            'member_id': a.member_id.id, 'member_name': a.member_id.name,
+            'assigned_date': a.assigned_date.isoformat() if a.assigned_date else '',
+        } for a in assignments]}
+
+    @api.model
+    def app_assign_pastor(self, pastor_id, member_id, requester_staff_id=None):
+        mode, _scope = self.env['res.partner']._church_caller_scope(
+            requester_staff_id=requester_staff_id)
+        if mode != 'all':
+            return {'success': False, 'error': 'Not authorized'}
+        existing = self.sudo().search([
+            ('pastor_id', '=', pastor_id), ('member_id', '=', member_id),
+        ], limit=1)
+        if existing:
+            return {'success': False, 'error': 'This member is already assigned to this pastor'}
+        assignment = self.sudo().create({'pastor_id': pastor_id, 'member_id': member_id})
+        return {'success': True, 'assignment_id': assignment.id}
+
+    @api.model
+    def app_remove_pastor_assignment(self, assignment_id, requester_staff_id=None):
+        mode, _scope = self.env['res.partner']._church_caller_scope(
+            requester_staff_id=requester_staff_id)
+        if mode != 'all':
+            return {'success': False, 'error': 'Not authorized'}
+        assignment = self.sudo().browse(assignment_id)
+        if assignment.exists():
+            assignment.unlink()
+        return {'success': True}

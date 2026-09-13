@@ -48,7 +48,7 @@ class ResPartnerGdpr(models.Model):
         # stay intact — only the donor's identifying fields are scrubbed.
         partner.write({
             'name': f'Deleted Member #{partner.id}',
-            'email': False, 'phone': False, 'mobile': False, 'street': False,
+            'email': False, 'phone': False, 'street': False,
             'city': False, 'date_of_birth': False, 'cnic': False,
             'app_login_email': False, 'app_password_hash': False,
             'is_app_profile': False, 'membership_status': 'inactive',

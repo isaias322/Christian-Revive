@@ -26,6 +26,7 @@
                     <group>
                         <group string="Lifecycle">
                             <field name="membership_status"/>
+                            <field name="leader_role" invisible="membership_status != 'leader'"/>
                             <field name="member_join_date"/>
                             <field name="water_baptism_date"/>
                             <field name="holy_spirit_baptism_date"/>

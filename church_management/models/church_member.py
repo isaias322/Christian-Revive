@@ -13,6 +13,27 @@ class ChurchMember(models.Model):
         ('inactive', 'Inactive'),
     ], string='Membership Status', default='visitor')
 
+    leader_role = fields.Selection([
+        ('elder', 'Elder'),
+        ('pastor', 'Pastor'),
+        ('evangelist', 'Evangelist'),
+        ('deacon', 'Deacon'),
+        ('deaconess', 'Deaconess'),
+        ('teacher', 'Teacher'),
+        ('preacher', 'Preacher'),
+        ('minister', 'Minister'),
+        ('worship_leader', 'Worship Leader'),
+        ('music_director', 'Music Director'),
+        ('youth_leader', 'Youth Leader'),
+        ('small_group_leader', 'Small Group Leader'),
+        ('treasurer', 'Treasurer'),
+        ('church_secretary', 'Church Secretary'),
+        ('church_administrator', 'Church Administrator'),
+        ('church_clerk', 'Church Clerk'),
+        ('care_taker', 'Care Taker'),
+    ], string='Leader Role',
+       help='Only meaningful when Membership Status is Leader.')
+
     member_join_date = fields.Date(string='Join Date')
     water_baptism_date = fields.Date(string='Water Baptism Date')
     holy_spirit_baptism_date = fields.Date(string='Holy Spirit Baptism Date')
@@ -109,7 +130,7 @@ class ChurchMember(models.Model):
 
         data = member.read([
             'id', 'name', 'email', 'phone', 'date_of_birth', 'cnic',
-            'membership_status', 'member_join_date',
+            'membership_status', 'leader_role', 'member_join_date',
             'water_baptism_date', 'holy_spirit_baptism_date',
             'family_id', 'is_family_head', 'guardian_id',
             'membership_type', 'contribution_preference',

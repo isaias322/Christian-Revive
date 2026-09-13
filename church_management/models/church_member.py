@@ -133,7 +133,7 @@ class ChurchMember(models.Model):
             'membership_status', 'leader_role', 'member_join_date',
             'water_baptism_date', 'holy_spirit_baptism_date',
             'family_id', 'is_family_head', 'guardian_id',
-            'membership_type', 'contribution_preference',
+            'membership_type', 'contribution_preference', 'write_date',
         ])[0]
         return {'success': True, 'member': data}
 

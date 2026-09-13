@@ -41,7 +41,12 @@ class ChurchGiveTransactionExt(models.Model):
 
         for r in result:
             tx = txs_by_id.get(r.get('odoo_id') or r.get('id'))
-            r['pledge_id'] = tx.pledge_id.id if tx and tx.pledge_id else False
-            r['pledge_label'] = tx.pledge_id.display_name if tx and tx.pledge_id else ''
+            pledge = tx.pledge_id if tx else False
+            r['pledge_id'] = pledge.id if pledge else False
+            # The app shows this as the payment's headline instead of the
+            # giving Category whenever it's set — simply flags "this was a
+            # pledge payment", distinct from a plain Tithe/Offering/Project
+            # gift.
+            r['pledge_label'] = 'Pledge' if pledge else ''
 
         return result

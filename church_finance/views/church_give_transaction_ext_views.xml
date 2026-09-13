@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- Add Pledge / Fund fields to the existing Donation form (church_give),
+         so staff recording a cash/bank gift can link it to a member's
+         pledge — without that link, a manual entry would save the money
+         but never update the pledge's progress bar. -->
+    <record id="view_church_give_transaction_form_finance_ext" model="ir.ui.view">
+        <field name="name">church.give.transaction.form.finance.ext</field>
+        <field name="model">church.give.transaction</field>
+        <field name="inherit_id" ref="church_give.view_church_give_transaction_form"/>
+        <field name="arch" type="xml">
+            <field name="project_id" position="after">
+                <field name="pledge_id"
+                       domain="[('member_id', '=', partner_id)]"
+                       help="Link this payment to one of the donor's pledges so its progress bar updates."/>
+                <field name="fund_id"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_church_give_transaction_list_finance_ext" model="ir.ui.view">
+        <field name="name">church.give.transaction.list.finance.ext</field>
+        <field name="model">church.give.transaction</field>
+        <field name="inherit_id" ref="church_give.view_church_give_transaction_list"/>
+        <field name="arch" type="xml">
+            <field name="project_id" position="after">
+                <field name="pledge_id" optional="show"/>
+            </field>
+        </field>
+    </record>
+
+</odoo>

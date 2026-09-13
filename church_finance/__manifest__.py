@@ -25,6 +25,7 @@
         'data/sequence.xml',
         'views/church_give_fund_views.xml',
         'views/church_give_pledge_views.xml',
+        'views/church_give_transaction_ext_views.xml',
         'views/reconciliation_views.xml',
         'views/menu.xml',
     ],

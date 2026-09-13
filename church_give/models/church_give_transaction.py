@@ -234,7 +234,7 @@ class ChurchGiveTransaction(models.Model):
             'donor_name':         donor_name or 'App User',
             'donor_email':        donor_email or (partner.email if partner else ''),
             'donor_phone':        data.get('donor_phone', '') or (
-                                      (partner.phone or partner.mobile)
+                                      (partner.phone or getattr(partner, 'mobile', ''))
                                       if partner else ''),
             'amount':             float(data.get('amount', 0)),
             'currency':           data.get('currency', 'PKR'),

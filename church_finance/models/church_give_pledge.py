@@ -38,6 +38,14 @@ class ChurchGivePledge(models.Model):
     paid_amount = fields.Float(string='Paid So Far', compute='_compute_paid_amount', digits=(16, 2))
     progress_percent = fields.Float(string='Progress %', compute='_compute_paid_amount')
 
+    def _compute_display_name(self):
+        for pledge in self:
+            pledge.display_name = '%s — %s %s (%s)' % (
+                pledge.member_id.name or 'Unknown',
+                pledge.currency, '{:,.0f}'.format(pledge.pledge_amount),
+                dict(self._fields['frequency'].selection).get(pledge.frequency, pledge.frequency),
+            )
+
     def _compute_paid_amount(self):
         Transaction = self.env['church.give.transaction']
         for pledge in self:

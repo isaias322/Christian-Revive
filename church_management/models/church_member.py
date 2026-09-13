@@ -107,7 +107,7 @@ class ChurchMember(models.Model):
         members = self.sudo().search(domain, order='name')
         return {'success': True, 'members': members.read([
             'id', 'name', 'email', 'phone', 'membership_status',
-            'member_join_date', 'family_id',
+            'member_join_date', 'family_id', 'write_date',
         ])}
 
     @api.model

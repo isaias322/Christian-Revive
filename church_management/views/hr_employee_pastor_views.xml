@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="view_hr_employee_form_senior_pastor" model="ir.ui.view">
+        <field name="name">hr.employee.form.senior.pastor</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="volunteer_and_donation_management.view_hr_employee_form_extend"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='is_app_active']" position="after">
+                <field name="is_senior_pastor" invisible="staff_role != 'pastor'"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

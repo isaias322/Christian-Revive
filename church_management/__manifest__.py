@@ -21,6 +21,7 @@
         'security/ir.model.access.csv',
         'security/church_management_security.xml',
         'views/church_member_views.xml',
+        'views/hr_employee_pastor_views.xml',
         'views/cell_group_views.xml',
         'views/pastoral_care_note_views.xml',
         'views/event_attendance_views.xml',

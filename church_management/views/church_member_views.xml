@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- Extend Member List (from volunteer_and_donation_management) with lifecycle fields -->
+    <record id="view_member_list_church_mgmt" model="ir.ui.view">
+        <field name="name">res.partner.member.list.church.mgmt</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="volunteer_and_donation_management.view_member_list"/>
+        <field name="arch" type="xml">
+            <field name="membership_type" position="after">
+                <field name="membership_status"/>
+                <field name="member_join_date"/>
+                <field name="family_id"/>
+            </field>
+        </field>
+    </record>
+
+    <!-- Extend Member Form: Church Membership page -->
+    <record id="view_partner_form_church_mgmt" model="ir.ui.view">
+        <field name="name">res.partner.form.church.mgmt</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="volunteer_and_donation_management.view_partner_form_member_extension"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet/notebook" position="inside">
+                <page string="Church Membership">
+                    <group>
+                        <group string="Lifecycle">
+                            <field name="membership_status"/>
+                            <field name="member_join_date"/>
+                            <field name="water_baptism_date"/>
+                            <field name="holy_spirit_baptism_date"/>
+                        </group>
+                        <group string="Family / Household">
+                            <field name="family_id"/>
+                            <field name="is_family_head"/>
+                            <field name="guardian_id"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Family Views -->
+    <record id="view_church_family_list" model="ir.ui.view">
+        <field name="name">church.family.list</field>
+        <field name="model">church.family</field>
+        <field name="arch" type="xml">
+            <list string="Families">
+                <field name="name"/>
+                <field name="head_id"/>
+                <field name="member_count"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_church_family_form" model="ir.ui.view">
+        <field name="name">church.family.form</field>
+        <field name="model">church.family</field>
+        <field name="arch" type="xml">
+            <form string="Family">
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Family Name..."/></h1>
+                    </div>
+                    <group>
+                        <field name="head_id"/>
+                    </group>
+                    <field name="member_ids">
+                        <list>
+                            <field name="name"/>
+                            <field name="membership_status"/>
+                            <field name="guardian_id"/>
+                        </list>
+                    </field>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_church_families" model="ir.actions.act_window">
+        <field name="name">Families</field>
+        <field name="res_model">church.family</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="action_church_members" model="ir.actions.act_window">
+        <field name="name">Members</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('is_member','=',True)]</field>
+    </record>
+
+    <!-- Pastor Assignment Views -->
+    <record id="view_pastor_assignment_list" model="ir.ui.view">
+        <field name="name">pastor.assignment.list</field>
+        <field name="model">pastor.assignment</field>
+        <field name="arch" type="xml">
+            <list string="Pastor Assignments" editable="bottom">
+                <field name="pastor_id"/>
+                <field name="member_id"/>
+                <field name="assigned_date"/>
+                <field name="notes"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_pastor_assignments" model="ir.actions.act_window">
+        <field name="name">Pastor Assignments</field>
+        <field name="res_model">pastor.assignment</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

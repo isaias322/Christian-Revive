@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="view_church_event_attendance_list" model="ir.ui.view">
+        <field name="name">church.event.attendance.list</field>
+        <field name="model">church.event.attendance</field>
+        <field name="arch" type="xml">
+            <list string="Event Attendance">
+                <field name="event_id"/>
+                <field name="member_id"/>
+                <field name="check_in_time"/>
+                <field name="method"/>
+                <field name="checked_in_by_staff_id"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_church_event_attendance" model="ir.actions.act_window">
+        <field name="name">Event Attendance</field>
+        <field name="res_model">church.event.attendance</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

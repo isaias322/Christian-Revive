@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <menuitem
+        id="menu_church_finance_root"
+        name="Church Finance"
+        sequence="17"/>
+
+    <menuitem id="menu_church_give_funds"
+        name="Funds"
+        parent="menu_church_finance_root"
+        action="action_church_give_funds"
+        sequence="1"/>
+
+    <menuitem id="menu_church_give_pledges"
+        name="Pledges"
+        parent="menu_church_finance_root"
+        action="action_church_give_pledges"
+        sequence="2"/>
+
+    <menuitem id="menu_reconciliation_batches"
+        name="Reconciliation"
+        parent="menu_church_finance_root"
+        action="action_reconciliation_batches"
+        sequence="3"/>
+
+</odoo>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="view_cell_group_list" model="ir.ui.view">
+        <field name="name">cell.group.list</field>
+        <field name="model">cell.group</field>
+        <field name="arch" type="xml">
+            <list string="Cell Groups">
+                <field name="name"/>
+                <field name="leader_id"/>
+                <field name="zone"/>
+                <field name="district"/>
+                <field name="meeting_day"/>
+                <field name="member_count"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_cell_group_form" model="ir.ui.view">
+        <field name="name">cell.group.form</field>
+        <field name="model">cell.group</field>
+        <field name="arch" type="xml">
+            <form string="Cell Group">
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Group Name..."/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="leader_id"/>
+                            <field name="zone"/>
+                            <field name="district"/>
+                        </group>
+                        <group>
+                            <field name="meeting_day"/>
+                            <field name="meeting_time"/>
+                            <field name="meeting_location"/>
+                        </group>
+                    </group>
+                    <field name="member_ids"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_cell_groups" model="ir.actions.act_window">
+        <field name="name">Cell Groups</field>
+        <field name="res_model">cell.group</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

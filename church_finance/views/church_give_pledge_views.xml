@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="view_church_give_pledge_list" model="ir.ui.view">
+        <field name="name">church.give.pledge.list</field>
+        <field name="model">church.give.pledge</field>
+        <field name="arch" type="xml">
+            <list string="Pledges">
+                <field name="member_id"/>
+                <field name="pledge_amount"/>
+                <field name="currency"/>
+                <field name="frequency"/>
+                <field name="paid_amount"/>
+                <field name="progress_percent"/>
+                <field name="status"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_church_give_pledge_form" model="ir.ui.view">
+        <field name="name">church.give.pledge.form</field>
+        <field name="model">church.give.pledge</field>
+        <field name="arch" type="xml">
+            <form string="Pledge">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="member_id"/>
+                            <field name="category_id"/>
+                            <field name="project_id"/>
+                            <field name="fund_id"/>
+                        </group>
+                        <group>
+                            <field name="pledge_amount"/>
+                            <field name="currency"/>
+                            <field name="frequency"/>
+                            <field name="status"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="start_date"/>
+                            <field name="end_date"/>
+                            <field name="next_reminder_date"/>
+                        </group>
+                        <group>
+                            <field name="paid_amount"/>
+                            <field name="progress_percent"/>
+                        </group>
+                    </group>
+                    <field name="notes" placeholder="Notes..."/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_church_give_pledges" model="ir.actions.act_window">
+        <field name="name">Pledges</field>
+        <field name="res_model">church.give.pledge</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

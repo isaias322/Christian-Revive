@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_church_family,church.family,model_church_family,base.group_user,1,1,1,1
+access_pastor_assignment,pastor.assignment,model_pastor_assignment,base.group_user,1,1,1,1
+access_cell_group,cell.group,model_cell_group,base.group_user,1,1,1,1
+access_pastoral_care_note,pastoral.care.note,model_pastoral_care_note,base.group_user,1,1,1,0
+access_church_event_attendance,church.event.attendance,model_church_event_attendance,base.group_user,1,1,1,1

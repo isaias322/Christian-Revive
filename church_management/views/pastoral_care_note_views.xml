@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="view_pastoral_care_note_list" model="ir.ui.view">
+        <field name="name">pastoral.care.note.list</field>
+        <field name="model">pastoral.care.note</field>
+        <field name="arch" type="xml">
+            <list string="Pastoral Care Notes">
+                <field name="member_id"/>
+                <field name="author_id"/>
+                <field name="note_type"/>
+                <field name="date"/>
+                <field name="follow_up_date"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_pastoral_care_note_form" model="ir.ui.view">
+        <field name="name">pastoral.care.note.form</field>
+        <field name="model">pastoral.care.note</field>
+        <field name="arch" type="xml">
+            <form string="Pastoral Care Note">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="member_id"/>
+                            <field name="author_id"/>
+                            <field name="note_type"/>
+                        </group>
+                        <group>
+                            <field name="date"/>
+                            <field name="follow_up_date"/>
+                            <field name="visible_to_senior_pastor_only"/>
+                        </group>
+                    </group>
+                    <field name="content" placeholder="Confidential notes..."/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_pastoral_care_notes" model="ir.actions.act_window">
+        <field name="name">Pastoral Care Notes</field>
+        <field name="res_model">pastoral.care.note</field>
+        <field name="view_mode">list,form</field>
+        <field name="groups_id" eval="[(4, ref('group_church_pastor'))]"/>
+    </record>
+
+</odoo>

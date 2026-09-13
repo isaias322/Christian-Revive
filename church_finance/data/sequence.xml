@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="seq_church_give_reconciliation_batch" model="ir.sequence">
+        <field name="name">Church Give Reconciliation Batch</field>
+        <field name="code">church.give.reconciliation.batch</field>
+        <field name="prefix">RECON-</field>
+        <field name="padding">4</field>
+    </record>
+</odoo>

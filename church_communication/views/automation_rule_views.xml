@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="view_church_automation_rule_list" model="ir.ui.view">
+        <field name="name">church.automation.rule.list</field>
+        <field name="model">church.automation.rule</field>
+        <field name="arch" type="xml">
+            <list string="Automation Rules" editable="bottom">
+                <field name="name"/>
+                <field name="rule_type"/>
+                <field name="threshold_days"/>
+                <field name="is_active"/>
+                <field name="last_run_at"/>
+                <field name="last_run_count"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_church_automation_rules" model="ir.actions.act_window">
+        <field name="name">Automation Rules</field>
+        <field name="res_model">church.automation.rule</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

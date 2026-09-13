@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <menuitem
+        id="menu_church_management_root"
+        name="Church Management"
+        sequence="16"/>
+
+    <menuitem id="menu_church_members"
+        name="Members"
+        parent="menu_church_management_root"
+        action="action_church_members"
+        sequence="1"/>
+
+    <menuitem id="menu_church_families"
+        name="Families"
+        parent="menu_church_management_root"
+        action="action_church_families"
+        sequence="2"/>
+
+    <menuitem id="menu_pastor_assignments"
+        name="Pastor Assignments"
+        parent="menu_church_management_root"
+        action="action_pastor_assignments"
+        sequence="3"/>
+
+    <menuitem id="menu_cell_groups"
+        name="Cell Groups"
+        parent="menu_church_management_root"
+        action="action_cell_groups"
+        sequence="4"/>
+
+    <menuitem id="menu_pastoral_care_notes"
+        name="Pastoral Care Notes"
+        parent="menu_church_management_root"
+        action="action_pastoral_care_notes"
+        groups="group_church_pastor"
+        sequence="5"/>
+
+    <menuitem id="menu_church_event_attendance"
+        name="Event Attendance"
+        parent="menu_church_management_root"
+        action="action_church_event_attendance"
+        sequence="6"/>
+
+</odoo>

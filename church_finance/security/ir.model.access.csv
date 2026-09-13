@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_church_give_fund,church.give.fund,model_church_give_fund,base.group_user,1,1,1,1
+access_church_give_pledge,church.give.pledge,model_church_give_pledge,base.group_user,1,1,1,1
+access_church_give_reconciliation_batch,church.give.reconciliation.batch,model_church_give_reconciliation_batch,base.group_user,1,1,1,1
+access_church_report,church.report,model_church_report,base.group_user,1,1,1,1

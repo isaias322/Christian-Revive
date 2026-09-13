@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <menuitem
+        id="menu_church_communication_root"
+        name="Church Communication"
+        sequence="18"/>
+
+    <menuitem id="menu_church_bulk_messages"
+        name="Bulk Messages"
+        parent="menu_church_communication_root"
+        action="action_church_bulk_messages"
+        sequence="1"/>
+
+    <menuitem id="menu_church_automation_rules"
+        name="Automation Rules"
+        parent="menu_church_communication_root"
+        action="action_church_automation_rules"
+        sequence="2"/>
+
+    <menuitem id="menu_church_branches"
+        name="Branches"
+        parent="menu_church_communication_root"
+        action="action_church_branches"
+        sequence="3"/>
+
+</odoo>

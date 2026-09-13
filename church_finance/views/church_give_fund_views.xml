@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="view_church_give_fund_list" model="ir.ui.view">
+        <field name="name">church.give.fund.list</field>
+        <field name="model">church.give.fund</field>
+        <field name="arch" type="xml">
+            <list string="Funds">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="fund_type"/>
+                <field name="total_contributed"/>
+                <field name="is_active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_church_give_fund_form" model="ir.ui.view">
+        <field name="name">church.give.fund.form</field>
+        <field name="model">church.give.fund</field>
+        <field name="arch" type="xml">
+            <form string="Fund">
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Fund Name..."/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="code"/>
+                            <field name="fund_type"/>
+                            <field name="is_active"/>
+                        </group>
+                        <group>
+                            <field name="total_contributed"/>
+                        </group>
+                    </group>
+                    <field name="description" placeholder="Purpose of this fund..."/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_church_give_funds" model="ir.actions.act_window">
+        <field name="name">Funds</field>
+        <field name="res_model">church.give.fund</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

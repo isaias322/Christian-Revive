@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="view_church_branch_list" model="ir.ui.view">
+        <field name="name">church.branch.list</field>
+        <field name="model">church.branch</field>
+        <field name="arch" type="xml">
+            <list string="Branches">
+                <field name="name"/>
+                <field name="location"/>
+                <field name="timezone"/>
+                <field name="member_count"/>
+                <field name="is_active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_church_branch_form" model="ir.ui.view">
+        <field name="name">church.branch.form</field>
+        <field name="model">church.branch</field>
+        <field name="arch" type="xml">
+            <form string="Branch">
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Branch Name..."/></h1>
+                    </div>
+                    <group>
+                        <field name="location"/>
+                        <field name="timezone"/>
+                        <field name="is_active"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_church_branches" model="ir.actions.act_window">
+        <field name="name">Branches</field>
+        <field name="res_model">church.branch</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

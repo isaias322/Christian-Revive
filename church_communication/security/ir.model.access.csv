@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_church_branch,church.branch,model_church_branch,base.group_user,1,1,1,1
+access_church_bulk_message,church.bulk.message,model_church_bulk_message,base.group_user,1,1,1,1
+access_church_automation_rule,church.automation.rule,model_church_automation_rule,base.group_user,1,1,1,1

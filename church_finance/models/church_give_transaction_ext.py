@@ -24,3 +24,24 @@ class ChurchGiveTransactionExt(models.Model):
                 self.sudo().browse(int(odoo_id)).write({'pledge_id': int(pledge_id)})
 
         return result
+
+    @api.model
+    def app_get_transactions(self, *args, **kwargs):
+        # church_give's own app_get_transactions has no idea pledge_id
+        # exists (it's defined here, not there), so it never includes it —
+        # the app's Giving History always showed the gift's Category and
+        # silently dropped which pledge it was applied to. Stitch it back
+        # in after the fact instead of duplicating the whole method.
+        result = super().app_get_transactions(*args, **kwargs)
+        if not isinstance(result, list):
+            return result
+
+        ids = [r.get('odoo_id') or r.get('id') for r in result if r.get('odoo_id') or r.get('id')]
+        txs_by_id = {tx.id: tx for tx in self.sudo().browse(ids)}
+
+        for r in result:
+            tx = txs_by_id.get(r.get('odoo_id') or r.get('id'))
+            r['pledge_id'] = tx.pledge_id.id if tx and tx.pledge_id else False
+            r['pledge_label'] = tx.pledge_id.display_name if tx and tx.pledge_id else ''
+
+        return result

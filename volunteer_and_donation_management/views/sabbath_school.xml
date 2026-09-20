@@ -12,6 +12,7 @@
                 <field name="quarter"/>
                 <field name="year"/>
                 <field name="language"/>
+                <field name="has_theme_song" string="Theme Song"/>
                 <field name="is_published"/>
             </list>
         </field>
@@ -65,6 +66,23 @@
                         </page>
                         <page string="Content" name="content">
                             <field name="content" widget="html" placeholder="Full lesson content..."/>
+                        </page>
+                        <page string="Theme Song" name="theme_song">
+                            <group>
+                                <group string="Upload the song">
+                                    <field name="theme_song_file" filename="theme_song_filename"/>
+                                    <field name="theme_song_filename" invisible="1"/>
+                                </group>
+                                <group string="Or use a link">
+                                    <field name="theme_song_url"
+                                           placeholder="https://example.com/song.mp3"/>
+                                    <field name="has_theme_song" readonly="1"/>
+                                </group>
+                            </group>
+                            <div class="text-muted">
+                                Once a theme song is added, a "Theme Song" button appears
+                                under this lesson in the app so people can listen to it.
+                            </div>
                         </page>
                     </notebook>
                 </sheet>

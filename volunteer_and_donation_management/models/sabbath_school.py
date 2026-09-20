@@ -1,4 +1,4 @@
-from odoo import fields, models
+from odoo import api, fields, models
 
 class SabbathSchoolLesson(models.Model):
     _name = 'sabbath.school.lesson'
@@ -35,6 +35,24 @@ class SabbathSchoolLesson(models.Model):
     cloud_video_url = fields.Char(string='Cloud Video Link')
     audio_file = fields.Binary(string='MP3 File', attachment=True)
     audio_filename = fields.Char(string='MP3 Filename')
+
+    # ── Theme song (shown as a "Theme Song" button under the lesson in the app) ──
+    theme_song_file = fields.Binary(string='Theme Song (MP3)', attachment=True)
+    theme_song_filename = fields.Char(string='Theme Song Filename')
+    theme_song_url = fields.Char(
+        string='Theme Song Link',
+        help='Optional direct link to an audio file (e.g. https://.../song.mp3). '
+             'If both a link and an uploaded file are set, the link is used.')
+    has_theme_song = fields.Boolean(
+        string='Has Theme Song', compute='_compute_has_theme_song', store=True)
+
+    @api.depends('theme_song_file', 'theme_song_url')
+    def _compute_has_theme_song(self):
+        for rec in self:
+            # bin_size=True returns the file size instead of loading the whole file
+            has_file = bool(rec.with_context(bin_size=True).theme_song_file)
+            has_url = bool((rec.theme_song_url or '').strip())
+            rec.has_theme_song = has_file or has_url
 
     def action_publish(self):
         self.write({'is_published': True})
